@@ -1,0 +1,82 @@
+# Prometheus configuration for ERPGo monitoring
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # ERPGo API
+  - job_name: 'erpgo-api'
+    static_configs:
+      - targets: ['api:8080']
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+
+  # PostgreSQL Exporter (if used)
+  - job_name: 'postgres-exporter'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    scrape_interval: 30s
+
+  # Redis Exporter (if used)
+  - job_name: 'redis-exporter'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    scrape_interval: 30s
+
+  # Node Exporter (if used)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 30s
+
+  # Docker metrics (if used)
+  - job_name: 'docker-exporter'
+    static_configs:
+      - targets: ['docker-exporter:9323']
+    scrape_interval: 30s
+
+# Alerting rules
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+# Example recording rules
+recording_rules:
+  - name: erpgo.rules
+    rules:
+      # Record high request rate
+      - record: job:http_requests:rate5m
+        expr: rate(http_requests_total[5m])
+
+      # Record error rate
+      - record: job:http_requests_errors:rate5m
+        expr: rate(http_requests_total{status=~"5.."}[5m])
+
+      # Record request duration
+      - record: job:http_request_duration_seconds:mean5m
+        expr: rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])
+
+      # Record database connection pool usage
+      - record: job:db_connections_pool_usage
+        expr: db_connections_active / db_connections_max
+
+      # Record cache hit rate
+      - record: job:cache_hit_rate
+        expr: cache_hits_total / (cache_hits_total + cache_misses_total)
+
+# Example alerting rules
+rule_files:
+  - "alert_rules.yml"

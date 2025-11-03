@@ -1,0 +1,34 @@
+# Development Dockerfile with hot reload support
+FROM golang:1.21-alpine
+
+# Install development tools
+RUN apk add --no-cache git ca-certificates tzdata air make curl
+
+# Install Delve debugger
+RUN go install github.com/go-delve/delve/cmd/dlv@latest
+
+# Set working directory
+WORKDIR /app
+
+# Copy go mod files
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download && go mod verify
+
+# Copy source code
+COPY . .
+
+# Create non-root user for development
+RUN addgroup -g 1001 -S erpgo && \
+    adduser -u 1001 -S erpgo -G erpgo && \
+    chown -R erpgo:erpgo /app
+
+# Switch to non-root user
+USER erpgo
+
+# Expose ports for API and debugger
+EXPOSE 8080 2345
+
+# Default command - starts the application with hot reload
+CMD ["air", "-c", ".air.toml"]

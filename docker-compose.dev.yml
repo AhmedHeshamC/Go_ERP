@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  # Development API Service with hot reload
+  api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: erpgo-api-dev
+    ports:
+      - "8080:8080"
+      - "2345:2345"  # Delve debugger port
+    environment:
+      ENVIRONMENT: development
+      DATABASE_URL: postgres://erpgo:erpgo_password@postgres:5432/erp?sslmode=disable
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev-secret-key
+      LOG_LEVEL: debug
+      DEBUG_MODE: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /app/vendor
+    networks:
+      - erpgo-network
+    stdin_open: true
+    tty: true
+    profiles:
+      - dev
+
+  # PostgreSQL with development settings
+  postgres-dev:
+    extends:
+      file: docker-compose.yml
+      service: postgres
+    container_name: erpgo-postgres-dev
+    ports:
+      - "5433:5432"  # Different port to avoid conflicts
+    environment:
+      POSTGRES_DB: erp_dev
+      POSTGRES_USER: erpgo_dev
+      POSTGRES_PASSWORD: erpgo_dev_password
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    profiles:
+      - dev
+
+  # Redis with development settings
+  redis-dev:
+    extends:
+      file: docker-compose.yml
+      service: redis
+    container_name: erpgo-redis-dev
+    ports:
+      - "6380:6379"  # Different port to avoid conflicts
+    volumes:
+      - redis_dev_data:/data
+    profiles:
+      - dev
+
+  # Test Database
+  postgres-test:
+    image: postgres:15-alpine
+    container_name: erpgo-postgres-test
+    environment:
+      POSTGRES_DB: erp_test
+      POSTGRES_USER: erpgo_test
+      POSTGRES_PASSWORD: erpgo_test_password
+    ports:
+      - "5434:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    networks:
+      - erpgo-network
+    profiles:
+      - test
+
+  # Redis for testing
+  redis-test:
+    image: redis:7-alpine
+    container_name: erpgo-redis-test
+    ports:
+      - "6381:6379"
+    tmpfs:
+      - /data
+    networks:
+      - erpgo-network
+    profiles:
+      - test
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+
+networks:
+  erpgo-network:
+    driver: bridge
