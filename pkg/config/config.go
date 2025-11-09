@@ -26,6 +26,13 @@ type Config struct {
 	ConnMaxLifetime int    `env:"CONN_MAX_LIFETIME" envDefault:"3600"` // seconds
 	ConnMaxIdleTime int    `env:"CONN_MAX_IDLE_TIME" envDefault:"1800"` // seconds
 
+	// SSL Configuration
+	DatabaseSSLMode string `env:"DATABASE_SSL_MODE" envDefault:"require"`
+	DatabaseSSLCert string `env:"DATABASE_SSL_CERT"`
+	DatabaseSSLKey  string `env:"DATABASE_SSL_KEY"`
+	DatabaseSSLCA   string `env:"DATABASE_SSL_CA"`
+	DatabaseSSLHost string `env:"DATABASE_SSL_HOST"`
+
 	// Redis configuration
 	RedisURL      string `env:"REDIS_URL" envDefault:"redis://localhost:6379"`
 	RedisPassword string `env:"REDIS_PASSWORD"`
@@ -41,6 +48,12 @@ type Config struct {
 	CORSOrigins []string `env:"CORS_ORIGINS" envDefault:"http://localhost:3000,http://localhost:8080"`
 	CORSMethods []string `env:"CORS_METHODS" envDefault:"GET,POST,PUT,DELETE,OPTIONS"`
 	CORSHeaders []string `env:"CORS_HEADERS" envDefault:"Origin,Content-Type,Accept,Authorization"`
+
+	// Production CORS configuration
+	ProductionCORSOrigins []string `env:"PRODUCTION_CORS_ORIGINS"`
+	CORSEnvironmentWhitelist  bool     `env:"CORS_ENVIRONMENT_WHITELIST" envDefault:"true"`
+	CORSMaxAge               int      `env:"CORS_MAX_AGE" envDefault:"86400"`
+	CORSCredentialsEnabled   bool     `env:"CORS_CREDENTIALS_ENABLED" envDefault:"true"`
 
 	// Rate limiting
 	RateLimitEnabled bool          `env:"RATE_LIMIT_ENABLED" envDefault:"true"`
@@ -95,6 +108,11 @@ type Config struct {
 	WorkerEnabled    bool `env:"WORKER_ENABLED" envDefault:"true"`
 	WorkerCount      int  `env:"WORKER_COUNT" envDefault:"5"`
 	JobRetryAttempts int  `env:"JOB_RETRY_ATTEMPTS" envDefault:"3"`
+
+	// Structured configuration objects (computed from env vars)
+	// These are not loaded from env directly but computed in Load()
+	RateLimit *RateLimitConfig `json:"-"`
+	Redis     *RedisConfig     `json:"-"`
 }
 
 // Load loads configuration from environment variables
@@ -109,15 +127,16 @@ func Load() (*Config, error) {
 		return nil, fmt.Errorf("error parsing environment variables: %w", err)
 	}
 
+	// Populate structured configuration objects
+	cfg.populateStructuredConfigs()
+
 	// Validate required configuration
 	if err := cfg.validate(); err != nil {
 		return nil, fmt.Errorf("configuration validation failed: %w", err)
 	}
 
-	// Parse comma-separated values
-	cfg.CORSOrigins = parseCommaSeparated(cfg.CORSOrigins)
-	cfg.CORSMethods = parseCommaSeparated(cfg.CORSMethods)
-	cfg.CORSHeaders = parseCommaSeparated(cfg.CORSHeaders)
+	// Parse comma-separated values from environment variables
+	// These are already parsed by env/v10 from comma-separated env vars
 
 	return cfg, nil
 }
@@ -155,6 +174,36 @@ func (c *Config) IsProduction() bool {
 	return strings.ToLower(c.Environment) == "production"
 }
 
+// populateStructuredConfigs populates structured configuration objects from environment variables
+func (c *Config) populateStructuredConfigs() {
+	// Populate RateLimit config
+	c.RateLimit = &RateLimitConfig{
+		Enabled:           c.RateLimitEnabled,
+		RequestsPerSecond: float64(c.RateLimitRPS),
+		BurstSize:         c.RateLimitBurst,
+		StorageType:       "redis", // Default to Redis for production
+		LogRequests:       true,
+		LogRejections:     true,
+		TTL:               c.RateLimitTTL,
+	}
+
+	// Populate Redis config
+	c.Redis = &RedisConfig{
+		URL:       c.RedisURL,
+		Password:  c.RedisPassword,
+		DB:        c.RedisDB,
+		PoolSize:  c.RedisPoolSize,
+	}
+}
+
+// GetRedisAddress returns the Redis address for rate limiting
+func (c *Config) GetRedisAddress() string {
+	if c.Redis != nil && c.Redis.URL != "" {
+		return c.Redis.URL
+	}
+	return "localhost:6379" // Default fallback
+}
+
 // GetDatabaseConfig returns database connection configuration
 func (c *Config) GetDatabaseConfig() DatabaseConfig {
 	return DatabaseConfig{
@@ -163,6 +212,11 @@ func (c *Config) GetDatabaseConfig() DatabaseConfig {
 		MinConnections:  c.MinConnections,
 		ConnMaxLifetime: time.Duration(c.ConnMaxLifetime) * time.Second,
 		ConnMaxIdleTime: time.Duration(c.ConnMaxIdleTime) * time.Second,
+		SSLMode:         c.DatabaseSSLMode,
+		SSLCert:         c.DatabaseSSLCert,
+		SSLKey:          c.DatabaseSSLKey,
+		SSLCA:           c.DatabaseSSLCA,
+		SSLHost:         c.DatabaseSSLHost,
 	}
 }
 
@@ -185,6 +239,35 @@ func (c *Config) GetJWTConfig() JWTConfig {
 	}
 }
 
+// GetCORSConfig returns CORS configuration based on environment
+func (c *Config) GetCORSConfig() CORSConfig {
+	if c.IsProduction() {
+		origins := c.ProductionCORSOrigins
+		if len(origins) == 0 {
+			origins = c.CORSOrigins
+		}
+		return CORSConfig{
+			Origins:         origins,
+			Methods:         c.CORSMethods,
+			Headers:         c.CORSHeaders,
+			MaxAge:          c.CORSMaxAge,
+			Credentials:     c.CORSCredentialsEnabled,
+			EnvironmentWhitelist: c.CORSEnvironmentWhitelist,
+			IsProduction:    true,
+		}
+	}
+
+	return CORSConfig{
+		Origins:         c.CORSOrigins,
+		Methods:         c.CORSMethods,
+		Headers:         c.CORSHeaders,
+		MaxAge:          c.CORSMaxAge,
+		Credentials:     c.CORSCredentialsEnabled,
+		EnvironmentWhitelist: c.CORSEnvironmentWhitelist,
+		IsProduction:    false,
+	}
+}
+
 // DatabaseConfig holds database configuration
 type DatabaseConfig struct {
 	URL             string
@@ -192,6 +275,11 @@ type DatabaseConfig struct {
 	MinConnections  int
 	ConnMaxLifetime time.Duration
 	ConnMaxIdleTime time.Duration
+	SSLMode         string
+	SSLCert         string
+	SSLKey          string
+	SSLCA           string
+	SSLHost         string
 }
 
 // RedisConfig holds Redis configuration
@@ -207,6 +295,28 @@ type JWTConfig struct {
 	Secret        string
 	Expiry        time.Duration
 	RefreshExpiry time.Duration
+}
+
+// CORSConfig holds CORS configuration
+type CORSConfig struct {
+	Origins              []string
+	Methods              []string
+	Headers              []string
+	MaxAge               int
+	Credentials          bool
+	EnvironmentWhitelist bool
+	IsProduction         bool
+}
+
+// RateLimitConfig holds rate limiting configuration
+type RateLimitConfig struct {
+	Enabled           bool    `json:"enabled"`
+	RequestsPerSecond float64 `json:"requests_per_second"`
+	BurstSize         int     `json:"burst_size"`
+	StorageType       string  `json:"storage_type"`
+	LogRequests       bool    `json:"log_requests"`
+	LogRejections     bool    `json:"log_rejections"`
+	TTL               time.Duration `json:"ttl"`
 }
 
 // parseCommaSeparated parses a comma-separated string into a slice
