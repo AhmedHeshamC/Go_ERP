@@ -1,0 +1,231 @@
+groups:
+  - name: erpgo_alerts
+    interval: 30s
+    rules:
+      # System Health Alerts
+      - alert: HighErrorRate
+        expr: rate(erpgo_http_requests_total{status_code=~"5.."}[5m]) / rate(erpgo_http_requests_total[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+          service: erpgo-api
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} for the last 5 minutes"
+
+      - alert: CriticalErrorRate
+        expr: rate(erpgo_http_requests_total{status_code=~"5.."}[5m]) / rate(erpgo_http_requests_total[5m]) > 0.10
+        for: 1m
+        labels:
+          severity: critical
+          service: erpgo-api
+        annotations:
+          summary: "Critical error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} for the last 5 minutes"
+
+      # Performance Alerts
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(erpgo_http_request_duration_seconds_bucket[5m])) > 1
+        for: 3m
+        labels:
+          severity: warning
+          service: erpgo-api
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is {{ $value }}s for the last 5 minutes"
+
+      - alert: CriticalResponseTime
+        expr: histogram_quantile(0.95, rate(erpgo_http_request_duration_seconds_bucket[5m])) > 2
+        for: 1m
+        labels:
+          severity: critical
+          service: erpgo-api
+        annotations:
+          summary: "Critical response time detected"
+          description: "95th percentile response time is {{ $value }}s for the last 5 minutes"
+
+      # System Resource Alerts
+      - alert: HighMemoryUsage
+        expr: erpgo_system_memory_bytes{type="alloc"} / erpgo_system_memory_bytes{type="sys"} > 0.80
+        for: 5m
+        labels:
+          severity: warning
+          service: erpgo-api
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value | humanizePercentage }} of system memory"
+
+      - alert: CriticalMemoryUsage
+        expr: erpgo_system_memory_bytes{type="alloc"} / erpgo_system_memory_bytes{type="sys"} > 0.95
+        for: 2m
+        labels:
+          severity: critical
+          service: erpgo-api
+        annotations:
+          summary: "Critical memory usage detected"
+          description: "Memory usage is {{ $value | humanizePercentage }} of system memory"
+
+      - alert: HighGoroutineCount
+        expr: erpgo_goroutines > 1000
+        for: 5m
+        labels:
+          severity: warning
+          service: erpgo-api
+        annotations:
+          summary: "High goroutine count detected"
+          description: "Goroutine count is {{ $value }}"
+
+      - alert: CriticalGoroutineCount
+        expr: erpgo_goroutines > 5000
+        for: 2m
+        labels:
+          severity: critical
+          service: erpgo-api
+        annotations:
+          summary: "Critical goroutine count detected"
+          description: "Goroutine count is {{ $value }}"
+
+      # Database Alerts
+      - alert: DatabaseConnectionHigh
+        expr: erpgo_database_connections{state="active"} > 20
+        for: 5m
+        labels:
+          severity: warning
+          service: erpgo-api
+        annotations:
+          summary: "High database connection count"
+          description: "Active database connections: {{ $value }}"
+
+      - alert: DatabaseConnectionCritical
+        expr: erpgo_database_connections{state="active"} > 50
+        for: 2m
+        labels:
+          severity: critical
+          service: erpgo-api
+        annotations:
+          summary: "Critical database connection count"
+          description: "Active database connections: {{ $value }}"
+
+      - alert: DatabaseSlowQueries
+        expr: histogram_quantile(0.95, rate(erpgo_database_query_duration_seconds_bucket[5m])) > 0.5
+        for: 3m
+        labels:
+          severity: warning
+          service: erpgo-api
+        annotations:
+          summary: "Slow database queries detected"
+          description: "95th percentile query time is {{ $value }}s"
+
+      # Cache Alerts
+      - alert: LowCacheHitRate
+        expr: erpgo_cache_hit_rate < 0.80
+        for: 10m
+        labels:
+          severity: warning
+          service: erpgo-api
+        annotations:
+          summary: "Low cache hit rate"
+          description: "Cache hit rate is {{ $value | humanizePercentage }}"
+
+      - alert: CriticalCacheHitRate
+        expr: erpgo_cache_hit_rate < 0.50
+        for: 5m
+        labels:
+          severity: critical
+          service: erpgo-api
+        annotations:
+          summary: "Critical cache hit rate"
+          description: "Cache hit rate is {{ $value | humanizePercentage }}"
+
+      # Business Metrics Alerts
+      - alert: LowOrderRate
+        expr: rate(erpgo_orders_created_total[1h]) < 0.1
+        for: 15m
+        labels:
+          severity: warning
+          service: erpgo-business
+        annotations:
+          summary: "Low order creation rate"
+          description: "Order creation rate is {{ $value }} orders per hour"
+
+      - alert: HighOrderCancellationRate
+        expr: rate(erpgo_orders_cancelled_total[1h]) / rate(erpgo_orders_created_total[1h]) > 0.20
+        for: 10m
+        labels:
+          severity: warning
+          service: erpgo-business
+        annotations:
+          summary: "High order cancellation rate"
+          description: "Order cancellation rate is {{ $value | humanizePercentage }}"
+
+      - alert: LowUserActivity
+        expr: rate(erpgo_user_logins_total[1h]) < 0.5
+        for: 30m
+        labels:
+          severity: warning
+          service: erpgo-business
+        annotations:
+          summary: "Low user activity"
+          description: "User login rate is {{ $value }} logins per hour"
+
+      - alert: HighAuthFailureRate
+        expr: rate(erpgo_auth_failures_total[5m]) > 5
+        for: 3m
+        labels:
+          severity: warning
+          service: erpgo-security
+        annotations:
+          summary: "High authentication failure rate"
+          description: "Authentication failure rate is {{ $value }} failures per minute"
+
+      - alert: CriticalAuthFailureRate
+        expr: rate(erpgo_auth_failures_total[5m]) > 20
+        for: 1m
+        labels:
+          severity: critical
+          service: erpgo-security
+        annotations:
+          summary: "Critical authentication failure rate"
+          description: "Authentication failure rate is {{ $value }} failures per minute"
+
+      # Inventory Alerts
+      - alert: LowStockAlerts
+        expr: rate(erpgo_low_stock_alerts_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          service: erpgo-inventory
+        annotations:
+          summary: "Low stock alerts triggered"
+          description: "Low stock alert rate is {{ $value }} alerts per minute"
+
+      - alert: HighInventoryUpdates
+        expr: rate(erpgo_inventory_updates_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          service: erpgo-inventory
+        annotations:
+          summary: "High inventory update rate"
+          description: "Inventory update rate is {{ $value }} updates per minute"
+
+      # Application Health Alerts
+      - alert: ApplicationDown
+        expr: up{job="erpgo-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: erpgo-api
+        annotations:
+          summary: "ERPGo application is down"
+          description: "ERPGo API has been down for more than 1 minute"
+
+      - alert: PanicDetected
+        expr: increase(erpgo_panics_total[5m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          service: erpgo-api
+        annotations:
+          summary: "Application panic detected"
+          description: "Application panic detected in component {{ $labels.component }}"

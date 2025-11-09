@@ -1,0 +1,156 @@
+# Gosec configuration file
+# For more information: https://github.com/securecodewarrior/gosec
+
+# Global settings
+global:
+  # Exclude directories from scanning
+  exclude-dirs:
+    - vendor
+    - testdata
+    - docs
+    - .git
+    - .idea
+    - .vscode
+    - build
+    - dist
+    - node_modules
+
+  # Exclude files from scanning
+  exclude-files:
+    - "*.pb.go"
+    - "*_generated.go"
+    - "*_mock.go"
+    - "*_test.go"
+
+# Rules configuration
+rules:
+  # Enable/disable specific rules
+  default:
+    # Enabled rules (default enabled rules)
+    enabled:
+      - G101  # Look for hardcoded credentials
+      - G102  # Bind to all interfaces
+      - G103  # Audit the use of unsafe block
+      - G104  # Audit errors not checked
+      - G106  # Audit the use of ssh.InsecureIgnoreHostKey
+      - G107  # Url provided to HTTP request as taint input
+      - G108  # Profiling endpoint automatically exposed on /debug/pprof
+      - G109  # Potential Integer overflow made by strconv.Atoi result conversion to int16/int32
+      - G110  # Potential DoS vulnerability via decompression bomb
+      - G111  # Potential directory traversal
+      - G112  # Potential slowloris attack
+      - G113  # Usage of Ratios in the Cryptographic library
+      - G114  # Use of net/http serve function that has no timeouts
+      - G201  # SQL query construction using format string
+      - G202  # SQL query construction using string concatenation
+      - G203  # Use of unescaped data in HTML templates
+      - G204  # Audit use of command execution
+      - G301  # Poor file permissions used when creating a directory
+      - G302  # Poor file permissions used with chmod
+      - G303  # Creating tempfile using a predictable path
+      - G304  # File path provided as taint input
+      - G305  # File traversal when extracting zip archive
+      - G306  # Poor file permissions used when writing to a file
+      - G307  # Deferring a method which returns an error
+      - G401  # Detect the usage of DES, RC4, MD5 or SHA1
+      - G402  # Look for bad TLS connection settings
+      - G403  # Ensure minimum RSA key length of 2048 bits
+      - G404  # Insecure random number source (rand)
+      - G405  # Detect weak or insecure cryptographic algorithms (SHA1, RC4, MD5, DES)
+      - G501  # Import blocklist: crypto/md5
+      - G502  # Import blocklist: crypto/des
+      - G503  # Import blocklist: crypto/rc4
+      - G504  # Import blocklist: net/http/cgi
+      - G505  # Import blocklist: crypto/sha1
+      - G601  # Implicit memory aliasing of items from a range statement
+      - G602  # Slice access out of bounds
+      - G603  # Integer overflow conversion
+      - G604  # Use of unsafe calls should be audited
+      - G605  # Use of weak cryptographic primitive
+      - G606  # Unmarshal with a non-public struct
+      - G607  # Use of any/unsafe type without sanitization
+
+    # Disabled rules (rule-specific configuration)
+    disabled:
+      - G101  # Example: disable hardcoded credentials check if using environment variables
+
+# Severity configuration
+severity:
+  # Define severity levels
+  low:
+    # Rules that should be treated as low severity
+    - G104
+    - G307
+
+  medium:
+    # Rules that should be treated as medium severity
+    - G101
+    - G102
+    - G107
+    - G201
+    - G202
+    - G301
+    - G302
+    - G401
+    - G404
+    - G501
+    - G502
+    - G503
+    - G504
+    - G505
+    - G601
+
+  high:
+    # Rules that should be treated as high severity
+    - G103
+    - G106
+    - G108
+    - G110
+    - G111
+    - G112
+    - G113
+    - G114
+    - G203
+    - G204
+    - G303
+    - G304
+    - G305
+    - G306
+    - G402
+    - G403
+    - G405
+    - G602
+    - G603
+    - G604
+    - G605
+    - G606
+    - G607
+
+# Output configuration
+output:
+  # Output format (json, yaml, text, csv, junit-xml, sonarqube)
+  format: json
+
+  # Output file (default: stdout)
+  file: "security-reports/gosec-report.json"
+
+  # Include line numbers in output
+  line-numbers: true
+
+  # Include code snippets in output
+  code-snippets: true
+
+  # Show confidence scores
+  confidence: true
+
+# Performance configuration
+performance:
+  # Number of concurrent workers
+  workers: 4
+
+  # Timeout for analysis (in seconds)
+  timeout: 300
+
+# Custom rules (optional)
+# You can define custom rules here if needed
+# custom-rules:

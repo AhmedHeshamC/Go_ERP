@@ -1,0 +1,174 @@
+# Docker Compose Override File
+# This file extends the base docker-compose.yml with development-specific overrides
+
+version: '3.8'
+
+services:
+  # Override PostgreSQL for development
+  postgres:
+    environment:
+      POSTGRES_DB: erp_dev
+      POSTGRES_USER: erpgo_dev
+      POSTGRES_PASSWORD: dev_password_change_me
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+      - ./scripts/postgres/init-dev.sql:/docker-entrypoint-initdb.d/99-init-dev.sql
+    command: postgres -c log_statement=all -c log_duration=on
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U erpgo_dev -d erp_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Override Redis for development
+  redis:
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    command: redis-server --appendonly yes --notify-keyspace-events Ex
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # Override NATS for development
+  nats:
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    command: ["-js", "-m", "8222", "-sd", "/data"]
+    volumes:
+      - nats_dev_data:/data
+
+  # Override API for development
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder  # Use development stage for hot reloading
+    environment:
+      ENVIRONMENT: development
+      DATABASE_URL: postgres://erpgo_dev:dev_password_change_me@postgres:5432/erp_dev?sslmode=disable
+      REDIS_URL: redis://redis:6379
+      NATS_URL: nats://nats:4222
+      JWT_SECRET: dev_secret_change_me_in_production
+      LOG_LEVEL: debug
+      DEBUG_MODE: true
+      RATE_LIMIT_ENABLED: "false"  # Disable rate limiting in development
+      BCRYPT_COST: "10"  # Lower cost for faster development
+      CORS_ALLOWED_ORIGINS: "http://localhost:3000,http://localhost:8080"
+      CORS_ALLOWED_METHODS: "GET,POST,PUT,DELETE,OPTIONS"
+      CORS_ALLOWED_HEADERS: "Origin,Content-Type,Accept,Authorization"
+    volumes:
+      - .:/app  # Mount source code for hot reloading
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Override Worker for development
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+      target: builder
+    environment:
+      ENVIRONMENT: development
+      DATABASE_URL: postgres://erpgo_dev:dev_password_change_me@postgres:5432/erp_dev?sslmode=disable
+      REDIS_URL: redis://redis:6379
+      NATS_URL: nats://nats:4222
+      LOG_LEVEL: debug
+      WORKER_COUNT: "2"  # Lower count for development
+    volumes:
+      - .:/app
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    profiles:
+      - worker
+
+  # Development services
+  adminer:
+    image: adminer:latest
+    container_name: erpgo-adminer
+    ports:
+      - "8081:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    networks:
+      - erpgo-network
+    depends_on:
+      - postgres
+    profiles:
+      - dev-tools
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: erpgo-redis-commander
+    ports:
+      - "8082:8081"
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    networks:
+      - erpgo-network
+    depends_on:
+      - redis
+    profiles:
+      - dev-tools
+
+  # Jaeger for distributed tracing
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: erpgo-jaeger
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "14268:14268"  # HTTP collector
+    environment:
+      COLLECTOR_ZIPKIN_HOST_PORT: ":9411"
+    networks:
+      - erpgo-network
+    profiles:
+      - observability
+
+  # Mailhog for email testing in development
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: erpgo-mailhog
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - erpgo-network
+    profiles:
+      - dev-tools
+
+# Development-specific volumes
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+  nats_dev_data:

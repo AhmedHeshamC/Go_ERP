@@ -1,0 +1,204 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run security scan daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Install security scanning tools
+      run: |
+        # Install gosec
+        go install github.com/securecodewarrior/gosec/v2/cmd/gosec@latest
+
+        # Install govulncheck
+        go install golang.org/x/vuln/cmd/govulncheck@latest
+
+        # Install staticcheck
+        go install honnef.co/go/tools/cmd/staticcheck@latest
+
+        # Install ineffassign
+        go install github.com/gordonklaus/ineffassign@latest
+
+        # Install misspell
+        go install github.com/client9/misspell/cmd/misspell@latest
+
+        # Install golangci-lint
+        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.54.2
+
+        # Install trufflehog
+        go install github.com/trufflesecurity/trufflehog/v3/cmd/trufflehog@latest
+
+        # Install hadolint for Docker security
+        wget -O hadolint https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64
+        chmod +x hadolint
+        sudo mv hadolint /usr/local/bin/
+
+    - name: Download dependencies
+      run: go mod download
+
+    - name: Verify dependencies
+      run: go mod verify
+
+    - name: Run go vet
+      run: go vet ./...
+
+    - name: Run govulncheck
+      run: govulncheck ./...
+
+    - name: Run gosec security scanner
+      run: |
+        gosec -conf .gosec.yml -fmt json -out security-reports/gosec-report.json ./... || true
+
+    - name: Run staticcheck
+      run: staticcheck ./...
+
+    - name: Run ineffassign
+      run: ineffassign ./...
+
+    - name: Run misspell
+      run: misspell -error .
+
+    - name: Run golangci-lint
+      run: |
+        golangci-lint run --enable-all --disable=godot,exhaustivestruct,unused,wsl,exhaustruct,gochecknoglobals --timeout=5m || true
+
+    - name: Run trufflehog secrets scan
+      run: |
+        trufflehog filesystem . --exclude "vendor/*,test*,*.md,*.txt,*.json,*.yml,*.yaml,node_modules,.git/*" --json --output security-reports/trufflehog-report.json || true
+
+    - name: Run Docker security scan
+      if: hashFiles('Dockerfile') != ''
+      run: hadolint Dockerfile || true
+
+    - name: Upload security scan reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: security-reports
+        path: security-reports/
+        retention-days: 30
+
+    - name: Comment PR with security results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const path = './security-reports';
+
+          let comment = '## 🔒 Security Scan Results\n\n';
+
+          // Check for gosec results
+          if (fs.existsSync(`${path}/gosec-report.json`)) {
+            const gosecReport = JSON.parse(fs.readFileSync(`${path}/gosec-report.json`, 'utf8'));
+            const issues = gosecReport.Issues || [];
+            comment += `### gosec\n${issues.length} issues found\n`;
+
+            if (issues.length > 0) {
+              const highIssues = issues.filter(i => i.severity === 'HIGH');
+              const mediumIssues = issues.filter(i => i.severity === 'MEDIUM');
+              const lowIssues = issues.filter(i => i.severity === 'LOW');
+
+              comment += `- High: ${highIssues.length}\n`;
+              comment += `- Medium: ${mediumIssues.length}\n`;
+              comment += `- Low: ${lowIssues.length}\n\n`;
+            }
+          }
+
+          // Check for trufflehog results
+          if (fs.existsSync(`${path}/trufflehog-report.json`)) {
+            const trufflehogReport = JSON.parse(fs.readFileSync(`${path}/trufflehog-report.json`, 'utf8'));
+            const secrets = trufflehogReport.results || [];
+            comment += `### Secrets Detection\n${secrets.length} potential secrets found\n\n`;
+
+            if (secrets.length > 0) {
+              comment += '⚠️ **Potential secrets detected. Please review immediately.**\n\n';
+            }
+          }
+
+          comment += 'Full reports are available in the [workflow artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).';
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+
+    - name: Check for high severity issues
+      run: |
+        if [ -f "security-reports/gosec-report.json" ]; then
+          HIGH_ISSUES=$(jq '[.Issues[] | select(.severity == "HIGH")] | length' security-reports/gosec-report.json)
+          if [ "$HIGH_ISSUES" -gt 0 ]; then
+            echo "❌ High severity security issues found: $HIGH_ISSUES"
+            echo "Please review and fix these issues before merging."
+            exit 1
+          fi
+        fi
+
+        if [ -f "security-reports/trufflehog-report.json" ]; then
+          SECRETS_FOUND=$(jq '.results | length' security-reports/trufflehog-report.json)
+          if [ "$SECRETS_FOUND" -gt 0 ]; then
+            echo "❌ Potential secrets found in code: $SECRETS_FOUND"
+            echo "Please remove any secrets before merging."
+            exit 1
+          fi
+        fi
+
+  dependency-check:
+    runs-on: ubuntu-latest
+    needs: security-scan
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Run dependency vulnerability check
+      run: |
+        go install golang.org/x/vuln/cmd/govulncheck@latest
+        govulncheck ./...
+
+    - name: Check for outdated dependencies
+      run: |
+        go list -u -m -json all | grep -E '"Path"|"Version"|"Time"' > dependency-report.txt || true
+        echo "Dependency report:"
+        cat dependency-report.txt
+
+    - name: Upload dependency report
+      uses: actions/upload-artifact@v3
+      with:
+        name: dependency-report
+        path: dependency-report.txt
+        retention-days: 30

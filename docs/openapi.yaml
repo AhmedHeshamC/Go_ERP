@@ -1,0 +1,1682 @@
+openapi: 3.0.3
+info:
+  title: ERPGo API
+  description: |
+    A comprehensive Enterprise Resource Planning (ERP) system built with Go, providing user management, inventory management, order management, and business analytics capabilities.
+
+    ## Overview
+    ERPGo is a modern, cloud-native ERP system designed for high performance, scalability, and maintainability. It provides:
+
+    - User authentication and authorization with JWT tokens
+    - Product catalog management with categories and variants
+    - Inventory tracking and warehouse management
+    - Order processing and fulfillment workflows
+    - Customer management and address handling
+    - Comprehensive analytics and reporting
+
+    ## Base URLs
+    - **Production**: `https://api.erpgo.example.com`
+    - **Staging**: `https://api-staging.erpgo.example.com`
+    - **Development**: `http://localhost:8080`
+
+    ## Authentication
+    The API uses JWT (JSON Web Tokens) for authentication. Include the token in the `Authorization` header:
+
+    ```
+    Authorization: Bearer <your-jwt-token>
+    ```
+
+    ## Rate Limiting
+    API requests are rate-limited to ensure fair usage:
+    - **Default**: 100 requests per minute
+    - **Burst**: 200 requests
+    - **Window**: 1 minute
+
+    Rate limit headers are included in responses:
+    ```
+    X-RateLimit-Limit: 100
+    X-RateLimit-Remaining: 99
+    X-RateLimit-Reset: 1640995200
+    ```
+  version: 1.0.0
+  contact:
+    name: ERPGo Support
+    email: support@erpgo.example.com
+    url: https://docs.erpgo.example.com
+  license:
+    name: AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
+
+servers:
+  - url: http://localhost:8080
+    description: Development server
+  - url: https://api-staging.erpgo.example.com
+    description: Staging server
+  - url: https://api.erpgo.example.com
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Users
+    description: User management operations
+  - name: Products
+    description: Product catalog management
+  - name: Categories
+    description: Product category management
+  - name: Variants
+    description: Product variant management
+  - name: Inventory
+    description: Inventory and warehouse management
+  - name: Orders
+    description: Order processing and management
+  - name: Images
+    description: Image upload and management
+
+paths:
+  # Authentication endpoints
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticate user with email and password
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: "user@example.com"
+              password: "password123"
+              remember: true
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: User registration
+      description: Register a new user account
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+            example:
+              email: "newuser@example.com"
+              username: "newuser"
+              password: "password123"
+              first_name: "John"
+              last_name: "Doe"
+              phone: "+1234567890"
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: User logout
+      description: Logout user and invalidate token
+      operationId: logoutUser
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      description: Get new access token using refresh token
+      operationId: refreshToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # User management endpoints
+  /api/v1/users:
+    get:
+      tags:
+        - Users
+      summary: List users
+      description: Get paginated list of users with filtering
+      operationId: listUsers
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Search'
+        - name: is_active
+          in: query
+          schema:
+            type: boolean
+          description: Filter by active status
+        - name: is_verified
+          in: query
+          schema:
+            type: boolean
+          description: Filter by verification status
+        - name: role_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter by role ID
+        - $ref: '#/components/parameters/SortBy'
+        - $ref: '#/components/parameters/SortOrder'
+      responses:
+        '200':
+          description: Users retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListUsersResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/v1/users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get user by ID
+      description: Retrieve user information by ID
+      operationId: getUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Users
+      summary: Update user
+      description: Update user information
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+    delete:
+      tags:
+        - Users
+      summary: Delete user
+      description: Delete user account (soft delete)
+      operationId: deleteUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '204':
+          description: User deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Product management endpoints
+  /api/v1/products:
+    post:
+      tags:
+        - Products
+      summary: Create product
+      description: Create a new product
+      operationId: createProduct
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductRequest'
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+    get:
+      tags:
+        - Products
+      summary: List products
+      description: Get paginated list of products with filtering
+      operationId: listProducts
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - name: category_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter by category ID
+        - name: is_active
+          in: query
+          schema:
+            type: boolean
+          description: Filter by active status
+        - name: is_featured
+          in: query
+          schema:
+            type: boolean
+          description: Filter by featured status
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/SortBy'
+        - $ref: '#/components/parameters/SortOrder'
+      responses:
+        '200':
+          description: Products retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductListResponse'
+
+  /api/v1/products/search:
+    get:
+      tags:
+        - Products
+      summary: Search products
+      description: Search products by various criteria
+      operationId: searchProducts
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Search query
+        - name: category_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter by category ID
+        - name: min_price
+          in: query
+          schema:
+            type: number
+            format: decimal
+          description: Minimum price filter
+        - name: max_price
+          in: query
+          schema:
+            type: number
+            format: decimal
+          description: Maximum price filter
+        - name: in_stock
+          in: query
+          schema:
+            type: boolean
+          description: Filter by stock availability
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchProductsResponse'
+
+  /api/v1/products/{id}:
+    get:
+      tags:
+        - Products
+      summary: Get product by ID
+      description: Retrieve product information by ID
+      operationId: getProduct
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ProductId'
+      responses:
+        '200':
+          description: Product retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Products
+      summary: Update product
+      description: Update product information
+      operationId: updateProduct
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ProductId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductRequest'
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+    delete:
+      tags:
+        - Products
+      summary: Delete product
+      description: Delete product (soft delete)
+      operationId: deleteProduct
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ProductId'
+      responses:
+        '204':
+          description: Product deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Category management endpoints
+  /api/v1/categories:
+    post:
+      tags:
+        - Categories
+      summary: Create category
+      description: Create a new product category
+      operationId: createCategory
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCategoryRequest'
+      responses:
+        '201':
+          description: Category created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryResponse'
+
+    get:
+      tags:
+        - Categories
+      summary: List categories
+      description: Get list of categories
+      operationId: listCategories
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: parent_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter by parent category ID
+        - name: is_active
+          in: query
+          schema:
+            type: boolean
+          description: Filter by active status
+      responses:
+        '200':
+          description: Categories retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryListResponse'
+
+  /api/v1/categories/tree:
+    get:
+      tags:
+        - Categories
+      summary: Get category tree
+      description: Get hierarchical tree of categories
+      operationId: getCategoryTree
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Category tree retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryTreeResponse'
+
+  # Order management endpoints
+  /api/v1/orders:
+    post:
+      tags:
+        - Orders
+      summary: Create order
+      description: Create a new order
+      operationId: createOrder
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        '201':
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+    get:
+      tags:
+        - Orders
+      summary: List orders
+      description: Get paginated list of orders with filtering
+      operationId: listOrders
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - name: customer_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter by customer ID
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/OrderStatus'
+          description: Filter by order status
+        - name: type
+          in: query
+          schema:
+            $ref: '#/components/schemas/OrderType'
+          description: Filter by order type
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/SortBy'
+        - $ref: '#/components/parameters/SortOrder'
+      responses:
+        '200':
+          description: Orders retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOrdersResponse'
+
+  /api/v1/orders/{id}:
+    get:
+      tags:
+        - Orders
+      summary: Get order by ID
+      description: Retrieve order information by ID
+      operationId: getOrder
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+      responses:
+        '200':
+          description: Order retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/orders/{id}/status:
+    put:
+      tags:
+        - Orders
+      summary: Update order status
+      description: Update the status of an order
+      operationId: updateOrderStatus
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderStatusRequest'
+      responses:
+        '200':
+          description: Order status updated successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/orders/{id}/cancel:
+    post:
+      tags:
+        - Orders
+      summary: Cancel order
+      description: Cancel an order with optional refund and restock
+      operationId: cancelOrder
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelOrderRequest'
+      responses:
+        '200':
+          description: Order cancelled successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: Page number for pagination
+
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      description: Number of items per page
+
+    Search:
+      name: search
+      in: query
+      schema:
+        type: string
+        minLength: 1
+      description: Search term
+
+    SortBy:
+      name: sort_by
+      in: query
+      schema:
+        type: string
+        enum: [created_at, updated_at, name, email, price]
+      description: Field to sort by
+
+    SortOrder:
+      name: sort_order
+      in: query
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: desc
+      description: Sort order
+
+    UserId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: User ID
+
+    ProductId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Product ID
+
+    OrderId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Order ID
+
+  schemas:
+    # Authentication schemas
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        password:
+          type: string
+          minLength: 8
+          example: "password123"
+        remember:
+          type: boolean
+          default: false
+
+    LoginResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        refresh_token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        expires_at:
+          type: string
+          format: date-time
+          example: "2024-01-09T12:00:00Z"
+        user:
+          $ref: '#/components/schemas/UserInfo'
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refresh_token
+      properties:
+        refresh_token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - username
+        - password
+        - first_name
+        - last_name
+      properties:
+        email:
+          type: string
+          format: email
+          example: "newuser@example.com"
+        username:
+          type: string
+          minLength: 3
+          maxLength: 50
+          example: "newuser"
+        password:
+          type: string
+          minLength: 8
+          example: "password123"
+        first_name:
+          type: string
+          minLength: 1
+          maxLength: 50
+          example: "John"
+        last_name:
+          type: string
+          minLength: 1
+          maxLength: 50
+          example: "Doe"
+        phone:
+          type: string
+          example: "+1234567890"
+
+    # User schemas
+    UserInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        username:
+          type: string
+          example: "username"
+        first_name:
+          type: string
+          example: "John"
+        last_name:
+          type: string
+          example: "Doe"
+        phone:
+          type: string
+          example: "+1234567890"
+        roles:
+          type: array
+          items:
+            type: string
+          example: ["user", "admin"]
+        is_active:
+          type: boolean
+          example: true
+        is_verified:
+          type: boolean
+          example: true
+        last_login_at:
+          type: string
+          format: date-time
+          example: "2024-01-08T12:00:00Z"
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-01-08T10:30:00Z"
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        first_name:
+          type: string
+          example: "John"
+        last_name:
+          type: string
+          example: "Doe"
+        phone:
+          type: string
+          example: "+1234567890"
+        is_active:
+          type: boolean
+          example: true
+
+    ListUsersResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserInfo'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # Product schemas
+    ProductResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        sku:
+          type: string
+          example: "PROD-001"
+        name:
+          type: string
+          example: "Premium Widget"
+        description:
+          type: string
+          example: "A high-quality widget"
+        category_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        category:
+          $ref: '#/components/schemas/CategoryInfo'
+        price:
+          type: number
+          format: decimal
+          example: 29.99
+        cost:
+          type: number
+          format: decimal
+          example: 15.50
+        weight:
+          type: number
+          example: 1.5
+        dimensions:
+          type: string
+          example: "10x8x5"
+        track_inventory:
+          type: boolean
+          example: true
+        stock_quantity:
+          type: integer
+          example: 100
+        min_stock_level:
+          type: integer
+          example: 10
+        is_active:
+          type: boolean
+          example: true
+        is_featured:
+          type: boolean
+          example: false
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-01-08T10:30:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2024-01-08T10:30:00Z"
+
+    CreateProductRequest:
+      type: object
+      required:
+        - sku
+        - name
+        - price
+        - category_id
+      properties:
+        sku:
+          type: string
+          example: "PROD-001"
+        name:
+          type: string
+          example: "Premium Widget"
+        description:
+          type: string
+          example: "A high-quality widget"
+        category_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        price:
+          type: number
+          format: decimal
+          example: 29.99
+        cost:
+          type: number
+          format: decimal
+          example: 15.50
+        weight:
+          type: number
+          example: 1.5
+        dimensions:
+          type: string
+          example: "10x8x5"
+        track_inventory:
+          type: boolean
+          default: true
+        stock_quantity:
+          type: integer
+          default: 0
+        min_stock_level:
+          type: integer
+          default: 0
+
+    UpdateProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: decimal
+        cost:
+          type: number
+          format: decimal
+        weight:
+          type: number
+        dimensions:
+          type: string
+        track_inventory:
+          type: boolean
+        min_stock_level:
+          type: integer
+        is_active:
+          type: boolean
+        is_featured:
+          type: boolean
+
+    ProductListResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductResponse'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    SearchProductsResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductResponse'
+        total:
+          type: integer
+          example: 150
+        query:
+          type: string
+          example: "widget"
+
+    # Category schemas
+    CategoryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        name:
+          type: string
+          example: "Electronics"
+        description:
+          type: string
+          example: "Electronic devices and accessories"
+        parent_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        parent:
+          $ref: '#/components/schemas/CategoryInfo'
+        path:
+          type: string
+          example: "Electronics/Smartphones"
+        level:
+          type: integer
+          example: 2
+        is_active:
+          type: boolean
+          example: true
+        sort_order:
+          type: integer
+          example: 1
+        product_count:
+          type: integer
+          example: 25
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-01-08T10:30:00Z"
+
+    CreateCategoryRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: "Electronics"
+        description:
+          type: string
+          example: "Electronic devices and accessories"
+        parent_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        sort_order:
+          type: integer
+          default: 0
+
+    CategoryInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        path:
+          type: string
+
+    CategoryListResponse:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryResponse'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    CategoryTreeResponse:
+      type: object
+      properties:
+        tree:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryTreeNode'
+
+    CategoryTreeNode:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/CategoryResponse'
+        - type: object
+          properties:
+            children:
+              type: array
+              items:
+                $ref: '#/components/schemas/CategoryTreeNode'
+
+    # Order schemas
+    OrderStatus:
+      type: string
+      enum:
+        - DRAFT
+        - PENDING
+        - CONFIRMED
+        - PROCESSING
+        - SHIPPED
+        - DELIVERED
+        - CANCELLED
+        - REFUNDED
+
+    OrderType:
+      type: string
+      enum:
+        - SALES
+        - PURCHASE
+        - RETURN
+        - EXCHANGE
+        - TRANSFER
+        - ADJUSTMENT
+
+    OrderResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440002"
+        order_number:
+          type: string
+          example: "ORD-2024-001"
+        customer_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        customer_name:
+          type: string
+          example: "John Doe"
+        type:
+          $ref: '#/components/schemas/OrderType'
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        priority:
+          type: string
+          enum: [LOW, NORMAL, HIGH, URGENT, CRITICAL]
+          example: "NORMAL"
+        payment_status:
+          type: string
+          enum: [PENDING, PAID, PARTIAL, REFUNDED]
+          example: "PENDING"
+        fulfillment_status:
+          type: string
+          enum: [PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED]
+          example: "PENDING"
+        currency:
+          type: string
+          example: "USD"
+        subtotal:
+          type: number
+          format: decimal
+          example: 50.00
+        tax_amount:
+          type: number
+          format: decimal
+          example: 4.50
+        shipping_amount:
+          type: number
+          format: decimal
+          example: 5.00
+        discount_amount:
+          type: number
+          format: decimal
+          example: 0.00
+        total_amount:
+          type: number
+          format: decimal
+          example: 59.50
+        shipping_method:
+          type: string
+          enum: [STANDARD, EXPRESS, OVERNIGHT, PICKUP, DIGITAL]
+          example: "STANDARD"
+        tracking_number:
+          type: string
+          example: "TRACK123"
+        shipping_address:
+          $ref: '#/components/schemas/AddressResponse'
+        billing_address:
+          $ref: '#/components/schemas/AddressResponse'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemResponse'
+        notes:
+          type: string
+          example: "Handle with care"
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-01-08T10:30:00Z"
+
+    OrderItemResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440003"
+        product_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        product_sku:
+          type: string
+          example: "PROD-001"
+        product_name:
+          type: string
+          example: "Premium Widget"
+        variant_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440004"
+        variant_name:
+          type: string
+          example: "Large - Blue"
+        quantity:
+          type: integer
+          example: 2
+        unit_price:
+          type: number
+          format: decimal
+          example: 25.00
+        total_price:
+          type: number
+          format: decimal
+          example: 50.00
+        tax_amount:
+          type: number
+          format: decimal
+          example: 4.50
+        discount_amount:
+          type: number
+          format: decimal
+          example: 0.00
+        final_price:
+          type: number
+          format: decimal
+          example: 54.50
+        status:
+          type: string
+          example: "PENDING"
+        shipped_quantity:
+          type: integer
+          example: 0
+        returned_quantity:
+          type: integer
+          example: 0
+
+    AddressResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440005"
+        type:
+          type: string
+          enum: [billing, shipping]
+          example: "shipping"
+        first_name:
+          type: string
+          example: "John"
+        last_name:
+          type: string
+          example: "Doe"
+        company:
+          type: string
+          example: "Acme Corp"
+        address1:
+          type: string
+          example: "123 Main St"
+        address2:
+          type: string
+          example: "Apt 4B"
+        city:
+          type: string
+          example: "New York"
+        state:
+          type: string
+          example: "NY"
+        postal_code:
+          type: string
+          example: "10001"
+        country:
+          type: string
+          example: "US"
+        phone:
+          type: string
+          example: "+1234567890"
+        email:
+          type: string
+          example: "user@example.com"
+        is_default:
+          type: boolean
+          example: true
+
+    OrderRequest:
+      type: object
+      required:
+        - customer_id
+        - type
+        - shipping_method
+        - shipping_address_id
+        - billing_address_id
+        - currency
+        - items
+      properties:
+        customer_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        type:
+          $ref: '#/components/schemas/OrderType'
+        priority:
+          type: string
+          enum: [LOW, NORMAL, HIGH, URGENT, CRITICAL]
+          default: "NORMAL"
+        shipping_method:
+          type: string
+          enum: [STANDARD, EXPRESS, OVERNIGHT, PICKUP, DIGITAL]
+          example: "STANDARD"
+        shipping_address_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440005"
+        billing_address_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440006"
+        currency:
+          type: string
+          example: "USD"
+        required_date:
+          type: string
+          format: date-time
+          example: "2024-01-15T00:00:00Z"
+        notes:
+          type: string
+          example: "Handle with care"
+        customer_notes:
+          type: string
+          example: "Please deliver after 5 PM"
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/OrderItemRequest'
+        discount_code:
+          type: string
+          example: "SAVE10"
+        payment_method:
+          type: string
+          example: "credit_card"
+
+    OrderItemRequest:
+      type: object
+      required:
+        - product_id
+        - quantity
+        - unit_price
+      properties:
+        product_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        variant_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440004"
+        quantity:
+          type: integer
+          minimum: 1
+          example: 2
+        unit_price:
+          type: number
+          format: decimal
+          minimum: 0
+          example: 25.00
+        notes:
+          type: string
+          example: "Gift wrap required"
+
+    UpdateOrderStatusRequest:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        notes:
+          type: string
+          example: "Payment received, processing order"
+        notify_customer:
+          type: boolean
+          default: false
+
+    CancelOrderRequest:
+      type: object
+      required:
+        - reason
+      properties:
+        reason:
+          type: string
+          example: "Customer requested cancellation"
+        notify_customer:
+          type: boolean
+          default: true
+        refund_payment:
+          type: boolean
+          default: true
+        restock_items:
+          type: boolean
+          default: true
+
+    ListOrdersResponse:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderResponse'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # Common schemas
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 20
+        total:
+          type: integer
+          example: 150
+        total_pages:
+          type: integer
+          example: 8
+        has_next:
+          type: boolean
+          example: true
+        has_prev:
+          type: boolean
+          example: false
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "VALIDATION_ERROR"
+            message:
+              type: string
+              example: "Request validation failed"
+            details:
+              oneOf:
+                - type: array
+                  items:
+                    type: object
+                    properties:
+                      field:
+                        type: string
+                        example: "email"
+                      message:
+                        type: string
+                        example: "Invalid email format"
+                - type: string
+                  example: "Additional error details"
+            timestamp:
+              type: string
+              format: date-time
+              example: "2024-01-08T10:30:00Z"
+            request_id:
+              type: string
+              example: "req_123456789"
+
+  responses:
+    BadRequest:
+      description: Bad request - Invalid request data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error:
+              code: "BAD_REQUEST"
+              message: "Invalid request data"
+              timestamp: "2024-01-08T10:30:00Z"
+              request_id: "req_123456789"
+
+    Unauthorized:
+      description: Unauthorized - Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error:
+              code: "UNAUTHORIZED"
+              message: "Authentication required"
+              timestamp: "2024-01-08T10:30:00Z"
+              request_id: "req_123456789"
+
+    Forbidden:
+      description: Forbidden - Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error:
+              code: "FORBIDDEN"
+              message: "Insufficient permissions"
+              timestamp: "2024-01-08T10:30:00Z"
+              request_id: "req_123456789"
+
+    NotFound:
+      description: Not found - Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error:
+              code: "NOT_FOUND"
+              message: "Resource not found"
+              timestamp: "2024-01-08T10:30:00Z"
+              request_id: "req_123456789"
+
+    Conflict:
+      description: Conflict - Resource already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error:
+              code: "CONFLICT"
+              message: "Resource already exists"
+              timestamp: "2024-01-08T10:30:00Z"
+              request_id: "req_123456789"
+
+    ValidationError:
+      description: Validation error - Request validation failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error:
+              code: "VALIDATION_ERROR"
+              message: "Request validation failed"
+              details:
+                - field: "email"
+                  message: "Invalid email format"
+              timestamp: "2024-01-08T10:30:00Z"
+              request_id: "req_123456789"
+
+    TooManyRequests:
+      description: Too many requests - Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error:
+              code: "TOO_MANY_REQUESTS"
+              message: "Rate limit exceeded"
+              timestamp: "2024-01-08T10:30:00Z"
+              request_id: "req_123456789"
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error:
+              code: "INTERNAL_ERROR"
+              message: "Internal server error"
+              timestamp: "2024-01-08T10:30:00Z"
+              request_id: "req_123456789"

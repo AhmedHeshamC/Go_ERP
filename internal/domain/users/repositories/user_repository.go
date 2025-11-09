@@ -3,33 +3,25 @@ package repositories
 import (
 	"context"
 
-	"github.com/erpgo/erpgo/internal/domain/users/entities"
+	"github.com/google/uuid"
+	"erpgo/internal/domain/users/entities"
 )
 
 // UserRepository defines the interface for user data operations
 type UserRepository interface {
 	Create(ctx context.Context, user *entities.User) error
-	GetByID(ctx context.Context, id string) (*entities.User, error)
+	GetByID(ctx context.Context, id uuid.UUID) (*entities.User, error)
 	GetByEmail(ctx context.Context, email string) (*entities.User, error)
 	GetByUsername(ctx context.Context, username string) (*entities.User, error)
 	Update(ctx context.Context, user *entities.User) error
-	Delete(ctx context.Context, id string) error
+	Delete(ctx context.Context, id uuid.UUID) error
 	List(ctx context.Context, filter UserFilter) ([]*entities.User, error)
 	Count(ctx context.Context, filter UserFilter) (int, error)
 	ExistsByEmail(ctx context.Context, email string) (bool, error)
 	ExistsByUsername(ctx context.Context, username string) (bool, error)
-	UpdateLastLogin(ctx context.Context, userID string) error
-}
-
-// RoleRepository defines the interface for role data operations
-type RoleRepository interface {
-	Create(ctx context.Context, role *entities.Role) error
-	GetByID(ctx context.Context, id string) (*entities.Role, error)
-	GetByName(ctx context.Context, name string) (*entities.Role, error)
-	Update(ctx context.Context, role *entities.Role) error
-	Delete(ctx context.Context, id string) error
-	List(ctx context.Context, filter RoleFilter) ([]*entities.Role, error)
-	Count(ctx context.Context, filter RoleFilter) (int, error)
+	UpdateLastLogin(ctx context.Context, userID uuid.UUID) error
+	GetUserRoles(ctx context.Context, userID uuid.UUID) ([]string, error)
+	AssignRole(ctx context.Context, userID uuid.UUID, roleName string, assignedBy uuid.UUID) error
 }
 
 // UserRoleRepository defines the interface for user-role relationship operations

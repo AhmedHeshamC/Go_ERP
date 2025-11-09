@@ -1,45 +1,88 @@
-# Dockerfile for database migrator
+# Database Migrator Dockerfile
+# Optimized for running database migrations securely and efficiently
+
 FROM golang:1.21-alpine AS builder
 
 # Install build dependencies
-RUN apk add --no-cache git ca-certificates tzdata
+RUN apk add --no-cache \
+    git \
+    ca-certificates \
+    tzdata \
+    musl-dev \
+    gcc \
+    && update-ca-certificates
 
 # Set working directory
 WORKDIR /app
 
-# Copy go mod files
+# Copy go mod files first for better layer caching
 COPY go.mod go.sum ./
 
-# Download dependencies
-RUN go mod download
+# Download dependencies and verify integrity
+RUN go mod download && \
+    go mod verify
 
 # Copy source code
 COPY . .
 
-# Build the migrator
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o migrator cmd/migrator/main.go
+# Build arguments for customization
+ARG APP_VERSION=dev
+ARG BUILD_TIME
+ARG GIT_COMMIT
 
-# Final stage
-FROM alpine:latest
+# Build the migrator binary with optimized flags
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+    -ldflags='-w -s -extldflags "-static"' \
+    -ldflags="-X main.version=${VERSION} -X main.built=${BUILT} -X main.commit=${COMMIT}" \
+    -a -installsuffix cgo \
+    -o migrator cmd/migrator/main.go && \
+    # Verify binary was created successfully
+    test -f migrator
 
-# Install runtime dependencies
-RUN apk --no-cache add ca-certificates tzdata
+# Minimal runtime stage
+FROM alpine:3.18
+
+# Install runtime dependencies (minimal for migrator)
+RUN apk add --no-cache \
+    ca-certificates \
+    tzdata \
+    dumb-init \
+    && update-ca-certificates \
+    && rm -rf /var/cache/apk/*
 
 # Create non-root user
 RUN addgroup -g 1001 -S erpgo && \
-    adduser -u 1001 -S erpgo -G erpgo
+    adduser -u 1001 -S erpgo -G erpgo -h /app -s /bin/sh
 
 # Set working directory
 WORKDIR /app
 
-# Copy binary from builder stage
-COPY --from=builder /app/migrator .
+# Copy migrator binary from builder stage
+COPY --from=builder --chown=erpgo:erpgo /app/migrator .
 
 # Copy migration files
-COPY --from=builder /app/migrations ./migrations
+COPY --from=builder --chown=erpgo:erpgo /app/migrations ./migrations
+
+# Create necessary directories
+RUN mkdir -p logs temp && \
+    chown -R erpgo:erpgo /app && \
+    chmod 755 /app && \
+    chmod 755 /app/migrations /app/logs /app/temp
 
 # Switch to non-root user
 USER erpgo
 
-# Run the migrator
+# Add labels for metadata
+LABEL maintainer="ERPGo Team" \
+      version="${APP_VERSION}" \
+      description="ERPGo Database Migrator" \
+      org.opencontainers.image.source="https://github.com/yourorg/erpgo"
+
+# Set environment variables
+ENV TZ=UTC
+
+# Use dumb-init as PID 1 for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+
+# Default command - run migrations up
 CMD ["./migrator", "up"]

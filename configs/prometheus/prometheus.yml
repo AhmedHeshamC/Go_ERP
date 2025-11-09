@@ -1,0 +1,274 @@
+# Production Prometheus Configuration for ERPGo
+# This configuration provides comprehensive monitoring and alerting
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'erpgo-production'
+    environment: 'production'
+
+# Rule files
+rule_files:
+  - "alert_rules.yml"
+  - "recording_rules.yml"
+
+# Alerting configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+      timeout: 10s
+      api_version: v2
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 30s
+    metrics_path: '/metrics'
+    scheme: http
+
+  # ERPGo API Services
+  - job_name: 'erpgo-api'
+    static_configs:
+      - targets: ['api:8080']
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    scheme: http
+    dns_refresh_interval: 30s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'erpgo-api'
+
+  # ERPGo Worker Services
+  - job_name: 'erpgo-worker'
+    static_configs:
+      - targets: ['worker:8081']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    scheme: http
+    dns_refresh_interval: 30s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'erpgo-worker'
+
+  # PostgreSQL Primary Database
+  - job_name: 'postgres-primary'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    scheme: http
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'postgres-primary'
+      - source_labels: [__address__]
+        target_label: db_role
+        replacement: 'primary'
+
+  # PostgreSQL Replica Database
+  - job_name: 'postgres-replica'
+    static_configs:
+      - targets: ['postgres-exporter:9188']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    scheme: http
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'postgres-replica'
+      - source_labels: [__address__]
+        target_label: db_role
+        replacement: 'replica'
+
+  # Redis Master
+  - job_name: 'redis-master'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    scheme: http
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'redis-master'
+      - source_labels: [__address__]
+        target_label: redis_role
+        replacement: 'master'
+
+  # Redis Replica
+  - job_name: 'redis-replica'
+    static_configs:
+      - targets: ['redis-exporter:9122']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    scheme: http
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'redis-replica'
+      - source_labels: [__address__]
+        target_label: redis_role
+        replacement: 'replica'
+
+  # NATS Messaging
+  - job_name: 'nats-server'
+    static_configs:
+      - targets: ['nats-server:8222']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: '/varz'
+    scheme: http
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'nats-server'
+
+  # Nginx Load Balancer
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx:9113']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    scheme: http
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'nginx-lb'
+
+  # Node Exporter (System Metrics)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    scheme: http
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'docker-host'
+
+  # Docker Container Metrics
+  - job_name: 'docker-exporter'
+    static_configs:
+      - targets: ['docker-exporter:9323']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    scheme: http
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'docker-daemon'
+
+  # Grafana
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3000']
+    scrape_interval: 60s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    scheme: http
+    basic_auth:
+      username: admin
+      password: ${GRAFANA_PASSWORD}
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'grafana'
+
+  # AlertManager
+  - job_name: 'alertmanager'
+    static_configs:
+      - targets: ['alertmanager:9093']
+    scrape_interval: 60s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    scheme: http
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'alertmanager'
+
+  # Loki Log Aggregation
+  - job_name: 'loki'
+    static_configs:
+      - targets: ['loki:3100']
+    scrape_interval: 60s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    scheme: http
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'loki'
+
+  # Blackbox Exporter (External URL Monitoring)
+  - job_name: 'blackbox-http'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+        - https://yourdomain.com
+        - https://api.yourdomain.com/health
+        - https://monitoring.yourdomain.com
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  # Blackbox Exporter (TCP Monitoring)
+  - job_name: 'blackbox-tcp'
+    metrics_path: /probe
+    params:
+      module: [tcp_connect]
+    static_configs:
+      - targets:
+        - postgres-primary:5432
+        - redis-master:6379
+        - nats-server:4222
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+# Remote write configuration (optional - for long-term storage)
+# remote_write:
+#   - url: "https://your-remote-storage/api/v1/write"
+#     basic_auth:
+#       username: your-username
+#       password: your-password
+#     queue_config:
+#       max_samples_per_send: 1000
+#       max_shards: 200
+#       capacity: 2500
+
+# Storage configuration
+storage:
+  tsdb:
+    path: /prometheus
+    retention.time: 30d
+    retention.size: 10GB
+    wal-compression: true

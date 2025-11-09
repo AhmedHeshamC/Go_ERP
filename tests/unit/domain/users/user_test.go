@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/erpgo/erpgo/internal/domain/users/entities"
+	"erpgo/internal/domain/users/entities"
 )
 
 func TestUser_NewUser(t *testing.T) {
@@ -21,28 +21,30 @@ func TestUser_NewUser(t *testing.T) {
 		{
 			name: "valid user",
 			user: &entities.User{
-				ID:        uuid.New(),
-				Email:     "test@example.com",
-				Username:  "testuser",
-				FirstName: "Test",
-				LastName:  "User",
-				IsActive:  true,
-				CreatedAt: time.Now(),
-				UpdatedAt: time.Now(),
+				ID:           uuid.New(),
+				Email:        "test@example.com",
+				Username:     "testuser",
+				PasswordHash: "hashed_password_here",
+				FirstName:    "Test",
+				LastName:     "User",
+				IsActive:     true,
+				CreatedAt:    time.Now(),
+				UpdatedAt:    time.Now(),
 			},
 			wantErr: false,
 		},
 		{
 			name: "invalid email",
 			user: &entities.User{
-				ID:        uuid.New(),
-				Email:     "invalid-email",
-				Username:  "testuser",
-				FirstName: "Test",
-				LastName:  "User",
-				IsActive:  true,
-				CreatedAt: time.Now(),
-				UpdatedAt: time.Now(),
+				ID:           uuid.New(),
+				Email:        "invalid-email",
+				Username:     "testuser",
+				PasswordHash: "hashed_password_here",
+				FirstName:    "Test",
+				LastName:     "User",
+				IsActive:     true,
+				CreatedAt:    time.Now(),
+				UpdatedAt:    time.Now(),
 			},
 			wantErr: true,
 			errMsg:  "invalid email format",
@@ -50,17 +52,18 @@ func TestUser_NewUser(t *testing.T) {
 		{
 			name: "empty username",
 			user: &entities.User{
-				ID:        uuid.New(),
-				Email:     "test@example.com",
-				Username:  "",
-				FirstName: "Test",
-				LastName:  "User",
-				IsActive:  true,
-				CreatedAt: time.Now(),
-				UpdatedAt: time.Now(),
+				ID:           uuid.New(),
+				Email:        "test@example.com",
+				Username:     "",
+				PasswordHash: "hashed_password_here",
+				FirstName:    "Test",
+				LastName:     "User",
+				IsActive:     true,
+				CreatedAt:    time.Now(),
+				UpdatedAt:    time.Now(),
 			},
 			wantErr: true,
-			errMsg:  "username is required",
+			errMsg:  "username cannot be empty",
 		},
 	}
 
@@ -159,7 +162,7 @@ func TestRole_NewRole(t *testing.T) {
 				UpdatedAt:   time.Now(),
 			},
 			wantErr: true,
-			errMsg:  "role name is required",
+			errMsg:  "role name cannot be empty",
 		},
 		{
 			name: "no permissions",

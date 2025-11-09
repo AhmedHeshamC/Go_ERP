@@ -1,0 +1,388 @@
+# Production Recording Rules for ERPGo
+# Pre-computed metrics for better dashboard performance and alerting efficiency
+
+groups:
+  # Application Performance Recording Rules
+  - name: erpgo_application_recording
+    interval: 30s
+    rules:
+      # HTTP request rates
+      - record: erpgo:http_requests:rate5m
+        expr: rate(http_requests_total[5m])
+
+      - record: erpgo:http_requests:rate1h
+        expr: rate(http_requests_total[1h])
+
+      # HTTP error rates
+      - record: erpgo:http_requests_errors:rate5m
+        expr: rate(http_requests_total{status=~"5.."}[5m])
+
+      - record: erpgo:http_requests_errors:rate1h
+        expr: rate(http_requests_total{status=~"5.."}[1h])
+
+      # HTTP request duration
+      - record: erpgo:http_request_duration_seconds:mean5m
+        expr: rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])
+
+      - record: erpgo:http_request_duration_seconds:p50_5m
+        expr: histogram_quantile(0.50, rate(http_request_duration_seconds_bucket[5m]))
+
+      - record: erpgo:http_request_duration_seconds:p95_5m
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
+
+      - record: erpgo:http_request_duration_seconds:p99_5m
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))
+
+      # Application memory metrics
+      - record: erpgo:memory_usage_bytes
+        expr: go_memstats_alloc_bytes
+
+      - record: erpgo:memory_usage_percent
+        expr: (go_memstats_alloc_bytes / go_memstats_sys_bytes) * 100
+
+      - record: erpgo:goroutine_count
+        expr: go_goroutines
+
+      # Database connection metrics
+      - record: erpgo:db_connections_active
+        expr: db_connections_active
+
+      - record: erpgo:db_connections_idle
+        expr: db_connections_idle
+
+      - record: erpgo:db_connections_usage_percent
+        expr: (db_connections_active / db_connections_max) * 100
+
+      # Cache metrics
+      - record: erpgo:cache_hit_rate
+        expr: cache_hits_total / (cache_hits_total + cache_misses_total)
+
+      - record: erpgo:cache_operations_rate
+        expr: rate(cache_operations_total[5m])
+
+  # Business Metrics Recording Rules
+  - name: erpgo_business_recording
+    interval: 60s
+    rules:
+      # Order metrics
+      - record: erpgo:orders:rate5m
+        expr: rate(orders_created_total[5m])
+
+      - record: erpgo:orders:rate1h
+        expr: rate(orders_created_total[1h])
+
+      - record: erpgo:orders:value_rate5m
+        expr: rate(order_value_total[5m])
+
+      - record: erpgo:orders:average_value
+        expr: increase(order_value_total[5m]) / increase(orders_created_total[5m])
+
+      # Order status metrics
+      - record: erpgo:orders_by_status
+        expr: sum by (status) (orders_total)
+
+      - record: erpgo:orders:completion_rate
+        expr: rate(orders_completed_total[5m]) / rate(orders_created_total[5m])
+
+      - record: erpgo:orders:failure_rate
+        expr: rate(orders_failed_total[5m]) / rate(orders_created_total[5m])
+
+      # User metrics
+      - record: erpgo:users:active_rate5m
+        expr: rate(active_users_total[5m])
+
+      - record: erpgo:users:registration_rate5m
+        expr: rate(user_registrations_total[5m])
+
+      - record: erpgo:users:login_rate5m
+        expr: rate(user_login_attempts_total[5m])
+
+      - record: erpgo:users:login_failure_rate
+        expr: rate(login_attempts_failed_total[5m]) / rate(user_login_attempts_total[5m])
+
+      # Revenue metrics
+      - record: erpgo:revenue:rate5m
+        expr: rate(revenue_total[5m])
+
+      - record: erpgo:revenue:rate1h
+        expr: rate(revenue_total[1h])
+
+      - record: erpgo:revenue:daily
+        expr: increase(revenue_total[1d])
+
+      - record: erpgo:revenue:weekly
+        expr: increase(revenue_total[7d])
+
+      # Inventory metrics
+      - record: erpgo:inventory:low_stock_count
+        expr: count(inventory_quantity_available < inventory_reorder_level)
+
+      - record: erpgo:inventory:out_of_stock_count
+        expr: count(inventory_quantity_available == 0)
+
+      - record: erpgo:inventory:total_value
+        expr: sum(inventory_quantity_available * inventory_cost_per_unit)
+
+      # Product metrics
+      - record: erpgo:products:active_count
+        expr: count(product_is_active == 1)
+
+      - record: erpgo:products:view_rate5m
+        expr: rate(product_views_total[5m])
+
+      # Payment metrics
+      - record: erpgo:payments:success_rate
+        expr: rate(payments_successful_total[5m]) / rate(payments_attempted_total[5m])
+
+      - record: erpgo:payments:average_amount
+        expr: increase(payment_amount_total[5m]) / increase(payments_successful_total[5m])
+
+      - record: erpgo:payments:processing_duration
+        expr: rate(payment_processing_duration_seconds_sum[5m]) / rate(payment_processing_duration_seconds_count[5m])
+
+  # Database Recording Rules
+  - name: erpgo_database_recording
+    interval: 30s
+    rules:
+      # PostgreSQL connection metrics
+      - record: erpgo:postgres:connection_usage_percent
+        expr: (pg_stat_activity_count / pg_settings_max_connections) * 100
+
+      - record: erpgo:postgres:connections_active
+        expr: pg_stat_activity_count{state="active"}
+
+      - record: erpgo:postgres:connections_idle
+        expr: pg_stat_activity_count{state="idle"}
+
+      # PostgreSQL query performance
+      - record: erpgo:postgres:query_duration_mean
+        expr: rate(pg_stat_statements_mean_time_seconds[5m])
+
+      - record: erpgo:postgres:query_duration_p95
+        expr: histogram_quantile(0.95, rate(pg_stat_statements_mean_time_seconds_bucket[5m]))
+
+      - record: erpgo:postgres:slow_queries_rate
+        expr: rate(pg_stat_statements_slow_queries_total[5m])
+
+      # PostgreSQL database size
+      - record: erpgo:postgres:database_size_gb
+        expr: pg_database_size_bytes / 1024 / 1024 / 1024
+
+      - record: erpgo:postgres:table_sizes
+        expr: pg_stat_user_table_size_bytes / 1024 / 1024
+
+      # PostgreSQL replication metrics
+      - record: erpgo:postgres:replication_lag_seconds
+        expr: pg_replication_lag_seconds
+
+      - record: erpgo:postgres:replication_throughput
+        expr: rate(pg_replication_bytes_total[5m])
+
+      # PostgreSQL transaction metrics
+      - record: erpgo:postgres:transactions_commit_rate
+        expr: rate(pg_stat_database_xact_commit[5m])
+
+      - record: erpgo:postgres:transactions_rollback_rate
+        expr: rate(pg_stat_database_xact_rollback[5m])
+
+      - record: erpgo:postgres:deadlocks_rate
+        expr: rate(pg_stat_database_deadlocks[5m])
+
+  # Redis Recording Rules
+  - name: erpgo_redis_recording
+    interval: 30s
+    rules:
+      # Redis memory metrics
+      - record: erpgo:redis:memory_usage_percent
+        expr: (redis_memory_used_bytes / redis_memory_max_bytes) * 100
+
+      - record: erpgo:redis:memory_usage_mb
+        expr: redis_memory_used_bytes / 1024 / 1024
+
+      - record: erpgo:redis:memory_fragmentation_ratio
+        expr: redis_memory_fragmentation_ratio
+
+      # Redis connection metrics
+      - record: erpgo:redis:connected_clients
+        expr: redis_connected_clients
+
+      - record: erpgo:redis:connection_usage_percent
+        expr: (redis_connected_clients / redis_config_maxclients) * 100
+
+      # Redis performance metrics
+      - record: erpgo:redis:commands_rate
+        expr: rate(redis_commands_processed_total[5m])
+
+      - record: erpgo:redis:operations_rate
+        expr: rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m])
+
+      - record: erpgo:redis:hit_rate
+        expr: rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m]))
+
+      - record: erpgo:redis:evicted_keys_rate
+        expr: rate(redis_evicted_keys_total[5m])
+
+      - record: erpgo:redis:expired_keys_rate
+        expr: rate(redis_expired_keys_total[5m])
+
+      # Redis key metrics
+      - record: erpgo:redis:keyspace_count
+        expr: redis_db_keys
+
+      - record: erpgo:redis:keyspace_expires_count
+        expr: redis_db_expires
+
+  # System Infrastructure Recording Rules
+  - name: erpgo_system_recording
+    interval: 60s
+    rules:
+      # CPU metrics
+      - record: erpgo:system:cpu_usage_percent
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+
+      - record: erpgo:system:cpu_usage_by_mode
+        expr: sum by(instance, mode) (rate(node_cpu_seconds_total[5m])) * 100
+
+      # Memory metrics
+      - record: erpgo:system:memory_usage_percent
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
+
+      - record: erpgo:system:memory_usage_gb
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / 1024 / 1024 / 1024
+
+      - record: erpgo:system:memory_available_gb
+        expr: node_memory_MemAvailable_bytes / 1024 / 1024 / 1024
+
+      - record: erpgo:system:swap_usage_percent
+        expr: (1 - (node_memory_SwapFree_bytes / node_memory_SwapTotal_bytes)) * 100
+
+      # Disk metrics
+      - record: erpgo:system:disk_usage_percent
+        expr: (1 - (node_filesystem_avail_bytes / node_filesystem_size_bytes)) * 100
+
+      - record: erpgo:system:disk_available_gb
+        expr: node_filesystem_avail_bytes / 1024 / 1024 / 1024
+
+      - record: erpgo:system:disk_usage_gb
+        expr: (node_filesystem_size_bytes - node_filesystem_avail_bytes) / 1024 / 1024 / 1024
+
+      - record: erpgo:system:disk_io_rate
+        expr: rate(node_disk_io_time_seconds_total[5m])
+
+      # Network metrics
+      - record: erpgo:system:network_receive_rate_mbps
+        expr: rate(node_network_receive_bytes_total[5m]) * 8 / 1024 / 1024
+
+      - record: erpgo:system:network_transmit_rate_mbps
+        expr: rate(node_network_transmit_bytes_total[5m]) * 8 / 1024 / 1024
+
+      - record: erpgo:system:network_error_rate
+        expr: rate(node_network_receive_errs_total[5m]) + rate(node_network_transmit_errs_total[5m])
+
+      # Load metrics
+      - record: erpgo:system:load1
+        expr: node_load1
+
+      - record: erpgo:system:load5
+        expr: node_load5
+
+      - record: erpgo:system:load15
+        expr: node_load15
+
+  # Docker Container Recording Rules
+  - name: erpgo_docker_recording
+    interval: 30s
+    rules:
+      # Container metrics
+      - record: erpgo:docker:container_cpu_usage_percent
+        expr: rate(container_cpu_usage_seconds_total{name!=""}[5m]) * 100
+
+      - record: erpgo:docker:container_memory_usage_mb
+        expr: container_memory_usage_bytes{name!=""} / 1024 / 1024
+
+      - record: erpgo:docker:container_memory_usage_percent
+        expr: (container_memory_usage_bytes{name!=""} / container_spec_memory_limit_bytes{name!=""}) * 100
+
+      - record: erpgo:docker:container_network_receive_rate_mbps
+        expr: rate(container_network_receive_bytes_total{name!=""}[5m]) * 8 / 1024 / 1024
+
+      - record: erpgo:docker:container_network_transmit_rate_mbps
+        expr: rate(container_network_transmit_bytes_total{name!=""}[5m]) * 8 / 1024 / 1024
+
+      - record: erpgo:docker:container_block_io_rate
+        expr: rate(container_block_io_bytes_total{name!=""}[5m])
+
+      # Container count metrics
+      - record: erpgo:docker:containers_running
+        expr: count(container_state{name!="", state="running"})
+
+      - record: erpgo:docker:containers_total
+        expr: count(container_state{name!=""})
+
+  # Security Recording Rules
+  - name: erpgo_security_recording
+    interval: 60s
+    rules:
+      # Authentication metrics
+      - record: erpgo:auth:login_success_rate
+        expr: rate(login_attempts_successful_total[5m])
+
+      - record: erpgo:auth:login_failure_rate
+        expr: rate(login_attempts_failed_total[5m])
+
+      - record: erpgo:auth:login_failure_percent
+        expr: (rate(login_attempts_failed_total[5m]) / rate(login_attempts_total[5m])) * 100
+
+      # Authorization metrics
+      - record: erpgo:auth:unauthorized_access_rate
+        expr: rate(unauthorized_access_total[5m])
+
+      - record: erpgo:auth:forbidden_access_rate
+        expr: rate(forbidden_access_total[5m])
+
+      # API security metrics
+      - record: erpgo:security:rate_limit_exceeded_rate
+        expr: rate(rate_limit_exceeded_total[5m])
+
+      - record: erpgo:security:input_validation_failures_rate
+        expr: rate(input_validation_failures_total[5m])
+
+      # Suspicious activity metrics
+      - record: erpgo:security:suspicious_requests_rate
+        expr: rate(suspicious_requests_total[5m])
+
+      - record: erpgo:security:blocked_ips_count
+        expr: count(increase(blocked_ips_total[5m]) > 0)
+
+  # SLA Recording Rules
+  - name: erpgo_sla_recording
+    interval: 60s
+    rules:
+      # Availability SLA
+      - record: erpgo:sla:availability_percentage_5m
+        expr: (sum(rate(http_requests_total{status!~"5.."}[5m])) / sum(rate(http_requests_total[5m]))) * 100
+
+      - record: erpgo:sla:availability_percentage_1h
+        expr: (sum(rate(http_requests_total{status!~"5.."}[1h])) / sum(rate(http_requests_total[1h]))) * 100
+
+      # Performance SLA
+      - record: erpgo:sla:response_time_p95_5m
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
+
+      - record: erpgo:sla:response_time_p99_5m
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))
+
+      # Error rate SLA
+      - record: erpgo:sla:error_rate_percentage_5m
+        expr: (sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m]))) * 100
+
+      # Throughput SLA
+      - record: erpgo:sla:requests_per_second_5m
+        expr: sum(rate(http_requests_total[5m]))
+
+      # Business SLA
+      - record: erpgo:sla:order_processing_time_p95
+        expr: histogram_quantile(0.95, rate(order_processing_duration_seconds_bucket[5m]))
+
+      - record: erpgo:sla:payment_processing_time_p95
+        expr: histogram_quantile(0.95, rate(payment_processing_duration_seconds_bucket[5m]))

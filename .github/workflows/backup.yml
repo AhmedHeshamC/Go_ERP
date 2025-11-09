@@ -1,0 +1,202 @@
+name: Automated Backup
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      backup_type:
+        description: 'Type of backup to create'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+          - full
+          - schema
+          - data
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+          - development
+
+env:
+  BACKUP_TYPE: ${{ github.event.inputs.backup_type || 'full' }}
+  ENVIRONMENT: ${{ github.event.inputs.environment || 'production' }}
+
+jobs:
+  backup:
+    name: Database Backup
+    runs-on: ubuntu-latest
+    environment: ${{ env.ENVIRONMENT }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Configure AWS credentials (if using S3)
+        if: env.AWS_ACCESS_KEY_ID != ''
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Create backup
+        run: |
+          echo "Starting ${{ env.BACKUP_TYPE }} backup for ${{ env.ENVIRONMENT }} environment..."
+          chmod +x scripts/backup/database-backup.sh
+
+          # Export environment variables for backup script
+          export POSTGRES_DB="${{ secrets.POSTGRES_DB }}"
+          export POSTGRES_USER="${{ secrets.POSTGRES_USER }}"
+          export POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"
+          export POSTGRES_PRIMARY_HOST="${{ secrets.POSTGRES_PRIMARY_HOST }}"
+          export BACKUP_ENCRYPTION_KEY="${{ secrets.BACKUP_ENCRYPTION_KEY }}"
+          export BACKUP_RETENTION_DAYS="${{ secrets.BACKUP_RETENTION_DAYS || '30' }}"
+
+          # Run backup
+          ./scripts/backup/database-backup.sh backup ${{ env.BACKUP_TYPE }}
+
+      - name: Upload backup to artifact storage
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: database-backup-${{ env.BACKUP_TYPE }}-${{ github.run_number }}
+          path: |
+            ./backups/postgres/*.sql
+            ./backups/postgres/encrypted/*.enc
+            ./backups/postgres/logs/*.log
+          retention-days: 90
+
+      - name: Sync backups to S3 (if configured)
+        if: env.AWS_S3_BUCKET != ''
+        run: |
+          echo "Syncing backups to S3..."
+          aws s3 sync ./backups/postgres/ s3://${AWS_S3_BUCKET}/backups/${{ env.ENVIRONMENT }}/$(date +%Y/%m/%d)/ \
+            --exclude "*" \
+            --include "*.sql" \
+            --include "*.enc" \
+            --include "*.log" \
+            --storage-class GLACIER
+
+      - name: Verify backup integrity
+        run: |
+          echo "Verifying backup integrity..."
+          # Find the most recent backup file
+          BACKUP_FILE=$(find ./backups/postgres -name "*.sql" -o -name "*.enc" | head -1)
+
+          if [[ -n "$BACKUP_FILE" ]]; then
+            echo "Verifying backup: $BACKUP_FILE"
+
+            # Export environment variables for verification
+            export BACKUP_ENCRYPTION_KEY="${{ secrets.BACKUP_ENCRYPTION_KEY }}"
+
+            # Run verification
+            ./scripts/backup/database-backup.sh verify "$BACKUP_FILE" || {
+              echo "Backup verification failed!"
+              exit 1
+            }
+          else
+            echo "No backup file found to verify"
+            exit 1
+          fi
+
+      - name: Clean up old backups
+        run: |
+          echo "Cleaning up old backups..."
+          export BACKUP_RETENTION_DAYS="${{ secrets.BACKUP_RETENTION_DAYS || '30' }}"
+          ./scripts/backup/database-backup.sh cleanup
+
+      - name: Send notification
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#backups'
+          text: |
+            Database backup ${{ job.status }}
+            Type: ${{ env.BACKUP_TYPE }}
+            Environment: ${{ env.ENVIRONMENT }}
+            Time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  backup-monitoring:
+    name: Backup Monitoring and Alerting
+    runs-on: ubuntu-latest
+    needs: backup
+    if: always()
+    steps:
+      - name: Check backup status
+        run: |
+          if [[ "${{ needs.backup.result }}" == "success" ]]; then
+            echo "✅ Backup completed successfully"
+          else
+            echo "❌ Backup failed or was skipped"
+            exit 1
+          fi
+
+      - name: Check backup age
+        run: |
+          echo "Checking most recent backup age..."
+          # This would check the age of the most recent backup
+          # Alert if backup is too old
+          LATEST_BACKUP=$(find ./backups/postgres -name "*.sql" -o -name "*.enc" -printf "%T@ %p\n" | sort -n | tail -1 | cut -d' ' -f2-)
+
+          if [[ -n "$LATEST_BACKUP" ]]; then
+            BACKUP_AGE=$(($(date +%s) - $(stat -c %Y "$LATEST_BACKUP")))
+            MAX_AGE=$((24 * 60 * 60))  # 24 hours in seconds
+
+            if [[ $BACKUP_AGE -gt $MAX_AGE ]]; then
+              echo "⚠️ Latest backup is older than 24 hours"
+              exit 1
+            else
+              echo "✅ Latest backup is recent"
+            fi
+          else
+            echo "❌ No backups found"
+            exit 1
+          fi
+
+      - name: Generate backup report
+        run: |
+          echo "Generating backup report..."
+          REPORT_FILE="backup_report_$(date +%Y%m%d_%H%M%S).txt"
+
+          {
+            echo "=== ERPGo Backup Report ==="
+            echo "Generated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "Environment: ${{ env.ENVIRONMENT }}"
+            echo "Backup Type: ${{ env.BACKUP_TYPE }}"
+            echo ""
+            echo "=== Backup Files ==="
+            find ./backups/postgres -name "*.sql" -o -name "*.enc" -exec ls -lh {} \;
+            echo ""
+            echo "=== Disk Usage ==="
+            du -sh ./backups/postgres
+            echo ""
+            echo "=== End of Report ==="
+          } > "$REPORT_FILE"
+
+          echo "Backup report generated: $REPORT_FILE"
+
+      - name: Send monitoring report
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "ERPGo Backup Report - ${{ env.ENVIRONMENT }} - $(date +%Y-%m-%d)"
+          body: file://backup_report_*.txt
+          to: ${{ secrets.NOTIFICATION_EMAIL }}
+          from: ${{ secrets.SMTP_FROM }}

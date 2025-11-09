@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_DB: erp
       POSTGRES_USER: erpgo
-      POSTGRES_PASSWORD: erpgo_password
+      POSTGRES_PASSWORD: XGhBzlakJlYUpJyfc58/Qcys7Xht/FWwJmFeyEhhMoI=
     ports:
       - "5432:5432"
     volumes:
@@ -64,11 +64,13 @@ services:
       - "8080:8080"
     environment:
       ENVIRONMENT: development
-      DATABASE_URL: postgres://erpgo:erpgo_password@postgres:5432/erp?sslmode=disable
+      DATABASE_URL: postgres://erpgo:XGhBzlakJlYUpJyfc58/Qcys7Xht/FWwJmFeyEhhMoI=@postgres:5432/erp?sslmode=require
       REDIS_URL: redis://redis:6379
-      JWT_SECRET: your-super-secret-jwt-key-change-in-production
-      LOG_LEVEL: debug
-      DEBUG_MODE: true
+      JWT_SECRET: TQXNjldyDKsDoDysO0W2ljSmNzqlWhSFpXkVFTmKsSQ=
+      LOG_LEVEL: info
+      DEBUG_MODE: false
+      RATE_LIMIT_ENABLED: "true"
+      BCRYPT_COST: "12"
     depends_on:
       postgres:
         condition: service_healthy
@@ -95,7 +97,7 @@ services:
       dockerfile: Dockerfile.migrator
     container_name: erpgo-migrator
     environment:
-      DATABASE_URL: postgres://erpgo:erpgo_password@postgres:5432/erp?sslmode=disable
+      DATABASE_URL: postgres://erpgo:XGhBzlakJlYUpJyfc58/Qcys7Xht/FWwJmFeyEhhMoI=@postgres:5432/erp?sslmode=require
     depends_on:
       postgres:
         condition: service_healthy
@@ -112,10 +114,10 @@ services:
     container_name: erpgo-worker
     environment:
       ENVIRONMENT: development
-      DATABASE_URL: postgres://erpgo:erpgo_password@postgres:5432/erp?sslmode=disable
+      DATABASE_URL: postgres://erpgo:XGhBzlakJlYUpJyfc58/Qcys7Xht/FWwJmFeyEhhMoI=@postgres:5432/erp?sslmode=require
       REDIS_URL: redis://redis:6379
       NATS_URL: nats://nats:4222
-      LOG_LEVEL: debug
+      LOG_LEVEL: info
       WORKER_COUNT: 5
     depends_on:
       postgres:
@@ -157,20 +159,123 @@ services:
     ports:
       - "3000:3000"
     environment:
-      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SECURITY_ADMIN_PASSWORD: 6dDq2jJjmka4pa6vGNrpDO30CBTgD7jfik1YV9d+4Zg=
+      GF_SECURITY_ADMIN_USER: admin
+      GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-simple-json-datasource
+      GF_FEATURE_TOGGLES_ENABLE: publicDashboards
     volumes:
       - grafana_data:/var/lib/grafana
       - ./configs/grafana:/etc/grafana/provisioning
+      - ./configs/grafana/dashboards:/var/lib/grafana/dashboards
     networks:
       - erpgo-network
     profiles:
       - monitoring
+    depends_on:
+      - prometheus
+
+  # AlertManager
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: erpgo-alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./configs/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - alertmanager_data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    networks:
+      - erpgo-network
+    profiles:
+      - monitoring
+
+  # Node Exporter
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: erpgo-node-exporter
+    ports:
+      - "9100:9100"
+    command:
+      - '--path.rootfs=/host'
+    volumes:
+      - /:/host:ro,rslave
+    networks:
+      - erpgo-network
+    profiles:
+      - monitoring
+
+  # PostgreSQL Exporter
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: erpgo-postgres-exporter
+    ports:
+      - "9187:9187"
+    environment:
+      DATA_SOURCE_NAME: "postgresql://erpgo:XGhBzlakJlYUpJyfc58/Qcys7Xht/FWwJmFeyEhhMoI=@postgres:5432/erp?sslmode=require"
+    networks:
+      - erpgo-network
+    profiles:
+      - monitoring
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Redis Exporter
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: erpgo-redis-exporter
+    ports:
+      - "9121:9121"
+    environment:
+      REDIS_ADDR: "redis://redis:6379"
+    networks:
+      - erpgo-network
+    profiles:
+      - monitoring
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  # Loki Log Aggregation
+  loki:
+    image: grafana/loki:latest
+    container_name: erpgo-loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./configs/loki.yml:/etc/loki/local-config.yaml
+      - loki_data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - erpgo-network
+    profiles:
+      - monitoring
+
+  # Promtail Log Collector
+  promtail:
+    image: grafana/promtail:latest
+    container_name: erpgo-promtail
+    volumes:
+      - ./configs/promtail.yml:/etc/promtail/config.yml
+      - ./logs:/var/log/erpgo
+      - /var/log:/var/log:ro
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - erpgo-network
+    profiles:
+      - monitoring
+    depends_on:
+      - loki
 
 volumes:
   postgres_data:
   redis_data:
   prometheus_data:
   grafana_data:
+  alertmanager_data:
+  loki_data:
 
 networks:
   erpgo-network:

@@ -1,0 +1,377 @@
+# Production Alert Rules for ERPGo
+# Comprehensive alerting for application performance, infrastructure, and business metrics
+
+groups:
+  # Application Performance Alerts
+  - name: erpgo_application
+    rules:
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          service: erpgo-api
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} for {{ $labels.instance }}"
+
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: erpgo-api
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is {{ $value }}s for {{ $labels.instance }}"
+
+      - alert: ServiceDown
+        expr: up{job=~"erpgo-api|erpgo-worker"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: erpgo
+        annotations:
+          summary: "Service is down"
+          description: "{{ $labels.job }} on {{ $labels.instance }} has been down for more than 1 minute"
+
+      - alert: HighMemoryUsage
+        expr: (go_memstats_alloc_bytes / go_memstats_sys_bytes) * 100 > 80
+        for: 10m
+        labels:
+          severity: warning
+          service: erpgo-api
+        annotations:
+          summary: "High memory usage"
+          description: "Memory usage is {{ $value }}% for {{ $labels.instance }}"
+
+      - alert: HighGoroutineCount
+        expr: go_goroutines > 1000
+        for: 5m
+        labels:
+          severity: warning
+          service: erpgo-api
+        annotations:
+          summary: "High goroutine count"
+          description: "Goroutine count is {{ $value }} for {{ $labels.instance }}"
+
+      - alert: DatabaseConnectionPoolExhausted
+        expr: db_connections_active / db_connections_max > 0.9
+        for: 5m
+        labels:
+          severity: critical
+          service: erpgo-api
+        annotations:
+          summary: "Database connection pool nearly exhausted"
+          description: "Database connection pool usage is {{ $value | humanizePercentage }} for {{ $labels.instance }}"
+
+  # Database Alerts
+  - name: erpgo_database
+    rules:
+      - alert: PostgreSQLDown
+        expr: up{job=~"postgres-.*"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: postgresql
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL {{ $labels.db_role }} on {{ $labels.instance }} has been down for more than 1 minute"
+
+      - alert: PostgreSQLHighConnections
+        expr: pg_stat_activity_count / pg_settings_max_connections * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: postgresql
+        annotations:
+          summary: "PostgreSQL high connection usage"
+          description: "PostgreSQL connection usage is {{ $value }}% for {{ $labels.instance }}"
+
+      - alert: PostgreSQLSlowQueries
+        expr: rate(pg_stat_statements_mean_time_seconds[5m]) > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: postgresql
+        annotations:
+          summary: "PostgreSQL slow queries detected"
+          description: "Average query time is {{ $value }}s for {{ $labels.instance }}"
+
+      - alert: PostgreSQLReplicationLag
+        expr: pg_replication_lag_seconds > 60
+        for: 5m
+        labels:
+          severity: warning
+          service: postgresql
+        annotations:
+          summary: "PostgreSQL replication lag"
+          description: "Replication lag is {{ $value }}s for {{ $labels.instance }}"
+
+      - alert: PostgreSQLDiskSpace
+        expr: pg_database_size_bytes / 1024 / 1024 / 1024 > 50
+        for: 10m
+        labels:
+          severity: warning
+          service: postgresql
+        annotations:
+          summary: "PostgreSQL high disk usage"
+          description: "Database size is {{ $value }}GB for {{ $labels.instance }}"
+
+  # Redis Alerts
+  - name: erpgo_redis
+    rules:
+      - alert: RedisDown
+        expr: up{job=~"redis-.*"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: redis
+        annotations:
+          summary: "Redis is down"
+          description: "Redis {{ $labels.redis_role }} on {{ $labels.instance }} has been down for more than 1 minute"
+
+      - alert: RedisHighMemoryUsage
+        expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+          service: redis
+        annotations:
+          summary: "Redis high memory usage"
+          description: "Redis memory usage is {{ $value | humanizePercentage }} for {{ $labels.instance }}"
+
+      - alert: RedisHighConnectionCount
+        expr: redis_connected_clients > 1000
+        for: 5m
+        labels:
+          severity: warning
+          service: redis
+        annotations:
+          summary: "Redis high connection count"
+          description: "Redis has {{ $value }} connected clients for {{ $labels.instance }}"
+
+      - alert: RedisExpiredKeys
+        expr: rate(redis_expired_keys_total[5m]) > 10
+        for: 10m
+        labels:
+          severity: warning
+          service: redis
+        annotations:
+          summary: "High Redis key expiration rate"
+          description: "Redis is expiring {{ $value }} keys per second for {{ $labels.instance }}"
+
+  # Infrastructure Alerts
+  - name: erpgo_infrastructure
+    rules:
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "High CPU usage"
+          description: "CPU usage is {{ $value }}% for {{ $labels.instance }}"
+
+      - alert: HighDiskUsage
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 < 10
+        for: 5m
+        labels:
+          severity: critical
+          service: system
+        annotations:
+          summary: "Low disk space"
+          description: "Disk space is {{ $value }}% available for {{ $labels.instance }}"
+
+      - alert: HighMemoryUsageSystem
+        expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 < 10
+        for: 5m
+        labels:
+          severity: critical
+          service: system
+        annotations:
+          summary: "Low system memory"
+          description: "System memory available is {{ $value }}% for {{ $labels.instance }}"
+
+      - alert: NetworkErrors
+        expr: rate(node_network_receive_errs_total[5m]) + rate(node_network_transmit_errs_total[5m]) > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "Network errors detected"
+          description: "Network error rate is {{ $value }} errors/sec for {{ $labels.instance }}"
+
+      - alert: DockerContainerDown
+        expr: time() - container_last_seen > 300
+        for: 2m
+        labels:
+          severity: warning
+          service: docker
+        annotations:
+          summary: "Docker container down"
+          description: "Container {{ $labels.name }} has been down for more than 5 minutes"
+
+  # Business Metrics Alerts
+  - name: erpgo_business
+    rules:
+      - alert: LowOrderRate
+        expr: rate(orders_created_total[1h]) < 1
+        for: 30m
+        labels:
+          severity: warning
+          service: business
+        annotations:
+          summary: "Low order rate"
+          description: "Order rate is {{ $value }} orders/hour for the last hour"
+
+      - alert: HighFailedOrderRate
+        expr: rate(orders_failed_total[5m]) / rate(orders_created_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          service: business
+        annotations:
+          summary: "High failed order rate"
+          description: "Failed order rate is {{ $value | humanizePercentage }}"
+
+      - alert: LowUserActivity
+        expr: rate(active_users_total[1h]) < 10
+        for: 30m
+        labels:
+          severity: warning
+          service: business
+        annotations:
+          summary: "Low user activity"
+          description: "Active user rate is {{ $value }} users/hour for the last hour"
+
+      - alert: HighInventoryAlerts
+        expr: inventory_low_stock_alerts_total > 50
+        for: 10m
+        labels:
+          severity: warning
+          service: business
+        annotations:
+          summary: "High number of inventory alerts"
+          description: "{{ $value }} items are below reorder level"
+
+      - alert: PaymentProcessingDelays
+        expr: rate(payment_processing_duration_seconds_sum[5m]) / rate(payment_processing_duration_seconds_count[5m]) > 30
+        for: 5m
+        labels:
+          severity: warning
+          service: business
+        annotations:
+          summary: "Payment processing delays"
+          description: "Average payment processing time is {{ $value }}s"
+
+  # Security Alerts
+  - name: erpgo_security
+    rules:
+      - alert: HighFailedLoginRate
+        expr: rate(login_attempts_failed_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: "High failed login rate"
+          description: "Failed login rate is {{ $value }} attempts/minute"
+
+      - alert: SuspiciousAPIUsage
+        expr: rate(http_requests_total[5m]) > 1000
+        for: 5m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: "Suspicious API usage"
+          description: "API request rate is {{ $value }} requests/second from {{ $labels.remote_addr }}"
+
+      - alert: UnauthorizedAccessAttempts
+        expr: rate(unauthorized_access_total[5m]) > 5
+        for: 2m
+        labels:
+          severity: critical
+          service: security
+        annotations:
+          summary: "Unauthorized access attempts"
+          description: "Unauthorized access rate is {{ $value }} attempts/minute"
+
+      - alert: DataExfiltrationDetection
+        expr: rate(data_export_requests_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: critical
+          service: security
+        annotations:
+          summary: "Potential data exfiltration"
+          description: "High data export rate: {{ $value }} exports/minute"
+
+  # Backup and Recovery Alerts
+  - name: erpgo_backup
+    rules:
+      - alert: BackupFailed
+        expr: backup_success == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: backup
+        annotations:
+          summary: "Backup failed"
+          description: "Last backup failed for {{ $labels.backup_type }}"
+
+      - alert: BackupOverdue
+        expr: time() - backup_last_success_timestamp > 86400
+        for: 1h
+        labels:
+          severity: warning
+          service: backup
+        annotations:
+          summary: "Backup overdue"
+          description: "No successful backup in the last 24 hours"
+
+      - alert: LowBackupRetention
+        expr: backup_retention_days < 7
+        for: 1m
+        labels:
+          severity: warning
+          service: backup
+        annotations:
+          summary: "Low backup retention"
+          description: "Backup retention is only {{ $value }} days"
+
+  # SLA and Performance Alerts
+  - name: erpgo_sla
+    rules:
+      - alert: SLAViolationResponseTime
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: critical
+          service: sla
+        annotations:
+          summary: "SLA violation: Response time"
+          description: "99th percentile response time is {{ $value }}s (SLA: <2s)"
+
+      - alert: SLAViolationAvailability
+        expr: sum(rate(http_requests_total{status!~"5.."}[5m])) / sum(rate(http_requests_total[5m])) < 0.99
+        for: 5m
+        labels:
+          severity: critical
+          service: sla
+        annotations:
+          summary: "SLA violation: Availability"
+          description: "Service availability is {{ $value | humanizePercentage }} (SLA: >99%)"
+
+      - alert: SLAViolationErrorRate
+        expr: sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) > 0.01
+        for: 5m
+        labels:
+          severity: critical
+          service: sla
+        annotations:
+          summary: "SLA violation: Error rate"
+          description: "Error rate is {{ $value | humanizePercentage }} (SLA: <1%)"

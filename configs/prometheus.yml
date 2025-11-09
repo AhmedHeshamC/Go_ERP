@@ -59,24 +59,41 @@ recording_rules:
     rules:
       # Record high request rate
       - record: job:http_requests:rate5m
-        expr: rate(http_requests_total[5m])
+        expr: rate(erpgo_http_requests_total[5m])
 
       # Record error rate
       - record: job:http_requests_errors:rate5m
-        expr: rate(http_requests_total{status=~"5.."}[5m])
+        expr: rate(erpgo_http_requests_total{status_code=~"5.."}[5m])
 
       # Record request duration
       - record: job:http_request_duration_seconds:mean5m
-        expr: rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])
+        expr: rate(erpgo_http_request_duration_seconds_sum[5m]) / rate(erpgo_http_request_duration_seconds_count[5m])
 
       # Record database connection pool usage
       - record: job:db_connections_pool_usage
-        expr: db_connections_active / db_connections_max
+        expr: erpgo_database_connections{state="active"} / erpgo_database_connections{state="max"}
 
       # Record cache hit rate
       - record: job:cache_hit_rate
-        expr: cache_hits_total / (cache_hits_total + cache_misses_total)
+        expr: erpgo_cache_hit_rate
 
-# Example alerting rules
+      # Business metrics
+      - record: business:orders_per_minute
+        expr: rate(erpgo_orders_created_total[5m]) * 60
+
+      - record: business:revenue_per_hour
+        expr: rate(erpgo_revenue_total[5m]) * 3600
+
+      - record: business:user_registrations_per_hour
+        expr: rate(erpgo_user_registrations_total[5m]) * 3600
+
+      # System metrics
+      - record: system:memory_usage_percent
+        expr: (erpgo_system_memory_bytes{type="alloc"} / erpgo_system_memory_bytes{type="sys"}) * 100
+
+      - record: system:error_rate_percent
+        expr: (rate(erpgo_errors_total[5m]) / rate(erpgo_http_requests_total[5m])) * 100
+
+# Alerting rules
 rule_files:
   - "alert_rules.yml"
