@@ -1,0 +1,13 @@
+{
+  "global": {
+    "exclude-dirs": [
+      "vendor",
+      "testdata",
+      "docs",
+      ".git",
+      "build",
+      "dist",
+      "node_modules"
+    ]
+  }
+}

@@ -39,6 +39,23 @@ type ValidationConfig struct {
 
 	// Blacklisted patterns for all fields
 	BlacklistedPatterns []*regexp.Regexp `json:"blacklisted_patterns"`
+
+	// Pagination limits
+	MaxPaginationLimit int `json:"max_pagination_limit"`
+	DefaultPaginationLimit int `json:"default_pagination_limit"`
+}
+
+// ValidationError represents a field-level validation error
+type ValidationError struct {
+	Field   string `json:"field"`
+	Message string `json:"message"`
+	Code    string `json:"code"`
+}
+
+// ValidationResult represents the result of validation with field-level errors
+type ValidationResult struct {
+	Valid  bool              `json:"valid"`
+	Errors []ValidationError `json:"errors,omitempty"`
 }
 
 // DefaultValidationConfig returns a secure default configuration
@@ -48,6 +65,8 @@ func DefaultValidationConfig() ValidationConfig {
 		AllowedContentTypes:            []string{"application/json", "application/x-www-form-urlencoded", "multipart/form-data"},
 		EnableXSSProtection:            true,
 		EnableSQLInjectionProtection:   true,
+		MaxPaginationLimit:             1000,
+		DefaultPaginationLimit:         50,
 		MaxFieldLengths: map[string]int{
 			"name":     100,
 			"email":    255,
@@ -220,8 +239,9 @@ func InputValidationMiddleware(config ValidationConfig, logger zerolog.Logger) g
 		if err := validateQueryParams(c, config, logger); err != nil {
 			logger.Warn().Err(err).Msg("Invalid query parameters")
 			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-				"code":  "INVALID_QUERY_PARAMS",
+				"error":   err.Error(),
+				"code":    "INVALID_QUERY_PARAMS",
+				"details": map[string]string{"message": err.Error()},
 			})
 			c.Abort()
 			return
@@ -388,7 +408,93 @@ func validateQueryParams(c *gin.Context, config ValidationConfig, logger zerolog
 			}
 		}
 	}
+
+	// Validate pagination parameters
+	if err := validatePaginationParams(c, config); err != nil {
+		return err
+	}
+
 	return nil
+}
+
+// validatePaginationParams validates pagination query parameters
+func validatePaginationParams(c *gin.Context, config ValidationConfig) error {
+	// Validate limit parameter
+	if limitStr := c.Query("limit"); limitStr != "" {
+		var limit int
+		if _, err := fmt.Sscanf(limitStr, "%d", &limit); err != nil {
+			return fmt.Errorf("invalid limit parameter: must be a positive integer")
+		}
+		if limit < 1 {
+			return fmt.Errorf("invalid limit parameter: must be at least 1")
+		}
+		if limit > config.MaxPaginationLimit {
+			return fmt.Errorf("invalid limit parameter: must not exceed %d", config.MaxPaginationLimit)
+		}
+	}
+
+	// Validate page parameter
+	if pageStr := c.Query("page"); pageStr != "" {
+		var page int
+		if _, err := fmt.Sscanf(pageStr, "%d", &page); err != nil {
+			return fmt.Errorf("invalid page parameter: must be a positive integer")
+		}
+		if page < 1 {
+			return fmt.Errorf("invalid page parameter: must be at least 1")
+		}
+	}
+
+	// Validate offset parameter (alternative to page)
+	if offsetStr := c.Query("offset"); offsetStr != "" {
+		var offset int
+		if _, err := fmt.Sscanf(offsetStr, "%d", &offset); err != nil {
+			return fmt.Errorf("invalid offset parameter: must be a non-negative integer")
+		}
+		if offset < 0 {
+			return fmt.Errorf("invalid offset parameter: must be at least 0")
+		}
+	}
+
+	return nil
+}
+
+// ValidateStructWithDetails validates a struct and returns detailed field-level errors
+func ValidateStructWithDetails(data map[string]interface{}, config ValidationConfig, logger zerolog.Logger) *ValidationResult {
+	result := &ValidationResult{
+		Valid:  true,
+		Errors: []ValidationError{},
+	}
+
+	// Get the endpoint key for validation
+	endpointKey := "" // This would need to be passed in or extracted from context
+
+	// Check required fields
+	if requiredFields, exists := config.RequiredFields[endpointKey]; exists {
+		for _, field := range requiredFields {
+			if value, found := data[field]; !found || value == nil || value == "" {
+				result.Valid = false
+				result.Errors = append(result.Errors, ValidationError{
+					Field:   field,
+					Message: fmt.Sprintf("field '%s' is required", field),
+					Code:    "REQUIRED_FIELD_MISSING",
+				})
+			}
+		}
+	}
+
+	// Validate each field
+	for field, value := range data {
+		if err := validateField(field, value, config, logger); err != nil {
+			result.Valid = false
+			result.Errors = append(result.Errors, ValidationError{
+				Field:   field,
+				Message: err.Error(),
+				Code:    "VALIDATION_ERROR",
+			})
+		}
+	}
+
+	return result
 }
 
 // SanitizeInput sanitizes input by removing potentially dangerous characters

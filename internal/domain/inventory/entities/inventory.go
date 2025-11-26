@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	apperrors "erpgo/pkg/errors"
 )
 
 // Inventory represents inventory levels for a product in a warehouse
@@ -180,12 +181,12 @@ func (i *Inventory) GetReservedQuantity() int {
 // IsAvailable returns true if the specified quantity is available
 func (i *Inventory) IsAvailable(quantity int) error {
 	if quantity <= 0 {
-		return errors.New("quantity must be positive")
+		return apperrors.NewBadRequestError("quantity must be positive")
 	}
 
 	available := i.GetAvailableQuantity()
 	if available < quantity {
-		return fmt.Errorf("insufficient stock: %d available, %d requested", available, quantity)
+		return apperrors.NewInsufficientStockError(available, quantity)
 	}
 
 	return nil
@@ -220,12 +221,12 @@ func (i *Inventory) NeedsReorder() bool {
 // CanFulfillOrder checks if the inventory can fulfill a given quantity
 func (i *Inventory) CanFulfillOrder(quantity int) error {
 	if quantity <= 0 {
-		return errors.New("order quantity must be positive")
+		return apperrors.NewBadRequestError("order quantity must be positive")
 	}
 
 	available := i.GetAvailableQuantity()
 	if available < quantity {
-		return fmt.Errorf("insufficient available stock: %d available, %d requested", available, quantity)
+		return apperrors.NewInsufficientStockError(available, quantity)
 	}
 
 	return nil

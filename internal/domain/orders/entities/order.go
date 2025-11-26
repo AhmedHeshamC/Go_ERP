@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
+	apperrors "erpgo/pkg/errors"
 )
 
 // OrderStatus represents the status of an order
@@ -712,11 +713,12 @@ func (o *Order) validateTrackingInfo() error {
 func (o *Order) ChangeStatus(newStatus OrderStatus, reason string) error {
 	// Validate status transition
 	if !IsValidStatusTransition(o.Status, newStatus) {
-		return fmt.Errorf("invalid status transition from %s to %s", o.Status, newStatus)
+		return apperrors.NewInvalidTransitionError(string(o.Status), string(newStatus))
 	}
 
-	// Store previous status
-	o.PreviousStatus = &o.Status
+	// Store previous status (make a copy to avoid pointer issues)
+	prevStatus := o.Status
+	o.PreviousStatus = &prevStatus
 
 	// Update status
 	o.Status = newStatus
@@ -1239,8 +1241,9 @@ func (oi *OrderItem) CalculateTotals() {
 	// Calculate subtotal before discount
 	subtotal := oi.UnitPrice.Mul(decimal.NewFromInt(int64(oi.Quantity)))
 
-	// Apply discount
-	afterDiscount := subtotal.Sub(oi.DiscountAmount)
+	// Apply discount (DiscountAmount is per-item, so multiply by quantity)
+	totalDiscount := oi.DiscountAmount.Mul(decimal.NewFromInt(int64(oi.Quantity)))
+	afterDiscount := subtotal.Sub(totalDiscount)
 
 	// Calculate tax
 	oi.TaxAmount = afterDiscount.Mul(oi.TaxRate).Div(decimal.NewFromInt(100))
@@ -1610,9 +1613,7 @@ func (c *Customer) validateMetadata() error {
 
 // GetFullName returns the customer's full name
 func (c *Customer) GetFullName() string {
-	if c.Type == "BUSINESS" && c.CompanyName != nil && strings.TrimSpace(*c.CompanyName) != "" {
-		return *c.CompanyName
-	}
+	// Always return the person's name, regardless of customer type
 	return fmt.Sprintf("%s %s", strings.TrimSpace(c.FirstName), strings.TrimSpace(c.LastName))
 }
 
@@ -1953,9 +1954,9 @@ func (oa *OrderAddress) ValidateAddress() bool {
 		usZipRegex := regexp.MustCompile(`^\d{5}(-\d{4})?$`)
 		return usZipRegex.MatchString(strings.TrimSpace(oa.PostalCode))
 	case "CA", "CAN", "CANADA":
-		// Canadian postal code validation (A1A 1A1 format)
-		caPostalRegex := regexp.MustCompile(`^[A-Z]\d[A-Z] \d[A-Z]\d$`)
-		return caPostalRegex.MatchString(strings.ToUpper(strings.ReplaceAll(oa.PostalCode, " ", "")))
+		// Canadian postal code validation (A1A 1A1 or A1A1A1 format)
+		caPostalRegex := regexp.MustCompile(`^[A-Z]\d[A-Z]\s?\d[A-Z]\d$`)
+		return caPostalRegex.MatchString(strings.ToUpper(oa.PostalCode))
 	case "GB", "UK", "UNITED KINGDOM":
 		// UK postcode validation (basic format)
 		ukPostcodeRegex := regexp.MustCompile(`^[A-Z]{1,2}\d[A-Z\d]? \d[A-Z]{2}$`)

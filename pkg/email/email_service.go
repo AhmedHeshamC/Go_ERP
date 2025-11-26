@@ -185,6 +185,7 @@ func (s *SMTPService) SendEmail(content *entities.EmailContent) error {
 		tlsConfig := &tls.Config{
 			InsecureSkipVerify: false,
 			ServerName:         s.config.SMTPHost,
+			MinVersion:         tls.VersionTLS12, // G402: Set minimum TLS version to 1.2
 		}
 
 		if s.config.UseSSL {

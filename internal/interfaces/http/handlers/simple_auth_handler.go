@@ -5,17 +5,23 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 
 	"erpgo/internal/application/services/user"
 	"erpgo/internal/domain/users/entities"
 	"erpgo/internal/interfaces/http/dto"
+	"erpgo/internal/interfaces/http/middleware"
+	"erpgo/pkg/audit"
+	"erpgo/pkg/ratelimit"
 )
 
 // AuthHandler handles authentication HTTP requests
 type AuthHandler struct {
 	userService user.Service
 	logger       zerolog.Logger
+	rateLimiter ratelimit.EnhancedRateLimiter
+	auditLogger audit.AuditLogger
 }
 
 // NewAuthHandler creates a new auth handler
@@ -23,7 +29,19 @@ func NewAuthHandler(userService user.Service, logger zerolog.Logger) *AuthHandle
 	return &AuthHandler{
 		userService: userService,
 		logger:       logger,
+		rateLimiter: nil, // Will be set via SetRateLimiter if needed
+		auditLogger: nil, // Will be set via SetAuditLogger if needed
 	}
+}
+
+// SetAuditLogger sets the audit logger for the auth handler
+func (h *AuthHandler) SetAuditLogger(logger audit.AuditLogger) {
+	h.auditLogger = logger
+}
+
+// SetRateLimiter sets the rate limiter for the auth handler
+func (h *AuthHandler) SetRateLimiter(limiter ratelimit.EnhancedRateLimiter) {
+	h.rateLimiter = limiter
 }
 
 // Login handles user login
@@ -36,6 +54,7 @@ func NewAuthHandler(userService user.Service, logger zerolog.Logger) *AuthHandle
 // @Success 200 {object} dto.LoginResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 401 {object} dto.ErrorResponse
+// @Failure 429 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /api/v1/auth/login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
@@ -48,6 +67,51 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
+	// Check rate limit if rate limiter is configured
+	if h.rateLimiter != nil {
+		// Check rate limit by IP
+		ipAddress := c.ClientIP()
+		allowed, err := h.rateLimiter.AllowLogin(c.Request.Context(), ipAddress)
+		if err != nil || !allowed {
+			h.logger.Warn().
+				Str("ip", ipAddress).
+				Str("email", req.Email).
+				Msg("Rate limit exceeded for login attempt")
+
+			// Check if account is locked
+			if err != nil {
+				if rateLimitErr, ok := err.(*ratelimit.RateLimitError); ok {
+					c.JSON(http.StatusTooManyRequests, dto.ErrorResponse{
+						Error:   "Rate limit exceeded",
+						Details: rateLimitErr.Message,
+					})
+					return
+				}
+			}
+
+			c.JSON(http.StatusTooManyRequests, dto.ErrorResponse{
+				Error:   "Too many login attempts",
+				Details: "Please try again later",
+			})
+			return
+		}
+
+		// Check if account is locked
+		isLocked, unlockTime, err := h.rateLimiter.IsAccountLocked(c.Request.Context(), req.Email)
+		if err == nil && isLocked {
+			h.logger.Warn().
+				Str("email", req.Email).
+				Time("unlock_time", unlockTime).
+				Msg("Login attempt for locked account")
+
+			c.JSON(http.StatusTooManyRequests, dto.ErrorResponse{
+				Error:   "Account locked",
+				Details: "Account is locked due to too many failed login attempts. Please try again at " + unlockTime.Format(time.RFC3339),
+			})
+			return
+		}
+	}
+
 	// Convert to service request
 	serviceReq := &user.LoginRequest{
 		Email:    req.Email,
@@ -57,20 +121,32 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	// Call service
 	response, err := h.userService.Login(c, serviceReq)
 	if err != nil {
-		if err == user.ErrInvalidCredentials {
-			c.JSON(http.StatusUnauthorized, dto.ErrorResponse{
-				Error:   "Invalid credentials",
-				Details: "The email or password you provided is incorrect",
-			})
-			return
+		// Record failed login attempt if rate limiter is configured
+		if h.rateLimiter != nil {
+			if recordErr := h.rateLimiter.RecordFailedLogin(c.Request.Context(), req.Email); recordErr != nil {
+				h.logger.Error().Err(recordErr).Str("email", req.Email).Msg("Failed to record failed login attempt")
+			}
+		}
+
+		// Log failed login attempt to audit log
+		if h.auditLogger != nil {
+			auditEvent := audit.NewLoginFailedEvent(req.Email, c.ClientIP(), c.Request.UserAgent(), err.Error())
+			if auditErr := h.auditLogger.LogEvent(c.Request.Context(), auditEvent); auditErr != nil {
+				h.logger.Error().Err(auditErr).Msg("Failed to log audit event for failed login")
+			}
 		}
 
 		h.logger.Error().Err(err).Str("email", req.Email).Msg("Failed to login user")
-		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error:   "Login failed",
-			Details: err.Error(),
-		})
+		middleware.HandleError(c, err)
 		return
+	}
+
+	// Log successful login to audit log
+	if h.auditLogger != nil {
+		auditEvent := audit.NewLoginEvent(response.User.ID, c.ClientIP(), c.Request.UserAgent())
+		if auditErr := h.auditLogger.LogEvent(c.Request.Context(), auditEvent); auditErr != nil {
+			h.logger.Error().Err(auditErr).Msg("Failed to log audit event for successful login")
+		}
 	}
 
 	// Convert to DTO response
@@ -228,6 +304,21 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 		return
 	}
 
+	// Log logout to audit log
+	// Try to get user ID from context (if available from auth middleware)
+	if h.auditLogger != nil {
+		if userIDVal, exists := c.Get("user_id"); exists {
+			if userID, ok := userIDVal.(string); ok {
+				if parsedUserID, parseErr := uuid.Parse(userID); parseErr == nil {
+					auditEvent := audit.NewLogoutEvent(parsedUserID, c.ClientIP(), c.Request.UserAgent())
+					if auditErr := h.auditLogger.LogEvent(c.Request.Context(), auditEvent); auditErr != nil {
+						h.logger.Error().Err(auditErr).Msg("Failed to log audit event for logout")
+					}
+				}
+			}
+		}
+	}
+
 	c.JSON(http.StatusOK, dto.SuccessResponse{
 		Message: "Logged out successfully",
 	})
@@ -302,11 +393,45 @@ func (h *AuthHandler) ResetPassword(c *gin.Context) {
 	err := h.userService.ResetPassword(c, serviceReq)
 	if err != nil {
 		h.logger.Error().Err(err).Msg("Failed to reset password")
+		
+		// Log failed password change to audit log
+		if h.auditLogger != nil {
+			// We don't have user ID here, but we can log the attempt
+			auditEvent := &audit.AuditEvent{
+				EventType: audit.EventTypePasswordChange,
+				Action:    "password_reset_failed",
+				IPAddress: c.ClientIP(),
+				UserAgent: c.Request.UserAgent(),
+				Success:   false,
+				Details: map[string]interface{}{
+					"error": err.Error(),
+				},
+			}
+			if auditErr := h.auditLogger.LogEvent(c.Request.Context(), auditEvent); auditErr != nil {
+				h.logger.Error().Err(auditErr).Msg("Failed to log audit event for failed password reset")
+			}
+		}
+		
 		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
 			Error:   "Failed to reset password",
 			Details: err.Error(),
 		})
 		return
+	}
+
+	// Log successful password change to audit log
+	if h.auditLogger != nil {
+		// We don't have user ID here, but we can log the success
+		auditEvent := &audit.AuditEvent{
+			EventType: audit.EventTypePasswordChange,
+			Action:    "password_reset_success",
+			IPAddress: c.ClientIP(),
+			UserAgent: c.Request.UserAgent(),
+			Success:   true,
+		}
+		if auditErr := h.auditLogger.LogEvent(c.Request.Context(), auditEvent); auditErr != nil {
+			h.logger.Error().Err(auditErr).Msg("Failed to log audit event for successful password reset")
+		}
 	}
 
 	c.JSON(http.StatusOK, dto.SuccessResponse{

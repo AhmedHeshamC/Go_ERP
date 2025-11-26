@@ -9,6 +9,7 @@ import (
 
 	"github.com/caarlos0/env/v10"
 	"github.com/joho/godotenv"
+	"erpgo/pkg/secrets"
 )
 
 // Config holds the application configuration
@@ -87,9 +88,10 @@ type Config struct {
 	TracingURL     string `env:"TRACING_URL"`
 
 	// Security
-	BcryptCost       int  `env:"BCRYPT_COST" envDefault:"12"`
-	MaxLoginAttempts int  `env:"MAX_LOGIN_ATTEMPTS" envDefault:"5"`
+	BcryptCost       int           `env:"BCRYPT_COST" envDefault:"12"`
+	MaxLoginAttempts int           `env:"MAX_LOGIN_ATTEMPTS" envDefault:"5"`
 	LockoutDuration  time.Duration `env:"LOCKOUT_DURATION" envDefault:"15m"`
+	PasswordPepper   string        `env:"PASSWORD_PEPPER" envDefault:""`
 
 	// API configuration
 	APIVersion     string `env:"API_VERSION" envDefault:"v1"`
@@ -139,6 +141,143 @@ func Load() (*Config, error) {
 	// These are already parsed by env/v10 from comma-separated env vars
 
 	return cfg, nil
+}
+
+// LoadWithSecretManager loads configuration using SecretManager for enhanced security
+func LoadWithSecretManager() (*Config, *secrets.SecretManager, error) {
+	// Try to load .env file if it exists
+	if err := godotenv.Load(); err != nil && !os.IsNotExist(err) {
+		return nil, nil, fmt.Errorf("error loading .env file: %w", err)
+	}
+
+	// Create secret manager
+	secretMgr := secrets.NewSecretManager(secrets.SourceEnvironment)
+
+	// Load and validate JWT secret
+	jwtSecret, err := secretMgr.LoadSecret("JWT_SECRET", secrets.NewJWTSecretValidator(256))
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to load JWT_SECRET: %w", err)
+	}
+
+	// Load and validate password pepper
+	pepperValidator := secrets.NewPepperValidator([]string{
+		"erpgo-secret-pepper-change-in-production",
+		"default-pepper",
+		"change-me",
+		"pepper",
+		"secret",
+	})
+	passwordPepper, err := secretMgr.LoadSecret("PASSWORD_PEPPER", pepperValidator)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to load PASSWORD_PEPPER: %w", err)
+	}
+
+	// Load database URL with validation
+	databaseURL, err := secretMgr.LoadSecret("DATABASE_URL", secrets.NewDatabaseURLValidator())
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to load DATABASE_URL: %w", err)
+	}
+
+	// Load refresh secret (optional, defaults to JWT secret if not provided)
+	refreshSecret, err := secretMgr.LoadSecretWithDefault("REFRESH_SECRET", jwtSecret, secrets.NewJWTSecretValidator(256))
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to load REFRESH_SECRET: %w", err)
+	}
+
+	// Validate all secrets are loaded
+	if err := secretMgr.ValidateAll(); err != nil {
+		return nil, nil, fmt.Errorf("secret validation failed: %w", err)
+	}
+
+	// Now load the rest of the config
+	cfg := &Config{}
+	if err := env.Parse(cfg); err != nil {
+		return nil, nil, fmt.Errorf("error parsing environment variables: %w", err)
+	}
+
+	// Override with validated secrets
+	cfg.JWTSecret = jwtSecret
+	cfg.PasswordPepper = passwordPepper
+	cfg.DatabaseURL = databaseURL
+	// Store refresh secret if different from JWT secret
+	if refreshSecret != jwtSecret {
+		// We could add a RefreshSecret field to Config if needed
+		// For now, we'll use the same secret
+	}
+
+	// Populate structured configuration objects
+	cfg.populateStructuredConfigs()
+
+	// Validate required configuration
+	if err := cfg.validate(); err != nil {
+		return nil, nil, fmt.Errorf("configuration validation failed: %w", err)
+	}
+
+	return cfg, &secretMgr, nil
+}
+
+// LoadWithSecretValidation loads configuration with enhanced secret validation
+// This function validates secrets meet production security requirements
+func LoadWithSecretValidation() (*Config, error) {
+	cfg, err := Load()
+	if err != nil {
+		return nil, err
+	}
+
+	// Additional secret validation for production
+	if err := validateSecrets(cfg); err != nil {
+		return nil, fmt.Errorf("secret validation failed: %w", err)
+	}
+
+	return cfg, nil
+}
+
+// validateSecrets performs enhanced validation on secrets
+func validateSecrets(cfg *Config) error {
+	// Validate JWT secret
+	if cfg.JWTSecret == "" || cfg.JWTSecret == "your-super-secret-jwt-key" {
+		return fmt.Errorf("JWT_SECRET must be set to a secure value (not default)")
+	}
+
+	if len(cfg.JWTSecret) < 32 {
+		return fmt.Errorf("JWT_SECRET must be at least 32 bytes long")
+	}
+
+	// Check for weak JWT secrets
+	weakSecrets := []string{
+		"secret", "jwt-secret", "change-me", "default", "test", "password", "123456",
+	}
+	jwtLower := strings.ToLower(cfg.JWTSecret)
+	for _, weak := range weakSecrets {
+		if jwtLower == weak {
+			return fmt.Errorf("JWT_SECRET is set to a weak value")
+		}
+	}
+
+	// Validate password pepper
+	if cfg.PasswordPepper == "" {
+		return fmt.Errorf("PASSWORD_PEPPER must be set")
+	}
+
+	if cfg.PasswordPepper == "erpgo-secret-pepper-change-in-production" {
+		return fmt.Errorf("PASSWORD_PEPPER is set to the default value and must be changed")
+	}
+
+	if len(cfg.PasswordPepper) < 32 {
+		return fmt.Errorf("PASSWORD_PEPPER must be at least 32 characters long")
+	}
+
+	// Validate database URL
+	if cfg.DatabaseURL == "" {
+		return fmt.Errorf("DATABASE_URL is required")
+	}
+
+	// Warn about insecure database connections in production
+	if cfg.IsProduction() && strings.Contains(cfg.DatabaseURL, "sslmode=disable") {
+		return fmt.Errorf("DATABASE_URL should not disable SSL in production")
+	}
+
+	return nil
 }
 
 // validate validates the configuration

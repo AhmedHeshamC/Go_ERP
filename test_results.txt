@@ -1,0 +1,1405 @@
+# erpgo/tests/e2e
+tests/e2e/complete_order_workflow_test.go:25:2: package erpgo/internal/domain/customers/repositories is not in std (/usr/local/go/src/erpgo/internal/domain/customers/repositories)
+FAIL	erpgo/tests/e2e [setup failed]
+# erpgo/tests/integration/api
+tests/integration/api/monitoring_test.go:20:2: package erpgo/internal/application/services/monitoring is not in std (/usr/local/go/src/erpgo/internal/application/services/monitoring)
+FAIL	erpgo/tests/integration/api [setup failed]
+# erpgo/tests/performance
+tests/e2e/complete_order_workflow_test.go:25:2: package erpgo/internal/domain/customers/repositories is not in std (/usr/local/go/src/erpgo/internal/domain/customers/repositories)
+FAIL	erpgo/tests/performance [setup failed]
+# erpgo/tests/quality
+tests/quality/production_gates_test.go:453:49: expected ')', found newline
+FAIL	erpgo/tests/quality [setup failed]
+# erpgo/internal/interfaces/http/middleware
+internal/interfaces/http/middleware/security_coordinator.go:26:29: undefined: Auditor
+internal/interfaces/http/middleware/security_coordinator.go:57:8: undefined: AuditConfig
+internal/interfaces/http/middleware/security_coordinator.go:83:25: undefined: DefaultAuditConfig
+internal/interfaces/http/middleware/security_coordinator.go:131:29: undefined: NewAuditor
+internal/interfaces/http/middleware/middleware.go:85:36: undefined: AuditConfig
+internal/interfaces/http/middleware/middleware.go:86:9: undefined: AuditLogging
+FAIL	erpgo/cmd/api [build failed]
+?   	erpgo/cmd/export-jwt	[no test files]
+?   	erpgo/cmd/generate-jwt	[no test files]
+?   	erpgo/docs	[no test files]
+?   	erpgo/internal/application/services/customer	[no test files]
+?   	erpgo/internal/application/services/email	[no test files]
+?   	erpgo/internal/application/services/file	[no test files]
+# erpgo/internal/application/services/order [erpgo/internal/application/services/order.test]
+internal/application/services/order/order_inventory_service_test.go:26:73: undefined: entities
+internal/application/services/order/order_inventory_service_test.go:40:117: undefined: entities
+internal/application/services/order/order_inventory_service_test.go:48:74: undefined: entities
+internal/application/services/order/order_inventory_service_test.go:53:100: undefined: entities
+internal/application/services/order/order_inventory_service_test.go:58:80: undefined: entities
+internal/application/services/order/order_inventory_service_test.go:69:87: undefined: entities
+internal/application/services/order/order_inventory_service_test.go:74:131: undefined: entities
+internal/application/services/order/order_inventory_service_test.go:79:189: undefined: entities
+internal/application/services/order/order_inventory_service_test.go:95:112: undefined: entities
+internal/application/services/order/order_inventory_service_test.go:146:81: undefined: LowStockAlert
+internal/application/services/order/order_inventory_service_test.go:146:81: too many errors
+# erpgo/internal/application/services/inventory [erpgo/internal/application/services/inventory.test]
+internal/application/services/inventory/inventory_service_transaction_test.go:163:93: undefined: repositories.InventoryTransactionFilter
+internal/application/services/inventory/inventory_service_transaction_test.go:171:94: undefined: repositories.InventoryTransactionFilter
+internal/application/services/inventory/inventory_service_transaction_test.go:217:24: cannot use mockInventoryRepo (variable of type *MockInventoryRepository) as repositories.InventoryRepository value in argument to NewService: *MockInventoryRepository does not implement repositories.InventoryRepository (missing method BulkAdjustStock)
+internal/application/services/inventory/inventory_service_transaction_test.go:217:43: cannot use mockWarehouseRepo (variable of type *MockWarehouseRepository) as repositories.WarehouseRepository value in argument to NewService: *MockWarehouseRepository does not implement repositories.WarehouseRepository (missing method BulkAssignManager)
+internal/application/services/inventory/inventory_service_transaction_test.go:217:62: cannot use mockTransactionRepo (variable of type *MockInventoryTransactionRepository) as repositories.InventoryTransactionRepository value in argument to NewService: *MockInventoryTransactionRepository does not implement repositories.InventoryTransactionRepository (missing method ApproveTransaction)
+FAIL	erpgo/internal/application/services/inventory [build failed]
+FAIL	erpgo/internal/application/services/order [build failed]
+?   	erpgo/internal/application/services/product	[no test files]
+# erpgo/internal/application/services/user [erpgo/internal/application/services/user.test]
+internal/application/services/user/user_service_test.go:28:38: cannot use mockRoleRepo (variable of type *MockRoleRepository) as repositories.RoleRepository value in argument to NewService: *MockRoleRepository does not implement repositories.RoleRepository (missing method AddPermissionToRole)
+internal/application/services/user/user_service_test.go:28:70: cannot use mockPasswordSvc (variable of type *MockPasswordService) as *"erpgo/pkg/auth".PasswordService value in argument to NewService
+internal/application/services/user/user_service_test.go:28:87: cannot use mockJWTSvc (variable of type *MockJWTService) as *"erpgo/pkg/auth".JWTService value in argument to NewService
+internal/application/services/user/user_service_test.go:75:38: cannot use mockRoleRepo (variable of type *MockRoleRepository) as repositories.RoleRepository value in argument to NewService: *MockRoleRepository does not implement repositories.RoleRepository (missing method AddPermissionToRole)
+internal/application/services/user/user_service_test.go:75:70: cannot use mockPasswordSvc (variable of type *MockPasswordService) as *"erpgo/pkg/auth".PasswordService value in argument to NewService
+internal/application/services/user/user_service_test.go:75:87: cannot use mockJWTSvc (variable of type *MockJWTService) as *"erpgo/pkg/auth".JWTService value in argument to NewService
+internal/application/services/user/user_service_test.go:108:38: cannot use mockRoleRepo (variable of type *MockRoleRepository) as repositories.RoleRepository value in argument to NewService: *MockRoleRepository does not implement repositories.RoleRepository (missing method AddPermissionToRole)
+internal/application/services/user/user_service_test.go:108:70: cannot use mockPasswordSvc (variable of type *MockPasswordService) as *"erpgo/pkg/auth".PasswordService value in argument to NewService
+internal/application/services/user/user_service_test.go:108:87: cannot use mockJWTSvc (variable of type *MockJWTService) as *"erpgo/pkg/auth".JWTService value in argument to NewService
+internal/application/services/user/user_service_test.go:150:38: cannot use mockRoleRepo (variable of type *MockRoleRepository) as repositories.RoleRepository value in argument to NewService: *MockRoleRepository does not implement repositories.RoleRepository (missing method AddPermissionToRole)
+internal/application/services/user/user_service_test.go:150:38: too many errors
+FAIL	erpgo/internal/application/services/user [build failed]
+# erpgo/internal/infrastructure/repositories [erpgo/internal/infrastructure/repositories.test]
+internal/infrastructure/repositories/inventory_repository_test.go:87:2: declared and not used: warehouse2
+internal/infrastructure/repositories/inventory_repository_test.go:95:13: undefined: WarehouseFilter
+internal/infrastructure/repositories/inventory_repository_test.go:104:19: undefined: WarehouseFilter
+internal/infrastructure/repositories/inventory_repository_test.go:186:2: declared and not used: inventory
+internal/infrastructure/repositories/inventory_repository_test.go:214:2: declared and not used: inventory
+internal/infrastructure/repositories/inventory_repository_test.go:306:19: undefined: StockAdjustment
+internal/infrastructure/repositories/inventory_repository_test.go:377:2: declared and not used: transaction1
+internal/infrastructure/repositories/inventory_repository_test.go:378:2: declared and not used: transaction2
+internal/infrastructure/repositories/inventory_repository_test.go:380:13: undefined: TransactionFilter
+internal/infrastructure/repositories/inventory_repository_test.go:458:13: undefined: TransactionFilter
+internal/infrastructure/repositories/inventory_repository_test.go:458:13: too many errors
+# erpgo/pkg/cache [erpgo/pkg/cache.test]
+pkg/cache/performance_test.go:61:31: undefined: TypeMetrics
+pkg/cache/performance_test.go:319:36: cannot use b (variable of type *testing.B) as *testing.T value in argument to setupTestCache
+pkg/cache/performance_test.go:326:10: cannot use 99.99 (untyped float constant) as decimal.Decimal value in struct literal
+pkg/cache/performance_test.go:348:36: cannot use b (variable of type *testing.B) as *testing.T value in argument to setupTestCache
+pkg/cache/performance_test.go:356:11: cannot use float64(i) + 0.99 (value of type float64) as decimal.Decimal value in struct literal
+pkg/cache/performance_test.go:391:14: cannot use float64(i) + 0.99 (value of type float64) as decimal.Decimal value in struct literal
+pkg/cache/performance_test.go:506:9: undefined: ProductCache
+pkg/cache/performance_test.go:529:9: undefined: ProductCache
+pkg/cache/performance_test.go:551:37: undefined: ProductCache
+pkg/cache/performance_test.go:561:78: undefined: ProductCache
+pkg/cache/performance_test.go:391:14: too many errors
+=== RUN   TestWarehouse
+=== RUN   TestWarehouse/ValidWarehouse
+=== RUN   TestWarehouse/EmptyName
+=== RUN   TestWarehouse/InvalidCode
+=== RUN   TestWarehouse/BusinessLogic
+--- PASS: TestWarehouse (0.00s)
+    --- PASS: TestWarehouse/ValidWarehouse (0.00s)
+    --- PASS: TestWarehouse/EmptyName (0.00s)
+    --- PASS: TestWarehouse/InvalidCode (0.00s)
+    --- PASS: TestWarehouse/BusinessLogic (0.00s)
+=== RUN   TestWarehouseExtended
+=== RUN   TestWarehouseExtended/ValidExtendedWarehouse
+=== RUN   TestWarehouseExtended/InvalidType
+=== RUN   TestWarehouseExtended/UtilizationCalculation
+--- PASS: TestWarehouseExtended (0.00s)
+    --- PASS: TestWarehouseExtended/ValidExtendedWarehouse (0.00s)
+    --- PASS: TestWarehouseExtended/InvalidType (0.00s)
+    --- PASS: TestWarehouseExtended/UtilizationCalculation (0.00s)
+=== RUN   TestInventory
+=== RUN   TestInventory/ValidInventory
+=== RUN   TestInventory/ReservedExceedsOnHand
+=== RUN   TestInventory/StockCalculations
+=== RUN   TestInventory/StockOperations
+--- PASS: TestInventory (0.00s)
+    --- PASS: TestInventory/ValidInventory (0.00s)
+    --- PASS: TestInventory/ReservedExceedsOnHand (0.00s)
+    --- PASS: TestInventory/StockCalculations (0.00s)
+    --- PASS: TestInventory/StockOperations (0.00s)
+=== RUN   TestInventoryTransaction
+=== RUN   TestInventoryTransaction/ValidPurchaseTransaction
+=== RUN   TestInventoryTransaction/ValidSaleTransaction
+=== RUN   TestInventoryTransaction/InvalidTransactionType
+=== RUN   TestInventoryTransaction/ZeroQuantity
+=== RUN   TestInventoryTransaction/TransferTransaction
+=== RUN   TestInventoryTransaction/TransactionWithBatchInfo
+=== RUN   TestInventoryTransaction/CostCalculation
+=== RUN   TestInventoryTransaction/ApprovalWorkflow
+--- PASS: TestInventoryTransaction (0.00s)
+    --- PASS: TestInventoryTransaction/ValidPurchaseTransaction (0.00s)
+    --- PASS: TestInventoryTransaction/ValidSaleTransaction (0.00s)
+    --- PASS: TestInventoryTransaction/InvalidTransactionType (0.00s)
+    --- PASS: TestInventoryTransaction/ZeroQuantity (0.00s)
+    --- PASS: TestInventoryTransaction/TransferTransaction (0.00s)
+    --- PASS: TestInventoryTransaction/TransactionWithBatchInfo (0.00s)
+    --- PASS: TestInventoryTransaction/CostCalculation (0.00s)
+    --- PASS: TestInventoryTransaction/ApprovalWorkflow (0.00s)
+=== RUN   TestInventoryTransactionFilter
+=== RUN   TestInventoryTransactionFilter/ValidFilter
+=== RUN   TestInventoryTransactionFilter/InvalidDateRange
+=== RUN   TestInventoryTransactionFilter/InvalidPagination
+--- PASS: TestInventoryTransactionFilter (0.00s)
+    --- PASS: TestInventoryTransactionFilter/ValidFilter (0.00s)
+    --- PASS: TestInventoryTransactionFilter/InvalidDateRange (0.00s)
+    --- PASS: TestInventoryTransactionFilter/InvalidPagination (0.00s)
+=== RUN   TestGetSummary
+--- PASS: TestGetSummary (0.00s)
+PASS
+ok  	erpgo/internal/domain/inventory/entities	0.329s
+?   	erpgo/internal/domain/inventory/repositories	[no test files]
+=== RUN   TestIsValidStatusTransition
+=== RUN   TestIsValidStatusTransition/valid_transition:_draft_to_pending
+=== RUN   TestIsValidStatusTransition/valid_transition:_pending_to_confirmed
+=== RUN   TestIsValidStatusTransition/valid_transition:_confirmed_to_processing
+=== RUN   TestIsValidStatusTransition/valid_transition:_processing_to_shipped
+=== RUN   TestIsValidStatusTransition/valid_transition:_shipped_to_delivered
+=== RUN   TestIsValidStatusTransition/valid_transition:_pending_to_cancelled
+=== RUN   TestIsValidStatusTransition/invalid_transition:_draft_to_shipped
+=== RUN   TestIsValidStatusTransition/invalid_transition:_delivered_to_pending
+=== RUN   TestIsValidStatusTransition/invalid_transition:_cancelled_to_confirmed
+=== RUN   TestIsValidStatusTransition/terminal_status:_delivered_cannot_transition
+--- PASS: TestIsValidStatusTransition (0.00s)
+    --- PASS: TestIsValidStatusTransition/valid_transition:_draft_to_pending (0.00s)
+    --- PASS: TestIsValidStatusTransition/valid_transition:_pending_to_confirmed (0.00s)
+    --- PASS: TestIsValidStatusTransition/valid_transition:_confirmed_to_processing (0.00s)
+    --- PASS: TestIsValidStatusTransition/valid_transition:_processing_to_shipped (0.00s)
+    --- PASS: TestIsValidStatusTransition/valid_transition:_shipped_to_delivered (0.00s)
+    --- PASS: TestIsValidStatusTransition/valid_transition:_pending_to_cancelled (0.00s)
+    --- PASS: TestIsValidStatusTransition/invalid_transition:_draft_to_shipped (0.00s)
+    --- PASS: TestIsValidStatusTransition/invalid_transition:_delivered_to_pending (0.00s)
+    --- PASS: TestIsValidStatusTransition/invalid_transition:_cancelled_to_confirmed (0.00s)
+    --- PASS: TestIsValidStatusTransition/terminal_status:_delivered_cannot_transition (0.00s)
+=== RUN   TestIsTerminalStatus
+=== RUN   TestIsTerminalStatus/terminal_status:_delivered
+=== RUN   TestIsTerminalStatus/terminal_status:_cancelled
+=== RUN   TestIsTerminalStatus/terminal_status:_refunded
+=== RUN   TestIsTerminalStatus/non-terminal_status:_draft
+=== RUN   TestIsTerminalStatus/non-terminal_status:_pending
+=== RUN   TestIsTerminalStatus/non-terminal_status:_confirmed
+=== RUN   TestIsTerminalStatus/non-terminal_status:_processing
+=== RUN   TestIsTerminalStatus/non-terminal_status:_shipped
+--- PASS: TestIsTerminalStatus (0.00s)
+    --- PASS: TestIsTerminalStatus/terminal_status:_delivered (0.00s)
+    --- PASS: TestIsTerminalStatus/terminal_status:_cancelled (0.00s)
+    --- PASS: TestIsTerminalStatus/terminal_status:_refunded (0.00s)
+    --- PASS: TestIsTerminalStatus/non-terminal_status:_draft (0.00s)
+    --- PASS: TestIsTerminalStatus/non-terminal_status:_pending (0.00s)
+    --- PASS: TestIsTerminalStatus/non-terminal_status:_confirmed (0.00s)
+    --- PASS: TestIsTerminalStatus/non-terminal_status:_processing (0.00s)
+    --- PASS: TestIsTerminalStatus/non-terminal_status:_shipped (0.00s)
+=== RUN   TestGetTerminalStatuses
+--- PASS: TestGetTerminalStatuses (0.00s)
+=== RUN   TestOrder_Validate
+=== RUN   TestOrder_Validate/valid_order
+=== RUN   TestOrder_Validate/missing_ID
+=== RUN   TestOrder_Validate/invalid_order_number_format
+=== RUN   TestOrder_Validate/missing_customer_ID
+=== RUN   TestOrder_Validate/negative_total_amount
+=== RUN   TestOrder_Validate/invalid_currency_format
+=== RUN   TestOrder_Validate/order_date_in_future
+--- PASS: TestOrder_Validate (0.00s)
+    --- PASS: TestOrder_Validate/valid_order (0.00s)
+    --- PASS: TestOrder_Validate/missing_ID (0.00s)
+    --- PASS: TestOrder_Validate/invalid_order_number_format (0.00s)
+    --- PASS: TestOrder_Validate/missing_customer_ID (0.00s)
+    --- PASS: TestOrder_Validate/negative_total_amount (0.00s)
+    --- PASS: TestOrder_Validate/invalid_currency_format (0.00s)
+    --- PASS: TestOrder_Validate/order_date_in_future (0.00s)
+=== RUN   TestOrder_ChangeStatus
+=== RUN   TestOrder_ChangeStatus/valid_status_transition
+    entities_test.go:383: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/internal/domain/orders/entities/entities_test.go:383
+        	Error:      	Not equal: 
+        	            	expected: "PENDING"
+        	            	actual  : "CONFIRMED"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(entities.OrderStatus) (len=7) "PENDING"
+        	            	+(entities.OrderStatus) (len=9) "CONFIRMED"
+        	            	 
+        	Test:       	TestOrder_ChangeStatus/valid_status_transition
+=== RUN   TestOrder_ChangeStatus/invalid_status_transition
+    entities_test.go:389: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/internal/domain/orders/entities/entities_test.go:389
+        	Error:      	"BAD_REQUEST: invalid state transition" does not contain "invalid status transition"
+        	Test:       	TestOrder_ChangeStatus/invalid_status_transition
+=== RUN   TestOrder_ChangeStatus/transition_to_cancelled_sets_cancelled_date
+--- FAIL: TestOrder_ChangeStatus (0.00s)
+    --- FAIL: TestOrder_ChangeStatus/valid_status_transition (0.00s)
+    --- FAIL: TestOrder_ChangeStatus/invalid_status_transition (0.00s)
+    --- PASS: TestOrder_ChangeStatus/transition_to_cancelled_sets_cancelled_date (0.00s)
+=== RUN   TestOrder_PaymentMethods
+=== RUN   TestOrder_PaymentMethods/add_valid_payment
+=== RUN   TestOrder_PaymentMethods/complete_payment
+    entities_test.go:415: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/internal/domain/orders/entities/entities_test.go:415
+        	Error:      	Not equal: 
+        	            	expected: decimal.Decimal{value:(*big.Int)(0x14000422aa0), exp:2}
+        	            	actual  : decimal.Decimal{value:(*big.Int)(0x14000422a40), exp:1}
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -4,6 +4,6 @@
+        	            	   abs: (big.nat) (len=1) {
+        	            	-   (big.Word) 1
+        	            	+   (big.Word) 10
+        	            	   }
+        	            	  }),
+        	            	- exp: (int32) 2
+        	            	+ exp: (int32) 1
+        	            	 }
+        	Test:       	TestOrder_PaymentMethods/complete_payment
+=== RUN   TestOrder_PaymentMethods/payment_exceeding_total
+=== RUN   TestOrder_PaymentMethods/negative_payment
+--- FAIL: TestOrder_PaymentMethods (0.00s)
+    --- PASS: TestOrder_PaymentMethods/add_valid_payment (0.00s)
+    --- FAIL: TestOrder_PaymentMethods/complete_payment (0.00s)
+    --- PASS: TestOrder_PaymentMethods/payment_exceeding_total (0.00s)
+    --- PASS: TestOrder_PaymentMethods/negative_payment (0.00s)
+=== RUN   TestOrder_RefundMethods
+=== RUN   TestOrder_RefundMethods/valid_refund
+=== RUN   TestOrder_RefundMethods/full_refund_changes_status
+    entities_test.go:447: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/internal/domain/orders/entities/entities_test.go:447
+        	Error:      	Not equal: 
+        	            	expected: decimal.Decimal{value:(*big.Int)(0x14000423020), exp:2}
+        	            	actual  : decimal.Decimal{value:(*big.Int)(0x14000422fc0), exp:0}
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -4,6 +4,6 @@
+        	            	   abs: (big.nat) (len=1) {
+        	            	-   (big.Word) 1
+        	            	+   (big.Word) 100
+        	            	   }
+        	            	  }),
+        	            	- exp: (int32) 2
+        	            	+ exp: (int32) 0
+        	            	 }
+        	Test:       	TestOrder_RefundMethods/full_refund_changes_status
+=== RUN   TestOrder_RefundMethods/refund_exceeding_paid_amount
+--- FAIL: TestOrder_RefundMethods (0.00s)
+    --- PASS: TestOrder_RefundMethods/valid_refund (0.00s)
+    --- FAIL: TestOrder_RefundMethods/full_refund_changes_status (0.00s)
+    --- PASS: TestOrder_RefundMethods/refund_exceeding_paid_amount (0.00s)
+=== RUN   TestOrder_BusinessLogic
+=== RUN   TestOrder_BusinessLogic/can_be_cancelled
+=== RUN   TestOrder_BusinessLogic/calculate_totals
+    entities_test.go:481: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/internal/domain/orders/entities/entities_test.go:481
+        	Error:      	Can not compare type "decimal.Decimal"
+        	Test:       	TestOrder_BusinessLogic/calculate_totals
+=== RUN   TestOrder_BusinessLogic/get_outstanding_balance
+=== RUN   TestOrder_BusinessLogic/update_tracking
+--- FAIL: TestOrder_BusinessLogic (0.00s)
+    --- PASS: TestOrder_BusinessLogic/can_be_cancelled (0.00s)
+    --- FAIL: TestOrder_BusinessLogic/calculate_totals (0.00s)
+    --- PASS: TestOrder_BusinessLogic/get_outstanding_balance (0.00s)
+    --- PASS: TestOrder_BusinessLogic/update_tracking (0.00s)
+=== RUN   TestOrderItem_Validate
+=== RUN   TestOrderItem_Validate/valid_order_item
+=== RUN   TestOrderItem_Validate/missing_ID
+=== RUN   TestOrderItem_Validate/invalid_quantity
+=== RUN   TestOrderItem_Validate/negative_unit_price
+=== RUN   TestOrderItem_Validate/discount_exceeding_unit_price
+--- PASS: TestOrderItem_Validate (0.00s)
+    --- PASS: TestOrderItem_Validate/valid_order_item (0.00s)
+    --- PASS: TestOrderItem_Validate/missing_ID (0.00s)
+    --- PASS: TestOrderItem_Validate/invalid_quantity (0.00s)
+    --- PASS: TestOrderItem_Validate/negative_unit_price (0.00s)
+    --- PASS: TestOrderItem_Validate/discount_exceeding_unit_price (0.00s)
+=== RUN   TestOrderItem_ShippingAndReturns
+=== RUN   TestOrderItem_ShippingAndReturns/ship_valid_quantity
+=== RUN   TestOrderItem_ShippingAndReturns/ship_remaining_quantity
+=== RUN   TestOrderItem_ShippingAndReturns/ship_more_than_ordered
+=== RUN   TestOrderItem_ShippingAndReturns/return_valid_quantity
+=== RUN   TestOrderItem_ShippingAndReturns/return_more_than_shipped
+--- PASS: TestOrderItem_ShippingAndReturns (0.00s)
+    --- PASS: TestOrderItem_ShippingAndReturns/ship_valid_quantity (0.00s)
+    --- PASS: TestOrderItem_ShippingAndReturns/ship_remaining_quantity (0.00s)
+    --- PASS: TestOrderItem_ShippingAndReturns/ship_more_than_ordered (0.00s)
+    --- PASS: TestOrderItem_ShippingAndReturns/return_valid_quantity (0.00s)
+    --- PASS: TestOrderItem_ShippingAndReturns/return_more_than_shipped (0.00s)
+=== RUN   TestOrderItem_CalculateTotals
+    entities_test.go:650: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/internal/domain/orders/entities/entities_test.go:650
+        	Error:      	Not equal: 
+        	            	expected: decimal.Decimal{value:(*big.Int)(0x14000465020), exp:-1}
+        	            	actual  : decimal.Decimal{value:(*big.Int)(0x14000464f00), exp:-16}
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -4,6 +4,6 @@
+        	            	   abs: (big.nat) (len=1) {
+        	            	-   (big.Word) 45
+        	            	+   (big.Word) 55000000000000000
+        	            	   }
+        	            	  }),
+        	            	- exp: (int32) -1
+        	            	+ exp: (int32) -16
+        	            	 }
+        	Test:       	TestOrderItem_CalculateTotals
+    entities_test.go:651: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/internal/domain/orders/entities/entities_test.go:651
+        	Error:      	Not equal: 
+        	            	expected: decimal.Decimal{value:(*big.Int)(0x14000465060), exp:-1}
+        	            	actual  : decimal.Decimal{value:(*big.Int)(0x14000464f60), exp:-16}
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -4,6 +4,6 @@
+        	            	   abs: (big.nat) (len=1) {
+        	            	-   (big.Word) 495
+        	            	+   (big.Word) 605000000000000000
+        	            	   }
+        	            	  }),
+        	            	- exp: (int32) -1
+        	            	+ exp: (int32) -16
+        	            	 }
+        	Test:       	TestOrderItem_CalculateTotals
+--- FAIL: TestOrderItem_CalculateTotals (0.00s)
+=== RUN   TestCustomer_Validate
+=== RUN   TestCustomer_Validate/valid_individual_customer
+=== RUN   TestCustomer_Validate/valid_business_customer
+=== RUN   TestCustomer_Validate/missing_customer_code
+=== RUN   TestCustomer_Validate/invalid_customer_type
+=== RUN   TestCustomer_Validate/credit_used_exceeds_credit_limit
+--- PASS: TestCustomer_Validate (0.00s)
+    --- PASS: TestCustomer_Validate/valid_individual_customer (0.00s)
+    --- PASS: TestCustomer_Validate/valid_business_customer (0.00s)
+    --- PASS: TestCustomer_Validate/missing_customer_code (0.00s)
+    --- PASS: TestCustomer_Validate/invalid_customer_type (0.00s)
+    --- PASS: TestCustomer_Validate/credit_used_exceeds_credit_limit (0.00s)
+=== RUN   TestCustomer_CreditMethods
+=== RUN   TestCustomer_CreditMethods/has_available_credit
+=== RUN   TestCustomer_CreditMethods/use_credit
+    entities_test.go:766: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/internal/domain/orders/entities/entities_test.go:766
+        	Error:      	Not equal: 
+        	            	expected: decimal.Decimal{value:(*big.Int)(0x140004642a0), exp:2}
+        	            	actual  : decimal.Decimal{value:(*big.Int)(0x14000464280), exp:1}
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -4,6 +4,6 @@
+        	            	   abs: (big.nat) (len=1) {
+        	            	-   (big.Word) 3
+        	            	+   (big.Word) 30
+        	            	   }
+        	            	  }),
+        	            	- exp: (int32) 2
+        	            	+ exp: (int32) 1
+        	            	 }
+        	Test:       	TestCustomer_CreditMethods/use_credit
+    entities_test.go:767: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/internal/domain/orders/entities/entities_test.go:767
+        	Error:      	Not equal: 
+        	            	expected: decimal.Decimal{value:(*big.Int)(0x14000464340), exp:2}
+        	            	actual  : decimal.Decimal{value:(*big.Int)(0x14000464380), exp:1}
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -4,6 +4,6 @@
+        	            	   abs: (big.nat) (len=1) {
+        	            	-   (big.Word) 7
+        	            	+   (big.Word) 70
+        	            	   }
+        	            	  }),
+        	            	- exp: (int32) 2
+        	            	+ exp: (int32) 1
+        	            	 }
+        	Test:       	TestCustomer_CreditMethods/use_credit
+=== RUN   TestCustomer_CreditMethods/use_credit_exceeding_limit
+=== RUN   TestCustomer_CreditMethods/release_credit
+    entities_test.go:779: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/internal/domain/orders/entities/entities_test.go:779
+        	Error:      	Not equal: 
+        	            	expected: decimal.Decimal{value:(*big.Int)(0x14000464660), exp:2}
+        	            	actual  : decimal.Decimal{value:(*big.Int)(0x14000464640), exp:1}
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -4,6 +4,6 @@
+        	            	   abs: (big.nat) (len=1) {
+        	            	-   (big.Word) 1
+        	            	+   (big.Word) 10
+        	            	   }
+        	            	  }),
+        	            	- exp: (int32) 2
+        	            	+ exp: (int32) 1
+        	            	 }
+        	Test:       	TestCustomer_CreditMethods/release_credit
+=== RUN   TestCustomer_CreditMethods/release_more_credit_than_used
+--- FAIL: TestCustomer_CreditMethods (0.00s)
+    --- PASS: TestCustomer_CreditMethods/has_available_credit (0.00s)
+    --- FAIL: TestCustomer_CreditMethods/use_credit (0.00s)
+    --- PASS: TestCustomer_CreditMethods/use_credit_exceeding_limit (0.00s)
+    --- FAIL: TestCustomer_CreditMethods/release_credit (0.00s)
+    --- PASS: TestCustomer_CreditMethods/release_more_credit_than_used (0.00s)
+=== RUN   TestCustomer_DisplayMethods
+=== RUN   TestCustomer_DisplayMethods/individual_customer_display_name
+=== RUN   TestCustomer_DisplayMethods/business_customer_display_name
+    entities_test.go:801: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/internal/domain/orders/entities/entities_test.go:801
+        	Error:      	Not equal: 
+        	            	expected: "John Doe"
+        	            	actual  : "Acme Corporation"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-John Doe
+        	            	+Acme Corporation
+        	Test:       	TestCustomer_DisplayMethods/business_customer_display_name
+--- FAIL: TestCustomer_DisplayMethods (0.00s)
+    --- PASS: TestCustomer_DisplayMethods/individual_customer_display_name (0.00s)
+    --- FAIL: TestCustomer_DisplayMethods/business_customer_display_name (0.00s)
+=== RUN   TestOrderAddress_Validate
+=== RUN   TestOrderAddress_Validate/valid_shipping_address
+=== RUN   TestOrderAddress_Validate/valid_billing_address
+=== RUN   TestOrderAddress_Validate/missing_address_association
+=== RUN   TestOrderAddress_Validate/invalid_address_type
+=== RUN   TestOrderAddress_Validate/missing_required_address_fields
+--- PASS: TestOrderAddress_Validate (0.00s)
+    --- PASS: TestOrderAddress_Validate/valid_shipping_address (0.00s)
+    --- PASS: TestOrderAddress_Validate/valid_billing_address (0.00s)
+    --- PASS: TestOrderAddress_Validate/missing_address_association (0.00s)
+    --- PASS: TestOrderAddress_Validate/invalid_address_type (0.00s)
+    --- PASS: TestOrderAddress_Validate/missing_required_address_fields (0.00s)
+=== RUN   TestOrderAddress_AddressMethods
+=== RUN   TestOrderAddress_AddressMethods/get_full_name
+=== RUN   TestOrderAddress_AddressMethods/get_full_address
+=== RUN   TestOrderAddress_AddressMethods/get_single_line_address
+=== RUN   TestOrderAddress_AddressMethods/address_type_checks
+=== RUN   TestOrderAddress_AddressMethods/default_address_management
+--- PASS: TestOrderAddress_AddressMethods (0.00s)
+    --- PASS: TestOrderAddress_AddressMethods/get_full_name (0.00s)
+    --- PASS: TestOrderAddress_AddressMethods/get_full_address (0.00s)
+    --- PASS: TestOrderAddress_AddressMethods/get_single_line_address (0.00s)
+    --- PASS: TestOrderAddress_AddressMethods/address_type_checks (0.00s)
+    --- PASS: TestOrderAddress_AddressMethods/default_address_management (0.00s)
+=== RUN   TestOrderAddress_AddressValidation
+=== RUN   TestOrderAddress_AddressValidation/valid_US_address
+=== RUN   TestOrderAddress_AddressValidation/valid_US_address_with_ZIP+4
+=== RUN   TestOrderAddress_AddressValidation/valid_Canadian_address
+    entities_test.go:1040: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/internal/domain/orders/entities/entities_test.go:1040
+        	Error:      	Not equal: 
+        	            	expected: true
+        	            	actual  : false
+        	Test:       	TestOrderAddress_AddressValidation/valid_Canadian_address
+=== RUN   TestOrderAddress_AddressValidation/valid_UK_address
+=== RUN   TestOrderAddress_AddressValidation/invalid_US_ZIP_code
+=== RUN   TestOrderAddress_AddressValidation/missing_required_fields
+--- FAIL: TestOrderAddress_AddressValidation (0.00s)
+    --- PASS: TestOrderAddress_AddressValidation/valid_US_address (0.00s)
+    --- PASS: TestOrderAddress_AddressValidation/valid_US_address_with_ZIP+4 (0.00s)
+    --- FAIL: TestOrderAddress_AddressValidation/valid_Canadian_address (0.00s)
+    --- PASS: TestOrderAddress_AddressValidation/valid_UK_address (0.00s)
+    --- PASS: TestOrderAddress_AddressValidation/invalid_US_ZIP_code (0.00s)
+    --- PASS: TestOrderAddress_AddressValidation/missing_required_fields (0.00s)
+=== RUN   TestCalculateOrderTotals
+    entities_test.go:1084: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/internal/domain/orders/entities/entities_test.go:1084
+        	Error:      	Not equal: 
+        	            	expected: decimal.Decimal{value:(*big.Int)(0x140004657c0), exp:2}
+        	            	actual  : decimal.Decimal{value:(*big.Int)(0x14000465600), exp:0}
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -4,6 +4,6 @@
+        	            	   abs: (big.nat) (len=1) {
+        	            	-   (big.Word) 1
+        	            	+   (big.Word) 100
+        	            	   }
+        	            	  }),
+        	            	- exp: (int32) 2
+        	            	+ exp: (int32) 0
+        	            	 }
+        	Test:       	TestCalculateOrderTotals
+    entities_test.go:1085: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/internal/domain/orders/entities/entities_test.go:1085
+        	Error:      	Not equal: 
+        	            	expected: decimal.Decimal{value:(*big.Int)(0x140004657e0), exp:-1}
+        	            	actual  : decimal.Decimal{value:(*big.Int)(0x140004656c0), exp:-16}
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -4,6 +4,6 @@
+        	            	   abs: (big.nat) (len=1) {
+        	            	-   (big.Word) 76
+        	            	+   (big.Word) 76000000000000000
+        	            	   }
+        	            	  }),
+        	            	- exp: (int32) -1
+        	            	+ exp: (int32) -16
+        	            	 }
+        	Test:       	TestCalculateOrderTotals
+    entities_test.go:1088: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/internal/domain/orders/entities/entities_test.go:1088
+        	Error:      	Not equal: 
+        	            	expected: decimal.Decimal{value:(*big.Int)(0x14000465800), exp:-1}
+        	            	actual  : decimal.Decimal{value:(*big.Int)(0x140004657a0), exp:-16}
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -4,6 +4,6 @@
+        	            	   abs: (big.nat) (len=1) {
+        	            	-   (big.Word) 1126
+        	            	+   (big.Word) 1126000000000000000
+        	            	   }
+        	            	  }),
+        	            	- exp: (int32) -1
+        	            	+ exp: (int32) -16
+        	            	 }
+        	Test:       	TestCalculateOrderTotals
+--- FAIL: TestCalculateOrderTotals (0.00s)
+=== RUN   TestValidateOrder
+=== RUN   TestValidateOrder/valid_order
+=== RUN   TestValidateOrder/order_with_no_items
+=== RUN   TestValidateOrder/order_with_invalid_status_transition
+    entities_test.go:1121: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/internal/domain/orders/entities/entities_test.go:1121
+        	Error:      	[]string{"Invalid status transition from PENDING to DELIVERED"} does not contain "Invalid status transition"
+        	Test:       	TestValidateOrder/order_with_invalid_status_transition
+=== RUN   TestValidateOrder/order_with_warnings
+    entities_test.go:1132: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/internal/domain/orders/entities/entities_test.go:1132
+        	Error:      	Should be true
+        	Test:       	TestValidateOrder/order_with_warnings
+--- FAIL: TestValidateOrder (0.00s)
+    --- PASS: TestValidateOrder/valid_order (0.00s)
+    --- PASS: TestValidateOrder/order_with_no_items (0.00s)
+    --- FAIL: TestValidateOrder/order_with_invalid_status_transition (0.00s)
+    --- FAIL: TestValidateOrder/order_with_warnings (0.00s)
+=== RUN   TestGenerateOrderNumber
+--- PASS: TestGenerateOrderNumber (0.00s)
+=== RUN   TestCalculateShippingWeight
+--- PASS: TestCalculateShippingWeight (0.00s)
+=== RUN   TestIsOrderComplete
+=== RUN   TestIsOrderComplete/terminal_status:_delivered
+=== RUN   TestIsOrderComplete/terminal_status:_cancelled
+=== RUN   TestIsOrderComplete/terminal_status:_refunded
+=== RUN   TestIsOrderComplete/non-terminal:_draft
+=== RUN   TestIsOrderComplete/non-terminal:_pending
+=== RUN   TestIsOrderComplete/non-terminal:_confirmed
+=== RUN   TestIsOrderComplete/non-terminal:_processing
+=== RUN   TestIsOrderComplete/non-terminal:_shipped
+--- PASS: TestIsOrderComplete (0.00s)
+    --- PASS: TestIsOrderComplete/terminal_status:_delivered (0.00s)
+    --- PASS: TestIsOrderComplete/terminal_status:_cancelled (0.00s)
+    --- PASS: TestIsOrderComplete/terminal_status:_refunded (0.00s)
+    --- PASS: TestIsOrderComplete/non-terminal:_draft (0.00s)
+    --- PASS: TestIsOrderComplete/non-terminal:_pending (0.00s)
+    --- PASS: TestIsOrderComplete/non-terminal:_confirmed (0.00s)
+    --- PASS: TestIsOrderComplete/non-terminal:_processing (0.00s)
+    --- PASS: TestIsOrderComplete/non-terminal:_shipped (0.00s)
+=== RUN   TestCanOrderBeModified
+=== RUN   TestCanOrderBeModified/modifiable:_draft
+=== RUN   TestCanOrderBeModified/modifiable:_pending
+=== RUN   TestCanOrderBeModified/modifiable:_confirmed
+=== RUN   TestCanOrderBeModified/modifiable:_processing
+=== RUN   TestCanOrderBeModified/not_modifiable:_shipped
+=== RUN   TestCanOrderBeModified/not_modifiable:_delivered
+=== RUN   TestCanOrderBeModified/not_modifiable:_cancelled
+=== RUN   TestCanOrderBeModified/not_modifiable:_refunded
+--- PASS: TestCanOrderBeModified (0.00s)
+    --- PASS: TestCanOrderBeModified/modifiable:_draft (0.00s)
+    --- PASS: TestCanOrderBeModified/modifiable:_pending (0.00s)
+    --- PASS: TestCanOrderBeModified/modifiable:_confirmed (0.00s)
+    --- PASS: TestCanOrderBeModified/modifiable:_processing (0.00s)
+    --- PASS: TestCanOrderBeModified/not_modifiable:_shipped (0.00s)
+    --- PASS: TestCanOrderBeModified/not_modifiable:_delivered (0.00s)
+    --- PASS: TestCanOrderBeModified/not_modifiable:_cancelled (0.00s)
+    --- PASS: TestCanOrderBeModified/not_modifiable:_refunded (0.00s)
+FAIL
+FAIL	erpgo/internal/domain/orders/entities	0.516s
+?   	erpgo/internal/domain/orders/repositories	[no test files]
+=== RUN   TestProductCategory_Validate
+=== RUN   TestProductCategory_Validate/valid_category
+=== RUN   TestProductCategory_Validate/missing_ID
+=== RUN   TestProductCategory_Validate/empty_name
+=== RUN   TestProductCategory_Validate/name_too_long
+=== RUN   TestProductCategory_Validate/invalid_name_characters
+=== RUN   TestProductCategory_Validate/negative_level
+=== RUN   TestProductCategory_Validate/invalid_path_format
+=== RUN   TestProductCategory_Validate/invalid_image_URL
+=== RUN   TestProductCategory_Validate/negative_sort_order
+--- PASS: TestProductCategory_Validate (0.00s)
+    --- PASS: TestProductCategory_Validate/valid_category (0.00s)
+    --- PASS: TestProductCategory_Validate/missing_ID (0.00s)
+    --- PASS: TestProductCategory_Validate/empty_name (0.00s)
+    --- PASS: TestProductCategory_Validate/name_too_long (0.00s)
+    --- PASS: TestProductCategory_Validate/invalid_name_characters (0.00s)
+    --- PASS: TestProductCategory_Validate/negative_level (0.00s)
+    --- PASS: TestProductCategory_Validate/invalid_path_format (0.00s)
+    --- PASS: TestProductCategory_Validate/invalid_image_URL (0.00s)
+    --- PASS: TestProductCategory_Validate/negative_sort_order (0.00s)
+=== RUN   TestProductCategory_BuildPath
+=== RUN   TestProductCategory_BuildPath/root_category
+=== RUN   TestProductCategory_BuildPath/child_category
+=== RUN   TestProductCategory_BuildPath/grandchild_category
+--- PASS: TestProductCategory_BuildPath (0.00s)
+    --- PASS: TestProductCategory_BuildPath/root_category (0.00s)
+    --- PASS: TestProductCategory_BuildPath/child_category (0.00s)
+    --- PASS: TestProductCategory_BuildPath/grandchild_category (0.00s)
+=== RUN   TestProduct_Validate
+=== RUN   TestProduct_Validate/valid_physical_product
+=== RUN   TestProduct_Validate/valid_digital_product
+=== RUN   TestProduct_Validate/missing_ID
+=== RUN   TestProduct_Validate/empty_SKU
+=== RUN   TestProduct_Validate/empty_name
+=== RUN   TestProduct_Validate/zero_price
+=== RUN   TestProduct_Validate/cost_higher_than_price
+=== RUN   TestProduct_Validate/negative_weight
+=== RUN   TestProduct_Validate/invalid_dimensions_format
+=== RUN   TestProduct_Validate/negative_stock_quantity
+--- PASS: TestProduct_Validate (0.00s)
+    --- PASS: TestProduct_Validate/valid_physical_product (0.00s)
+    --- PASS: TestProduct_Validate/valid_digital_product (0.00s)
+    --- PASS: TestProduct_Validate/missing_ID (0.00s)
+    --- PASS: TestProduct_Validate/empty_SKU (0.00s)
+    --- PASS: TestProduct_Validate/empty_name (0.00s)
+    --- PASS: TestProduct_Validate/zero_price (0.00s)
+    --- PASS: TestProduct_Validate/cost_higher_than_price (0.00s)
+    --- PASS: TestProduct_Validate/negative_weight (0.00s)
+    --- PASS: TestProduct_Validate/invalid_dimensions_format (0.00s)
+    --- PASS: TestProduct_Validate/negative_stock_quantity (0.00s)
+=== RUN   TestProduct_BusinessLogic
+=== RUN   TestProduct_BusinessLogic/IsInStock_with_positive_quantity
+=== RUN   TestProduct_BusinessLogic/IsInStock_with_zero_quantity_and_no_backorder
+=== RUN   TestProduct_BusinessLogic/IsInStock_with_zero_quantity_and_backorder_allowed
+=== RUN   TestProduct_BusinessLogic/IsLowStock
+=== RUN   TestProduct_BusinessLogic/CanFulfillOrder
+=== RUN   TestProduct_BusinessLogic/CalculateProfit
+=== RUN   TestProduct_BusinessLogic/CalculateProfitMargin
+=== RUN   TestProduct_BusinessLogic/CalculateTax
+=== RUN   TestProduct_BusinessLogic/CalculateTotalPrice
+=== RUN   TestProduct_BusinessLogic/UpdateStock
+=== RUN   TestProduct_BusinessLogic/UpdatePrice
+=== RUN   TestProduct_BusinessLogic/Activate_and_Deactivate
+=== RUN   TestProduct_BusinessLogic/SetFeatured
+--- PASS: TestProduct_BusinessLogic (0.00s)
+    --- PASS: TestProduct_BusinessLogic/IsInStock_with_positive_quantity (0.00s)
+    --- PASS: TestProduct_BusinessLogic/IsInStock_with_zero_quantity_and_no_backorder (0.00s)
+    --- PASS: TestProduct_BusinessLogic/IsInStock_with_zero_quantity_and_backorder_allowed (0.00s)
+    --- PASS: TestProduct_BusinessLogic/IsLowStock (0.00s)
+    --- PASS: TestProduct_BusinessLogic/CanFulfillOrder (0.00s)
+    --- PASS: TestProduct_BusinessLogic/CalculateProfit (0.00s)
+    --- PASS: TestProduct_BusinessLogic/CalculateProfitMargin (0.00s)
+    --- PASS: TestProduct_BusinessLogic/CalculateTax (0.00s)
+    --- PASS: TestProduct_BusinessLogic/CalculateTotalPrice (0.00s)
+    --- PASS: TestProduct_BusinessLogic/UpdateStock (0.00s)
+    --- PASS: TestProduct_BusinessLogic/UpdatePrice (0.00s)
+    --- PASS: TestProduct_BusinessLogic/Activate_and_Deactivate (0.00s)
+    --- PASS: TestProduct_BusinessLogic/SetFeatured (0.00s)
+=== RUN   TestProductVariant_Validate
+=== RUN   TestProductVariant_Validate/valid_variant
+=== RUN   TestProductVariant_Validate/missing_product_ID
+=== RUN   TestProductVariant_Validate/empty_SKU
+=== RUN   TestProductVariant_Validate/digital_variant_without_download_URL
+=== RUN   TestProductVariant_Validate/digital_variant_with_shipping_requirement
+--- PASS: TestProductVariant_Validate (0.00s)
+    --- PASS: TestProductVariant_Validate/valid_variant (0.00s)
+    --- PASS: TestProductVariant_Validate/missing_product_ID (0.00s)
+    --- PASS: TestProductVariant_Validate/empty_SKU (0.00s)
+    --- PASS: TestProductVariant_Validate/digital_variant_without_download_URL (0.00s)
+    --- PASS: TestProductVariant_Validate/digital_variant_with_shipping_requirement (0.00s)
+=== RUN   TestProductVariant_BusinessLogic
+=== RUN   TestProductVariant_BusinessLogic/CalculateProfit
+=== RUN   TestProductVariant_BusinessLogic/CalculateProfitMargin
+=== RUN   TestProductVariant_BusinessLogic/UpdateSortOrder
+--- PASS: TestProductVariant_BusinessLogic (0.00s)
+    --- PASS: TestProductVariant_BusinessLogic/CalculateProfit (0.00s)
+    --- PASS: TestProductVariant_BusinessLogic/CalculateProfitMargin (0.00s)
+    --- PASS: TestProductVariant_BusinessLogic/UpdateSortOrder (0.00s)
+=== RUN   TestVariantAttribute_Validate
+=== RUN   TestVariantAttribute_Validate/valid_attribute
+=== RUN   TestVariantAttribute_Validate/empty_name
+=== RUN   TestVariantAttribute_Validate/empty_value
+--- PASS: TestVariantAttribute_Validate (0.00s)
+    --- PASS: TestVariantAttribute_Validate/valid_attribute (0.00s)
+    --- PASS: TestVariantAttribute_Validate/empty_name (0.00s)
+    --- PASS: TestVariantAttribute_Validate/empty_value (0.00s)
+=== RUN   TestVariantImage_Validate
+=== RUN   TestVariantImage_Validate/valid_image
+=== RUN   TestVariantImage_Validate/empty_image_URL
+=== RUN   TestVariantImage_Validate/invalid_image_URL_format
+--- PASS: TestVariantImage_Validate (0.00s)
+    --- PASS: TestVariantImage_Validate/valid_image (0.00s)
+    --- PASS: TestVariantImage_Validate/empty_image_URL (0.00s)
+    --- PASS: TestVariantImage_Validate/invalid_image_URL_format (0.00s)
+=== RUN   TestVariantImage_SetAsMain
+--- PASS: TestVariantImage_SetAsMain (0.00s)
+=== RUN   TestCategoryMetadata_Validate
+=== RUN   TestCategoryMetadata_Validate/valid_metadata
+=== RUN   TestCategoryMetadata_Validate/missing_category_ID
+=== RUN   TestCategoryMetadata_Validate/SEO_title_too_long
+--- PASS: TestCategoryMetadata_Validate (0.00s)
+    --- PASS: TestCategoryMetadata_Validate/valid_metadata (0.00s)
+    --- PASS: TestCategoryMetadata_Validate/missing_category_ID (0.00s)
+    --- PASS: TestCategoryMetadata_Validate/SEO_title_too_long (0.00s)
+=== RUN   TestProduct_WithVariants_Integration
+--- PASS: TestProduct_WithVariants_Integration (0.00s)
+PASS
+ok  	erpgo/internal/domain/products/entities	0.704s
+?   	erpgo/internal/domain/products/repositories	[no test files]
+?   	erpgo/internal/domain/users/entities	[no test files]
+?   	erpgo/internal/domain/users/repositories	[no test files]
+?   	erpgo/internal/domain/users/services	[no test files]
+?   	erpgo/internal/infrastructure/monitoring	[no test files]
+FAIL	erpgo/internal/infrastructure/repositories [build failed]
+?   	erpgo/internal/infrastructure/storage	[no test files]
+?   	erpgo/internal/interfaces/http/dto	[no test files]
+FAIL	erpgo/internal/interfaces/http/handlers [build failed]
+FAIL	erpgo/internal/interfaces/http/middleware [build failed]
+FAIL	erpgo/internal/interfaces/http/routes [build failed]
+# erpgo/tests [erpgo/tests.test]
+tests/basic_monitoring_test.go:236:13: undefined: monitoring.InitializeMetricsCollector
+tests/basic_monitoring_test.go:237:24: undefined: monitoring.GetMetricsCollector
+tests/basic_monitoring_test.go:240:38: undefined: zerolog
+tests/monitoring_integration_test.go:93:11: too many arguments in call to log.Info
+	have (string, map[string]interface{})
+	want ()
+tests/monitoring_integration_test.go:97:12: too many arguments in call to log.Error
+	have (string, error, map[string]interface{})
+	want ()
+tests/monitoring_integration_test.go:101:6: log.Audit undefined (type zerolog.Logger has no field or method Audit)
+tests/monitoring_integration_test.go:105:6: log.Performance undefined (type zerolog.Logger has no field or method Performance)
+tests/monitoring_integration_test.go:254:23: undefined: monitoring.MonitoringConfig
+tests/monitoring_integration_test.go:270:19: undefined: monitoring.NewMonitoringService
+tests/monitoring_integration_test.go:346:23: undefined: monitoring.MonitoringConfig
+tests/monitoring_integration_test.go:346:23: too many errors
+# erpgo/tests/load [erpgo/tests/load.test]
+tests/load/auth_stress_test.go:200:10: declared and not used: userID
+tests/load/auth_stress_test.go:214:10: declared and not used: userID
+tests/load/cache_load_test.go:395:19: invalid operation: cannot take address of c.results.OperationBreakdown[operation.Type] (map index expression of type int64)
+tests/load/cache_load_test.go:435:21: cannot use &c.results.HitRate (value of type *float64) as *int64 value in argument to atomic.AddInt64
+tests/load/cache_load_test.go:437:21: cannot use &c.results.MissRate (value of type *float64) as *int64 value in argument to atomic.AddInt64
+tests/load/performance_benchmark_test.go:5:2: "encoding/json" imported and not used
+tests/load/performance_benchmark_test.go:987:42: metrics.ErrorRate undefined (type *EndpointMetrics has no field or method ErrorRate)
+tests/load/performance_benchmark_test.go:1033:6: declared and not used: name
+tests/load/api_load_test.go:5:2: "context" imported and not used
+tests/load/database_load_test.go:5:2: "database/sql" imported and not used
+tests/load/performance_benchmark_test.go:5:2: too many errors
+# erpgo/tests/unit [erpgo/tests/unit.test]
+tests/unit/user_password_test.go:40:28: undefined: repositories.ErrUserNotFound
+tests/unit/user_password_test.go:51:27: undefined: repositories.ErrUserNotFound
+tests/unit/user_password_test.go:64:71: undefined: repositories.ListUsersFilter
+tests/unit/user_password_test.go:86:72: undefined: repositories.ListUsersFilter
+tests/unit/user_password_test.go:128:75: undefined: repositories.ListUserRolesFilter
+tests/unit/user_password_test.go:160:37: cannot use userRepo (variable of type *MockUserRepo) as repositories.UserRepository value in argument to user.NewUserService: *MockUserRepo does not implement repositories.UserRepository (missing method AssignRole)
+tests/unit/user_password_test.go:160:57: cannot use userRoleRepo (variable of type *MockUserRoleRepo) as repositories.UserRoleRepository value in argument to user.NewUserService: *MockUserRoleRepo does not implement repositories.UserRoleRepository (missing method AssignRole)
+tests/unit/user_password_test.go:182:21: user.ChangePasswordRequest is not a type
+tests/unit/user_password_test.go:199:20: user.ChangePasswordRequest is not a type
+tests/unit/user_password_test.go:221:37: cannot use userRepo (variable of type *MockUserRepo) as repositories.UserRepository value in argument to user.NewUserService: *MockUserRepo does not implement repositories.UserRepository (missing method AssignRole)
+tests/unit/user_password_test.go:221:37: too many errors
+# erpgo/tests/unit/domain/users_test [erpgo/tests/unit/domain/users.test]
+tests/unit/domain/users/user_test.go:184:19: tt.role.Validate undefined (type *entities.Role has no field or method Validate)
+=== RUN   TestProperty_AuditLogImmutability
++ logged audit events cannot be modified: OK, passed 100 tests.
++ new events don't affect existing events: OK, passed 100 tests.
++ audit logger interface is append-only: OK, passed 100 tests.
++ querying events is read-only: OK, passed 100 tests.
++ events maintain identity over time: OK, passed 100 tests.
+--- PASS: TestProperty_AuditLogImmutability (5.55s)
+=== RUN   TestNewLoginEvent
+--- PASS: TestNewLoginEvent (0.00s)
+=== RUN   TestNewLoginFailedEvent
+--- PASS: TestNewLoginFailedEvent (0.00s)
+=== RUN   TestNewRoleAssignmentEvent
+--- PASS: TestNewRoleAssignmentEvent (0.00s)
+=== RUN   TestMockAuditLogger_LogEvent
+--- PASS: TestMockAuditLogger_LogEvent (0.00s)
+=== RUN   TestMockAuditLogger_Query_ByUserID
+--- PASS: TestMockAuditLogger_Query_ByUserID (0.00s)
+=== RUN   TestMockAuditLogger_Query_ByEventType
+--- PASS: TestMockAuditLogger_Query_ByEventType (0.00s)
+=== RUN   TestMockAuditLogger_Query_BySuccess
+--- PASS: TestMockAuditLogger_Query_BySuccess (0.00s)
+=== RUN   TestMockAuditLogger_Query_WithPagination
+--- PASS: TestMockAuditLogger_Query_WithPagination (0.00s)
+=== RUN   TestMockAuditLogger_Count
+--- PASS: TestMockAuditLogger_Count (0.00s)
+=== RUN   TestAuditEvent_Validation
+=== RUN   TestAuditEvent_Validation/valid_event
+=== RUN   TestAuditEvent_Validation/missing_event_type
+=== RUN   TestAuditEvent_Validation/missing_action
+--- PASS: TestAuditEvent_Validation (0.00s)
+    --- PASS: TestAuditEvent_Validation/valid_event (0.00s)
+    --- PASS: TestAuditEvent_Validation/missing_event_type (0.00s)
+    --- PASS: TestAuditEvent_Validation/missing_action (0.00s)
+PASS
+ok  	erpgo/pkg/audit	6.176s
+=== RUN   TestJWTService_GenerateAccessToken
+--- PASS: TestJWTService_GenerateAccessToken (0.00s)
+=== RUN   TestJWTService_ValidateAccessToken
+--- PASS: TestJWTService_ValidateAccessToken (0.00s)
+=== RUN   TestJWTService_ValidateInvalidToken
+--- PASS: TestJWTService_ValidateInvalidToken (0.00s)
+=== RUN   TestJWTService_ValidateExpiredToken
+--- PASS: TestJWTService_ValidateExpiredToken (0.01s)
+=== RUN   TestJWTService_GenerateRefreshToken
+--- PASS: TestJWTService_GenerateRefreshToken (0.00s)
+=== RUN   TestJWTService_ValidateRefreshToken
+--- PASS: TestJWTService_ValidateRefreshToken (0.00s)
+=== RUN   TestJWTService_ValidateInvalidRefreshToken
+--- PASS: TestJWTService_ValidateInvalidRefreshToken (0.00s)
+=== RUN   TestJWTService_GenerateTokenPair
+--- PASS: TestJWTService_GenerateTokenPair (0.00s)
+=== RUN   TestJWTService_RefreshAccessToken
+--- PASS: TestJWTService_RefreshAccessToken (0.00s)
+=== RUN   TestJWTService_RefreshAccessTokenWithInvalidToken
+--- PASS: TestJWTService_RefreshAccessTokenWithInvalidToken (0.00s)
+=== RUN   TestJWTService_RefreshAccessTokenWithWrongUserID
+--- PASS: TestJWTService_RefreshAccessTokenWithWrongUserID (0.00s)
+=== RUN   TestJWTService_GetTokenExpiration
+--- PASS: TestJWTService_GetTokenExpiration (0.00s)
+=== RUN   TestJWTService_IsTokenExpired
+    jwt_test.go:322: Skipping time-based expiration test due to timing reliability issues
+--- SKIP: TestJWTService_IsTokenExpired (0.00s)
+=== RUN   TestExtractTokenFromBearer
+=== RUN   TestExtractTokenFromBearer/valid_bearer_token
+=== RUN   TestExtractTokenFromBearer/empty_header
+=== RUN   TestExtractTokenFromBearer/invalid_format_-_no_bearer
+=== RUN   TestExtractTokenFromBearer/invalid_format_-_lowercase_bearer
+=== RUN   TestExtractTokenFromBearer/invalid_format_-_no_token
+=== RUN   TestExtractTokenFromBearer/valid_bearer_token_with_spaces
+--- PASS: TestExtractTokenFromBearer (0.00s)
+    --- PASS: TestExtractTokenFromBearer/valid_bearer_token (0.00s)
+    --- PASS: TestExtractTokenFromBearer/empty_header (0.00s)
+    --- PASS: TestExtractTokenFromBearer/invalid_format_-_no_bearer (0.00s)
+    --- PASS: TestExtractTokenFromBearer/invalid_format_-_lowercase_bearer (0.00s)
+    --- PASS: TestExtractTokenFromBearer/invalid_format_-_no_token (0.00s)
+    --- PASS: TestExtractTokenFromBearer/valid_bearer_token_with_spaces (0.00s)
+=== RUN   TestAuthMiddleware_Success
+--- PASS: TestAuthMiddleware_Success (0.00s)
+=== RUN   TestAuthMiddleware_MissingAuthHeader
+--- PASS: TestAuthMiddleware_MissingAuthHeader (0.00s)
+=== RUN   TestAuthMiddleware_InvalidAuthFormat
+=== RUN   TestAuthMiddleware_InvalidAuthFormat/no_bearer_prefix
+=== RUN   TestAuthMiddleware_InvalidAuthFormat/lowercase_bearer
+=== RUN   TestAuthMiddleware_InvalidAuthFormat/empty_bearer
+--- PASS: TestAuthMiddleware_InvalidAuthFormat (0.00s)
+    --- PASS: TestAuthMiddleware_InvalidAuthFormat/no_bearer_prefix (0.00s)
+    --- PASS: TestAuthMiddleware_InvalidAuthFormat/lowercase_bearer (0.00s)
+    --- PASS: TestAuthMiddleware_InvalidAuthFormat/empty_bearer (0.00s)
+=== RUN   TestAuthMiddleware_InvalidToken
+--- PASS: TestAuthMiddleware_InvalidToken (0.00s)
+=== RUN   TestOptionalAuthMiddleware_WithValidToken
+--- PASS: TestOptionalAuthMiddleware_WithValidToken (0.00s)
+=== RUN   TestOptionalAuthMiddleware_WithoutToken
+--- PASS: TestOptionalAuthMiddleware_WithoutToken (0.00s)
+=== RUN   TestRequireRoles_Success
+--- PASS: TestRequireRoles_Success (0.00s)
+=== RUN   TestRequireRoles_InsufficientPermissions
+--- PASS: TestRequireRoles_InsufficientPermissions (0.00s)
+=== RUN   TestRequireAllRoles_Success
+--- PASS: TestRequireAllRoles_Success (0.00s)
+=== RUN   TestRequireAllRoles_MissingRole
+--- PASS: TestRequireAllRoles_MissingRole (0.00s)
+=== RUN   TestRequirePermission_Success
+--- PASS: TestRequirePermission_Success (0.00s)
+=== RUN   TestGetCurrentUser
+--- PASS: TestGetCurrentUser (0.00s)
+=== RUN   TestSecurityHeadersMiddleware
+--- PASS: TestSecurityHeadersMiddleware (0.00s)
+=== RUN   TestCORSMiddleware
+=== RUN   TestCORSMiddleware/allowed_origin
+=== RUN   TestCORSMiddleware/disallowed_origin
+=== RUN   TestCORSMiddleware/no_origin
+--- PASS: TestCORSMiddleware (0.00s)
+    --- PASS: TestCORSMiddleware/allowed_origin (0.00s)
+    --- PASS: TestCORSMiddleware/disallowed_origin (0.00s)
+    --- PASS: TestCORSMiddleware/no_origin (0.00s)
+=== RUN   TestRequestIDMiddleware
+--- PASS: TestRequestIDMiddleware (0.00s)
+=== RUN   TestPasswordService_HashPassword
+=== RUN   TestPasswordService_HashPassword/valid_password
+=== RUN   TestPasswordService_HashPassword/too_short_password
+=== RUN   TestPasswordService_HashPassword/no_uppercase
+=== RUN   TestPasswordService_HashPassword/no_lowercase
+=== RUN   TestPasswordService_HashPassword/no_numbers
+=== RUN   TestPasswordService_HashPassword/no_symbols
+=== RUN   TestPasswordService_HashPassword/common_password
+--- PASS: TestPasswordService_HashPassword (0.27s)
+    --- PASS: TestPasswordService_HashPassword/valid_password (0.27s)
+    --- PASS: TestPasswordService_HashPassword/too_short_password (0.00s)
+    --- PASS: TestPasswordService_HashPassword/no_uppercase (0.00s)
+    --- PASS: TestPasswordService_HashPassword/no_lowercase (0.00s)
+    --- PASS: TestPasswordService_HashPassword/no_numbers (0.00s)
+    --- PASS: TestPasswordService_HashPassword/no_symbols (0.00s)
+    --- PASS: TestPasswordService_HashPassword/common_password (0.00s)
+=== RUN   TestPasswordService_CheckPassword
+--- PASS: TestPasswordService_CheckPassword (1.08s)
+=== RUN   TestPasswordService_ValidatePassword
+=== RUN   TestPasswordService_ValidatePassword/valid_password
+=== RUN   TestPasswordService_ValidatePassword/too_short
+=== RUN   TestPasswordService_ValidatePassword/no_uppercase
+=== RUN   TestPasswordService_ValidatePassword/no_lowercase
+=== RUN   TestPasswordService_ValidatePassword/no_numbers
+=== RUN   TestPasswordService_ValidatePassword/no_symbols
+=== RUN   TestPasswordService_ValidatePassword/multiple_issues
+--- PASS: TestPasswordService_ValidatePassword (0.00s)
+    --- PASS: TestPasswordService_ValidatePassword/valid_password (0.00s)
+    --- PASS: TestPasswordService_ValidatePassword/too_short (0.00s)
+    --- PASS: TestPasswordService_ValidatePassword/no_uppercase (0.00s)
+    --- PASS: TestPasswordService_ValidatePassword/no_lowercase (0.00s)
+    --- PASS: TestPasswordService_ValidatePassword/no_numbers (0.00s)
+    --- PASS: TestPasswordService_ValidatePassword/no_symbols (0.00s)
+    --- PASS: TestPasswordService_ValidatePassword/multiple_issues (0.00s)
+=== RUN   TestPasswordService_GenerateSecurePassword
+=== RUN   TestPasswordService_GenerateSecurePassword/length_8
+=== RUN   TestPasswordService_GenerateSecurePassword/length_12
+=== RUN   TestPasswordService_GenerateSecurePassword/length_16
+=== RUN   TestPasswordService_GenerateSecurePassword/length_32
+--- PASS: TestPasswordService_GenerateSecurePassword (0.00s)
+    --- PASS: TestPasswordService_GenerateSecurePassword/length_8 (0.00s)
+    --- PASS: TestPasswordService_GenerateSecurePassword/length_12 (0.00s)
+    --- PASS: TestPasswordService_GenerateSecurePassword/length_16 (0.00s)
+    --- PASS: TestPasswordService_GenerateSecurePassword/length_32 (0.00s)
+=== RUN   TestPasswordService_GenerateResetToken
+--- PASS: TestPasswordService_GenerateResetToken (0.00s)
+=== RUN   TestPasswordService_EstimatePasswordStrength
+=== RUN   TestPasswordService_EstimatePasswordStrength/very_weak
+=== RUN   TestPasswordService_EstimatePasswordStrength/weak
+=== RUN   TestPasswordService_EstimatePasswordStrength/fair
+=== RUN   TestPasswordService_EstimatePasswordStrength/good
+=== RUN   TestPasswordService_EstimatePasswordStrength/strong
+=== RUN   TestPasswordService_EstimatePasswordStrength/very_long_strong
+--- PASS: TestPasswordService_EstimatePasswordStrength (0.00s)
+    --- PASS: TestPasswordService_EstimatePasswordStrength/very_weak (0.00s)
+    --- PASS: TestPasswordService_EstimatePasswordStrength/weak (0.00s)
+    --- PASS: TestPasswordService_EstimatePasswordStrength/fair (0.00s)
+    --- PASS: TestPasswordService_EstimatePasswordStrength/good (0.00s)
+    --- PASS: TestPasswordService_EstimatePasswordStrength/strong (0.00s)
+    --- PASS: TestPasswordService_EstimatePasswordStrength/very_long_strong (0.00s)
+=== RUN   TestPasswordService_IsCommonPassword
+=== RUN   TestPasswordService_IsCommonPassword/common_password
+=== RUN   TestPasswordService_IsCommonPassword/common_123456
+=== RUN   TestPasswordService_IsCommonPassword/common_password123
+=== RUN   TestPasswordService_IsCommonPassword/common_admin
+=== RUN   TestPasswordService_IsCommonPassword/common_qwerty
+=== RUN   TestPasswordService_IsCommonPassword/common_letmein
+=== RUN   TestPasswordService_IsCommonPassword/common_welcome
+=== RUN   TestPasswordService_IsCommonPassword/common_monkey
+=== RUN   TestPasswordService_IsCommonPassword/common_1234567890
+=== RUN   TestPasswordService_IsCommonPassword/common_password1
+=== RUN   TestPasswordService_IsCommonPassword/common_abc123
+=== RUN   TestPasswordService_IsCommonPassword/common_111111
+=== RUN   TestPasswordService_IsCommonPassword/common_123123
+=== RUN   TestPasswordService_IsCommonPassword/common_123456789
+=== RUN   TestPasswordService_IsCommonPassword/common_iloveyou
+=== RUN   TestPasswordService_IsCommonPassword/variation_Password2023
+=== RUN   TestPasswordService_IsCommonPassword/variation_MyPassword123
+=== RUN   TestPasswordService_IsCommonPassword/variation_admin123
+=== RUN   TestPasswordService_IsCommonPassword/variation_qwerty123
+=== RUN   TestPasswordService_IsCommonPassword/variation_password12345
+=== RUN   TestPasswordService_IsCommonPassword/variation_123456password
+=== RUN   TestPasswordService_IsCommonPassword/variation_MyPassword
+--- PASS: TestPasswordService_IsCommonPassword (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/common_password (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/common_123456 (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/common_password123 (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/common_admin (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/common_qwerty (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/common_letmein (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/common_welcome (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/common_monkey (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/common_1234567890 (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/common_password1 (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/common_abc123 (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/common_111111 (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/common_123123 (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/common_123456789 (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/common_iloveyou (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/variation_Password2023 (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/variation_MyPassword123 (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/variation_admin123 (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/variation_qwerty123 (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/variation_password12345 (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/variation_123456password (0.00s)
+    --- PASS: TestPasswordService_IsCommonPassword/variation_MyPassword (0.00s)
+=== RUN   TestDefaultPasswordValidator
+--- PASS: TestDefaultPasswordValidator (0.00s)
+=== RUN   TestGetStrengthDescription
+=== RUN   TestGetStrengthDescription/strength_0
+=== RUN   TestGetStrengthDescription/strength_1
+=== RUN   TestGetStrengthDescription/strength_2
+=== RUN   TestGetStrengthDescription/strength_3
+=== RUN   TestGetStrengthDescription/strength_4
+=== RUN   TestGetStrengthDescription/strength_-1
+=== RUN   TestGetStrengthDescription/strength_5
+=== RUN   TestGetStrengthDescription/strength_10
+--- PASS: TestGetStrengthDescription (0.00s)
+    --- PASS: TestGetStrengthDescription/strength_0 (0.00s)
+    --- PASS: TestGetStrengthDescription/strength_1 (0.00s)
+    --- PASS: TestGetStrengthDescription/strength_2 (0.00s)
+    --- PASS: TestGetStrengthDescription/strength_3 (0.00s)
+    --- PASS: TestGetStrengthDescription/strength_4 (0.00s)
+    --- PASS: TestGetStrengthDescription/strength_-1 (0.00s)
+    --- PASS: TestGetStrengthDescription/strength_5 (0.00s)
+    --- PASS: TestGetStrengthDescription/strength_10 (0.00s)
+=== RUN   TestPasswordService_CostValidation
+--- PASS: TestPasswordService_CostValidation (0.00s)
+PASS
+ok  	erpgo/pkg/auth	1.807s
+FAIL	erpgo/pkg/cache [build failed]
+?   	erpgo/pkg/config	[no test files]
+?   	erpgo/pkg/cors	[no test files]
+=== RUN   TestConfig_Validate
+=== RUN   TestConfig_Validate/valid_config
+=== RUN   TestConfig_Validate/missing_URL
+=== RUN   TestConfig_Validate/invalid_max_connections
+=== RUN   TestConfig_Validate/negative_min_connections
+=== RUN   TestConfig_Validate/min_greater_than_max
+=== RUN   TestConfig_Validate/zero_max_lifetime
+=== RUN   TestConfig_Validate/zero_max_idle_time
+--- PASS: TestConfig_Validate (0.00s)
+    --- PASS: TestConfig_Validate/valid_config (0.00s)
+    --- PASS: TestConfig_Validate/missing_URL (0.00s)
+    --- PASS: TestConfig_Validate/invalid_max_connections (0.00s)
+    --- PASS: TestConfig_Validate/negative_min_connections (0.00s)
+    --- PASS: TestConfig_Validate/min_greater_than_max (0.00s)
+    --- PASS: TestConfig_Validate/zero_max_lifetime (0.00s)
+    --- PASS: TestConfig_Validate/zero_max_idle_time (0.00s)
+=== RUN   TestNew_WithInvalidConfig
+--- PASS: TestNew_WithInvalidConfig (0.00s)
+=== RUN   TestNew_WithInvalidURL
+    database_test.go:139: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/pkg/database/database_test.go:139
+        	Error:      	"failed to ping database: failed to connect to `host=/private/tmp user=m database=`: dial error (dial unix /private/tmp/.s.PGSQL.5432: connect: no such file or directory)" does not contain "failed to parse database URL"
+        	Test:       	TestNew_WithInvalidURL
+--- FAIL: TestNew_WithInvalidURL (0.00s)
+=== RUN   TestDatabase_Getters
+--- PASS: TestDatabase_Getters (0.00s)
+=== RUN   TestDatabase_Close
+--- PASS: TestDatabase_Close (0.00s)
+=== RUN   TestDatabase_MethodsWithNilPool
+    database_test.go:185: 
+        	Error Trace:	/Users/m/Desktop/Go_ERP/pkg/database/database_test.go:185
+        	Error:      	func (assert.PanicTestFunc)(0x10120a1d0) should panic
+        	            		Panic value:	<nil>
+        	Test:       	TestDatabase_MethodsWithNilPool
+--- FAIL: TestDatabase_MethodsWithNilPool (0.00s)
+=== RUN   TestDatabase_HealthCheck
+--- FAIL: TestDatabase_HealthCheck (0.00s)
+panic: runtime error: invalid memory address or nil pointer dereference [recovered, repanicked]
+[signal SIGSEGV: segmentation violation code=0x2 addr=0x18 pc=0x1011484f4]
+
+goroutine 68 [running]:
+testing.tRunner.func1.2({0x1013e5fc0, 0x101992e20})
+	/usr/local/go/src/testing/testing.go:1872 +0x190
+testing.tRunner.func1()
+	/usr/local/go/src/testing/testing.go:1875 +0x31c
+panic({0x1013e5fc0?, 0x101992e20?})
+	/usr/local/go/src/runtime/panic.go:783 +0x120
+github.com/jackc/pgx/v5/pgxpool.(*Pool).Acquire(0x0, {0x1014e9078, 0x1019dbc40})
+	/Users/m/go/pkg/mod/github.com/jackc/pgx/v5@v5.4.3/pgxpool/pool.go:503 +0x34
+github.com/jackc/pgx/v5/pgxpool.(*Pool).Ping(0x24?, {0x1014e9078, 0x1019dbc40})
+	/Users/m/go/pkg/mod/github.com/jackc/pgx/v5@v5.4.3/pgxpool/pool.go:689 +0x30
+erpgo/pkg/database.(*Database).Ping(...)
+	/Users/m/Desktop/Go_ERP/pkg/database/database.go:198
+erpgo/pkg/database.(*Database).HealthCheck(0x140000cbf30, {0x1014e9078?, 0x1019dbc40?})
+	/Users/m/Desktop/Go_ERP/pkg/database/database.go:377 +0x2c
+erpgo/pkg/database.TestDatabase_HealthCheck(0x140005028c0)
+	/Users/m/Desktop/Go_ERP/pkg/database/database_test.go:224 +0x64
+testing.tRunner(0x140005028c0, 0x1014dad98)
+	/usr/local/go/src/testing/testing.go:1934 +0xc8
+created by testing.(*T).Run in goroutine 1
+	/usr/local/go/src/testing/testing.go:1997 +0x364
+FAIL	erpgo/pkg/database	0.565s
+?   	erpgo/pkg/email	[no test files]
+=== RUN   TestProperty_DomainErrorTypeConsistency
++ domain errors are wrapped in AppError: OK, passed 100 tests.
++ wrapped errors preserve original error: OK, passed 100 tests.
++ error codes match error types: OK, passed 100 tests.
++ status codes match error types: OK, passed 100 tests.
++ context preserves error type: OK, passed 100 tests.
++ validation errors support field errors: OK, passed 100 tests.
++ entity errors are consistent: OK, passed 100 tests.
+--- PASS: TestProperty_DomainErrorTypeConsistency (0.01s)
+=== RUN   TestProperty_DatabaseErrorClassification
++ no rows error classified as NotFoundError: OK, passed 100 tests.
++ unique violations classified as ConflictError: OK, passed 100 tests.
++ foreign key violations classified as BadRequestError: OK, passed 100
+   tests.
++ check violations classified as ValidationError: OK, passed 100 tests.
++ not null violations classified as ValidationError: OK, passed 100 tests.
++ deadlock errors classified as ConflictError: OK, passed 100 tests.
++ serialization failures classified as ConflictError: OK, passed 100 tests.
++ connection errors classified as UnavailableError: OK, passed 100 tests.
++ resource errors classified as UnavailableError: OK, passed 100 tests.
++ unknown errors classified as InternalError: OK, passed 100 tests.
++ retryable errors identified correctly: OK, passed 100 tests.
++ nil errors return nil: OK, passed 100 tests.
+--- PASS: TestProperty_DatabaseErrorClassification (0.01s)
+=== RUN   TestNewAppError
+--- PASS: TestNewAppError (0.00s)
+=== RUN   TestAppErrorWithContext
+--- PASS: TestAppErrorWithContext (0.00s)
+=== RUN   TestAppErrorWithCorrelationID
+--- PASS: TestAppErrorWithCorrelationID (0.00s)
+=== RUN   TestWrapError
+--- PASS: TestWrapError (0.00s)
+=== RUN   TestNotFoundError
+--- PASS: TestNotFoundError (0.00s)
+=== RUN   TestValidationError
+--- PASS: TestValidationError (0.00s)
+=== RUN   TestConflictError
+--- PASS: TestConflictError (0.00s)
+=== RUN   TestUnauthorizedError
+--- PASS: TestUnauthorizedError (0.00s)
+=== RUN   TestRateLimitError
+--- PASS: TestRateLimitError (0.00s)
+=== RUN   TestGetStatusCode
+=== RUN   TestGetStatusCode/NotFoundError
+=== RUN   TestGetStatusCode/ValidationError
+=== RUN   TestGetStatusCode/ConflictError
+=== RUN   TestGetStatusCode/UnauthorizedError
+=== RUN   TestGetStatusCode/InternalError
+=== RUN   TestGetStatusCode/GenericError
+--- PASS: TestGetStatusCode (0.00s)
+    --- PASS: TestGetStatusCode/NotFoundError (0.00s)
+    --- PASS: TestGetStatusCode/ValidationError (0.00s)
+    --- PASS: TestGetStatusCode/ConflictError (0.00s)
+    --- PASS: TestGetStatusCode/UnauthorizedError (0.00s)
+    --- PASS: TestGetStatusCode/InternalError (0.00s)
+    --- PASS: TestGetStatusCode/GenericError (0.00s)
+=== RUN   TestGetErrorCode
+=== RUN   TestGetErrorCode/NotFoundError
+=== RUN   TestGetErrorCode/ValidationError
+=== RUN   TestGetErrorCode/ConflictError
+=== RUN   TestGetErrorCode/UnauthorizedError
+=== RUN   TestGetErrorCode/InternalError
+=== RUN   TestGetErrorCode/GenericError
+--- PASS: TestGetErrorCode (0.00s)
+    --- PASS: TestGetErrorCode/NotFoundError (0.00s)
+    --- PASS: TestGetErrorCode/ValidationError (0.00s)
+    --- PASS: TestGetErrorCode/ConflictError (0.00s)
+    --- PASS: TestGetErrorCode/UnauthorizedError (0.00s)
+    --- PASS: TestGetErrorCode/InternalError (0.00s)
+    --- PASS: TestGetErrorCode/GenericError (0.00s)
+=== RUN   TestAppErrorError
+--- PASS: TestAppErrorError (0.00s)
+PASS
+ok  	erpgo/pkg/errors	0.668s
+=== RUN   TestProperty13_ReadinessCheckDatabaseVerification
+=== RUN   TestProperty13_ReadinessCheckDatabaseVerification/database_unhealthy_returns_unhealthy_status
+=== RUN   TestProperty13_ReadinessCheckDatabaseVerification/database_healthy_and_redis_unhealthy_returns_healthy_(redis_not_critical)
+=== RUN   TestProperty13_ReadinessCheckDatabaseVerification/both_healthy_returns_healthy
+=== RUN   TestProperty13_ReadinessCheckDatabaseVerification/both_unhealthy_returns_unhealthy
+--- PASS: TestProperty13_ReadinessCheckDatabaseVerification (0.00s)
+    --- PASS: TestProperty13_ReadinessCheckDatabaseVerification/database_unhealthy_returns_unhealthy_status (0.00s)
+    --- PASS: TestProperty13_ReadinessCheckDatabaseVerification/database_healthy_and_redis_unhealthy_returns_healthy_(redis_not_critical) (0.00s)
+    --- PASS: TestProperty13_ReadinessCheckDatabaseVerification/both_healthy_returns_healthy (0.00s)
+    --- PASS: TestProperty13_ReadinessCheckDatabaseVerification/both_unhealthy_returns_unhealthy (0.00s)
+=== RUN   TestLivenessProbe
+--- PASS: TestLivenessProbe (0.00s)
+=== RUN   TestReadinessProbeChecksDatabase
+=== RUN   TestReadinessProbeChecksDatabase/database_healthy
+=== RUN   TestReadinessProbeChecksDatabase/database_unhealthy
+--- PASS: TestReadinessProbeChecksDatabase (0.00s)
+    --- PASS: TestReadinessProbeChecksDatabase/database_healthy (0.00s)
+    --- PASS: TestReadinessProbeChecksDatabase/database_unhealthy (0.00s)
+=== RUN   TestReadinessProbeChecksRedis
+--- PASS: TestReadinessProbeChecksRedis (0.00s)
+=== RUN   TestHealthCheckTimeout
+--- PASS: TestHealthCheckTimeout (1.00s)
+=== RUN   TestHealthCheckReturns503WithDetails
+--- PASS: TestHealthCheckReturns503WithDetails (0.00s)
+=== RUN   TestShutdownUpdatesReadiness
+--- PASS: TestShutdownUpdatesReadiness (0.00s)
+=== RUN   TestLivenessNotAffectedByDependencies
+--- PASS: TestLivenessNotAffectedByDependencies (0.00s)
+=== RUN   TestMultipleDependencyFailures
+--- PASS: TestMultipleDependencyFailures (0.00s)
+=== RUN   TestHealthCheckWithContext
+--- PASS: TestHealthCheckWithContext (0.10s)
+=== RUN   TestLivenessEndpoint
+--- PASS: TestLivenessEndpoint (0.00s)
+=== RUN   TestReadinessEndpointHealthy
+--- PASS: TestReadinessEndpointHealthy (0.00s)
+=== RUN   TestReadinessEndpointUnhealthy
+--- PASS: TestReadinessEndpointUnhealthy (0.00s)
+=== RUN   TestReadinessEndpointWithDetails
+--- PASS: TestReadinessEndpointWithDetails (0.00s)
+=== RUN   TestReadinessEndpointDuringShutdown
+--- PASS: TestReadinessEndpointDuringShutdown (0.00s)
+=== RUN   TestRegisterRoutes
+--- PASS: TestRegisterRoutes (0.00s)
+=== RUN   TestLivenessNotAffectedByDatabaseFailure
+--- PASS: TestLivenessNotAffectedByDatabaseFailure (0.00s)
+PASS
+ok  	erpgo/pkg/health	1.908s
+?   	erpgo/pkg/logger	[no test files]
+?   	erpgo/pkg/monitoring	[no test files]
+=== RUN   TestProperty_LoginRateLimiting
++ login attempts exceeding 5 per 15 minutes are rejected: OK, passed 100
+   tests.
++ rate limits are independent per IP: OK, passed 100 tests.
++ rate limit resets after window expires: OK, passed 100 tests.
+--- PASS: TestProperty_LoginRateLimiting (15.16s)
+=== RUN   TestProperty_AccountLockoutAfterFailedLogins
++ account locks after 5 failed login attempts: OK, passed 100 tests.
++ locked accounts reject login attempts: OK, passed 100 tests.
++ account lockout expires after duration: OK, passed 100 tests.
++ account lockouts are independent: OK, passed 100 tests.
++ unlock clears account lockout: OK, passed 100 tests.
+--- PASS: TestProperty_AccountLockoutAfterFailedLogins (15.14s)
+PASS
+ok  	erpgo/pkg/ratelimit	31.108s
+=== RUN   TestProperty_SecretValidationOnStartup
++ invalid secrets are rejected: OK, passed 100 tests.
++ empty secrets are rejected: OK, passed 100 tests.
++ missing secrets are rejected: OK, passed 100 tests.
+--- PASS: TestProperty_SecretValidationOnStartup (0.00s)
+=== RUN   TestProperty_JWTSecretEntropy
++ secrets under 32 bytes are rejected: OK, passed 100 tests.
++ weak secrets are rejected: OK, passed 100 tests.
++ secrets with sufficient entropy pass validation: OK, passed 100 tests.
+--- PASS: TestProperty_JWTSecretEntropy (0.00s)
+PASS
+ok  	erpgo/pkg/secrets	1.002s
+?   	erpgo/pkg/security	[no test files]
+=== RUN   TestShutdownManager_RequestCompletion
+=== RUN   TestShutdownManager_RequestCompletion/short_request_completes_before_timeout
+=== RUN   TestShutdownManager_RequestCompletion/request_completes_just_before_timeout
+=== RUN   TestShutdownManager_RequestCompletion/request_exceeds_timeout
+=== RUN   TestShutdownManager_RequestCompletion/multiple_requests_complete_before_timeout
+--- PASS: TestShutdownManager_RequestCompletion (1.70s)
+    --- PASS: TestShutdownManager_RequestCompletion/short_request_completes_before_timeout (0.10s)
+    --- PASS: TestShutdownManager_RequestCompletion/request_completes_just_before_timeout (0.90s)
+    --- PASS: TestShutdownManager_RequestCompletion/request_exceeds_timeout (0.50s)
+    --- PASS: TestShutdownManager_RequestCompletion/multiple_requests_complete_before_timeout (0.20s)
+=== RUN   TestShutdownManager_HookPriority
+--- PASS: TestShutdownManager_HookPriority (0.00s)
+=== RUN   TestShutdownManager_HookError
+--- PASS: TestShutdownManager_HookError (0.00s)
+=== RUN   TestShutdownManager_ContextCancellation
+--- PASS: TestShutdownManager_ContextCancellation (0.10s)
+=== RUN   TestShutdownManager_NotifyShutdown
+--- PASS: TestShutdownManager_NotifyShutdown (0.00s)
+=== RUN   TestShutdownManager_MultipleShutdownCalls
+--- PASS: TestShutdownManager_MultipleShutdownCalls (0.10s)
+PASS
+ok  	erpgo/pkg/shutdown	2.966s
+?   	erpgo/pkg/timeout	[no test files]
+=== RUN   TestProperty_TraceIDUniqueness
+    tracer_property_test.go:18: [rapid] OK, passed 100 tests (14.284542ms)
+--- PASS: TestProperty_TraceIDUniqueness (0.01s)
+=== RUN   TestProperty_SpanIDUniqueness
+    tracer_property_test.go:91: [rapid] OK, passed 100 tests (8.351667ms)
+--- PASS: TestProperty_SpanIDUniqueness (0.01s)
+=== RUN   TestProperty_TraceIDFormat
+    tracer_property_test.go:134: [rapid] OK, passed 100 tests (10.263375ms)
+--- PASS: TestProperty_TraceIDFormat (0.01s)
+=== RUN   TestProperty_ConcurrentTraceIDGeneration
+    tracer_property_test.go:178: [rapid] OK, passed 100 tests (133.236667ms)
+--- PASS: TestProperty_ConcurrentTraceIDGeneration (0.13s)
+=== RUN   TestProperty_ParentChildSpanRelationship
+    tracer_property_test.go:242: [rapid] OK, passed 100 tests (4.543541ms)
+--- PASS: TestProperty_ParentChildSpanRelationship (0.00s)
+PASS
+ok  	erpgo/pkg/tracing	1.137s
+=== RUN   TestProperty_SQLColumnWhitelisting
++ whitelisted columns are accepted: OK, passed 100 tests.
++ non-whitelisted columns are rejected: OK, passed 100 tests.
++ empty columns are rejected: OK, passed 100 tests.
++ ORDER BY with whitelisted columns accepted: OK, passed 100 tests.
++ ORDER BY with non-whitelisted columns rejected: OK, passed 100 tests.
++ case-insensitive column matching: OK, passed 100 tests.
++ ORDER BY with ASC/DESC modifiers: OK, passed 100 tests.
++ multiple columns in ORDER BY validated: OK, passed 100 tests.
++ SQL injection attempts rejected: OK, passed 100 tests.
+--- PASS: TestProperty_SQLColumnWhitelisting (0.00s)
+PASS
+ok  	erpgo/pkg/validation	1.105s
+?   	erpgo/scripts	[no test files]
+FAIL	erpgo/tests [build failed]
+FAIL	erpgo/tests/e2e/testutil [build failed]
+FAIL	erpgo/tests/integration/http [build failed]
+?   	erpgo/tests/integration/http/user	[no test files]
+?   	erpgo/tests/integration/testutil	[no test files]
+FAIL	erpgo/tests/load [build failed]
+?   	erpgo/tests/performance/testutil	[no test files]
+=== RUN   TestComprehensivePerformance
+=== RUN   TestComprehensivePerformance/APIPerformanceUnderLoad
+    comprehensive_test.go:31: Starting API performance test under load...
+    comprehensive_test.go:104: === API Performance Test Results ===
+    comprehensive_test.go:105: Duration: 10.003626208s
+    comprehensive_test.go:106: Total Requests: 19250
+    comprehensive_test.go:107: Successful Requests: 19250
+    comprehensive_test.go:108: Failed Requests: 0
+    comprehensive_test.go:109: Actual RPS: 1924.30 (target: 1000)
+    comprehensive_test.go:110: Error Rate: 0.0000% (max: 1.0000%)
+    comprehensive_test.go:111: Average Latency: 24.72064ms
+    comprehensive_test.go:112: P99 Latency: 25.341916ms (max: 500ms)
+=== RUN   TestComprehensivePerformance/DatabasePerformanceUnderLoad
+    comprehensive_test.go:126: Starting database performance test under load...
+    comprehensive_test.go:197: === Database Performance Test Results ===
+    comprehensive_test.go:198: Duration: 10.001307083s
+    comprehensive_test.go:199: Total Queries: 15016
+    comprehensive_test.go:200: Successful Queries: 13392
+    comprehensive_test.go:201: Failed Queries: 1624
+    comprehensive_test.go:202: Actual QPS: 1501.40 (target: 5000)
+    comprehensive_test.go:203: Error Rate: 10.8151% (max: 1.0000%)
+    comprehensive_test.go:204: Average Query Time: 13.063903ms
+    comprehensive_test.go:205: P95 Query Time: 23.067583ms (max: 100ms)
+=== RUN   TestComprehensivePerformance/CachePerformanceUnderLoad
+    comprehensive_test.go:217: Starting cache performance test under load...
+    comprehensive_test.go:292: === Cache Performance Test Results ===
+    comprehensive_test.go:293: Duration: 10.001121583s
+    comprehensive_test.go:294: Total Operations: 57668
+    comprehensive_test.go:295: Cache Hits: 53058
+    comprehensive_test.go:296: Cache Misses: 0
+    comprehensive_test.go:297: Cache Errors: 4610
+    comprehensive_test.go:298: Actual OPS: 5766.15 (target: 20000)
+    comprehensive_test.go:299: Hit Rate: 100.00% (min: 80.00%)
+    comprehensive_test.go:300: Error Rate: 7.9940%
+    comprehensive_test.go:301: Average Latency: 4.108955ms
+    comprehensive_test.go:302: P95 Latency: 9.201333ms (max: 50ms)
+=== RUN   TestComprehensivePerformance/MemoryLeakDetection
+    comprehensive_test.go:319: Running memory leak detection test (2 minutes for testing, use 1 hour in production)...
+    comprehensive_test.go:334: Initial state:
+    comprehensive_test.go:335:   Memory: 0 MB
+    comprehensive_test.go:336:   Goroutines: 3
+    comprehensive_test.go:378: Sample at 00:22:22: Memory=0 MB, Goroutines=5
+    comprehensive_test.go:378: Sample at 00:22:52: Memory=0 MB, Goroutines=5
+    comprehensive_test.go:378: Sample at 00:23:22: Memory=0 MB, Goroutines=5
+    comprehensive_test.go:378: Sample at 00:23:52: Memory=0 MB, Goroutines=5
+    comprehensive_test.go:417: 
+        === Memory Leak Detection Results ===
+    comprehensive_test.go:418: Test Duration: 2m0s
+    comprehensive_test.go:419: Samples Collected: 4
+    comprehensive_test.go:420: Initial Memory: 0 MB
+    comprehensive_test.go:421: Final Memory: 0 MB
+    comprehensive_test.go:422: Memory Growth: 0 MB (max: 100 MB)
+    comprehensive_test.go:423: Initial Goroutines: 3
+    comprehensive_test.go:424: Final Goroutines: 3
+    comprehensive_test.go:425: Goroutine Growth: 0 (max: 50)
+    comprehensive_test.go:432: 
+        Memory Trend:
+    comprehensive_test.go:433:   First Sample: 0 MB at 00:22:22
+    comprehensive_test.go:434:   Last Sample: 0 MB at 00:23:52
+    comprehensive_test.go:435:   Trend Growth: 0 MB
+    comprehensive_test.go:455: Memory Growth Rate: 0.00% of samples showed growth
+--- PASS: TestComprehensivePerformance (153.62s)
+    --- PASS: TestComprehensivePerformance/APIPerformanceUnderLoad (10.21s)
+    --- PASS: TestComprehensivePerformance/DatabasePerformanceUnderLoad (10.16s)
+    --- PASS: TestComprehensivePerformance/CachePerformanceUnderLoad (13.23s)
+    --- PASS: TestComprehensivePerformance/MemoryLeakDetection (120.02s)
+PASS
+ok  	erpgo/tests/performance_tests	154.263s
+FAIL	erpgo/tests/security [build failed]
+FAIL	erpgo/tests/unit [build failed]
+FAIL	erpgo/tests/unit/domain/users [build failed]
+FAIL

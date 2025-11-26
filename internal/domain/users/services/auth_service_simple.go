@@ -33,7 +33,7 @@ func NewSimpleAuthService(
 	return &SimpleAuthService{
 		userRepo:        userRepo,
 		jwtService:      auth.NewJWTService(jwtConfig.Secret, "erpgo-api", jwtConfig.Expiry, jwtConfig.RefreshExpiry),
-		passwordService: auth.NewPasswordService(cfg.BcryptCost, auth.Pepper),
+		passwordService: auth.NewPasswordService(cfg.BcryptCost, cfg.PasswordPepper),
 		cacheService:    cacheService,
 		config:          cfg,
 	}

@@ -1,13 +1,13 @@
 package entities
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 	"strings"
 	"time"
 
 	"github.com/google/uuid"
+	apperrors "erpgo/pkg/errors"
 )
 
 // User represents a user in the system
@@ -28,51 +28,61 @@ type User struct {
 
 // Validate validates the user entity
 func (u *User) Validate() error {
-	var errs []error
+	validationErr := apperrors.NewValidationError("user validation failed")
+	hasErrors := false
 
 	// Validate UUID
 	if u.ID == uuid.Nil {
-		errs = append(errs, errors.New("user ID cannot be empty"))
+		validationErr.AddFieldError("id", "user ID cannot be empty")
+		hasErrors = true
 	}
 
 	// Validate email
 	if err := u.validateEmail(); err != nil {
-		errs = append(errs, fmt.Errorf("invalid email: %w", err))
+		validationErr.AddFieldError("email", err.Error())
+		hasErrors = true
 	}
 
 	// Validate username
 	if err := u.validateUsername(); err != nil {
-		errs = append(errs, fmt.Errorf("invalid username: %w", err))
+		validationErr.AddFieldError("username", err.Error())
+		hasErrors = true
 	}
 
 	// Validate password hash
 	if strings.TrimSpace(u.PasswordHash) == "" {
-		errs = append(errs, errors.New("password hash cannot be empty"))
+		validationErr.AddFieldError("password_hash", "password hash cannot be empty")
+		hasErrors = true
 	}
 
 	// Validate first name
 	if strings.TrimSpace(u.FirstName) == "" {
-		errs = append(errs, errors.New("first name cannot be empty"))
+		validationErr.AddFieldError("first_name", "first name cannot be empty")
+		hasErrors = true
 	} else if len(u.FirstName) > 100 {
-		errs = append(errs, errors.New("first name cannot exceed 100 characters"))
+		validationErr.AddFieldError("first_name", "first name cannot exceed 100 characters")
+		hasErrors = true
 	}
 
 	// Validate last name
 	if strings.TrimSpace(u.LastName) == "" {
-		errs = append(errs, errors.New("last name cannot be empty"))
+		validationErr.AddFieldError("last_name", "last name cannot be empty")
+		hasErrors = true
 	} else if len(u.LastName) > 100 {
-		errs = append(errs, errors.New("last name cannot exceed 100 characters"))
+		validationErr.AddFieldError("last_name", "last name cannot exceed 100 characters")
+		hasErrors = true
 	}
 
 	// Validate phone (optional)
 	if u.Phone != "" {
 		if err := u.validatePhone(); err != nil {
-			errs = append(errs, fmt.Errorf("invalid phone: %w", err))
+			validationErr.AddFieldError("phone", err.Error())
+			hasErrors = true
 		}
 	}
 
-	if len(errs) > 0 {
-		return fmt.Errorf("validation failed: %v", errors.Join(errs...))
+	if hasErrors {
+		return validationErr
 	}
 
 	return nil
@@ -87,17 +97,17 @@ func (u *User) GetFullName() string {
 func (u *User) validateEmail() error {
 	email := strings.TrimSpace(u.Email)
 	if email == "" {
-		return errors.New("email cannot be empty")
+		return fmt.Errorf("email cannot be empty")
 	}
 
 	// Basic email regex pattern
 	emailRegex := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 	if !emailRegex.MatchString(email) {
-		return errors.New("invalid email format")
+		return fmt.Errorf("invalid email format")
 	}
 
 	if len(email) > 255 {
-		return errors.New("email cannot exceed 255 characters")
+		return fmt.Errorf("email cannot exceed 255 characters")
 	}
 
 	return nil
@@ -107,17 +117,17 @@ func (u *User) validateEmail() error {
 func (u *User) validateUsername() error {
 	username := strings.TrimSpace(u.Username)
 	if username == "" {
-		return errors.New("username cannot be empty")
+		return fmt.Errorf("username cannot be empty")
 	}
 
 	// Username should be 3-50 characters, alphanumeric with underscores and hyphens
 	if len(username) < 3 || len(username) > 50 {
-		return errors.New("username must be between 3 and 50 characters")
+		return fmt.Errorf("username must be between 3 and 50 characters")
 	}
 
 	usernameRegex := regexp.MustCompile(`^[a-zA-Z0-9_-]+$`)
 	if !usernameRegex.MatchString(username) {
-		return errors.New("username can only contain letters, numbers, underscores, and hyphens")
+		return fmt.Errorf("username can only contain letters, numbers, underscores, and hyphens")
 	}
 
 	return nil
@@ -133,7 +143,7 @@ func (u *User) validatePhone() error {
 	// Basic phone regex - allows international format with +, spaces, hyphens, and parentheses
 	phoneRegex := regexp.MustCompile(`^\+?[\d\s\-\(\)]{7,20}$`)
 	if !phoneRegex.MatchString(phone) {
-		return errors.New("invalid phone number format")
+		return fmt.Errorf("invalid phone number format")
 	}
 
 	return nil

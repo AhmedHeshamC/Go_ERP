@@ -1,6 +1,7 @@
 package monitoring
 
 import (
+	"fmt"
 	"net/http"
 	"runtime"
 	"sync"
@@ -317,6 +318,13 @@ func (mc *MetricsCollector) RecordHTTPRequest(method, endpoint, statusCode, user
 	if responseSize > 0 {
 		mc.httpResponseSizeBytes.WithLabelValues(method, endpoint).Observe(float64(responseSize))
 	}
+}
+
+// RecordRequest records HTTP request metrics (simplified version for middleware)
+func (mc *MetricsCollector) RecordRequest(method, path string, statusCode int, duration time.Duration) {
+	statusStr := fmt.Sprintf("%d", statusCode)
+	mc.httpRequestsTotal.WithLabelValues(method, path, statusStr, "").Inc()
+	mc.httpRequestDuration.WithLabelValues(method, path).Observe(duration.Seconds())
 }
 
 // RecordOrderCreated records an order creation event

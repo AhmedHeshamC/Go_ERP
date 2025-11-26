@@ -87,7 +87,7 @@ func SetupE2ETest(t *testing.T) *E2ETestSetup {
 	// Create a mock cache for testing
 	mockCache := cache.NewMockCache()
 
-	userSvc := userService.NewService(userRepo, roleRepo, userRoleRepo, passwordService, jwtService, nil, mockCache)
+	userSvc := userService.NewService(userRepo, roleRepo, userRoleRepo, passwordService, jwtService, nil, mockCache, nil)
 
 	// Create logger
 	logger := zerolog.Nop()

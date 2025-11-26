@@ -2,10 +2,12 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"testing/fstest"
 	"time"
 
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

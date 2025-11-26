@@ -52,8 +52,11 @@ func (suite *UserAPITestSuite) SetupSuite() {
 	roleRepo := &MockRoleRepository{db: suite.db}
 	userRoleRepo := &MockUserRoleRepository{db: suite.db}
 
+	// Create transaction manager
+	txManager := database.NewTransactionManagerImpl(suite.db, suite.logger)
+
 	// Create user service
-	suite.userService = userService.NewUserService(userRepo, roleRepo, userRoleRepo, suite.passwordService, suite.jwtService)
+	suite.userService = userService.NewUserService(userRepo, roleRepo, userRoleRepo, suite.passwordService, suite.jwtService, nil, nil, txManager)
 
 	// Setup test server
 	suite.server = httptest.NewServer(setupTestRouter(suite.userService))

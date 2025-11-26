@@ -34,6 +34,7 @@ import (
 	"erpgo/pkg/database"
 	"erpgo/pkg/email"
 	"erpgo/pkg/logger"
+	"erpgo/pkg/shutdown"
 )
 
 // Build information injected at build time
@@ -45,11 +46,14 @@ var (
 
 
 func main() {
-	// Load configuration
-	cfg, err := config.Load()
+	// Load configuration with secret management
+	cfg, secretMgr, err := config.LoadWithSecretManager()
 	if err != nil {
 		log.Fatalf("Failed to load configuration: %v", err)
 	}
+
+	// Log loaded secret keys (not values!) for audit
+	log.Printf("Loaded secrets: %v", (*secretMgr).ListSecretKeys())
 
 	// Initialize logger
 	log := logger.New(cfg.LogLevel, cfg.IsDevelopment())
@@ -76,7 +80,9 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to initialize database")
 	}
-	defer db.Close()
+
+	// Initialize transaction manager
+	txManager := database.NewTransactionManagerImpl(db, log)
 
 	// Initialize cache
 	redisConfig := cfg.GetRedisConfig()
@@ -89,7 +95,6 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to initialize cache")
 	}
-	defer cache.Close()
 
 	// Initialize repositories with proper implementations
 	userRepo := infrarepos.NewPostgresUserRepository(db)
@@ -131,7 +136,7 @@ func main() {
 	jwtSvc := auth.NewJWTService(jwtConfig.Secret, "erpgo-api", jwtConfig.Expiry, jwtConfig.RefreshExpiry)
 	// TODO: Set Redis client for token blacklist when implemented
 	// jwtSvc.SetRedisClient(cache.GetClient())
-	passwordSvc := auth.NewPasswordService(12, "default-pepper") // TODO: Get from config
+	passwordSvc := auth.NewPasswordService(cfg.BcryptCost, cfg.PasswordPepper)
 
 	// Initialize email service
 	// TODO: Get email configuration from config file
@@ -157,13 +162,13 @@ func main() {
 	// Initialize services
 	// TODO: Implement SimpleAuthService
 	// simpleAuthService := services.NewSimpleAuthService(userRepo, cfg, cache)
-	userService := user.NewUserService(userRepo, roleRepo, userRoleRepo, passwordSvc, jwtSvc, emailSvc, cache)
+	userService := user.NewUserService(userRepo, roleRepo, userRoleRepo, passwordSvc, jwtSvc, emailSvc, cache, txManager)
 
 	// Initialize product service
 	productService := product.NewService(productRepo, categoryRepo, variantRepo, variantAttrRepo, variantImageRepo)
 
 	// Initialize inventory service
-	inventoryService := inventory.NewService(inventoryRepo, warehouseRepo, transactionRepo, log)
+	inventoryService := inventory.NewService(inventoryRepo, warehouseRepo, transactionRepo, txManager, log)
 
 	// Initialize order service (with some dependencies still nil)
 	// TODO: Implement notification, payment, tax, and shipping services
@@ -206,7 +211,6 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to initialize security middleware")
 	}
-	defer securityCoordinator.Stop()
 
 	// Add basic middleware
 	router.Use(httpmiddleware.Logger(*log))
@@ -219,9 +223,23 @@ func main() {
 	// Setup routes
 	routes.SetupRoutes(router, authHandler, productHandler, inventoryHandler, warehouseHandler, transactionHandler, cfg, *log)
 
-	// Setup Swagger documentation route
-	router.GET("/api/v1/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	// Setup Swagger documentation routes with configuration
+	// Configure Swagger UI with authentication support
+	swaggerConfig := func(c *ginSwagger.Config) {
+		c.URL = "/swagger/doc.json"
+		c.DocExpansion = "list"
+		c.DeepLinking = true
+		c.DefaultModelsExpandDepth = 1
+		c.PersistAuthorization = true // Persist auth token across page refreshes
+	}
+	
+	// Main Swagger UI endpoint at /api/docs
+	router.GET("/api/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, swaggerConfig))
+	
+	// Alternative endpoints for convenience
+	router.GET("/api/v1/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, swaggerConfig))
+	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, swaggerConfig))
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, swaggerConfig))
 
 	// Security dashboard endpoint (only in development/staging)
 	if !cfg.IsProduction() {
@@ -303,6 +321,40 @@ func main() {
 		IdleTimeout:  120 * time.Second,
 	}
 
+	// Initialize shutdown manager with 30 second timeout
+	shutdownMgr := shutdown.NewManager(30 * time.Second)
+
+	// Register shutdown hooks in priority order (lower priority runs first)
+	// Priority 1: Stop accepting new requests (HTTP server)
+	httpHook := shutdown.NewHTTPServerHook(server, log, 1)
+	if err := shutdownMgr.RegisterHook(httpHook); err != nil {
+		log.Fatal().Err(err).Msg("Failed to register HTTP server shutdown hook")
+	}
+
+	// Priority 2: Close database connections
+	dbHook := shutdown.NewDatabaseHook(func() error {
+		db.Close()
+		return nil
+	}, log, 2)
+	if err := shutdownMgr.RegisterHook(dbHook); err != nil {
+		log.Fatal().Err(err).Msg("Failed to register database shutdown hook")
+	}
+
+	// Priority 3: Close cache connections
+	cacheHook := shutdown.NewCacheHook(cache.Close, log, 3)
+	if err := shutdownMgr.RegisterHook(cacheHook); err != nil {
+		log.Fatal().Err(err).Msg("Failed to register cache shutdown hook")
+	}
+
+	// Priority 4: Stop security coordinator
+	securityHook := shutdown.NewGenericHook("security-coordinator", 4, func(ctx context.Context) error {
+		securityCoordinator.Stop()
+		return nil
+	}, log)
+	if err := shutdownMgr.RegisterHook(securityHook); err != nil {
+		log.Fatal().Err(err).Msg("Failed to register security coordinator shutdown hook")
+	}
+
 	// Start server in a goroutine
 	go func() {
 		log.Info().Int("port", cfg.ServerPort).Msg("Starting HTTP server")
@@ -316,14 +368,14 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	log.Info().Msg("Shutting down server...")
+	log.Info().Msg("Shutdown signal received, initiating graceful shutdown...")
 
-	// Give outstanding requests 30 seconds to complete
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
-	if err := server.Shutdown(ctx); err != nil {
-		log.Error().Err(err).Msg("Server forced to shutdown")
+	// Initiate graceful shutdown
+	ctx := context.Background()
+	if err := shutdownMgr.Shutdown(ctx); err != nil {
+		log.Error().Err(err).Msg("Shutdown completed with errors")
+	} else {
+		log.Info().Msg("Shutdown completed successfully")
 	}
 
 	log.Info().Msg("Server exited")

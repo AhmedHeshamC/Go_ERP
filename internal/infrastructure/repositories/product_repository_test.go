@@ -16,173 +16,7 @@ import (
 	"erpgo/pkg/database"
 )
 
-// Test setup helper functions
-func setupTestDB(t testing.TB) *database.Database {
-	t.Helper()
-
-	config := database.Config{
-		URL:             "postgres://postgres:password@localhost:5432/test_erpgo?sslmode=disable",
-		MaxConnections:  10,
-		MinConnections:  1,
-		ConnMaxLifetime: time.Hour,
-		ConnMaxIdleTime: time.Minute * 30,
-		SSLMode:         "disable",
-	}
-
-	db, err := database.New(config)
-	if err != nil {
-		require.NoError(t, err, "Failed to create test database connection")
-	}
-
-	// Clean up database before each test
-	ctx := context.Background()
-	err = setupTestSchema(ctx, db)
-	if err != nil {
-		require.NoError(t, err, "Failed to setup test schema")
-	}
-
-	return db
-}
-
-func setupTestSchema(ctx context.Context, db *database.Database) error {
-	// Drop tables if they exist
-	queries := []string{
-		`DROP TABLE IF EXISTS variant_images CASCADE`,
-		`DROP TABLE IF EXISTS variant_attributes CASCADE`,
-		`DROP TABLE IF EXISTS product_variants CASCADE`,
-		`DROP TABLE IF EXISTS products CASCADE`,
-		`DROP TABLE IF EXISTS product_categories CASCADE`,
-	}
-
-	for _, query := range queries {
-		_, err := db.Exec(ctx, query)
-		if err != nil {
-			// Ignore errors for tables that don't exist
-			continue
-		}
-	}
-
-	// Create tables
-	schemaQueries := []string{
-		`CREATE TABLE product_categories (
-			id UUID PRIMARY KEY,
-			name VARCHAR(200) NOT NULL,
-			description TEXT,
-			parent_id UUID REFERENCES product_categories(id),
-			level INTEGER NOT NULL DEFAULT 0,
-			path VARCHAR(500),
-			image_url VARCHAR(500),
-			sort_order INTEGER NOT NULL DEFAULT 0,
-			is_active BOOLEAN NOT NULL DEFAULT true,
-			created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-			updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
-		)`,
-		`CREATE TABLE products (
-			id UUID PRIMARY KEY,
-			sku VARCHAR(100) NOT NULL UNIQUE,
-			name VARCHAR(300) NOT NULL,
-			description TEXT,
-			short_description VARCHAR(500),
-			category_id UUID NOT NULL REFERENCES product_categories(id),
-			price DECIMAL(12,2) NOT NULL,
-			cost DECIMAL(12,2) NOT NULL DEFAULT 0,
-			weight DECIMAL(10,2) NOT NULL DEFAULT 0,
-			dimensions VARCHAR(100),
-			length DECIMAL(10,2) NOT NULL DEFAULT 0,
-			width DECIMAL(10,2) NOT NULL DEFAULT 0,
-			height DECIMAL(10,2) NOT NULL DEFAULT 0,
-			volume DECIMAL(10,2) NOT NULL DEFAULT 0,
-			barcode VARCHAR(50),
-			track_inventory BOOLEAN NOT NULL DEFAULT true,
-			stock_quantity INTEGER NOT NULL DEFAULT 0,
-			min_stock_level INTEGER NOT NULL DEFAULT 0,
-			max_stock_level INTEGER NOT NULL DEFAULT 0,
-			allow_backorder BOOLEAN NOT NULL DEFAULT false,
-			requires_shipping BOOLEAN NOT NULL DEFAULT true,
-			taxable BOOLEAN NOT NULL DEFAULT true,
-			tax_rate DECIMAL(5,2) NOT NULL DEFAULT 0,
-			is_active BOOLEAN NOT NULL DEFAULT true,
-			is_featured BOOLEAN NOT NULL DEFAULT false,
-			is_digital BOOLEAN NOT NULL DEFAULT false,
-			download_url VARCHAR(1000),
-			max_downloads INTEGER NOT NULL DEFAULT 0,
-			expiry_days INTEGER NOT NULL DEFAULT 0,
-			created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-			updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
-		)`,
-		`CREATE TABLE product_variants (
-			id UUID PRIMARY KEY,
-			product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-			sku VARCHAR(100) NOT NULL UNIQUE,
-			name VARCHAR(300) NOT NULL,
-			price DECIMAL(12,2) NOT NULL,
-			cost DECIMAL(12,2) NOT NULL DEFAULT 0,
-			weight DECIMAL(10,2) NOT NULL DEFAULT 0,
-			dimensions VARCHAR(100),
-			length DECIMAL(10,2) NOT NULL DEFAULT 0,
-			width DECIMAL(10,2) NOT NULL DEFAULT 0,
-			height DECIMAL(10,2) NOT NULL DEFAULT 0,
-			volume DECIMAL(10,2) NOT NULL DEFAULT 0,
-			barcode VARCHAR(50),
-			image_url VARCHAR(1000),
-			track_inventory BOOLEAN NOT NULL DEFAULT true,
-			stock_quantity INTEGER NOT NULL DEFAULT 0,
-			min_stock_level INTEGER NOT NULL DEFAULT 0,
-			max_stock_level INTEGER NOT NULL DEFAULT 0,
-			allow_backorder BOOLEAN NOT NULL DEFAULT false,
-			requires_shipping BOOLEAN NOT NULL DEFAULT true,
-			taxable BOOLEAN NOT NULL DEFAULT true,
-			tax_rate DECIMAL(5,2) NOT NULL DEFAULT 0,
-			is_active BOOLEAN NOT NULL DEFAULT true,
-			is_digital BOOLEAN NOT NULL DEFAULT false,
-			download_url VARCHAR(1000),
-			max_downloads INTEGER NOT NULL DEFAULT 0,
-			expiry_days INTEGER NOT NULL DEFAULT 0,
-			sort_order INTEGER NOT NULL DEFAULT 0,
-			created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-			updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
-		)`,
-		`CREATE TABLE variant_attributes (
-			id UUID PRIMARY KEY,
-			variant_id UUID NOT NULL REFERENCES product_variants(id) ON DELETE CASCADE,
-			name VARCHAR(100) NOT NULL,
-			value VARCHAR(200) NOT NULL,
-			type VARCHAR(50) NOT NULL,
-			sort_order INTEGER NOT NULL DEFAULT 0
-		)`,
-		`CREATE TABLE variant_images (
-			id UUID PRIMARY KEY,
-			variant_id UUID NOT NULL REFERENCES product_variants(id) ON DELETE CASCADE,
-			image_url VARCHAR(1000) NOT NULL,
-			alt_text VARCHAR(200),
-			sort_order INTEGER NOT NULL DEFAULT 0,
-			is_main BOOLEAN NOT NULL DEFAULT false
-		)`,
-		// Create indexes
-		`CREATE INDEX idx_products_sku ON products(sku)`,
-		`CREATE INDEX idx_products_category_id ON products(category_id)`,
-		`CREATE INDEX idx_products_is_active ON products(is_active)`,
-		`CREATE INDEX idx_products_is_featured ON products(is_featured)`,
-		`CREATE INDEX idx_products_price ON products(price)`,
-		`CREATE INDEX idx_product_variants_product_id ON product_variants(product_id)`,
-		`CREATE INDEX idx_product_variants_sku ON product_variants(sku)`,
-		`CREATE INDEX idx_product_variants_is_active ON product_variants(is_active)`,
-		`CREATE INDEX idx_product_categories_parent_id ON product_categories(parent_id)`,
-		`CREATE INDEX idx_product_categories_path ON product_categories(path)`,
-		`CREATE INDEX idx_product_categories_is_active ON product_categories(is_active)`,
-		`CREATE INDEX idx_variant_attributes_variant_id ON variant_attributes(variant_id)`,
-		`CREATE INDEX idx_variant_images_variant_id ON variant_images(variant_id)`,
-	}
-
-	for _, query := range schemaQueries {
-		_, err := db.Exec(ctx, query)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
+// Test setup helper functions - product-specific helpers
 
 func createTestCategory(t testing.TB) *entities.ProductCategory {
 	t.Helper()
@@ -202,7 +36,7 @@ func createTestCategory(t testing.TB) *entities.ProductCategory {
 	}
 }
 
-func createTestProduct(t testing.TB, categoryID uuid.UUID) *entities.Product {
+func createTestProductEntity(t testing.TB, categoryID uuid.UUID) *entities.Product {
 	t.Helper()
 
 	return &entities.Product{
@@ -279,7 +113,7 @@ func TestPostgresProductRepository_Create(t *testing.T) {
 	require.NoError(t, err)
 
 	// Create test product
-	product := createTestProduct(t, category.ID)
+	product := createTestProductEntity(t, category.ID)
 
 	err = repo.Create(ctx, product)
 	assert.NoError(t, err)
@@ -306,7 +140,7 @@ func TestPostgresProductRepository_GetByID(t *testing.T) {
 	require.NoError(t, err)
 
 	// Create test product
-	product := createTestProduct(t, category.ID)
+	product := createTestProductEntity(t, category.ID)
 	err = repo.Create(ctx, product)
 	require.NoError(t, err)
 
@@ -332,7 +166,7 @@ func TestPostgresProductRepository_GetBySKU(t *testing.T) {
 	require.NoError(t, err)
 
 	// Create test product
-	product := createTestProduct(t, category.ID)
+	product := createTestProductEntity(t, category.ID)
 	err = repo.Create(ctx, product)
 	require.NoError(t, err)
 
@@ -358,7 +192,7 @@ func TestPostgresProductRepository_Update(t *testing.T) {
 	require.NoError(t, err)
 
 	// Create test product
-	product := createTestProduct(t, category.ID)
+	product := createTestProductEntity(t, category.ID)
 	err = repo.Create(ctx, product)
 	require.NoError(t, err)
 
@@ -391,7 +225,7 @@ func TestPostgresProductRepository_Delete(t *testing.T) {
 	require.NoError(t, err)
 
 	// Create test product
-	product := createTestProduct(t, category.ID)
+	product := createTestProductEntity(t, category.ID)
 	err = repo.Create(ctx, product)
 	require.NoError(t, err)
 
@@ -420,7 +254,7 @@ func TestPostgresProductRepository_List(t *testing.T) {
 	// Create test products
 	products := make([]*entities.Product, 5)
 	for i := 0; i < 5; i++ {
-		product := createTestProduct(t, category.ID)
+		product := createTestProductEntity(t, category.ID)
 		product.SKU = fmt.Sprintf("TEST-%03d", i+1)
 		product.Name = fmt.Sprintf("Test Product %d", i+1)
 		product.Price = decimal.NewFromFloat(float64(i+1) * 10.0)
@@ -468,7 +302,7 @@ func TestPostgresProductRepository_Count(t *testing.T) {
 
 	// Create test products
 	for i := 0; i < 5; i++ {
-		product := createTestProduct(t, category.ID)
+		product := createTestProductEntity(t, category.ID)
 		product.SKU = fmt.Sprintf("TEST-%03d", i+1)
 		product.Name = fmt.Sprintf("Test Product %d", i+1)
 		product.IsActive = i < 3 // First 3 are active
@@ -515,7 +349,7 @@ func TestPostgresProductRepository_Search(t *testing.T) {
 	}
 
 	for _, p := range products {
-		product := createTestProduct(t, category.ID)
+		product := createTestProductEntity(t, category.ID)
 		product.SKU = p.sku
 		product.Name = p.name
 		product.IsActive = p.isActive
@@ -561,7 +395,7 @@ func TestPostgresProductRepository_GetLowStock(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		product := createTestProduct(t, category.ID)
+		product := createTestProductEntity(t, category.ID)
 		product.SKU = fmt.Sprintf("STOCK-%03d", i+1)
 		product.Name = fmt.Sprintf("Stock Test %d", i+1)
 		product.StockQuantity = tc.stockQuantity
@@ -598,7 +432,7 @@ func TestPostgresProductRepository_ExistsBySKU(t *testing.T) {
 	require.NoError(t, err)
 
 	// Create test product
-	product := createTestProduct(t, category.ID)
+	product := createTestProductEntity(t, category.ID)
 	err = repo.Create(ctx, product)
 	require.NoError(t, err)
 
@@ -627,7 +461,7 @@ func TestPostgresProductRepository_UpdateStock(t *testing.T) {
 	require.NoError(t, err)
 
 	// Create test product
-	product := createTestProduct(t, category.ID)
+	product := createTestProductEntity(t, category.ID)
 	err = repo.Create(ctx, product)
 	require.NoError(t, err)
 
@@ -674,7 +508,7 @@ func TestPostgresProductRepository_GetProductStats(t *testing.T) {
 	}
 
 	for _, p := range products {
-		product := createTestProduct(t, category.ID)
+		product := createTestProductEntity(t, category.ID)
 		product.SKU = uuid.New().String()[:8]
 		product.Name = "Stats Test Product"
 		product.IsActive = p.isActive

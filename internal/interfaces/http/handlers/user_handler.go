@@ -10,6 +10,7 @@ import (
 	"erpgo/internal/application/services/user"
 	"erpgo/internal/domain/users/entities"
 	"erpgo/internal/interfaces/http/dto"
+	"erpgo/internal/interfaces/http/middleware"
 )
 
 // UserHandler handles user HTTP requests
@@ -91,10 +92,7 @@ func (h *UserHandler) GetUsers(c *gin.Context) {
 	response, err := h.userService.ListUsers(c, req)
 	if err != nil {
 		h.logger.Error().Err(err).Msg("Failed to list users")
-		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error:   "Failed to list users",
-			Details: err.Error(),
-		})
+		middleware.HandleError(c, err)
 		return
 	}
 
@@ -135,19 +133,8 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 	// Call service
 	user, err := h.userService.GetUser(c, userID)
 	if err != nil {
-		if err.Error() == "user not found" {
-			c.JSON(http.StatusNotFound, dto.ErrorResponse{
-				Error:   "User not found",
-				Details: "No user found with the provided ID",
-			})
-			return
-		}
-
 		h.logger.Error().Err(err).Str("user_id", userID).Msg("Failed to get user")
-		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error:   "Failed to get user",
-			Details: err.Error(),
-		})
+		middleware.HandleError(c, err)
 		return
 	}
 

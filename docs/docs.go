@@ -5,11 +5,22 @@ import "github.com/swaggo/swag"
 
 const docTemplate = `{
     "schemes": {{ marshal .Schemes }},
+    "produces": [
+        "application/json"
+    ],
     "swagger": "2.0",
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "contact": {
+            "name": "ERPGo Support",
+            "url": "https://docs.erpgo.example.com",
+            "email": "support@erpgo.example.com"
+        },
+        "license": {
+            "name": "AGPL-3.0",
+            "url": "https://www.gnu.org/licenses/agpl-3.0.en.html"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -35,7 +46,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ForgotPasswordRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ForgotPasswordRequest"
                         }
                     }
                 ],
@@ -43,19 +54,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SuccessResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -81,7 +92,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.LoginRequest"
                         }
                     }
                 ],
@@ -89,25 +100,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -130,19 +147,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SuccessResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.SuccessResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -168,7 +185,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RefreshTokenRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.RefreshTokenRequest"
                         }
                     }
                 ],
@@ -176,25 +193,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -220,7 +237,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RegisterRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.RegisterRequest"
                         }
                     }
                 ],
@@ -228,19 +245,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserInfo"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UserInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -266,7 +283,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ResetPasswordRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ResetPasswordRequest"
                         }
                     }
                 ],
@@ -274,19 +291,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SuccessResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -367,19 +384,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.CategoryListResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CategoryListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -403,7 +420,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateCategoryRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CreateCategoryRequest"
                         }
                     }
                 ],
@@ -411,37 +428,37 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.CategoryResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CategoryResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -473,25 +490,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.CategoryResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CategoryResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -514,13 +531,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.CategoryTreeResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CategoryTreeResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -552,25 +569,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.CategoryResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CategoryResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -601,7 +618,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateCategoryRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UpdateCategoryRequest"
                         }
                     }
                 ],
@@ -609,37 +626,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.CategoryResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CategoryResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -672,37 +689,37 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -736,26 +753,26 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.CategoryResponse"
+                                "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CategoryResponse"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -789,26 +806,26 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.CategoryResponse"
+                                "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CategoryResponse"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -841,7 +858,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.MoveCategoryRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.MoveCategoryRequest"
                         }
                     }
                 ],
@@ -849,43 +866,43 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.CategoryResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CategoryResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -972,19 +989,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ListCompaniesResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ListCompaniesResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1008,7 +1025,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateCompanyRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CreateCompanyRequest"
                         }
                     }
                 ],
@@ -1016,37 +1033,37 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.CompanyResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CompanyResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1078,25 +1095,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.CompanyResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CompanyResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1127,7 +1144,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateCompanyRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UpdateCompanyRequest"
                         }
                     }
                 ],
@@ -1135,37 +1152,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.CompanyResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CompanyResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1198,31 +1215,31 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1339,19 +1356,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ListCustomersResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ListCustomersResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1375,7 +1392,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateCustomerRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CreateCustomerRequest"
                         }
                     }
                 ],
@@ -1383,37 +1400,37 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.CustomerResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CustomerResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1445,25 +1462,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.CustomerResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CustomerResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1579,19 +1596,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SearchCustomersResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.SearchCustomersResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1623,25 +1640,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.CustomerResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CustomerResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1672,7 +1689,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateCustomerRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UpdateCustomerRequest"
                         }
                     }
                 ],
@@ -1680,37 +1697,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.CustomerResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CustomerResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1743,31 +1760,31 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1799,37 +1816,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.CustomerResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CustomerResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1861,25 +1878,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.CustomerCreditResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CustomerCreditResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1910,7 +1927,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateCustomerCreditRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UpdateCustomerCreditRequest"
                         }
                     }
                 ],
@@ -1918,37 +1935,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.CustomerResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CustomerResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1980,37 +1997,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.CustomerResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CustomerResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2061,19 +2078,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.FileListResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.FileListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2115,43 +2132,43 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.UploadResult"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UploadResult"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "413": {
                         "description": "Request Entity Too Large",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "415": {
                         "description": "Unsupported Media Type",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2195,31 +2212,31 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.BatchFileUploadResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.BatchFileUploadResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "413": {
                         "description": "Request Entity Too Large",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "415": {
                         "description": "Unsupported Media Type",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2257,19 +2274,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2299,25 +2316,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.MessageResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.MessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2349,25 +2366,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.FileMetadataResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.FileMetadataResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2398,7 +2415,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateMetadataRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UpdateMetadataRequest"
                         }
                     }
                 ],
@@ -2406,25 +2423,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.MessageResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.MessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2469,25 +2486,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.FileURLResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.FileURLResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2525,19 +2542,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2567,25 +2584,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.MessageResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.MessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2714,19 +2731,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.InventoryListResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.InventoryListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2752,7 +2769,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.AdjustInventoryRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.AdjustInventoryRequest"
                         }
                     }
                 ],
@@ -2760,37 +2777,37 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.InventoryTransactionResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.InventoryTransactionResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2865,19 +2882,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.LowStockAlertListResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.LowStockAlertListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2901,7 +2918,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.LowStockAlertRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.LowStockAlertRequest"
                         }
                     }
                 ],
@@ -2909,37 +2926,37 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.LowStockAlertResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.LowStockAlertResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2973,26 +2990,26 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.LowStockAlertResponse"
+                                "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.LowStockAlertResponse"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3025,7 +3042,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.LowStockAlertRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.LowStockAlertRequest"
                         }
                     }
                 ],
@@ -3033,37 +3050,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.LowStockAlertResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.LowStockAlertResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3096,31 +3113,31 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3146,7 +3163,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.BulkInventoryAdjustmentRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.BulkInventoryAdjustmentRequest"
                         }
                     }
                 ],
@@ -3154,31 +3171,31 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.BulkInventoryOperationResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.BulkInventoryOperationResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3209,19 +3226,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.InventoryListResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.InventoryListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3260,25 +3277,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.InventoryResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.InventoryResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3324,25 +3341,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.AvailabilityResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.AvailabilityResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3390,26 +3407,26 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.InventoryTransactionResponse"
+                                "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.InventoryTransactionResponse"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3435,7 +3452,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ReleaseInventoryRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ReleaseInventoryRequest"
                         }
                     }
                 ],
@@ -3443,43 +3460,43 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.InventoryResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.InventoryResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3505,7 +3522,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ReserveInventoryRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ReserveInventoryRequest"
                         }
                     }
                 ],
@@ -3513,43 +3530,43 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.InventoryResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.InventoryResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3572,25 +3589,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.InventoryStatsResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.InventoryStatsResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3689,19 +3706,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.InventoryTransactionListResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.InventoryTransactionListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3732,19 +3749,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.InventoryTransactionListResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.InventoryTransactionListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3783,19 +3800,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.InventoryTransactionListResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.InventoryTransactionListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3832,19 +3849,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TransactionStatsResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.TransactionStatsResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3876,25 +3893,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.InventoryTransactionResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.InventoryTransactionResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3927,7 +3944,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ApproveTransactionRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ApproveTransactionRequest"
                         }
                     }
                 ],
@@ -3935,43 +3952,43 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.InventoryTransactionResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.InventoryTransactionResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -4015,43 +4032,43 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.InventoryTransactionResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.InventoryTransactionResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -4077,7 +4094,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.TransferInventoryRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.TransferInventoryRequest"
                         }
                     }
                 ],
@@ -4085,43 +4102,43 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.InventoryTransactionResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.InventoryTransactionResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -4238,19 +4255,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ListOrdersResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ListOrdersResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -4274,7 +4291,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.OrderRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.OrderRequest"
                         }
                     }
                 ],
@@ -4282,37 +4299,37 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.OrderResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.OrderResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -4344,25 +4361,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.OrderResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.OrderResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -4466,19 +4483,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SearchOrdersResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.SearchOrdersResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -4510,25 +4527,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.OrderResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.OrderResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -4559,7 +4576,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateOrderRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UpdateOrderRequest"
                         }
                     }
                 ],
@@ -4567,37 +4584,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.OrderResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.OrderResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -4630,31 +4647,31 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -4687,7 +4704,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CancelOrderRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CancelOrderRequest"
                         }
                     }
                 ],
@@ -4695,37 +4712,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.OrderResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.OrderResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -4758,7 +4775,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.DeliverOrderRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.DeliverOrderRequest"
                         }
                     }
                 ],
@@ -4766,37 +4783,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.OrderResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.OrderResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -4829,7 +4846,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ProcessPaymentRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProcessPaymentRequest"
                         }
                     }
                 ],
@@ -4837,37 +4854,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.OrderResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.OrderResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -4900,7 +4917,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ProcessOrderRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProcessOrderRequest"
                         }
                     }
                 ],
@@ -4908,37 +4925,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.OrderResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.OrderResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -4971,7 +4988,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ShipOrderRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ShipOrderRequest"
                         }
                     }
                 ],
@@ -4979,37 +4996,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.OrderResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.OrderResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -5042,7 +5059,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateOrderStatusRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UpdateOrderStatusRequest"
                         }
                     }
                 ],
@@ -5050,37 +5067,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.OrderResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.OrderResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -5225,19 +5242,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductListResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -5261,7 +5278,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateProductRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CreateProductRequest"
                         }
                     }
                 ],
@@ -5269,37 +5286,37 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -5338,19 +5355,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SearchProductsResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.SearchProductsResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -5382,25 +5399,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -5432,25 +5449,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -5481,7 +5498,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateProductRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UpdateProductRequest"
                         }
                     }
                 ],
@@ -5489,37 +5506,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -5552,31 +5569,31 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -5608,37 +5625,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -5671,7 +5688,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CheckAvailabilityRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CheckAvailabilityRequest"
                         }
                     }
                 ],
@@ -5679,25 +5696,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.AvailabilityResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.AvailabilityResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -5729,37 +5746,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -5803,37 +5820,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -5866,7 +5883,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdatePriceRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UpdatePriceRequest"
                         }
                     }
                 ],
@@ -5874,37 +5891,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -5936,25 +5953,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.StockLevelResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.StockLevelResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -5985,7 +6002,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateStockRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UpdateStockRequest"
                         }
                     }
                 ],
@@ -5993,37 +6010,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -6056,7 +6073,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.AdjustStockRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.AdjustStockRequest"
                         }
                     }
                 ],
@@ -6064,37 +6081,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -6128,20 +6145,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.ImageInfo"
+                                "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ImageInfo"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -6178,49 +6195,49 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.UploadResult"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UploadResult"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "413": {
                         "description": "Request Entity Too Large",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "415": {
                         "description": "Unsupported Media Type",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -6261,50 +6278,50 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.UploadResult"
+                                "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UploadResult"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "413": {
                         "description": "Request Entity Too Large",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "415": {
                         "description": "Unsupported Media Type",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -6398,25 +6415,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductVariantListResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductVariantListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -6447,7 +6464,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateProductVariantRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CreateProductVariantRequest"
                         }
                     }
                 ],
@@ -6455,43 +6472,43 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductVariantResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductVariantResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -6543,49 +6560,49 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.UploadResult"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UploadResult"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "413": {
                         "description": "Request Entity Too Large",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "415": {
                         "description": "Unsupported Media Type",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -6608,19 +6625,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserInfo"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UserInfo"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -6644,7 +6661,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateUserRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UpdateUserRequest"
                         }
                     }
                 ],
@@ -6652,25 +6669,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserInfo"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UserInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -6706,13 +6723,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.PaginatedResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.PaginatedResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -6736,7 +6753,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateRoleRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CreateRoleRequest"
                         }
                     }
                 ],
@@ -6744,25 +6761,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.RoleResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.RoleResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -6788,7 +6805,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.AssignRoleRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.AssignRoleRequest"
                         }
                     }
                 ],
@@ -6796,25 +6813,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SuccessResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -6840,7 +6857,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RemoveRoleRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.RemoveRoleRequest"
                         }
                     }
                 ],
@@ -6848,25 +6865,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SuccessResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -6895,19 +6912,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SuccessResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -6936,19 +6953,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserPermissionsResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UserPermissionsResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -6977,19 +6994,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.RoleResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.RoleResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -7020,7 +7037,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateRoleRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UpdateRoleRequest"
                         }
                     }
                 ],
@@ -7028,25 +7045,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.RoleResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.RoleResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -7073,19 +7090,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SuccessResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.SuccessResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -7114,25 +7131,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.RolePermissionResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.RolePermissionResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -7213,25 +7230,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ListUsersResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ListUsersResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -7263,25 +7280,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserInfo"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UserInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -7312,7 +7329,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateUserRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UpdateUserRequest"
                         }
                     }
                 ],
@@ -7320,25 +7337,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserInfo"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UserInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -7368,25 +7385,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SuccessResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -7420,26 +7437,26 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.RoleInfo"
+                                "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.RoleInfo"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -7471,25 +7488,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductVariantResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductVariantResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -7521,25 +7538,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductVariantResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductVariantResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -7570,7 +7587,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateProductVariantRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UpdateProductVariantRequest"
                         }
                     }
                 ],
@@ -7578,37 +7595,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductVariantResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductVariantResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -7641,31 +7658,31 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -7698,7 +7715,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateStockRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UpdateStockRequest"
                         }
                     }
                 ],
@@ -7706,37 +7723,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductVariantResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductVariantResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -7769,7 +7786,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.AdjustStockRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.AdjustStockRequest"
                         }
                     }
                 ],
@@ -7777,37 +7794,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductVariantResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductVariantResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -7918,19 +7935,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WarehouseListResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.WarehouseListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -7954,7 +7971,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateWarehouseRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CreateWarehouseRequest"
                         }
                     }
                 ],
@@ -7962,37 +7979,37 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.WarehouseResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.WarehouseResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -8024,25 +8041,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WarehouseResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.WarehouseResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -8081,19 +8098,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WarehouseListResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.WarehouseListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -8116,25 +8133,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WarehouseStatsResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.WarehouseStatsResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -8166,25 +8183,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WarehouseResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.WarehouseResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -8215,7 +8232,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateWarehouseRequest"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UpdateWarehouseRequest"
                         }
                     }
                 ],
@@ -8223,37 +8240,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WarehouseResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.WarehouseResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -8286,31 +8303,31 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -8342,37 +8359,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WarehouseResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.WarehouseResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -8404,37 +8421,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WarehouseResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.WarehouseResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -8478,37 +8495,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WarehouseResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.WarehouseResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -8538,37 +8555,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WarehouseResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.WarehouseResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
+                            "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ErrorResponse"
                         }
                     }
                 }
@@ -8576,7 +8593,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dto.AddressResponse": {
+        "erpgo_internal_interfaces_http_dto.AddressResponse": {
             "type": "object",
             "properties": {
                 "address1": {
@@ -8623,7 +8640,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AdjustInventoryRequest": {
+        "erpgo_internal_interfaces_http_dto.AdjustInventoryRequest": {
             "type": "object",
             "required": [
                 "adjustment",
@@ -8661,7 +8678,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AdjustStockRequest": {
+        "erpgo_internal_interfaces_http_dto.AdjustStockRequest": {
             "type": "object",
             "required": [
                 "adjustment"
@@ -8676,7 +8693,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ApproveTransactionRequest": {
+        "erpgo_internal_interfaces_http_dto.ApproveTransactionRequest": {
             "type": "object",
             "required": [
                 "approved_by"
@@ -8691,7 +8708,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AssignRoleRequest": {
+        "erpgo_internal_interfaces_http_dto.AssignRoleRequest": {
             "type": "object",
             "required": [
                 "role_id",
@@ -8706,7 +8723,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AvailabilityResponse": {
+        "erpgo_internal_interfaces_http_dto.AvailabilityResponse": {
             "type": "object",
             "properties": {
                 "available": {
@@ -8729,7 +8746,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.BatchFileUploadError": {
+        "erpgo_internal_interfaces_http_dto.BatchFileUploadError": {
             "type": "object",
             "properties": {
                 "error": {
@@ -8743,13 +8760,13 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.BatchFileUploadResponse": {
+        "erpgo_internal_interfaces_http_dto.BatchFileUploadResponse": {
             "type": "object",
             "properties": {
                 "errors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.BatchFileUploadError"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.BatchFileUploadError"
                     }
                 },
                 "failed": {
@@ -8758,7 +8775,7 @@ const docTemplate = `{
                 "results": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.UploadResult"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UploadResult"
                     }
                 },
                 "successful": {
@@ -8769,7 +8786,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.BulkInventoryAdjustmentRequest": {
+        "erpgo_internal_interfaces_http_dto.BulkInventoryAdjustmentRequest": {
             "type": "object",
             "required": [
                 "adjustments"
@@ -8780,7 +8797,7 @@ const docTemplate = `{
                     "maxItems": 100,
                     "minItems": 1,
                     "items": {
-                        "$ref": "#/definitions/dto.AdjustInventoryRequest"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.AdjustInventoryRequest"
                     }
                 },
                 "dry_run": {
@@ -8788,7 +8805,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.BulkInventoryOperationError": {
+        "erpgo_internal_interfaces_http_dto.BulkInventoryOperationError": {
             "type": "object",
             "properties": {
                 "details": {
@@ -8808,13 +8825,13 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.BulkInventoryOperationResponse": {
+        "erpgo_internal_interfaces_http_dto.BulkInventoryOperationResponse": {
             "type": "object",
             "properties": {
                 "errors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.BulkInventoryOperationError"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.BulkInventoryOperationError"
                     }
                 },
                 "failed_count": {
@@ -8823,21 +8840,21 @@ const docTemplate = `{
                 "results": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.BulkInventoryOperationResult"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.BulkInventoryOperationResult"
                     }
                 },
                 "success_count": {
                     "type": "integer"
                 },
                 "summary": {
-                    "$ref": "#/definitions/dto.BulkOperationSummary"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.BulkOperationSummary"
                 },
                 "total_count": {
                     "type": "integer"
                 }
             }
         },
-        "dto.BulkInventoryOperationResult": {
+        "erpgo_internal_interfaces_http_dto.BulkInventoryOperationResult": {
             "type": "object",
             "properties": {
                 "adjustment": {
@@ -8866,7 +8883,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.BulkOperationSummary": {
+        "erpgo_internal_interfaces_http_dto.BulkOperationSummary": {
             "type": "object",
             "properties": {
                 "affected_products": {
@@ -8889,7 +8906,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CancelOrderRequest": {
+        "erpgo_internal_interfaces_http_dto.CancelOrderRequest": {
             "type": "object",
             "required": [
                 "reason"
@@ -8909,7 +8926,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CategoryInfo": {
+        "erpgo_internal_interfaces_http_dto.CategoryInfo": {
             "type": "object",
             "properties": {
                 "id": {
@@ -8923,21 +8940,21 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CategoryListResponse": {
+        "erpgo_internal_interfaces_http_dto.CategoryListResponse": {
             "type": "object",
             "properties": {
                 "categories": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.CategoryResponse"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CategoryResponse"
                     }
                 },
                 "pagination": {
-                    "$ref": "#/definitions/dto.PaginationInfo"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.PaginationInfo"
                 }
             }
         },
-        "dto.CategoryResponse": {
+        "erpgo_internal_interfaces_http_dto.CategoryResponse": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -8959,7 +8976,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "parent": {
-                    "$ref": "#/definitions/dto.CategoryInfo"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CategoryInfo"
                 },
                 "parent_id": {
                     "type": "string"
@@ -8987,13 +9004,13 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CategoryTreeNode": {
+        "erpgo_internal_interfaces_http_dto.CategoryTreeNode": {
             "type": "object",
             "properties": {
                 "children": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.CategoryTreeNode"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CategoryTreeNode"
                     }
                 },
                 "created_at": {
@@ -9015,7 +9032,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "parent": {
-                    "$ref": "#/definitions/dto.CategoryInfo"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CategoryInfo"
                 },
                 "parent_id": {
                     "type": "string"
@@ -9043,18 +9060,18 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CategoryTreeResponse": {
+        "erpgo_internal_interfaces_http_dto.CategoryTreeResponse": {
             "type": "object",
             "properties": {
                 "tree": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.CategoryTreeNode"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CategoryTreeNode"
                     }
                 }
             }
         },
-        "dto.CheckAvailabilityRequest": {
+        "erpgo_internal_interfaces_http_dto.CheckAvailabilityRequest": {
             "type": "object",
             "required": [
                 "product_id",
@@ -9070,7 +9087,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CompanyResponse": {
+        "erpgo_internal_interfaces_http_dto.CompanyResponse": {
             "type": "object",
             "properties": {
                 "address": {
@@ -9126,7 +9143,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateCategoryRequest": {
+        "erpgo_internal_interfaces_http_dto.CreateCategoryRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -9165,7 +9182,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateCompanyRequest": {
+        "erpgo_internal_interfaces_http_dto.CreateCompanyRequest": {
             "type": "object",
             "required": [
                 "address",
@@ -9237,7 +9254,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateCustomerRequest": {
+        "erpgo_internal_interfaces_http_dto.CreateCustomerRequest": {
             "type": "object",
             "required": [
                 "credit_limit",
@@ -9325,7 +9342,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateProductRequest": {
+        "erpgo_internal_interfaces_http_dto.CreateProductRequest": {
             "type": "object",
             "required": [
                 "category_id",
@@ -9430,7 +9447,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateProductVariantRequest": {
+        "erpgo_internal_interfaces_http_dto.CreateProductVariantRequest": {
             "type": "object",
             "required": [
                 "name",
@@ -9444,7 +9461,7 @@ const docTemplate = `{
                 "attributes": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.VariantAttributeReq"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.VariantAttributeReq"
                     }
                 },
                 "barcode": {
@@ -9458,7 +9475,7 @@ const docTemplate = `{
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.VariantImageReq"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.VariantImageReq"
                     }
                 },
                 "is_active": {
@@ -9499,7 +9516,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateRoleRequest": {
+        "erpgo_internal_interfaces_http_dto.CreateRoleRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -9522,7 +9539,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateWarehouseRequest": {
+        "erpgo_internal_interfaces_http_dto.CreateWarehouseRequest": {
             "type": "object",
             "required": [
                 "address",
@@ -9615,7 +9632,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CustomerCreditResponse": {
+        "erpgo_internal_interfaces_http_dto.CustomerCreditResponse": {
             "type": "object",
             "properties": {
                 "available_percentage": {
@@ -9644,7 +9661,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CustomerResponse": {
+        "erpgo_internal_interfaces_http_dto.CustomerResponse": {
             "type": "object",
             "properties": {
                 "company_id": {
@@ -9730,7 +9747,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.DailyTransactionStats": {
+        "erpgo_internal_interfaces_http_dto.DailyTransactionStats": {
             "type": "object",
             "properties": {
                 "count": {
@@ -9747,7 +9764,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.DeliverOrderRequest": {
+        "erpgo_internal_interfaces_http_dto.DeliverOrderRequest": {
             "type": "object",
             "properties": {
                 "delivery_date": {
@@ -9767,7 +9784,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ErrorResponse": {
+        "erpgo_internal_interfaces_http_dto.ErrorResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -9781,7 +9798,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.FileInfo": {
+        "erpgo_internal_interfaces_http_dto.FileInfo": {
             "type": "object",
             "properties": {
                 "content_type": {
@@ -9804,13 +9821,13 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.FileListResponse": {
+        "erpgo_internal_interfaces_http_dto.FileListResponse": {
             "type": "object",
             "properties": {
                 "files": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.FileInfo"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.FileInfo"
                     }
                 },
                 "is_truncated": {
@@ -9830,7 +9847,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.FileMetadataResponse": {
+        "erpgo_internal_interfaces_http_dto.FileMetadataResponse": {
             "type": "object",
             "properties": {
                 "cache_control": {
@@ -9871,7 +9888,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.FileURLResponse": {
+        "erpgo_internal_interfaces_http_dto.FileURLResponse": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -9888,7 +9905,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ForgotPasswordRequest": {
+        "erpgo_internal_interfaces_http_dto.ForgotPasswordRequest": {
             "type": "object",
             "required": [
                 "email"
@@ -9899,7 +9916,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ImageInfo": {
+        "erpgo_internal_interfaces_http_dto.ImageInfo": {
             "type": "object",
             "properties": {
                 "filename": {
@@ -9916,21 +9933,21 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.InventoryListResponse": {
+        "erpgo_internal_interfaces_http_dto.InventoryListResponse": {
             "type": "object",
             "properties": {
                 "inventory": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.InventoryResponse"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.InventoryResponse"
                     }
                 },
                 "pagination": {
-                    "$ref": "#/definitions/dto.PaginationInfo"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.PaginationInfo"
                 }
             }
         },
-        "dto.InventoryResponse": {
+        "erpgo_internal_interfaces_http_dto.InventoryResponse": {
             "type": "object",
             "properties": {
                 "available_quantity": {
@@ -9986,7 +10003,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.InventoryStatsResponse": {
+        "erpgo_internal_interfaces_http_dto.InventoryStatsResponse": {
             "type": "object",
             "properties": {
                 "low_stock_items": {
@@ -9998,13 +10015,13 @@ const docTemplate = `{
                 "top_products_by_value": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.ProductValueInfo"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductValueInfo"
                     }
                 },
                 "top_warehouses_by_stock": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.WarehouseStockInfo"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.WarehouseStockInfo"
                     }
                 },
                 "total_inventory_value": {
@@ -10024,21 +10041,21 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.InventoryTransactionListResponse": {
+        "erpgo_internal_interfaces_http_dto.InventoryTransactionListResponse": {
             "type": "object",
             "properties": {
                 "pagination": {
-                    "$ref": "#/definitions/dto.PaginationInfo"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.PaginationInfo"
                 },
                 "transactions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.InventoryTransactionResponse"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.InventoryTransactionResponse"
                     }
                 }
             }
         },
-        "dto.InventoryTransactionResponse": {
+        "erpgo_internal_interfaces_http_dto.InventoryTransactionResponse": {
             "type": "object",
             "properties": {
                 "approval_notes": {
@@ -10103,63 +10120,63 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ListCompaniesResponse": {
+        "erpgo_internal_interfaces_http_dto.ListCompaniesResponse": {
             "type": "object",
             "properties": {
                 "companies": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.CompanyResponse"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CompanyResponse"
                     }
                 },
                 "pagination": {
-                    "$ref": "#/definitions/dto.Pagination"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.Pagination"
                 }
             }
         },
-        "dto.ListCustomersResponse": {
+        "erpgo_internal_interfaces_http_dto.ListCustomersResponse": {
             "type": "object",
             "properties": {
                 "customers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.CustomerResponse"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CustomerResponse"
                     }
                 },
                 "pagination": {
-                    "$ref": "#/definitions/dto.Pagination"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.Pagination"
                 }
             }
         },
-        "dto.ListOrdersResponse": {
+        "erpgo_internal_interfaces_http_dto.ListOrdersResponse": {
             "type": "object",
             "properties": {
                 "orders": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.OrderResponse"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.OrderResponse"
                     }
                 },
                 "pagination": {
-                    "$ref": "#/definitions/dto.Pagination"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.Pagination"
                 }
             }
         },
-        "dto.ListUsersResponse": {
+        "erpgo_internal_interfaces_http_dto.ListUsersResponse": {
             "type": "object",
             "properties": {
                 "pagination": {
-                    "$ref": "#/definitions/dto.Pagination"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.Pagination"
                 },
                 "users": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.UserInfo"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UserInfo"
                     }
                 }
             }
         },
-        "dto.LoginRequest": {
+        "erpgo_internal_interfaces_http_dto.LoginRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -10177,7 +10194,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.LoginResponse": {
+        "erpgo_internal_interfaces_http_dto.LoginResponse": {
             "type": "object",
             "properties": {
                 "access_token": {
@@ -10190,25 +10207,25 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/dto.UserInfo"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.UserInfo"
                 }
             }
         },
-        "dto.LowStockAlertListResponse": {
+        "erpgo_internal_interfaces_http_dto.LowStockAlertListResponse": {
             "type": "object",
             "properties": {
                 "alerts": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.LowStockAlertResponse"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.LowStockAlertResponse"
                     }
                 },
                 "pagination": {
-                    "$ref": "#/definitions/dto.PaginationInfo"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.PaginationInfo"
                 }
             }
         },
-        "dto.LowStockAlertRequest": {
+        "erpgo_internal_interfaces_http_dto.LowStockAlertRequest": {
             "type": "object",
             "properties": {
                 "is_active": {
@@ -10226,7 +10243,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.LowStockAlertResponse": {
+        "erpgo_internal_interfaces_http_dto.LowStockAlertResponse": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -10273,7 +10290,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.MessageResponse": {
+        "erpgo_internal_interfaces_http_dto.MessageResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -10284,7 +10301,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.MoveCategoryRequest": {
+        "erpgo_internal_interfaces_http_dto.MoveCategoryRequest": {
             "type": "object",
             "properties": {
                 "parent_id": {
@@ -10292,7 +10309,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.OrderItemRequest": {
+        "erpgo_internal_interfaces_http_dto.OrderItemRequest": {
             "type": "object",
             "required": [
                 "product_id",
@@ -10318,7 +10335,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.OrderItemResponse": {
+        "erpgo_internal_interfaces_http_dto.OrderItemResponse": {
             "type": "object",
             "properties": {
                 "discount_amount": {
@@ -10374,7 +10391,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.OrderRequest": {
+        "erpgo_internal_interfaces_http_dto.OrderRequest": {
             "type": "object",
             "required": [
                 "billing_address_id",
@@ -10405,7 +10422,7 @@ const docTemplate = `{
                     "type": "array",
                     "minItems": 1,
                     "items": {
-                        "$ref": "#/definitions/dto.OrderItemRequest"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.OrderItemRequest"
                     }
                 },
                 "notes": {
@@ -10453,7 +10470,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.OrderResponse": {
+        "erpgo_internal_interfaces_http_dto.OrderResponse": {
             "type": "object",
             "properties": {
                 "approved_at": {
@@ -10463,7 +10480,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "billing_address": {
-                    "$ref": "#/definitions/dto.AddressResponse"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.AddressResponse"
                 },
                 "cancellation_reason": {
                     "type": "string"
@@ -10507,7 +10524,7 @@ const docTemplate = `{
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.OrderItemResponse"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.OrderItemResponse"
                     }
                 },
                 "notes": {
@@ -10535,7 +10552,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "shipping_address": {
-                    "$ref": "#/definitions/dto.AddressResponse"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.AddressResponse"
                 },
                 "shipping_amount": {
                     "type": "number"
@@ -10569,7 +10586,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.PaginatedResponse": {
+        "erpgo_internal_interfaces_http_dto.PaginatedResponse": {
             "type": "object",
             "properties": {
                 "data": {},
@@ -10577,11 +10594,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "pagination": {
-                    "$ref": "#/definitions/dto.Pagination"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.Pagination"
                 }
             }
         },
-        "dto.Pagination": {
+        "erpgo_internal_interfaces_http_dto.Pagination": {
             "type": "object",
             "properties": {
                 "has_next": {
@@ -10604,7 +10621,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.PaginationInfo": {
+        "erpgo_internal_interfaces_http_dto.PaginationInfo": {
             "type": "object",
             "properties": {
                 "has_next": {
@@ -10627,7 +10644,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ProcessOrderRequest": {
+        "erpgo_internal_interfaces_http_dto.ProcessOrderRequest": {
             "type": "object",
             "properties": {
                 "notify_customer": {
@@ -10635,7 +10652,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ProcessPaymentRequest": {
+        "erpgo_internal_interfaces_http_dto.ProcessPaymentRequest": {
             "type": "object",
             "required": [
                 "amount",
@@ -10659,21 +10676,21 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ProductListResponse": {
+        "erpgo_internal_interfaces_http_dto.ProductListResponse": {
             "type": "object",
             "properties": {
                 "pagination": {
-                    "$ref": "#/definitions/dto.PaginationInfo"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.PaginationInfo"
                 },
                 "products": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.ProductResponse"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductResponse"
                     }
                 }
             }
         },
-        "dto.ProductResponse": {
+        "erpgo_internal_interfaces_http_dto.ProductResponse": {
             "type": "object",
             "properties": {
                 "allow_backorder": {
@@ -10683,7 +10700,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "category": {
-                    "$ref": "#/definitions/dto.CategoryInfo"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CategoryInfo"
                 },
                 "category_id": {
                     "type": "string"
@@ -10775,7 +10792,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ProductTransactionStats": {
+        "erpgo_internal_interfaces_http_dto.ProductTransactionStats": {
             "type": "object",
             "properties": {
                 "count": {
@@ -10795,7 +10812,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ProductValueInfo": {
+        "erpgo_internal_interfaces_http_dto.ProductValueInfo": {
             "type": "object",
             "properties": {
                 "product_id": {
@@ -10818,21 +10835,21 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ProductVariantListResponse": {
+        "erpgo_internal_interfaces_http_dto.ProductVariantListResponse": {
             "type": "object",
             "properties": {
                 "pagination": {
-                    "$ref": "#/definitions/dto.PaginationInfo"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.PaginationInfo"
                 },
                 "variants": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.ProductVariantResponse"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductVariantResponse"
                     }
                 }
             }
         },
-        "dto.ProductVariantResponse": {
+        "erpgo_internal_interfaces_http_dto.ProductVariantResponse": {
             "type": "object",
             "properties": {
                 "allow_backorder": {
@@ -10841,7 +10858,7 @@ const docTemplate = `{
                 "attributes": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.VariantAttribute"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.VariantAttribute"
                     }
                 },
                 "barcode": {
@@ -10859,7 +10876,7 @@ const docTemplate = `{
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.VariantImage"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.VariantImage"
                     }
                 },
                 "is_active": {
@@ -10897,7 +10914,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.RefreshTokenRequest": {
+        "erpgo_internal_interfaces_http_dto.RefreshTokenRequest": {
             "type": "object",
             "required": [
                 "refresh_token"
@@ -10908,7 +10925,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.RegisterRequest": {
+        "erpgo_internal_interfaces_http_dto.RegisterRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -10945,7 +10962,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ReleaseInventoryRequest": {
+        "erpgo_internal_interfaces_http_dto.ReleaseInventoryRequest": {
             "type": "object",
             "required": [
                 "quantity",
@@ -10967,7 +10984,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.RemoveRoleRequest": {
+        "erpgo_internal_interfaces_http_dto.RemoveRoleRequest": {
             "type": "object",
             "required": [
                 "role_id",
@@ -10982,7 +10999,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ReserveInventoryRequest": {
+        "erpgo_internal_interfaces_http_dto.ReserveInventoryRequest": {
             "type": "object",
             "required": [
                 "product_id",
@@ -11024,7 +11041,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ResetPasswordRequest": {
+        "erpgo_internal_interfaces_http_dto.ResetPasswordRequest": {
             "type": "object",
             "required": [
                 "password",
@@ -11040,7 +11057,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.RoleInfo": {
+        "erpgo_internal_interfaces_http_dto.RoleInfo": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -11066,7 +11083,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.RolePermissionResponse": {
+        "erpgo_internal_interfaces_http_dto.RolePermissionResponse": {
             "type": "object",
             "properties": {
                 "permissions": {
@@ -11083,7 +11100,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.RoleResponse": {
+        "erpgo_internal_interfaces_http_dto.RoleResponse": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -11109,47 +11126,47 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.SearchCustomersResponse": {
+        "erpgo_internal_interfaces_http_dto.SearchCustomersResponse": {
             "type": "object",
             "properties": {
                 "customers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.CustomerResponse"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.CustomerResponse"
                     }
                 },
                 "pagination": {
-                    "$ref": "#/definitions/dto.Pagination"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.Pagination"
                 },
                 "total_count": {
                     "type": "integer"
                 }
             }
         },
-        "dto.SearchOrdersResponse": {
+        "erpgo_internal_interfaces_http_dto.SearchOrdersResponse": {
             "type": "object",
             "properties": {
                 "orders": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.OrderResponse"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.OrderResponse"
                     }
                 },
                 "pagination": {
-                    "$ref": "#/definitions/dto.Pagination"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.Pagination"
                 },
                 "total_count": {
                     "type": "integer"
                 }
             }
         },
-        "dto.SearchProductsResponse": {
+        "erpgo_internal_interfaces_http_dto.SearchProductsResponse": {
             "type": "object",
             "properties": {
                 "products": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.ProductResponse"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductResponse"
                     }
                 },
                 "query": {
@@ -11160,7 +11177,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ShipOrderRequest": {
+        "erpgo_internal_interfaces_http_dto.ShipOrderRequest": {
             "type": "object",
             "required": [
                 "carrier",
@@ -11187,7 +11204,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.StockLevelResponse": {
+        "erpgo_internal_interfaces_http_dto.StockLevelResponse": {
             "type": "object",
             "properties": {
                 "allow_backorder": {
@@ -11219,7 +11236,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.SuccessResponse": {
+        "erpgo_internal_interfaces_http_dto.SuccessResponse": {
             "type": "object",
             "properties": {
                 "data": {},
@@ -11228,7 +11245,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.TransactionStatsResponse": {
+        "erpgo_internal_interfaces_http_dto.TransactionStatsResponse": {
             "type": "object",
             "properties": {
                 "approved_transactions": {
@@ -11237,13 +11254,13 @@ const docTemplate = `{
                 "most_active_products": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.ProductTransactionStats"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.ProductTransactionStats"
                     }
                 },
                 "most_active_warehouses": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.WarehouseTransactionStats"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.WarehouseTransactionStats"
                     }
                 },
                 "net_quantity_change": {
@@ -11267,7 +11284,7 @@ const docTemplate = `{
                 "transactions_by_day": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.DailyTransactionStats"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.DailyTransactionStats"
                     }
                 },
                 "transactions_by_type": {
@@ -11278,7 +11295,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.TransferInventoryRequest": {
+        "erpgo_internal_interfaces_http_dto.TransferInventoryRequest": {
             "type": "object",
             "required": [
                 "from_warehouse_id",
@@ -11319,7 +11336,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateCategoryRequest": {
+        "erpgo_internal_interfaces_http_dto.UpdateCategoryRequest": {
             "type": "object",
             "properties": {
                 "description": {
@@ -11352,7 +11369,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateCompanyRequest": {
+        "erpgo_internal_interfaces_http_dto.UpdateCompanyRequest": {
             "type": "object",
             "properties": {
                 "address": {
@@ -11416,7 +11433,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateCustomerCreditRequest": {
+        "erpgo_internal_interfaces_http_dto.UpdateCustomerCreditRequest": {
             "type": "object",
             "required": [
                 "adjustment",
@@ -11434,7 +11451,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateCustomerRequest": {
+        "erpgo_internal_interfaces_http_dto.UpdateCustomerRequest": {
             "type": "object",
             "properties": {
                 "company_id": {
@@ -11503,7 +11520,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateMetadataRequest": {
+        "erpgo_internal_interfaces_http_dto.UpdateMetadataRequest": {
             "type": "object",
             "required": [
                 "metadata"
@@ -11517,7 +11534,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateOrderRequest": {
+        "erpgo_internal_interfaces_http_dto.UpdateOrderRequest": {
             "type": "object",
             "properties": {
                 "billing_address_id": {
@@ -11552,7 +11569,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateOrderStatusRequest": {
+        "erpgo_internal_interfaces_http_dto.UpdateOrderStatusRequest": {
             "type": "object",
             "required": [
                 "status"
@@ -11569,7 +11586,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdatePriceRequest": {
+        "erpgo_internal_interfaces_http_dto.UpdatePriceRequest": {
             "type": "object",
             "required": [
                 "price"
@@ -11584,7 +11601,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateProductRequest": {
+        "erpgo_internal_interfaces_http_dto.UpdateProductRequest": {
             "type": "object",
             "properties": {
                 "allow_backorder": {
@@ -11676,7 +11693,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateProductVariantRequest": {
+        "erpgo_internal_interfaces_http_dto.UpdateProductVariantRequest": {
             "type": "object",
             "properties": {
                 "allow_backorder": {
@@ -11685,7 +11702,7 @@ const docTemplate = `{
                 "attributes": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.VariantAttributeReq"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.VariantAttributeReq"
                     }
                 },
                 "barcode": {
@@ -11723,7 +11740,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateRoleRequest": {
+        "erpgo_internal_interfaces_http_dto.UpdateRoleRequest": {
             "type": "object",
             "properties": {
                 "description": {
@@ -11743,7 +11760,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateStockRequest": {
+        "erpgo_internal_interfaces_http_dto.UpdateStockRequest": {
             "type": "object",
             "required": [
                 "quantity"
@@ -11755,7 +11772,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateUserRequest": {
+        "erpgo_internal_interfaces_http_dto.UpdateUserRequest": {
             "type": "object",
             "properties": {
                 "first_name": {
@@ -11772,7 +11789,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateWarehouseRequest": {
+        "erpgo_internal_interfaces_http_dto.UpdateWarehouseRequest": {
             "type": "object",
             "properties": {
                 "address": {
@@ -11852,7 +11869,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UploadResult": {
+        "erpgo_internal_interfaces_http_dto.UploadResult": {
             "type": "object",
             "properties": {
                 "directory": {
@@ -11881,7 +11898,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UserInfo": {
+        "erpgo_internal_interfaces_http_dto.UserInfo": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -11922,7 +11939,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UserPermissionsResponse": {
+        "erpgo_internal_interfaces_http_dto.UserPermissionsResponse": {
             "type": "object",
             "properties": {
                 "permissions": {
@@ -11936,7 +11953,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.VariantAttribute": {
+        "erpgo_internal_interfaces_http_dto.VariantAttribute": {
             "type": "object",
             "properties": {
                 "id": {
@@ -11950,7 +11967,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.VariantAttributeReq": {
+        "erpgo_internal_interfaces_http_dto.VariantAttributeReq": {
             "type": "object",
             "required": [
                 "name",
@@ -11967,7 +11984,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.VariantImage": {
+        "erpgo_internal_interfaces_http_dto.VariantImage": {
             "type": "object",
             "properties": {
                 "alt": {
@@ -11987,7 +12004,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.VariantImageReq": {
+        "erpgo_internal_interfaces_http_dto.VariantImageReq": {
             "type": "object",
             "required": [
                 "url"
@@ -12010,21 +12027,21 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.WarehouseListResponse": {
+        "erpgo_internal_interfaces_http_dto.WarehouseListResponse": {
             "type": "object",
             "properties": {
                 "pagination": {
-                    "$ref": "#/definitions/dto.PaginationInfo"
+                    "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.PaginationInfo"
                 },
                 "warehouses": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.WarehouseResponse"
+                        "$ref": "#/definitions/erpgo_internal_interfaces_http_dto.WarehouseResponse"
                     }
                 }
             }
         },
-        "dto.WarehouseResponse": {
+        "erpgo_internal_interfaces_http_dto.WarehouseResponse": {
             "type": "object",
             "properties": {
                 "address": {
@@ -12095,7 +12112,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.WarehouseStatsResponse": {
+        "erpgo_internal_interfaces_http_dto.WarehouseStatsResponse": {
             "type": "object",
             "properties": {
                 "active_warehouses": {
@@ -12124,7 +12141,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.WarehouseStockInfo": {
+        "erpgo_internal_interfaces_http_dto.WarehouseStockInfo": {
             "type": "object",
             "properties": {
                 "product_count": {
@@ -12144,7 +12161,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.WarehouseTransactionStats": {
+        "erpgo_internal_interfaces_http_dto.WarehouseTransactionStats": {
             "type": "object",
             "properties": {
                 "count": {
@@ -12161,17 +12178,71 @@ const docTemplate = `{
                 }
             }
         }
-    }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Type \"Bearer\" followed by a space and JWT token. Example: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    },
+    "tags": [
+        {
+            "description": "User authentication and authorization endpoints. Includes login, registration, token refresh, and password reset.",
+            "name": "Authentication"
+        },
+        {
+            "description": "User management operations. Requires authentication and appropriate permissions.",
+            "name": "Users"
+        },
+        {
+            "description": "Product catalog management including creation, updates, and search functionality.",
+            "name": "Products"
+        },
+        {
+            "description": "Product category management with hierarchical structure support.",
+            "name": "Categories"
+        },
+        {
+            "description": "Product variant management for products with multiple options (size, color, etc.).",
+            "name": "Variants"
+        },
+        {
+            "description": "Inventory tracking and stock management across multiple warehouses.",
+            "name": "Inventory"
+        },
+        {
+            "description": "Warehouse management including location and capacity tracking.",
+            "name": "Warehouses"
+        },
+        {
+            "description": "Order processing, fulfillment, and management workflows.",
+            "name": "Orders"
+        },
+        {
+            "description": "Customer management including contact information and order history.",
+            "name": "Customers"
+        },
+        {
+            "description": "Image upload and management for products and other resources.",
+            "name": "Images"
+        },
+        {
+            "description": "System health checks and monitoring endpoints.",
+            "name": "Health"
+        }
+    ]
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
-	Host:             "",
-	BasePath:         "",
-	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Version:          "1.0.0",
+	Host:             "localhost:8080",
+	BasePath:         "/",
+	Schemes:          []string{"http", "https"},
+	Title:            "ERPGo API",
+	Description:      "A comprehensive Enterprise Resource Planning (ERP) system built with Go, providing user management, inventory management, order management, and business analytics capabilities.\n\n## Overview\nERPGo is a modern, cloud-native ERP system designed for high performance, scalability, and maintainability. It provides:\n- User authentication and authorization with JWT tokens\n- Product catalog management with categories and variants\n- Inventory tracking and warehouse management\n- Order processing and fulfillment workflows\n- Customer management and address handling\n- Comprehensive analytics and reporting\n\n## Authentication\nThe API uses JWT (JSON Web Tokens) for authentication. To authenticate:\n1. Call the `/api/v1/auth/login` endpoint with your credentials\n2. Include the returned token in the `Authorization` header for subsequent requests:\n```\nAuthorization: Bearer <your-jwt-token>\n```\n\n## Rate Limiting\nAPI requests are rate-limited to ensure fair usage:\n- **Default**: 100 requests per minute per IP\n- **Authentication endpoints**: 5 attempts per 15 minutes per IP\n- **Account lockout**: After 5 failed login attempts, accounts are locked for 15 minutes\n\nRate limit headers are included in responses:\n```\nX-RateLimit-Limit: 100\nX-RateLimit-Remaining: 99\nX-RateLimit-Reset: 1640995200\n```\n\n## Error Codes\nThe API uses standard HTTP status codes and returns detailed error information:\n\n### Success Codes\n- **200 OK**: Request succeeded\n- **201 Created**: Resource created successfully\n- **204 No Content**: Request succeeded with no response body\n\n### Client Error Codes\n- **400 Bad Request**: Invalid request format or parameters\n- Error Code: `VALIDATION_ERROR` - Input validation failed\n- Error Code: `INVALID_REQUEST` - Malformed request\n- **401 Unauthorized**: Authentication required or failed\n- Error Code: `UNAUTHORIZED` - Missing or invalid authentication token\n- Error Code: `TOKEN_EXPIRED` - JWT token has expired\n- Error Code: `INVALID_CREDENTIALS` - Incorrect email or password\n- **403 Forbidden**: Authenticated but not authorized\n- Error Code: `FORBIDDEN` - Insufficient permissions\n- Error Code: `ACCOUNT_LOCKED` - Account temporarily locked due to failed login attempts\n- **404 Not Found**: Resource does not exist\n- Error Code: `NOT_FOUND` - Requested resource not found\n- **409 Conflict**: Resource conflict\n- Error Code: `CONFLICT` - Resource already exists\n- Error Code: `DUPLICATE_EMAIL` - Email already registered\n- Error Code: `DUPLICATE_SKU` - Product SKU already exists\n- **422 Unprocessable Entity**: Validation errors\n- Error Code: `VALIDATION_ERROR` - One or more fields failed validation\n- **429 Too Many Requests**: Rate limit exceeded\n- Error Code: `RATE_LIMIT_EXCEEDED` - Too many requests, try again later\n\n### Server Error Codes\n- **500 Internal Server Error**: Unexpected server error\n- Error Code: `INTERNAL_ERROR` - An unexpected error occurred\n- **503 Service Unavailable**: Service temporarily unavailable\n- Error Code: `SERVICE_UNAVAILABLE` - Database or cache unavailable\n\n### Error Response Format\nAll errors return a JSON response with the following structure:\n```json\n{\n\"error\": \"Human-readable error message\",\n\"code\": \"ERROR_CODE\",\n\"details\": \"Additional context or field-level errors\"\n}\n```\n\nFor validation errors, the `details` field contains field-specific errors:\n```json\n{\n\"error\": \"Validation failed\",\n\"code\": \"VALIDATION_ERROR\",\n\"details\": {\n\"email\": [\"Email is required\", \"Email must be valid\"],\n\"password\": [\"Password must be at least 8 characters\"]\n}\n}\n```\n\n## Pagination\nList endpoints support pagination with the following query parameters:\n- `page`: Page number (default: 1, min: 1)\n- `limit`: Items per page (default: 20, min: 1, max: 100)\n- `sort_by`: Field to sort by (varies by endpoint)\n- `sort_order`: Sort direction (`asc` or `desc`, default: `desc`)\n\nPaginated responses include metadata:\n```json\n{\n\"data\": [...],\n\"pagination\": {\n\"page\": 1,\n\"limit\": 20,\n\"total\": 150,\n\"total_pages\": 8,\n\"has_next\": true,\n\"has_prev\": false\n}\n}\n```\n\n## Filtering and Search\nMany list endpoints support filtering and search:\n- `search`: Full-text search across relevant fields\n- Resource-specific filters (e.g., `is_active`, `category_id`, `status`)\n\n## Security Best Practices\n- Always use HTTPS in production\n- Store JWT tokens securely (httpOnly cookies recommended)\n- Implement token refresh before expiration\n- Never log or expose sensitive data (passwords, tokens)\n- Validate all input on the client side before sending\n- Handle rate limit errors gracefully with exponential backoff\n\n## Support\nFor API support, contact: support@erpgo.example.com\nDocumentation: https://docs.erpgo.example.com",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

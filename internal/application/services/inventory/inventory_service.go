@@ -7,12 +7,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
 	"github.com/shopspring/decimal"
 
 	"erpgo/internal/domain/inventory/entities"
 	"erpgo/internal/domain/inventory/repositories"
 	"erpgo/internal/interfaces/http/dto"
+	"erpgo/pkg/database"
 )
 
 // InventoryAvailabilityResponse represents inventory availability information
@@ -58,6 +60,7 @@ type ServiceImpl struct {
 	inventoryRepo     repositories.InventoryRepository
 	warehouseRepo     repositories.WarehouseRepository
 	transactionRepo   repositories.InventoryTransactionRepository
+	txManager         database.TransactionManagerInterface
 	logger            *zerolog.Logger
 }
 
@@ -66,12 +69,14 @@ func NewService(
 	inventoryRepo repositories.InventoryRepository,
 	warehouseRepo repositories.WarehouseRepository,
 	transactionRepo repositories.InventoryTransactionRepository,
+	txManager database.TransactionManagerInterface,
 	logger *zerolog.Logger,
 ) Service {
 	return &ServiceImpl{
 		inventoryRepo:   inventoryRepo,
 		warehouseRepo:   warehouseRepo,
 		transactionRepo: transactionRepo,
+		txManager:       txManager,
 		logger:          logger,
 	}
 }
@@ -96,14 +101,23 @@ func (s *ServiceImpl) AdjustInventory(c *gin.Context, req *dto.AdjustInventoryRe
 		CreatedAt:       time.Now().UTC(),
 	}
 
-	// Save transaction
-	if err := s.transactionRepo.Create(ctx, transaction); err != nil {
-		return nil, fmt.Errorf("failed to create transaction: %w", err)
-	}
+	// Execute transaction creation and stock adjustment within a database transaction
+	err := s.txManager.WithRetryTransaction(ctx, func(tx pgx.Tx) error {
+		// Save transaction
+		if err := s.transactionRepo.Create(ctx, transaction); err != nil {
+			return fmt.Errorf("failed to create transaction: %w", err)
+		}
 
-	// Update inventory stock
-	if err := s.inventoryRepo.AdjustStock(ctx, req.ProductID, req.WarehouseID, req.Adjustment); err != nil {
-		return nil, fmt.Errorf("failed to adjust stock: %w", err)
+		// Update inventory stock
+		if err := s.inventoryRepo.AdjustStock(ctx, req.ProductID, req.WarehouseID, req.Adjustment); err != nil {
+			return fmt.Errorf("failed to adjust stock: %w", err)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
 	}
 
 	// Return response
@@ -207,37 +221,50 @@ func (s *ServiceImpl) TransferInventory(c *gin.Context, req *dto.TransferInvento
 		CreatedAt:       time.Now().UTC(),
 	}
 
-	// Save transactions
-	if err := s.transactionRepo.Create(ctx, outboundTransaction); err != nil {
-		return nil, fmt.Errorf("failed to create outbound transaction: %w", err)
+	// Execute all operations within a transaction
+	var response *dto.InventoryTransactionResponse
+	err = s.txManager.WithRetryTransaction(ctx, func(tx pgx.Tx) error {
+		// Save outbound transaction
+		if err := s.transactionRepo.Create(ctx, outboundTransaction); err != nil {
+			return fmt.Errorf("failed to create outbound transaction: %w", err)
+		}
+
+		// Save inbound transaction
+		if err := s.transactionRepo.Create(ctx, inboundTransaction); err != nil {
+			return fmt.Errorf("failed to create inbound transaction: %w", err)
+		}
+
+		// Update source inventory (remove stock)
+		if err := s.inventoryRepo.AdjustStock(ctx, req.ProductID, req.FromWarehouseID, -req.Quantity); err != nil {
+			return fmt.Errorf("failed to adjust source inventory: %w", err)
+		}
+
+		// Update destination inventory (add stock)
+		if err := s.inventoryRepo.AdjustStock(ctx, req.ProductID, req.ToWarehouseID, req.Quantity); err != nil {
+			return fmt.Errorf("failed to adjust destination inventory: %w", err)
+		}
+
+		// Prepare response (using outbound transaction as primary)
+		response = &dto.InventoryTransactionResponse{
+			ID:              outboundTransaction.ID,
+			ProductID:       outboundTransaction.ProductID,
+			WarehouseID:     outboundTransaction.WarehouseID,
+			TransactionType: string(outboundTransaction.TransactionType),
+			Quantity:        outboundTransaction.Quantity,
+			Reason:          outboundTransaction.Reason,
+			CreatedBy:       uuid.Nil, // No CreatedBy field in transaction entity
+			CreatedAt:       outboundTransaction.CreatedAt,
+			UpdatedAt:       outboundTransaction.CreatedAt,
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("transfer inventory transaction failed: %w", err)
 	}
 
-	if err := s.transactionRepo.Create(ctx, inboundTransaction); err != nil {
-		return nil, fmt.Errorf("failed to create inbound transaction: %w", err)
-	}
-
-	// Update source inventory (remove stock)
-	if err := s.inventoryRepo.AdjustStock(ctx, req.ProductID, req.FromWarehouseID, -req.Quantity); err != nil {
-		return nil, fmt.Errorf("failed to adjust source inventory: %w", err)
-	}
-
-	// Update destination inventory (add stock)
-	if err := s.inventoryRepo.AdjustStock(ctx, req.ProductID, req.ToWarehouseID, req.Quantity); err != nil {
-		return nil, fmt.Errorf("failed to adjust destination inventory: %w", err)
-	}
-
-	// Return response (using outbound transaction as primary)
-	return &dto.InventoryTransactionResponse{
-		ID:              outboundTransaction.ID,
-		ProductID:       outboundTransaction.ProductID,
-		WarehouseID:     outboundTransaction.WarehouseID,
-		TransactionType: string(outboundTransaction.TransactionType),
-		Quantity:        outboundTransaction.Quantity,
-		Reason:          outboundTransaction.Reason,
-		CreatedBy:       uuid.Nil, // No CreatedBy field in transaction entity
-		CreatedAt:       outboundTransaction.CreatedAt,
-		UpdatedAt:       outboundTransaction.CreatedAt,
-	}, nil
+	return response, nil
 }
 
 // ListInventory lists inventory with filtering

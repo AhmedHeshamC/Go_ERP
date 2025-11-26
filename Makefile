@@ -330,9 +330,35 @@ setup-dev: ## Set up development environment
 setup-env: ## Set up environment file
 	@if [ ! -f .env ]; then cp .env.example .env; echo "📝 Created .env file from template"; else echo "📝 .env file already exists"; fi
 
+# Load Testing
+load-test: ## Run comprehensive load tests with k6
+	@echo "⚡ Running comprehensive load tests..."
+	@which k6 > /dev/null || (echo "❌ 'k6' not found. Install from: https://k6.io/docs/getting-started/installation/" && exit 1)
+	@./tests/load/run-load-tests.sh
+
+load-test-baseline: ## Run baseline load test (100 RPS)
+	@echo "⚡ Running baseline load test..."
+	@which k6 > /dev/null || (echo "❌ 'k6' not found. Install from: https://k6.io/docs/getting-started/installation/" && exit 1)
+	@./tests/load/run-load-tests.sh baseline
+
+load-test-peak: ## Run peak load test (1000 RPS)
+	@echo "⚡ Running peak load test..."
+	@which k6 > /dev/null || (echo "❌ 'k6' not found. Install from: https://k6.io/docs/getting-started/installation/" && exit 1)
+	@./tests/load/run-load-tests.sh peak
+
+load-test-stress: ## Run stress test (up to 5000 RPS)
+	@echo "⚡ Running stress test..."
+	@which k6 > /dev/null || (echo "❌ 'k6' not found. Install from: https://k6.io/docs/getting-started/installation/" && exit 1)
+	@./tests/load/run-load-tests.sh stress
+
+load-test-spike: ## Run spike test (sudden traffic spike)
+	@echo "⚡ Running spike test..."
+	@which k6 > /dev/null || (echo "❌ 'k6' not found. Install from: https://k6.io/docs/getting-started/installation/" && exit 1)
+	@./tests/load/run-load-tests.sh spike
+
 # Performance testing
-perf-test: ## Run performance tests
-	@echo "⚡ Running performance tests..."
+perf-test: ## Run quick performance test with hey
+	@echo "⚡ Running quick performance test..."
 	@which hey > /dev/null || (echo "❌ 'hey' not found. Install with: go install github.com/rakyll/hey@latest" && exit 1)
 	@echo "Running load test against http://localhost:8080..."
 	@hey -n 1000 -c 10 -m GET http://localhost:8080/health

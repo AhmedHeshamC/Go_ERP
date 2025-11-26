@@ -12,18 +12,47 @@ import (
 	"erpgo/internal/domain/products/entities"
 	"erpgo/internal/domain/products/repositories"
 	"erpgo/pkg/database"
+	"erpgo/pkg/validation"
 )
 
 // PostgresProductRepository implements ProductRepository for PostgreSQL
 type PostgresProductRepository struct {
-	db *database.Database
+	db              *database.Database
+	columnWhitelist *validation.SQLColumnWhitelist
 }
 
 // NewPostgresProductRepository creates a new PostgreSQL product repository
 func NewPostgresProductRepository(db *database.Database) *PostgresProductRepository {
 	return &PostgresProductRepository{
-		db: db,
+		db:              db,
+		columnWhitelist: validation.NewProductColumnWhitelist(),
 	}
+}
+
+// validateAndBuildOrderBy validates sort parameters and builds ORDER BY clause
+func (r *PostgresProductRepository) validateAndBuildOrderBy(sortBy, sortOrder string, defaultSort string) (string, error) {
+	// Set default sort column
+	if sortBy == "" {
+		sortBy = defaultSort
+	} else {
+		// Validate column name against whitelist
+		if err := r.columnWhitelist.ValidateColumn(sortBy); err != nil {
+			return "", fmt.Errorf("invalid sort column: %w", err)
+		}
+	}
+
+	// Set default sort order
+	if sortOrder == "" {
+		sortOrder = "DESC"
+	} else {
+		sortOrder = strings.ToUpper(sortOrder)
+		// Validate sort order
+		if sortOrder != "ASC" && sortOrder != "DESC" {
+			return "", fmt.Errorf("invalid sort order: must be ASC or DESC")
+		}
+	}
+
+	return fmt.Sprintf(" ORDER BY %s %s", sortBy, sortOrder), nil
 }
 
 // Create creates a new product
@@ -381,17 +410,12 @@ func (r *PostgresProductRepository) List(ctx context.Context, filter repositorie
 		baseQuery += " AND " + strings.Join(conditions, " AND ")
 	}
 
-	// Add ORDER BY
-	sortBy := "created_at"
-	if filter.SortBy != "" {
-		sortBy = filter.SortBy
+	// Add ORDER BY with validation
+	orderByClause, err := r.validateAndBuildOrderBy(filter.SortBy, filter.SortOrder, "created_at")
+	if err != nil {
+		return nil, err
 	}
-
-	sortOrder := "DESC"
-	if filter.SortOrder != "" {
-		sortOrder = strings.ToUpper(filter.SortOrder)
-	}
-	baseQuery += fmt.Sprintf(" ORDER BY %s %s", sortBy, sortOrder)
+	baseQuery += orderByClause
 
 	// Add LIMIT and OFFSET for pagination
 	if filter.Limit > 0 {

@@ -476,7 +476,7 @@ func (r *Reporter) shouldSample(err error) bool {
 	// Apply sampling rate
 	if r.config.SampleRate < 1.0 {
 		// Simple random sampling
-		return rand.Float64() <= r.config.SampleRate
+		return rand.Float64() <= r.config.SampleRate // #nosec G404 - Used for sampling, not security
 	}
 
 	return true

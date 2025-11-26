@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -14,6 +15,7 @@ import (
 	"erpgo/internal/domain/users/repositories"
 	"erpgo/pkg/auth"
 	"erpgo/pkg/cache"
+	"erpgo/pkg/database"
 )
 
 // MockUserRepository for testing
@@ -128,6 +130,21 @@ func (m *MockUserRoleRepo) DeleteByUserIDAndRoleID(ctx context.Context, userID, 
 func (m *MockUserRoleRepo) DeleteByUserID(ctx context.Context, userID uuid.UUID) error { return nil }
 func (m *MockUserRoleRepo) Exists(ctx context.Context, id uuid.UUID) (bool, error) { return false, nil }
 
+// MockTransactionManager for testing
+type MockTransactionManager struct{}
+
+func (m *MockTransactionManager) WithTransaction(ctx context.Context, fn func(tx pgx.Tx) error) error {
+	return fn(nil)
+}
+
+func (m *MockTransactionManager) WithRetryTransaction(ctx context.Context, fn func(tx pgx.Tx) error) error {
+	return fn(nil)
+}
+
+func (m *MockTransactionManager) WithTransactionOptions(ctx context.Context, opts database.TransactionConfig, fn func(tx pgx.Tx) error) error {
+	return fn(nil)
+}
+
 func TestPasswordChange(t *testing.T) {
 	ctx := context.Background()
 
@@ -140,7 +157,7 @@ func TestPasswordChange(t *testing.T) {
 	passwordSvc := auth.NewPasswordService(12, "test-pepper")
 	jwtSvc := auth.NewJWTService("test-secret", "test-issuer", time.Hour, 24*time.Hour)
 
-	userService := user.NewUserService(userRepo, roleRepo, userRoleRepo, passwordSvc, jwtSvc, nil, mockCache)
+	userService := user.NewUserService(userRepo, roleRepo, userRoleRepo, passwordSvc, jwtSvc, nil, mockCache, &MockTransactionManager{})
 
 	// Create a test user
 	user := &entities.User{
@@ -201,7 +218,7 @@ func TestPasswordResetFlow(t *testing.T) {
 	passwordSvc := auth.NewPasswordService(12, "test-pepper")
 	jwtSvc := auth.NewJWTService("test-secret", "test-issuer", time.Hour, 24*time.Hour)
 
-	userService := user.NewUserService(userRepo, roleRepo, userRoleRepo, passwordSvc, jwtSvc, nil, mockCache)
+	userService := user.NewUserService(userRepo, roleRepo, userRoleRepo, passwordSvc, jwtSvc, nil, mockCache, &MockTransactionManager{})
 
 	// Create a test user
 	user := &entities.User{
@@ -251,7 +268,7 @@ func TestPasswordValidation(t *testing.T) {
 	passwordSvc := auth.NewPasswordService(12, "test-pepper")
 	jwtSvc := auth.NewJWTService("test-secret", "test-issuer", time.Hour, 24*time.Hour)
 
-	userService := user.NewUserService(userRepo, roleRepo, userRoleRepo, passwordSvc, jwtSvc, nil, mockCache)
+	userService := user.NewUserService(userRepo, roleRepo, userRoleRepo, passwordSvc, jwtSvc, nil, mockCache, &MockTransactionManager{})
 
 	// Create a test user
 	user := &entities.User{

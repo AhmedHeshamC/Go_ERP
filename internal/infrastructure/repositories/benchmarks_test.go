@@ -33,7 +33,7 @@ func BenchmarkProductRepository_Create(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		product := createTestProduct(b, category.ID)
+		product := createTestProductEntity(b, category.ID)
 		product.SKU = fmt.Sprintf("BENCH-%08d", i)
 		product.Name = fmt.Sprintf("Benchmark Product %d", i)
 
@@ -62,7 +62,7 @@ func BenchmarkProductRepository_GetByID(b *testing.B) {
 	// Create test products
 	productIDs := make([]uuid.UUID, 100)
 	for i := 0; i < 100; i++ {
-		product := createTestProduct(b, category.ID)
+		product := createTestProductEntity(b, category.ID)
 		product.SKU = fmt.Sprintf("BENCH-%08d", i)
 		product.Name = fmt.Sprintf("Benchmark Product %d", i)
 		err := repo.Create(ctx, product)
@@ -101,7 +101,7 @@ func BenchmarkProductRepository_List(b *testing.B) {
 
 	// Create test products
 	for i := 0; i < 1000; i++ {
-		product := createTestProduct(b, category.ID)
+		product := createTestProductEntity(b, category.ID)
 		product.SKU = fmt.Sprintf("BENCH-%08d", i)
 		product.Name = fmt.Sprintf("Benchmark Product %d", i)
 		product.Price = decimal.NewFromFloat(float64(i%100) + 1.0)
@@ -149,7 +149,7 @@ func BenchmarkProductRepository_Search(b *testing.B) {
 	// Create test products with searchable names
 	keywords := []string{"Laptop", "Computer", "Phone", "Tablet", "Monitor", "Keyboard", "Mouse"}
 	for i := 0; i < 1000; i++ {
-		product := createTestProduct(b, category.ID)
+		product := createTestProductEntity(b, category.ID)
 		product.SKU = fmt.Sprintf("BENCH-%08d", i)
 		keyword := keywords[i%len(keywords)]
 		product.Name = fmt.Sprintf("%s Model %d", keyword, i)
@@ -191,7 +191,7 @@ func BenchmarkProductRepository_Count(b *testing.B) {
 
 	// Create test products
 	for i := 0; i < 1000; i++ {
-		product := createTestProduct(b, category.ID)
+		product := createTestProductEntity(b, category.ID)
 		product.SKU = fmt.Sprintf("BENCH-%08d", i)
 		product.Name = fmt.Sprintf("Benchmark Product %d", i)
 		product.IsActive = i%10 != 0 // 90% active
@@ -322,7 +322,7 @@ func BenchmarkProductVariantRepository_Create(b *testing.B) {
 		b.Fatalf("Failed to create test category: %v", err)
 	}
 
-	product := createTestProduct(b, category.ID)
+	product := createTestProductEntity(b, category.ID)
 	productRepo := NewPostgresProductRepository(db)
 	err = productRepo.Create(ctx, product)
 	if err != nil {
@@ -362,7 +362,7 @@ func BenchmarkProductVariantRepository_GetByProductID(b *testing.B) {
 	// Create multiple test products
 	productIDs := make([]uuid.UUID, 10)
 	for p := 0; p < 10; p++ {
-		product := createTestProduct(b, category.ID)
+		product := createTestProductEntity(b, category.ID)
 		product.SKU = fmt.Sprintf("BENCH-PROD-%08d", p)
 		product.Name = fmt.Sprintf("Benchmark Product %d", p)
 		productRepo := NewPostgresProductRepository(db)
@@ -414,7 +414,7 @@ func BenchmarkProductVariantRepository_List(b *testing.B) {
 
 	// Create test products
 	for p := 0; p < 10; p++ {
-		product := createTestProduct(b, category.ID)
+		product := createTestProductEntity(b, category.ID)
 		product.SKU = fmt.Sprintf("BENCH-PROD-%08d", p)
 		product.Name = fmt.Sprintf("Benchmark Product %d", p)
 		productRepo := NewPostgresProductRepository(db)
@@ -476,7 +476,7 @@ func BenchmarkProductRepository_ConcurrentReads(b *testing.B) {
 	// Create test products
 	productIDs := make([]uuid.UUID, 100)
 	for i := 0; i < 100; i++ {
-		product := createTestProduct(b, category.ID)
+		product := createTestProductEntity(b, category.ID)
 		product.SKU = fmt.Sprintf("BENCH-%08d", i)
 		product.Name = fmt.Sprintf("Benchmark Product %d", i)
 		err := repo.Create(ctx, product)
@@ -517,7 +517,7 @@ func BenchmarkProductVariantRepository_BulkCreate(b *testing.B) {
 		b.Fatalf("Failed to create test category: %v", err)
 	}
 
-	product := createTestProduct(b, category.ID)
+	product := createTestProductEntity(b, category.ID)
 	productRepo := NewPostgresProductRepository(db)
 	err = productRepo.Create(ctx, product)
 	if err != nil {
@@ -561,7 +561,7 @@ func BenchmarkProductRepository_List_Memory(b *testing.B) {
 
 	// Create test products
 	for i := 0; i < 100; i++ {
-		product := createTestProduct(b, category.ID)
+		product := createTestProductEntity(b, category.ID)
 		product.SKU = fmt.Sprintf("BENCH-%08d", i)
 		product.Name = fmt.Sprintf("Benchmark Product %d", i)
 		err := repo.Create(ctx, product)

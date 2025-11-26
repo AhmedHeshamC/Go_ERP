@@ -213,7 +213,7 @@ func NewRetryManager(config *RetryConfig, logger *zerolog.Logger) *RetryManager 
 		config:         config,
 		logger:         logger,
 		circuitBreaker: circuitBreaker,
-		randSource:     rand.New(rand.NewSource(time.Now().UnixNano())),
+		randSource:     rand.New(rand.NewSource(time.Now().UnixNano())), // #nosec G404 - Used for timing jitter, not security
 	}
 }
 

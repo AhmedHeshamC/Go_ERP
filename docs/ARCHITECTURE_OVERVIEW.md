@@ -1071,6 +1071,409 @@ func (hcs *HealthCheckService) RunChecks(ctx context.Context) map[string]HealthS
 }
 ```
 
+## Production Architecture
+
+### Production Infrastructure
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          Load Balancer (AWS ALB/NGINX)                  │
+│                         SSL Termination, WAF, DDoS Protection           │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+                ┌────────────────┼────────────────┐
+                │                │                │
+        ┌───────▼──────┐ ┌──────▼──────┐ ┌──────▼──────┐
+        │  API Server  │ │  API Server │ │  API Server │
+        │  Instance 1  │ │  Instance 2 │ │  Instance 3 │
+        └───────┬──────┘ └──────┬──────┘ └──────┬──────┘
+                │                │                │
+                └────────────────┼────────────────┘
+                                 │
+        ┌────────────────────────┼────────────────────────┐
+        │                        │                        │
+┌───────▼──────┐        ┌───────▼──────┐        ┌───────▼──────┐
+│  PostgreSQL  │        │    Redis     │        │  Monitoring  │
+│   Primary    │◄──────►│   Cluster    │        │    Stack     │
+│              │        │              │        │              │
+│  + Replicas  │        │  + Sentinel  │        │ Prometheus   │
+└──────────────┘        └──────────────┘        │ Grafana      │
+                                                 │ Jaeger       │
+                                                 │ AlertManager │
+                                                 └──────────────┘
+```
+
+### Production Components
+
+#### 1. Application Layer
+
+**API Servers (3+ instances)**
+- Stateless application servers
+- Auto-scaling based on CPU/memory
+- Health checks: `/health/live` and `/health/ready`
+- Graceful shutdown support
+- Resource limits: 2 CPU, 4GB RAM per instance
+
+**Configuration:**
+```yaml
+# Kubernetes Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: erpgo-api
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    spec:
+      containers:
+      - name: erpgo-api
+        image: erpgo/api:v1.0.0
+        resources:
+          requests:
+            cpu: "1000m"
+            memory: "2Gi"
+          limits:
+            cpu: "2000m"
+            memory: "4Gi"
+        env:
+        - name: ENV
+          value: "production"
+        - name: LOG_LEVEL
+          value: "info"
+        - name: DB_MAX_CONNECTIONS
+          value: "100"
+        - name: CACHE_TTL_PERMISSIONS
+          value: "300"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+```
+
+#### 2. Database Layer
+
+**PostgreSQL Primary + Replicas**
+- Primary: Write operations
+- Replicas (2+): Read operations
+- Streaming replication
+- Automated failover
+- Point-in-time recovery (PITR)
+
+**Configuration:**
+```yaml
+# PostgreSQL Configuration (postgresql.conf)
+max_connections = 200
+shared_buffers = 4GB
+effective_cache_size = 12GB
+maintenance_work_mem = 1GB
+checkpoint_completion_target = 0.9
+wal_buffers = 16MB
+default_statistics_target = 100
+random_page_cost = 1.1
+effective_io_concurrency = 200
+work_mem = 20MB
+min_wal_size = 2GB
+max_wal_size = 8GB
+max_worker_processes = 8
+max_parallel_workers_per_gather = 4
+max_parallel_workers = 8
+max_parallel_maintenance_workers = 4
+
+# Replication settings
+wal_level = replica
+max_wal_senders = 10
+max_replication_slots = 10
+hot_standby = on
+```
+
+#### 3. Cache Layer
+
+**Redis Cluster**
+- 3 master nodes
+- 3 replica nodes
+- Redis Sentinel for high availability
+- Automatic failover
+- Memory: 8GB per node
+
+**Configuration:**
+```conf
+# Redis Configuration (redis.conf)
+maxmemory 8gb
+maxmemory-policy allkeys-lru
+save 900 1
+save 300 10
+save 60 10000
+appendonly yes
+appendfsync everysec
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+```
+
+#### 4. Monitoring Stack
+
+**Prometheus**
+- Metrics collection (15s scrape interval)
+- 30-day retention
+- Alert evaluation
+
+**Grafana**
+- Visualization dashboards
+- Alert management
+- User access control
+
+**Jaeger**
+- Distributed tracing
+- 7-day trace retention
+- Sampling rate: 10%
+
+**AlertManager**
+- Alert routing
+- Notification channels (PagerDuty, Slack, Email)
+- Alert grouping and deduplication
+
+### Environment-Specific Settings
+
+#### Development Environment
+
+```bash
+# .env.development
+ENV=development
+LOG_LEVEL=debug
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=erpgo_dev
+DB_MAX_CONNECTIONS=20
+REDIS_HOST=localhost
+REDIS_PORT=6379
+CACHE_ENABLED=true
+CACHE_TTL_PERMISSIONS=60
+JWT_EXPIRY=24h
+RATE_LIMIT_ENABLED=false
+METRICS_ENABLED=true
+TRACING_ENABLED=false
+```
+
+#### Staging Environment
+
+```bash
+# .env.staging
+ENV=staging
+LOG_LEVEL=info
+DB_HOST=postgres-staging.internal
+DB_PORT=5432
+DB_NAME=erpgo_staging
+DB_MAX_CONNECTIONS=50
+DB_SSL_MODE=require
+REDIS_HOST=redis-staging.internal
+REDIS_PORT=6379
+REDIS_PASSWORD=${REDIS_PASSWORD}
+CACHE_ENABLED=true
+CACHE_TTL_PERMISSIONS=300
+JWT_EXPIRY=15m
+REFRESH_TOKEN_EXPIRY=7d
+RATE_LIMIT_ENABLED=true
+AUTH_MAX_ATTEMPTS=5
+AUTH_LOCKOUT_DURATION=15m
+METRICS_ENABLED=true
+TRACING_ENABLED=true
+TRACING_SAMPLE_RATE=0.5
+```
+
+#### Production Environment
+
+```bash
+# .env.production
+ENV=production
+LOG_LEVEL=info
+DB_HOST=postgres-primary.internal
+DB_PORT=5432
+DB_NAME=erpgo_production
+DB_MAX_CONNECTIONS=100
+DB_SSL_MODE=require
+DB_REPLICA_HOSTS=postgres-replica-1.internal,postgres-replica-2.internal
+REDIS_HOST=redis-cluster.internal
+REDIS_PORT=6379
+REDIS_PASSWORD=${REDIS_PASSWORD}
+REDIS_SENTINEL_ENABLED=true
+CACHE_ENABLED=true
+CACHE_TTL_PERMISSIONS=300
+CACHE_TTL_ROLES=600
+JWT_SECRET=${JWT_SECRET}
+JWT_EXPIRY=15m
+REFRESH_SECRET=${REFRESH_SECRET}
+REFRESH_TOKEN_EXPIRY=7d
+PASSWORD_PEPPER=${PASSWORD_PEPPER}
+RATE_LIMIT_ENABLED=true
+AUTH_MAX_ATTEMPTS=5
+AUTH_LOCKOUT_DURATION=15m
+METRICS_ENABLED=true
+METRICS_PORT=9090
+TRACING_ENABLED=true
+TRACING_SAMPLE_RATE=0.1
+TRACING_ENDPOINT=http://jaeger-collector:14268/api/traces
+BACKUP_ENABLED=true
+BACKUP_INTERVAL=6h
+BACKUP_RETENTION_DAYS=7
+ALERT_WEBHOOK_URL=${ALERT_WEBHOOK_URL}
+```
+
+### Configuration Options Reference
+
+#### Application Configuration
+
+| Variable | Type | Default | Description |
+|----------|------|---------|-------------|
+| `ENV` | string | development | Environment name (development, staging, production) |
+| `LOG_LEVEL` | string | info | Logging level (debug, info, warn, error) |
+| `PORT` | int | 8080 | HTTP server port |
+| `SHUTDOWN_TIMEOUT` | duration | 30s | Graceful shutdown timeout |
+
+#### Database Configuration
+
+| Variable | Type | Default | Description |
+|----------|------|---------|-------------|
+| `DB_HOST` | string | localhost | Database host |
+| `DB_PORT` | int | 5432 | Database port |
+| `DB_NAME` | string | erpgo | Database name |
+| `DB_USER` | string | postgres | Database user |
+| `DB_PASSWORD` | string | - | Database password (required) |
+| `DB_SSL_MODE` | string | disable | SSL mode (disable, require, verify-full) |
+| `DB_MAX_CONNECTIONS` | int | 100 | Maximum database connections |
+| `DB_MAX_IDLE_CONNECTIONS` | int | 10 | Maximum idle connections |
+| `DB_CONNECTION_LIFETIME` | duration | 1h | Connection max lifetime |
+| `DB_QUERY_TIMEOUT` | duration | 30s | Query timeout |
+
+#### Cache Configuration
+
+| Variable | Type | Default | Description |
+|----------|------|---------|-------------|
+| `REDIS_HOST` | string | localhost | Redis host |
+| `REDIS_PORT` | int | 6379 | Redis port |
+| `REDIS_PASSWORD` | string | - | Redis password |
+| `REDIS_DB` | int | 0 | Redis database number |
+| `CACHE_ENABLED` | bool | true | Enable caching |
+| `CACHE_TTL_PERMISSIONS` | int | 300 | Permission cache TTL (seconds) |
+| `CACHE_TTL_ROLES` | int | 600 | Role cache TTL (seconds) |
+
+#### Authentication Configuration
+
+| Variable | Type | Default | Description |
+|----------|------|---------|-------------|
+| `JWT_SECRET` | string | - | JWT signing secret (required, min 32 bytes) |
+| `JWT_EXPIRY` | duration | 15m | Access token expiry |
+| `REFRESH_SECRET` | string | - | Refresh token secret (required) |
+| `REFRESH_TOKEN_EXPIRY` | duration | 7d | Refresh token expiry |
+| `PASSWORD_PEPPER` | string | - | Password pepper (required, not default) |
+| `BCRYPT_COST` | int | 12 | Bcrypt hashing cost |
+
+#### Rate Limiting Configuration
+
+| Variable | Type | Default | Description |
+|----------|------|---------|-------------|
+| `RATE_LIMIT_ENABLED` | bool | true | Enable rate limiting |
+| `RATE_LIMIT_REQUESTS` | int | 100 | Requests per window |
+| `RATE_LIMIT_WINDOW` | duration | 1m | Rate limit window |
+| `AUTH_MAX_ATTEMPTS` | int | 5 | Max login attempts |
+| `AUTH_LOCKOUT_DURATION` | duration | 15m | Account lockout duration |
+
+#### Monitoring Configuration
+
+| Variable | Type | Default | Description |
+|----------|------|---------|-------------|
+| `METRICS_ENABLED` | bool | true | Enable Prometheus metrics |
+| `METRICS_PORT` | int | 9090 | Metrics endpoint port |
+| `TRACING_ENABLED` | bool | false | Enable distributed tracing |
+| `TRACING_SAMPLE_RATE` | float | 0.1 | Trace sampling rate (0.0-1.0) |
+| `TRACING_ENDPOINT` | string | - | Jaeger collector endpoint |
+
+#### Backup Configuration
+
+| Variable | Type | Default | Description |
+|----------|------|---------|-------------|
+| `BACKUP_ENABLED` | bool | true | Enable automated backups |
+| `BACKUP_INTERVAL` | duration | 6h | Backup interval |
+| `BACKUP_RETENTION_DAYS` | int | 7 | Backup retention period |
+| `BACKUP_S3_BUCKET` | string | - | S3 bucket for backups |
+
+### Security Configuration
+
+#### Secret Management
+
+All secrets must be stored in a secure secret management system (HashiCorp Vault, AWS Secrets Manager, or Kubernetes Secrets).
+
+**Required Secrets:**
+- `JWT_SECRET`: Minimum 32 bytes, high entropy
+- `REFRESH_SECRET`: Minimum 32 bytes, different from JWT_SECRET
+- `PASSWORD_PEPPER`: Unique per environment, not default value
+- `DB_PASSWORD`: Strong database password
+- `REDIS_PASSWORD`: Strong Redis password
+
+**Secret Rotation:**
+- Rotate secrets every 90 days
+- Support dual-secret validation during rotation
+- Zero-downtime rotation process
+
+#### Network Security
+
+**Firewall Rules:**
+```yaml
+# Allow only necessary traffic
+- Allow: Load Balancer → API Servers (port 8080)
+- Allow: API Servers → Database (port 5432)
+- Allow: API Servers → Redis (port 6379)
+- Allow: API Servers → Monitoring (port 9090)
+- Deny: All other traffic
+```
+
+**TLS Configuration:**
+- TLS 1.2+ only
+- Strong cipher suites
+- Certificate rotation every 90 days
+- HSTS enabled
+
+### Disaster Recovery
+
+#### Backup Strategy
+
+**Database Backups:**
+- Full backup: Every 6 hours
+- WAL archiving: Continuous
+- Retention: 7 days daily, 4 weeks weekly, 1 year monthly
+- Backup verification: Automated daily
+
+**Recovery Objectives:**
+- RTO (Recovery Time Objective): 4 hours
+- RPO (Recovery Point Objective): 1 hour
+
+#### Failover Procedures
+
+**Database Failover:**
+1. Detect primary failure (< 1 minute)
+2. Promote replica to primary (< 2 minutes)
+3. Update application configuration (< 1 minute)
+4. Verify application connectivity (< 1 minute)
+5. Total failover time: < 5 minutes
+
+**Application Failover:**
+- Automatic via Kubernetes
+- Health check-based
+- Zero-downtime rolling updates
+
 ## Conclusion
 
 The ERPGo architecture is designed to be:
@@ -1081,5 +1484,15 @@ The ERPGo architecture is designed to be:
 - **Secure**: Comprehensive security measures at all layers
 - **Performant**: Optimized for high throughput and low latency
 - **Observable**: Complete monitoring and tracing capabilities
+- **Production-Ready**: Comprehensive operational procedures and monitoring
 
 This architecture provides a solid foundation for enterprise-grade ERP operations while maintaining flexibility for future enhancements and adaptations.
+
+## Related Documentation
+
+- [Deployment Guide](./DEPLOYMENT_GUIDE.md)
+- [Security Best Practices](./SECURITY_BEST_PRACTICES.md)
+- [Monitoring and Alerting](./MONITORING_ALERTING.md)
+- [Operational Runbooks](./operations/RUNBOOKS.md)
+- [API Documentation](./API_DOCUMENTATION.md)
+- [Database Schema](./DATABASE_SCHEMA.md)

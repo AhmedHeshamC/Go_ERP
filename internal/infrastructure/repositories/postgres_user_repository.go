@@ -10,31 +10,88 @@ import (
 	"erpgo/internal/domain/users/entities"
 	"erpgo/internal/domain/users/repositories"
 	"erpgo/pkg/database"
+	"erpgo/pkg/validation"
 )
 
 // PostgresUserRepository implements UserRepository for PostgreSQL
 type PostgresUserRepository struct {
-	db     *database.Database
-	logger interface{} // Can be zerolog.Logger or any logger
+	db              *database.Database
+	logger          interface{} // Can be zerolog.Logger or any logger
+	columnWhitelist *validation.SQLColumnWhitelist
 }
 
 // NewPostgresUserRepository creates a new PostgreSQL user repository
 func NewPostgresUserRepository(db *database.Database) *PostgresUserRepository {
 	return &PostgresUserRepository{
-		db: db,
+		db:              db,
+		columnWhitelist: validation.NewUserColumnWhitelist(),
 	}
+}
+
+// validateAndBuildOrderBy validates sort parameters and builds ORDER BY clause
+func (r *PostgresUserRepository) validateAndBuildOrderBy(sortBy, sortOrder string, defaultSort string) (string, error) {
+	// Set default sort column
+	if sortBy == "" {
+		sortBy = defaultSort
+	} else {
+		// Validate column name against whitelist
+		if err := r.columnWhitelist.ValidateColumn(sortBy); err != nil {
+			return "", fmt.Errorf("invalid sort column: %w", err)
+		}
+	}
+
+	// Set default sort order
+	if sortOrder == "" {
+		sortOrder = "DESC"
+	} else {
+		sortOrder = strings.ToUpper(sortOrder)
+		// Validate sort order
+		if sortOrder != "ASC" && sortOrder != "DESC" {
+			return "", fmt.Errorf("invalid sort order: must be ASC or DESC")
+		}
+	}
+
+	return fmt.Sprintf(" ORDER BY %s %s", sortBy, sortOrder), nil
 }
 
 // PostgresRoleRepository implements RoleRepository for PostgreSQL
 type PostgresRoleRepository struct {
-	db *database.Database
+	db              *database.Database
+	columnWhitelist *validation.SQLColumnWhitelist
 }
 
 // NewPostgresRoleRepository creates a new PostgreSQL role repository
 func NewPostgresRoleRepository(db *database.Database) *PostgresRoleRepository {
 	return &PostgresRoleRepository{
-		db: db,
+		db:              db,
+		columnWhitelist: validation.NewRoleColumnWhitelist(),
 	}
+}
+
+// validateAndBuildOrderByForRole validates sort parameters and builds ORDER BY clause for roles
+func (r *PostgresRoleRepository) validateAndBuildOrderByForRole(sortBy, sortOrder string, defaultSort string) (string, error) {
+	// Set default sort column
+	if sortBy == "" {
+		sortBy = defaultSort
+	} else {
+		// Validate column name against whitelist
+		if err := r.columnWhitelist.ValidateColumn(sortBy); err != nil {
+			return "", fmt.Errorf("invalid sort column: %w", err)
+		}
+	}
+
+	// Set default sort order
+	if sortOrder == "" {
+		sortOrder = "DESC"
+	} else {
+		sortOrder = strings.ToUpper(sortOrder)
+		// Validate sort order
+		if sortOrder != "ASC" && sortOrder != "DESC" {
+			return "", fmt.Errorf("invalid sort order: must be ASC or DESC")
+		}
+	}
+
+	return fmt.Sprintf(" ORDER BY %s %s", sortBy, sortOrder), nil
 }
 
 // PostgresUserRoleRepository implements UserRoleRepository for PostgreSQL
@@ -262,17 +319,12 @@ func (r *PostgresUserRepository) List(ctx context.Context, filter repositories.U
 		baseQuery += " AND " + strings.Join(conditions, " AND ")
 	}
 
-	// Add ORDER BY
-	sortBy := "created_at"
-	if filter.SortBy != "" {
-		sortBy = filter.SortBy
+	// Add ORDER BY with validation
+	orderByClause, err := r.validateAndBuildOrderBy(filter.SortBy, filter.SortOrder, "created_at")
+	if err != nil {
+		return nil, err
 	}
-
-	sortOrder := "DESC"
-	if filter.SortOrder != "" {
-		sortOrder = strings.ToUpper(filter.SortOrder)
-	}
-	baseQuery += fmt.Sprintf(" ORDER BY %s %s", sortBy, sortOrder)
+	baseQuery += orderByClause
 
 	// Add LIMIT and OFFSET for pagination
 	if filter.Limit > 0 {
@@ -603,17 +655,12 @@ func (r *PostgresRoleRepository) List(ctx context.Context, filter repositories.R
 		baseQuery += " AND " + strings.Join(conditions, " AND ")
 	}
 
-	// Add ORDER BY
-	sortBy := "created_at"
-	if filter.SortBy != "" {
-		sortBy = filter.SortBy
+	// Add ORDER BY with validation
+	orderByClause, err := r.validateAndBuildOrderByForRole(filter.SortBy, filter.SortOrder, "created_at")
+	if err != nil {
+		return nil, err
 	}
-
-	sortOrder := "DESC"
-	if filter.SortOrder != "" {
-		sortOrder = strings.ToUpper(filter.SortOrder)
-	}
-	baseQuery += fmt.Sprintf(" ORDER BY %s %s", sortBy, sortOrder)
+	baseQuery += orderByClause
 
 	// Add LIMIT and OFFSET for pagination
 	if filter.Limit > 0 {

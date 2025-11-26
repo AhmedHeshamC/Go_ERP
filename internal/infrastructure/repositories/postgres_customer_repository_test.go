@@ -17,7 +17,7 @@ import (
 // CustomerRepositoryTestSuite contains all tests for the customer repository
 type CustomerRepositoryTestSuite struct {
 	suite.Suite
-	db          *database.Database
+	db          *testutil.TestDatabase
 	repo        repositories.CustomerRepository
 	cleanupFunc func()
 }

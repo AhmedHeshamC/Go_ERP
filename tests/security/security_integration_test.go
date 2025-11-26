@@ -2,6 +2,7 @@ package security
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -139,7 +140,7 @@ func TestAPIKeyManagement(t *testing.T) {
 			CreatedBy:   createdBy,
 		}
 
-		resp, err := apiKeyService.CreateAPIKey(t.Context(), req)
+		resp, err := apiKeyService.CreateAPIKey(context.Background(), req)
 		require.NoError(t, err)
 		assert.NotNil(t, resp)
 		assert.NotEmpty(t, resp.PlainText)
@@ -157,7 +158,7 @@ func TestAPIKeyManagement(t *testing.T) {
 			CreatedBy:   createdBy,
 		}
 
-		createResp, err := apiKeyService.CreateAPIKey(t.Context(), req)
+		createResp, err := apiKeyService.CreateAPIKey(context.Background(), req)
 		require.NoError(t, err)
 
 		// Validate the API key
@@ -165,7 +166,7 @@ func TestAPIKeyManagement(t *testing.T) {
 			APIKey: createResp.PlainText,
 		}
 
-		validateResp, err := apiKeyService.ValidateAPIKey(t.Context(), validateReq)
+		validateResp, err := apiKeyService.ValidateAPIKey(context.Background(), validateReq)
 		require.NoError(t, err)
 		assert.True(t, validateResp.Valid)
 		assert.NotNil(t, validateResp.APIKey)
@@ -177,7 +178,7 @@ func TestAPIKeyManagement(t *testing.T) {
 			APIKey: "invalid-key-123",
 		}
 
-		validateResp, err := apiKeyService.ValidateAPIKey(t.Context(), validateReq)
+		validateResp, err := apiKeyService.ValidateAPIKey(context.Background(), validateReq)
 		require.NoError(t, err)
 		assert.False(t, validateResp.Valid)
 		assert.Nil(t, validateResp.APIKey)
@@ -193,11 +194,11 @@ func TestAPIKeyManagement(t *testing.T) {
 			CreatedBy:   createdBy,
 		}
 
-		createResp, err := apiKeyService.CreateAPIKey(t.Context(), req)
+		createResp, err := apiKeyService.CreateAPIKey(context.Background(), req)
 		require.NoError(t, err)
 
 		// Delete the API key
-		err = apiKeyService.DeleteAPIKey(t.Context(), createResp.APIKey.ID, userID)
+		err = apiKeyService.DeleteAPIKey(context.Background(), createResp.APIKey.ID, userID)
 		require.NoError(t, err)
 
 		// Try to validate the deleted key
@@ -205,7 +206,7 @@ func TestAPIKeyManagement(t *testing.T) {
 			APIKey: createResp.PlainText,
 		}
 
-		validateResp, err := apiKeyService.ValidateAPIKey(t.Context(), validateReq)
+		validateResp, err := apiKeyService.ValidateAPIKey(context.Background(), validateReq)
 		require.NoError(t, err)
 		assert.False(t, validateResp.Valid)
 	})

@@ -377,7 +377,7 @@ func (p *PerformanceBenchmarkSuite) runDatabaseBenchmarks() error {
 	dbMetrics.IndexEfficiency = map[string]float64{
 		"users_pkey":           95.0,
 		"products_category_idx": 85.0,
-		orders_customer_idx":    90.0,
+		"orders_customer_idx":    90.0,
 		"order_items_order_idx":  88.0,
 	}
 

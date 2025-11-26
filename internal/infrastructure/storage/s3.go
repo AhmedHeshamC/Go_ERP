@@ -338,11 +338,17 @@ func (s *S3Storage) ListWithPagination(ctx context.Context, prefix string, optio
 		options = &ListOptions{}
 	}
 
+	// Validate MaxKeys is within int32 range
+	maxKeys := options.MaxKeys
+	if maxKeys > 0x7FFFFFFF || maxKeys < 0 {
+		maxKeys = 1000 // Default to reasonable limit
+	}
+	
 	input := &s3.ListObjectsV2Input{
 		Bucket:            aws.String(s.bucket),
 		Prefix:            aws.String(prefix),
 		Delimiter:         aws.String(options.Delimiter),
-		MaxKeys:           aws.Int32(int32(options.MaxKeys)),
+		MaxKeys:           aws.Int32(int32(maxKeys)), // #nosec G115 - Validated above
 		ContinuationToken: aws.String(options.ContinuationToken),
 	}
 
@@ -386,9 +392,9 @@ func (s *S3Storage) ListWithPagination(ctx context.Context, prefix string, optio
 		isTruncated = *result.IsTruncated
 	}
 
-	maxKeys := 1000 // default
+	resultMaxKeys := 1000 // default
 	if result.MaxKeys != nil {
-		maxKeys = int(*result.MaxKeys)
+		resultMaxKeys = int(*result.MaxKeys)
 	}
 
 	return &ListResult{
@@ -396,7 +402,7 @@ func (s *S3Storage) ListWithPagination(ctx context.Context, prefix string, optio
 		Prefixes:             prefixes,
 		IsTruncated:          isTruncated,
 		NextContinuationToken: aws.ToString(result.NextContinuationToken),
-		MaxKeys:              maxKeys,
+		MaxKeys:              resultMaxKeys,
 		CommonPrefixes:       prefixes,
 	}, nil
 }

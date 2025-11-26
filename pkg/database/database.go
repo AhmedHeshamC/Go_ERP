@@ -22,9 +22,11 @@ import (
 
 // Database wraps a pgx connection pool and provides database operations
 type Database struct {
-	pool   *pgxpool.Pool
-	logger *zerolog.Logger
-	config *Config
+	pool             *pgxpool.Pool
+	logger           *zerolog.Logger
+	config           *Config
+	poolMonitor      *PoolMonitor
+	slowQueryMonitor *SlowQueryMonitor
 }
 
 // Config holds database configuration
@@ -84,13 +86,25 @@ func NewWithLogger(cfg Config, logger *zerolog.Logger) (*Database, error) {
 	}
 
 	// Configure connection pool with optimized production settings
-	poolConfig.MaxConns = int32(cfg.MaxConnections)
-	poolConfig.MinConns = int32(cfg.MinConnections)
+	// Validate and convert connection limits
+	if cfg.MaxConnections > 0x7FFFFFFF || cfg.MaxConnections < 0 {
+		return nil, fmt.Errorf("MaxConnections out of valid range for int32")
+	}
+	if cfg.MinConnections > 0x7FFFFFFF || cfg.MinConnections < 0 {
+		return nil, fmt.Errorf("MinConnections out of valid range for int32")
+	}
+	poolConfig.MaxConns = int32(cfg.MaxConnections) // #nosec G115 - Validated above
+	poolConfig.MinConns = int32(cfg.MinConnections) // #nosec G115 - Validated above
 	poolConfig.MaxConnLifetime = cfg.ConnMaxLifetime
 	poolConfig.MaxConnIdleTime = cfg.ConnMaxIdleTime
 
 	// Configure advanced connection pool settings for production
-	poolConfig.HealthCheckPeriod = cfg.HealthCheckPeriod
+	if cfg.HealthCheckPeriod > 0 {
+		poolConfig.HealthCheckPeriod = cfg.HealthCheckPeriod
+	} else {
+		// Default to 1 minute if not specified
+		poolConfig.HealthCheckPeriod = time.Minute
+	}
 	// Note: Some pgxpool v5 config fields are not available, use defaults where needed
 
 	// Configure connection timeouts for production resilience
@@ -160,6 +174,16 @@ func NewWithLogger(cfg Config, logger *zerolog.Logger) (*Database, error) {
 		pool:   pool,
 		logger: logger,
 		config: &cfg,
+	}
+
+	// Initialize pool monitor if connection stats are enabled
+	if cfg.EnableConnectionStats {
+		db.poolMonitor = NewPoolMonitor(pool, logger, DefaultPoolMonitorConfig())
+	}
+
+	// Initialize slow query monitor if enabled
+	if cfg.LogSlowQueries {
+		db.slowQueryMonitor = NewSlowQueryMonitor(logger, cfg.SlowQueryThreshold)
 	}
 
 	return db, nil
@@ -681,10 +705,17 @@ func (db *Database) logQueryWithDetails(ctx context.Context, query string, args 
 		threshold = 100 * time.Millisecond // Default threshold
 	}
 
+	queryType := db.extractQueryType(query)
+
+	// Record slow query if monitor is enabled
+	if db.slowQueryMonitor != nil {
+		db.slowQueryMonitor.RecordQuery(ctx, db.sanitizeQuery(query), queryType, len(args), duration)
+	}
+
 	// Prepare log event
 	event := db.logger.Debug().
 		Str("query", db.sanitizeQuery(query)).
-		Str("query_type", db.extractQueryType(query)).
+		Str("query_type", queryType).
 		Dur("duration", duration).
 		Int("arg_count", len(args)).
 		Str("trace_id", db.getTraceID(ctx))
@@ -706,7 +737,7 @@ func (db *Database) logQueryWithDetails(ctx context.Context, query string, args 
 
 	// Track performance metrics if enabled
 	if db.config.EnableConnectionStats {
-		db.trackQueryMetrics(db.extractQueryType(query), duration, err != nil)
+		db.trackQueryMetrics(queryType, duration, err != nil)
 	}
 }
 
@@ -782,8 +813,13 @@ func (db *Database) WithRetryTransaction(ctx context.Context, maxRetries int, fn
 
 		lastErr = err
 
-		// Exponential backoff
-		backoff := time.Duration(1<<uint(i)) * 100 * time.Millisecond
+		// Exponential backoff with overflow protection
+		var backoff time.Duration
+		if i < 30 { // Prevent overflow: 2^30 is already > 1 billion
+			backoff = time.Duration(1<<uint(i)) * 100 * time.Millisecond // #nosec G115 - Protected by i < 30 check
+		} else {
+			backoff = 5 * time.Second
+		}
 		if backoff > 5*time.Second {
 			backoff = 5 * time.Second
 		}
@@ -859,3 +895,38 @@ func (db *Database) IsHealthy(ctx context.Context) bool {
 	return true
 }
 
+
+// StartPoolMonitoring starts the connection pool monitoring
+func (db *Database) StartPoolMonitoring(ctx context.Context) {
+	if db.poolMonitor != nil {
+		go db.poolMonitor.Start(ctx)
+	} else {
+		db.logger.Warn().Msg("Pool monitoring not enabled - set EnableConnectionStats to true in config")
+	}
+}
+
+// GetPoolMonitor returns the pool monitor instance
+func (db *Database) GetPoolMonitor() *PoolMonitor {
+	return db.poolMonitor
+}
+
+// GetPoolStats returns current pool statistics
+func (db *Database) GetPoolStats() *PoolStats {
+	if db.poolMonitor != nil {
+		return db.poolMonitor.GetCurrentStats()
+	}
+	return nil
+}
+
+// GetSlowQueryMonitor returns the slow query monitor instance
+func (db *Database) GetSlowQueryMonitor() *SlowQueryMonitor {
+	return db.slowQueryMonitor
+}
+
+// GetSlowQueries returns recent slow queries
+func (db *Database) GetSlowQueries() []SlowQueryRecord {
+	if db.slowQueryMonitor != nil {
+		return db.slowQueryMonitor.GetSlowQueries()
+	}
+	return nil
+}

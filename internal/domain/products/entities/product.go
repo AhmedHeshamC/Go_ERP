@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
+	apperrors "erpgo/pkg/errors"
 )
 
 // Product represents a product in the system
@@ -400,15 +401,15 @@ func (p *Product) IsLowStock() bool {
 // CanFulfillOrder checks if the product can fulfill a given quantity
 func (p *Product) CanFulfillOrder(quantity int) error {
 	if quantity <= 0 {
-		return errors.New("order quantity must be positive")
+		return apperrors.NewBadRequestError("order quantity must be positive")
 	}
 
 	if !p.IsActive {
-		return errors.New("product is not active")
+		return apperrors.NewConflictError("product is not active")
 	}
 
 	if p.TrackInventory && !p.AllowBackorder && p.StockQuantity < quantity {
-		return fmt.Errorf("insufficient stock: %d available, %d requested", p.StockQuantity, quantity)
+		return apperrors.NewInsufficientStockError(p.StockQuantity, quantity)
 	}
 
 	return nil
@@ -445,11 +446,13 @@ func (p *Product) CalculateTotalPrice() decimal.Decimal {
 // UpdateStock updates the stock quantity
 func (p *Product) UpdateStock(newQuantity int) error {
 	if newQuantity < 0 {
-		return errors.New("stock quantity cannot be negative")
+		return apperrors.NewValidationError("stock quantity cannot be negative").
+			AddFieldError("stock_quantity", "cannot be negative")
 	}
 
 	if newQuantity > 999999 {
-		return errors.New("stock quantity cannot exceed 999999")
+		return apperrors.NewValidationError("stock quantity cannot exceed 999999").
+			AddFieldError("stock_quantity", "cannot exceed 999999")
 	}
 
 	p.StockQuantity = newQuantity

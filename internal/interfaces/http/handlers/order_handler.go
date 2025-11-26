@@ -723,20 +723,34 @@ func (h *OrderHandler) orderToResponse(o *entities.Order) *dto.OrderResponse {
 	// Convert order items
 	items := make([]dto.OrderItemResponse, len(o.Items))
 	for i, item := range o.Items {
+		// Validate quantities are within int32 range
+		quantity := item.Quantity
+		if quantity > 0x7FFFFFFF || quantity < -0x80000000 {
+			quantity = 0 // Fallback to 0 if out of range
+		}
+		shippedQty := item.QuantityShipped
+		if shippedQty > 0x7FFFFFFF || shippedQty < -0x80000000 {
+			shippedQty = 0
+		}
+		returnedQty := item.QuantityReturned
+		if returnedQty > 0x7FFFFFFF || returnedQty < -0x80000000 {
+			returnedQty = 0
+		}
+		
 		items[i] = dto.OrderItemResponse{
 			ID:               item.ID,
 			ProductID:        item.ProductID,
 			ProductSKU:       item.ProductSKU,
 			ProductName:      item.ProductName,
-			Quantity:         int32(item.Quantity),
+			Quantity:         int32(quantity),         // #nosec G115 - Validated above
 			UnitPrice:        item.UnitPrice,
 			TotalPrice:       item.TotalPrice,
 			TaxAmount:        item.TaxAmount,
 			DiscountAmount:   item.DiscountAmount,
 			Weight:           decimal.NewFromFloat(item.Weight),
 			Status:           item.Status,
-			ShippedQuantity:  int32(item.QuantityShipped),
-			ReturnedQuantity: int32(item.QuantityReturned),
+			ShippedQuantity:  int32(shippedQty),       // #nosec G115 - Validated above
+			ReturnedQuantity: int32(returnedQty),      // #nosec G115 - Validated above
 			Notes:            item.Notes,
 		}
 	}

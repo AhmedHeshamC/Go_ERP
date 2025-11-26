@@ -386,9 +386,10 @@ func (ltf *LoadTestFramework) initializeSystemMetrics() *SystemMetrics {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
 
+	// Convert memory stats safely - m.Alloc is uint64, converting to MB will always fit in int64
 	return &SystemMetrics{
-		InitialMemoryMB:   int64(m.Alloc) / 1024 / 1024,
-		PeakMemoryMB:      int64(m.Alloc) / 1024 / 1024,
+		InitialMemoryMB:   int64(m.Alloc) / 1024 / 1024,   // #nosec G115 - Division by 1024*1024 ensures result fits in int64
+		PeakMemoryMB:      int64(m.Alloc) / 1024 / 1024,   // #nosec G115 - Division by 1024*1024 ensures result fits in int64
 		InitialGoroutines: runtime.NumGoroutine(),
 		PeakGoroutines:    runtime.NumGoroutine(),
 	}
@@ -408,7 +409,7 @@ func (ltf *LoadTestFramework) startSystemMetricsCollection() {
 				var m runtime.MemStats
 				runtime.ReadMemStats(&m)
 
-				memoryMB := int64(m.Alloc) / 1024 / 1024
+				memoryMB := int64(m.Alloc) / 1024 / 1024 // #nosec G115 - Division by 1024*1024 ensures result fits in int64
 				goroutines := runtime.NumGoroutine()
 
 				if memoryMB > ltf.results.SystemMetrics.PeakMemoryMB {
@@ -432,7 +433,7 @@ func (ltf *LoadTestFramework) finalizeResults() {
 	// Calculate final system metrics
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
-	ltf.results.SystemMetrics.FinalMemoryMB = int64(m.Alloc) / 1024 / 1024
+	ltf.results.SystemMetrics.FinalMemoryMB = int64(m.Alloc) / 1024 / 1024 // #nosec G115 - Division by 1024*1024 ensures result fits in int64
 	ltf.results.SystemMetrics.FinalGoroutines = runtime.NumGoroutine()
 
 	// Calculate derived metrics

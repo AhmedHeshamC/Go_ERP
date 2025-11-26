@@ -34,8 +34,8 @@ jobs:
 
     - name: Install security scanning tools
       run: |
-        # Install gosec
-        go install github.com/securecodewarrior/gosec/v2/cmd/gosec@latest
+        # Install gosec (correct repository)
+        go install github.com/securego/gosec/v2/cmd/gosec@latest
 
         # Install govulncheck
         go install golang.org/x/vuln/cmd/govulncheck@latest
@@ -59,6 +59,12 @@ jobs:
         wget -O hadolint https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64
         chmod +x hadolint
         sudo mv hadolint /usr/local/bin/
+
+        # Install trivy for container scanning
+        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+        echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+        sudo apt-get update
+        sudo apt-get install -y trivy
 
     - name: Download dependencies
       run: go mod download
@@ -96,6 +102,11 @@ jobs:
     - name: Run Docker security scan
       if: hashFiles('Dockerfile') != ''
       run: hadolint Dockerfile || true
+
+    - name: Run comprehensive security audit
+      run: |
+        chmod +x scripts/comprehensive-security-audit.sh
+        ./scripts/comprehensive-security-audit.sh || true
 
     - name: Upload security scan reports
       uses: actions/upload-artifact@v3

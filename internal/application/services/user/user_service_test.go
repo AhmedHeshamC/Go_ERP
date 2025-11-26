@@ -23,8 +23,9 @@ func TestCreateUser(t *testing.T) {
 	mockUserRoleRepo := &MockUserRoleRepository{}
 	mockPasswordSvc := &MockPasswordService{}
 	mockJWTSvc := &MockJWTService{}
+	mockTxManager := &MockTransactionManager{}
 
-	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache())
+	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), mockTxManager)
 
 	ctx := context.Background()
 	req := &CreateUserRequest{
@@ -69,8 +70,9 @@ func TestCreateUserUserAlreadyExists(t *testing.T) {
 	mockUserRoleRepo := &MockUserRoleRepository{}
 	mockPasswordSvc := &MockPasswordService{}
 	mockJWTSvc := &MockJWTService{}
+	mockTxManager := &MockTransactionManager{}
 
-	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache())
+	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), mockTxManager)
 
 	ctx := context.Background()
 	req := &CreateUserRequest{
@@ -103,7 +105,7 @@ func TestGetUser(t *testing.T) {
 	mockPasswordSvc := &MockPasswordService{}
 	mockJWTSvc := &MockJWTService{}
 
-	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache())
+	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
 	ctx := context.Background()
 	userID := uuid.New()
@@ -145,7 +147,7 @@ func TestGetUserNotFound(t *testing.T) {
 	mockPasswordSvc := &MockPasswordService{}
 	mockJWTSvc := &MockJWTService{}
 
-	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache())
+	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
 	ctx := context.Background()
 	userID := uuid.New()
@@ -172,7 +174,7 @@ func TestLogin(t *testing.T) {
 	mockPasswordSvc := &MockPasswordService{}
 	mockJWTSvc := &MockJWTService{}
 
-	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache())
+	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
 	ctx := context.Background()
 	req := &LoginRequest{
@@ -229,7 +231,7 @@ func TestLoginInvalidCredentials(t *testing.T) {
 	mockPasswordSvc := &MockPasswordService{}
 	mockJWTSvc := &MockJWTService{}
 
-	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache())
+	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
 	ctx := context.Background()
 	req := &LoginRequest{
@@ -269,7 +271,7 @@ func TestListUsers(t *testing.T) {
 	mockPasswordSvc := &MockPasswordService{}
 	mockJWTSvc := &MockJWTService{}
 
-	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache())
+	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
 	ctx := context.Background()
 	req := &ListUsersRequest{
@@ -325,7 +327,7 @@ func TestUpdateUser(t *testing.T) {
 	mockPasswordSvc := &MockPasswordService{}
 	mockJWTSvc := &MockJWTService{}
 
-	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache())
+	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
 	ctx := context.Background()
 	userID := uuid.New()
@@ -369,7 +371,7 @@ func TestAssignRole(t *testing.T) {
 	mockPasswordSvc := &MockPasswordService{}
 	mockJWTSvc := &MockJWTService{}
 
-	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache())
+	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
 	ctx := context.Background()
 	userID := uuid.New()
@@ -409,7 +411,7 @@ func TestCreateRole(t *testing.T) {
 	mockPasswordSvc := &MockPasswordService{}
 	mockJWTSvc := &MockJWTService{}
 
-	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache())
+	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
 	ctx := context.Background()
 	req := &CreateRoleRequest{
@@ -443,7 +445,7 @@ func TestDeleteUser(t *testing.T) {
 	mockPasswordSvc := &MockPasswordService{}
 	mockJWTSvc := &MockJWTService{}
 
-	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache())
+	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
 	ctx := context.Background()
 	userID := uuid.New()
@@ -474,7 +476,7 @@ func TestChangePassword(t *testing.T) {
 	mockPasswordSvc := &MockPasswordService{}
 	mockJWTSvc := &MockJWTService{}
 
-	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache())
+	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
 	ctx := context.Background()
 	userID := uuid.New().String()
@@ -519,7 +521,7 @@ func TestChangePasswordInvalidOldPassword(t *testing.T) {
 	mockPasswordSvc := &MockPasswordService{}
 	mockJWTSvc := &MockJWTService{}
 
-	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache())
+	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
 	ctx := context.Background()
 	userID := uuid.New().String()
@@ -558,7 +560,7 @@ func TestForgotPassword(t *testing.T) {
 	mockPasswordSvc := &MockPasswordService{}
 	mockJWTSvc := &MockJWTService{}
 
-	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache())
+	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
 	ctx := context.Background()
 	email := "test@example.com"
@@ -590,7 +592,7 @@ func TestResetPassword(t *testing.T) {
 	mockPasswordSvc := &MockPasswordService{}
 	mockJWTSvc := &MockJWTService{}
 
-	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache())
+	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
 	ctx := context.Background()
 	userID := uuid.New()
@@ -645,7 +647,7 @@ func TestResetPasswordInvalidToken(t *testing.T) {
 	mockPasswordSvc := &MockPasswordService{}
 	mockJWTSvc := &MockJWTService{}
 
-	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache())
+	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
 	ctx := context.Background()
 	req := &ResetPasswordRequest{

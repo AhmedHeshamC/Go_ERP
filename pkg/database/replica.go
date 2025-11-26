@@ -2,8 +2,9 @@ package database
 
 import (
 	"context"
+	"crypto/rand"
 	"fmt"
-	"math/rand"
+	"math/big"
 	"strings"
 	"time"
 
@@ -115,7 +116,15 @@ func (rdb *ReplicaDB) GetReplica() *Database {
 	}
 
 	// Use round-robin or random selection for load balancing
-	selectedIndex := healthyIndices[rand.Intn(len(healthyIndices))]
+	// G404: Use crypto/rand instead of math/rand for security
+	n, err := rand.Int(rand.Reader, big.NewInt(int64(len(healthyIndices))))
+	if err != nil {
+		// Fallback to first healthy replica if random fails
+		selectedIndex := healthyIndices[0]
+		rdb.logger.Warn().Err(err).Msg("Failed to generate random index, using first replica")
+		return rdb.replicas[selectedIndex]
+	}
+	selectedIndex := healthyIndices[n.Int64()]
 
 	rdb.logger.Debug().
 		Int("selected_replica", selectedIndex).

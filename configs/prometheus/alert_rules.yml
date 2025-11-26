@@ -14,6 +14,7 @@ groups:
         annotations:
           summary: "High error rate detected"
           description: "Error rate is {{ $value | humanizePercentage }} for {{ $labels.instance }}"
+          runbook_url: "https://github.com/yourusername/erpgo/blob/main/docs/operations/RUNBOOKS.md#high-error-rate"
 
       - alert: HighResponseTime
         expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1
@@ -24,6 +25,7 @@ groups:
         annotations:
           summary: "High response time detected"
           description: "95th percentile response time is {{ $value }}s for {{ $labels.instance }}"
+          runbook_url: "https://github.com/yourusername/erpgo/blob/main/docs/operations/RUNBOOKS.md#high-latency-incidents"
 
       - alert: ServiceDown
         expr: up{job=~"erpgo-api|erpgo-worker"} == 0
@@ -64,6 +66,7 @@ groups:
         annotations:
           summary: "Database connection pool nearly exhausted"
           description: "Database connection pool usage is {{ $value | humanizePercentage }} for {{ $labels.instance }}"
+          runbook_url: "https://github.com/yourusername/erpgo/blob/main/docs/operations/RUNBOOKS.md#database-connection-pool-exhaustion"
 
   # Database Alerts
   - name: erpgo_database
@@ -77,6 +80,7 @@ groups:
         annotations:
           summary: "PostgreSQL is down"
           description: "PostgreSQL {{ $labels.db_role }} on {{ $labels.instance }} has been down for more than 1 minute"
+          runbook_url: "https://github.com/yourusername/erpgo/blob/main/docs/operations/RUNBOOKS.md#database-connectivity-issues"
 
       - alert: PostgreSQLHighConnections
         expr: pg_stat_activity_count / pg_settings_max_connections * 100 > 80
@@ -279,6 +283,7 @@ groups:
         annotations:
           summary: "High failed login rate"
           description: "Failed login rate is {{ $value }} attempts/minute"
+          runbook_url: "https://github.com/yourusername/erpgo/blob/main/docs/operations/RUNBOOKS.md#authentication-failures"
 
       - alert: SuspiciousAPIUsage
         expr: rate(http_requests_total[5m]) > 1000

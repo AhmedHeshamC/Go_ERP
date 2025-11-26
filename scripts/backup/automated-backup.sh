@@ -19,12 +19,15 @@ fi
 
 # Backup configuration
 BACKUP_TYPE="${BACKUP_TYPE:-full}"
-BACKUP_SCHEDULE="${BACKUP_SCHEDULE:-0 2 * * *}"  # Daily at 2 AM UTC
-BACKUP_RETENTION_DAYS="${BACKUP_RETENTION_DAYS:-30}"
+BACKUP_SCHEDULE="${BACKUP_SCHEDULE:-0 */6 * * *}"  # Every 6 hours
+BACKUP_RETENTION_DAILY_DAYS="${BACKUP_RETENTION_DAILY_DAYS:-7}"  # 7 days for daily backups
+BACKUP_RETENTION_WEEKLY_WEEKS="${BACKUP_RETENTION_WEEKLY_WEEKS:-4}"  # 4 weeks for weekly backups
+BACKUP_RETENTION_MONTHLY_MONTHS="${BACKUP_RETENTION_MONTHLY_MONTHS:-12}"  # 1 year for monthly backups
 BACKUP_ENCRYPTION_KEY="${BACKUP_ENCRYPTION_KEY:-}"
 BACKUP_STORAGE_TYPE="${BACKUP_STORAGE_TYPE:-local}"
 BACKUP_S3_BUCKET="${BACKUP_S3_BUCKET:-}"
 BACKUP_S3_REGION="${BACKUP_S3_REGION:-}"
+BACKUP_MAX_RETRIES="${BACKUP_MAX_RETRIES:-1}"  # Retry once on failure
 
 # Directories
 BACKUP_DIR="${POSTGRES_BACKUPS_PATH:-$PROJECT_ROOT/backups/postgres}"
@@ -109,32 +112,67 @@ check_prerequisites() {
     success "Prerequisites check passed"
 }
 
-# Create backup
+# Create backup with retry logic
 create_backup() {
     local backup_type="${1:-$BACKUP_TYPE}"
     local timestamp=$(date '+%Y%m%d_%H%M%S')
     local backup_filename="automated_${backup_type}_backup_${timestamp}.sql"
     local backup_path="$TEMP_DIR/$backup_filename"
+    local attempt=0
+    local max_attempts=$((BACKUP_MAX_RETRIES + 1))
 
     log "Starting automated $backup_type backup..."
 
-    # Create backup using the main backup script
-    if "$SCRIPT_DIR/database-backup.sh" backup "$backup_type" > "$LOG_DIR/backup_${timestamp}.log" 2>&1; then
-        success "Backup created successfully"
-
-        # Move backup to temp directory for processing
-        local created_backup=$(find "$BACKUP_DIR" -name "*${backup_type}_backup_${timestamp}*.sql" -type f | head -1)
-        if [[ -n "$created_backup" ]]; then
-            mv "$created_backup" "$backup_path"
-            echo "$backup_path"
-        else
-            error "Backup file not found after creation"
-            return 1
+    while [[ $attempt -lt $max_attempts ]]; do
+        attempt=$((attempt + 1))
+        
+        if [[ $attempt -gt 1 ]]; then
+            warn "Retry attempt $attempt of $max_attempts..."
+            sleep 5  # Wait before retry
         fi
-    else
-        error "Backup creation failed. Check log: $LOG_DIR/backup_${timestamp}.log"
-        return 1
-    fi
+
+        log "Backup attempt $attempt..."
+
+        # Create backup using pg_dump directly
+        local container_name="erpgo-postgres-primary"
+        
+        if docker exec "$container_name" pg_dump \
+            --no-owner \
+            --no-privileges \
+            --verbose \
+            --format=custom \
+            --compress=9 \
+            --file="/tmp/${backup_filename}" \
+            "${POSTGRES_DB:-erp}" > "$LOG_DIR/backup_${timestamp}_attempt${attempt}.log" 2>&1; then
+            
+            # Copy backup from container to host
+            if docker cp "${container_name}:/tmp/${backup_filename}" "$backup_path"; then
+                # Clean up temporary backup file in container
+                docker exec "$container_name" rm -f "/tmp/${backup_filename}"
+                
+                # Verify backup file exists and has content
+                if [[ -f "$backup_path" ]] && [[ -s "$backup_path" ]]; then
+                    local backup_size=$(du -h "$backup_path" | cut -f1)
+                    success "Backup created successfully on attempt $attempt (Size: $backup_size)"
+                    echo "$backup_path"
+                    return 0
+                else
+                    error "Backup file is empty or missing"
+                fi
+            else
+                error "Failed to copy backup from container"
+            fi
+        else
+            error "Backup creation failed on attempt $attempt. Check log: $LOG_DIR/backup_${timestamp}_attempt${attempt}.log"
+        fi
+        
+        # Clean up failed attempt
+        docker exec "$container_name" rm -f "/tmp/${backup_filename}" 2>/dev/null || true
+        rm -f "$backup_path" 2>/dev/null || true
+    done
+
+    error "Backup creation failed after $max_attempts attempts"
+    return 1
 }
 
 # Compress backup
@@ -253,30 +291,107 @@ store_backup() {
     echo "$final_path"
 }
 
-# Clean up old backups
+# Determine backup category based on timestamp
+get_backup_category() {
+    local timestamp="$1"
+    local day_of_week=$(date -d "$timestamp" +%u)  # 1-7 (Monday-Sunday)
+    local day_of_month=$(date -d "$timestamp" +%d)
+    
+    # Monthly backup: first day of month
+    if [[ "$day_of_month" == "01" ]]; then
+        echo "monthly"
+    # Weekly backup: Sunday (day 7)
+    elif [[ "$day_of_week" == "7" ]]; then
+        echo "weekly"
+    # Daily backup: all others
+    else
+        echo "daily"
+    fi
+}
+
+# Tag backup with category
+tag_backup() {
+    local backup_path="$1"
+    local category=$(get_backup_category "$(date)")
+    local tagged_path="${backup_path%.sql*}_${category}${backup_path##*.sql}"
+    
+    mv "$backup_path" "$tagged_path"
+    log "Backup tagged as: $category"
+    echo "$tagged_path"
+}
+
+# Clean up old backups with retention policy
 cleanup_old_backups() {
-    log "Cleaning up backups older than $BACKUP_RETENTION_DAYS days..."
+    log "Cleaning up backups with retention policy..."
+    log "  Daily backups: $BACKUP_RETENTION_DAILY_DAYS days"
+    log "  Weekly backups: $BACKUP_RETENTION_WEEKLY_WEEKS weeks"
+    log "  Monthly backups: $BACKUP_RETENTION_MONTHLY_MONTHS months"
 
     local deleted_count=0
+    local daily_cutoff_days=$BACKUP_RETENTION_DAILY_DAYS
+    local weekly_cutoff_days=$((BACKUP_RETENTION_WEEKLY_WEEKS * 7))
+    local monthly_cutoff_days=$((BACKUP_RETENTION_MONTHLY_MONTHS * 30))
 
-    # Clean local backups
+    # Clean daily backups older than retention period
+    log "Cleaning daily backups older than $daily_cutoff_days days..."
     while IFS= read -r -d '' backup_file; do
-        log "Deleting old backup: $(basename "$backup_file")"
+        log "Deleting old daily backup: $(basename "$backup_file")"
         rm -f "$backup_file"
         ((deleted_count++))
-    done < <(find "$BACKUP_DIR" -name "automated_*backup_*.sql*" -type f -mtime +$BACKUP_RETENTION_DAYS -print0)
+    done < <(find "$BACKUP_DIR" -name "automated_*backup_*_daily.sql*" -type f -mtime +$daily_cutoff_days -print0 2>/dev/null)
+
+    # Clean weekly backups older than retention period
+    log "Cleaning weekly backups older than $weekly_cutoff_days days..."
+    while IFS= read -r -d '' backup_file; do
+        log "Deleting old weekly backup: $(basename "$backup_file")"
+        rm -f "$backup_file"
+        ((deleted_count++))
+    done < <(find "$BACKUP_DIR" -name "automated_*backup_*_weekly.sql*" -type f -mtime +$weekly_cutoff_days -print0 2>/dev/null)
+
+    # Clean monthly backups older than retention period
+    log "Cleaning monthly backups older than $monthly_cutoff_days days..."
+    while IFS= read -r -d '' backup_file; do
+        log "Deleting old monthly backup: $(basename "$backup_file")"
+        rm -f "$backup_file"
+        ((deleted_count++))
+    done < <(find "$BACKUP_DIR" -name "automated_*backup_*_monthly.sql*" -type f -mtime +$monthly_cutoff_days -print0 2>/dev/null)
 
     # Clean S3 backups if configured
     if [[ "$BACKUP_STORAGE_TYPE" == "s3" ]]; then
-        local cutoff_date=$(date -d "$BACKUP_RETENTION_DAYS days ago" +%Y-%m-%d)
-
+        log "Cleaning S3 backups with retention policy..."
+        
+        # Daily backups
+        local daily_cutoff_date=$(date -d "$daily_cutoff_days days ago" +%Y-%m-%d)
         while IFS= read -r s3_file; do
-            log "Deleting old S3 backup: $s3_file"
-            aws s3 rm "$s3_file" || warn "Failed to delete S3 file: $s3_file"
-            ((deleted_count++))
-        done < <(aws s3 ls "s3://$BACKUP_S3_BUCKET/backups/" --recursive | \
-                  awk '$1 < "'$cutoff_date'" {print $4}' | \
-                  sed 's/^/s3:\/\/'$BACKUP_S3_BUCKET'\//')
+            if [[ "$s3_file" == *"_daily"* ]]; then
+                log "Deleting old S3 daily backup: $s3_file"
+                aws s3 rm "$s3_file" || warn "Failed to delete S3 file: $s3_file"
+                ((deleted_count++))
+            fi
+        done < <(aws s3 ls "s3://$BACKUP_S3_BUCKET/backups/" --recursive 2>/dev/null | \
+                  awk '$1 < "'$daily_cutoff_date'" {print "s3://'$BACKUP_S3_BUCKET'/" $4}')
+        
+        # Weekly backups
+        local weekly_cutoff_date=$(date -d "$weekly_cutoff_days days ago" +%Y-%m-%d)
+        while IFS= read -r s3_file; do
+            if [[ "$s3_file" == *"_weekly"* ]]; then
+                log "Deleting old S3 weekly backup: $s3_file"
+                aws s3 rm "$s3_file" || warn "Failed to delete S3 file: $s3_file"
+                ((deleted_count++))
+            fi
+        done < <(aws s3 ls "s3://$BACKUP_S3_BUCKET/backups/" --recursive 2>/dev/null | \
+                  awk '$1 < "'$weekly_cutoff_date'" {print "s3://'$BACKUP_S3_BUCKET'/" $4}')
+        
+        # Monthly backups
+        local monthly_cutoff_date=$(date -d "$monthly_cutoff_days days ago" +%Y-%m-%d)
+        while IFS= read -r s3_file; do
+            if [[ "$s3_file" == *"_monthly"* ]]; then
+                log "Deleting old S3 monthly backup: $s3_file"
+                aws s3 rm "$s3_file" || warn "Failed to delete S3 file: $s3_file"
+                ((deleted_count++))
+            fi
+        done < <(aws s3 ls "s3://$BACKUP_S3_BUCKET/backups/" --recursive 2>/dev/null | \
+                  awk '$1 < "'$monthly_cutoff_date'" {print "s3://'$BACKUP_S3_BUCKET'/" $4}')
     fi
 
     success "Cleaned up $deleted_count old backups"
@@ -306,9 +421,13 @@ generate_report() {
         echo "Environment: ${ENVIRONMENT:-unknown}"
         echo ""
         echo "=== Configuration ==="
-        echo "Retention Period: $BACKUP_RETENTION_DAYS days"
+        echo "Backup Schedule: Every 6 hours"
+        echo "Daily Retention: $BACKUP_RETENTION_DAILY_DAYS days"
+        echo "Weekly Retention: $BACKUP_RETENTION_WEEKLY_WEEKS weeks"
+        echo "Monthly Retention: $BACKUP_RETENTION_MONTHLY_MONTHS months"
+        echo "Max Retries: $BACKUP_MAX_RETRIES"
         echo "Encryption: $([ -n "$BACKUP_ENCRYPTION_KEY" ] && echo "Enabled" || echo "Disabled")"
-        echo "S3 Storage: $BACKUP_STORAGE_TYPE"
+        echo "Storage Type: $BACKUP_STORAGE_TYPE"
         if [[ "$BACKUP_STORAGE_TYPE" == "s3" ]]; then
             echo "S3 Bucket: $BACKUP_S3_BUCKET"
             echo "S3 Region: $BACKUP_S3_REGION"
@@ -453,6 +572,9 @@ main() {
         exit 1
     }
 
+    # Tag backup with category (daily/weekly/monthly)
+    backup_path=$(tag_backup "$backup_path")
+
     # Store backup
     backup_path=$(store_backup "$backup_path") || {
         send_notification "ERROR" "Backup storage failed"
@@ -487,13 +609,16 @@ usage() {
     echo "  help                          Show this help message"
     echo ""
     echo "Environment Variables:"
-    echo "  BACKUP_TYPE                   Backup type (full, schema, data)"
-    echo "  BACKUP_SCHEDULE               Cron schedule for backups"
-    echo "  BACKUP_RETENTION_DAYS         Backup retention period"
-    echo "  BACKUP_ENCRYPTION_KEY         Encryption key for backups"
-    echo "  BACKUP_STORAGE_TYPE           Storage type (local, s3)"
-    echo "  BACKUP_S3_BUCKET              S3 bucket name"
-    echo "  BACKUP_S3_REGION              S3 bucket region"
+    echo "  BACKUP_TYPE                      Backup type (full, schema, data)"
+    echo "  BACKUP_SCHEDULE                  Cron schedule (default: every 6 hours)"
+    echo "  BACKUP_RETENTION_DAILY_DAYS      Daily backup retention (default: 7 days)"
+    echo "  BACKUP_RETENTION_WEEKLY_WEEKS    Weekly backup retention (default: 4 weeks)"
+    echo "  BACKUP_RETENTION_MONTHLY_MONTHS  Monthly backup retention (default: 12 months)"
+    echo "  BACKUP_MAX_RETRIES               Retry attempts on failure (default: 1)"
+    echo "  BACKUP_ENCRYPTION_KEY            Encryption key for backups"
+    echo "  BACKUP_STORAGE_TYPE              Storage type (local, s3)"
+    echo "  BACKUP_S3_BUCKET                 S3 bucket name"
+    echo "  BACKUP_S3_REGION                 S3 bucket region"
     echo ""
     echo "Examples:"
     echo "  $0 backup full                # Run full backup"

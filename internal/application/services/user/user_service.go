@@ -11,12 +11,16 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+	"github.com/rs/zerolog"
 
 	"erpgo/internal/application/services/email"
 	"erpgo/internal/domain/users/entities"
 	"erpgo/internal/domain/users/repositories"
 	"erpgo/pkg/auth"
 	"erpgo/pkg/cache"
+	"erpgo/pkg/database"
+	apperrors "erpgo/pkg/errors"
 )
 
 // Service defines the business logic interface for user management
@@ -184,6 +188,8 @@ type ServiceImpl struct {
 	jwtSvc                *auth.JWTService
 	emailVerificationSvc  email.Service
 	cache                 cache.Cache
+	permissionCache       *cache.PermissionCache
+	txManager             database.TransactionManagerInterface
 	defaultRole           string
 	resetTokens           map[string]*ResetTokenInfo  // Fallback for when cache is not available
 	resetMutex            sync.RWMutex
@@ -197,8 +203,16 @@ func NewService(
 	passwordSvc *auth.PasswordService,
 	jwtSvc *auth.JWTService,
 	emailVerificationSvc email.Service,
-	cache cache.Cache,
+	cacheInstance cache.Cache,
+	txManager database.TransactionManagerInterface,
 ) Service {
+	// Initialize permission cache with default config
+	var permissionCache *cache.PermissionCache
+	if cacheInstance != nil {
+		logger := zerolog.Nop()
+		permissionCache = cache.NewPermissionCache(cacheInstance, &logger, cache.DefaultPermissionCacheConfig())
+	}
+	
 	return &ServiceImpl{
 		userRepo:              userRepo,
 		roleRepo:              roleRepo,
@@ -206,7 +220,9 @@ func NewService(
 		passwordSvc:           passwordSvc,
 		jwtSvc:                jwtSvc,
 		emailVerificationSvc:  emailVerificationSvc,
-		cache:                 cache,
+		cache:                 cacheInstance,
+		permissionCache:       permissionCache,
+		txManager:             txManager,
 		defaultRole:           "student", // Default role for new users
 		resetTokens:           make(map[string]*ResetTokenInfo),
 	}
@@ -221,8 +237,9 @@ func NewUserService(
 	jwtSvc *auth.JWTService,
 	emailVerificationSvc email.Service,
 	cache cache.Cache,
+	txManager database.TransactionManagerInterface,
 ) Service {
-	return NewService(userRepo, roleRepo, userRoleRepo, passwordSvc, jwtSvc, emailVerificationSvc, cache)
+	return NewService(userRepo, roleRepo, userRoleRepo, passwordSvc, jwtSvc, emailVerificationSvc, cache, txManager)
 }
 
 // storeResetToken stores a reset token in Redis with expiration
@@ -323,24 +340,31 @@ func (s *ServiceImpl) CreateUser(ctx context.Context, req *CreateUserRequest) (*
 	// Check if user already exists
 	exists, err := s.userRepo.ExistsByEmail(ctx, req.Email)
 	if err != nil {
-		return nil, fmt.Errorf("failed to check if user exists: %w", err)
+		return nil, apperrors.WrapInternalError(err, "failed to check if user exists").
+			WithContext("operation", "CreateUser").
+			WithContext("email", req.Email)
 	}
 	if exists {
-		return nil, ErrUserAlreadyExists
+		return nil, apperrors.NewConflictError("user with this email already exists").
+			WithContext("email", req.Email)
 	}
 
 	exists, err = s.userRepo.ExistsByUsername(ctx, req.Username)
 	if err != nil {
-		return nil, fmt.Errorf("failed to check if username exists: %w", err)
+		return nil, apperrors.WrapInternalError(err, "failed to check if username exists").
+			WithContext("operation", "CreateUser").
+			WithContext("username", req.Username)
 	}
 	if exists {
-		return nil, ErrUserAlreadyExists
+		return nil, apperrors.NewConflictError("user with this username already exists").
+			WithContext("username", req.Username)
 	}
 
 	// Hash password
 	hashedPassword, err := s.passwordSvc.HashPassword(req.Password)
 	if err != nil {
-		return nil, fmt.Errorf("failed to hash password: %w", err)
+		return nil, apperrors.WrapInternalError(err, "failed to hash password").
+			WithContext("operation", "CreateUser")
 	}
 
 	// Create user entity
@@ -360,18 +384,30 @@ func (s *ServiceImpl) CreateUser(ctx context.Context, req *CreateUserRequest) (*
 
 	// Validate user entity
 	if err := user.Validate(); err != nil {
-		return nil, fmt.Errorf("invalid user data: %w", err)
+		// The error from Validate is already a ValidationError with field details
+		return nil, err
 	}
 
-	// Save user to database
-	if err := s.userRepo.Create(ctx, user); err != nil {
-		return nil, fmt.Errorf("failed to create user: %w", err)
-	}
+	// Execute user creation and role assignment within a transaction
+	err = s.txManager.WithRetryTransaction(ctx, func(tx pgx.Tx) error {
+		// Save user to database
+		if err := s.userRepo.Create(ctx, user); err != nil {
+			return apperrors.ClassifyDatabaseError(err, "CreateUser")
+		}
 
-	// Assign default role
-	if err := s.userRepo.AssignRole(ctx, user.ID, s.defaultRole, user.ID); err != nil {
-		// Log error but don't fail user creation
-		// In production, this should be monitored
+		// Assign default role
+		if err := s.userRepo.AssignRole(ctx, user.ID, s.defaultRole, user.ID); err != nil {
+			return apperrors.WrapInternalError(err, "failed to assign default role").
+				WithContext("operation", "CreateUser").
+				WithContext("user_id", user.ID.String()).
+				WithContext("role", s.defaultRole)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
 	}
 
 	// Return user without sensitive data
@@ -382,15 +418,17 @@ func (s *ServiceImpl) CreateUser(ctx context.Context, req *CreateUserRequest) (*
 func (s *ServiceImpl) GetUser(ctx context.Context, id string) (*entities.User, error) {
 	userID, err := uuid.Parse(id)
 	if err != nil {
-		return nil, fmt.Errorf("invalid user ID: %w", err)
+		return nil, apperrors.NewBadRequestError("invalid user ID format").
+			WithContext("user_id", id)
 	}
 
 	user, err := s.userRepo.GetByID(ctx, userID)
 	if err != nil {
-		if strings.Contains(err.Error(), "not found") {
-			return nil, ErrUserNotFound
+		dbErr := apperrors.ClassifyDatabaseError(err, "GetUser")
+		if appErr, ok := dbErr.(*apperrors.AppError); ok {
+			appErr.WithContext("user_id", id)
 		}
-		return nil, fmt.Errorf("failed to get user: %w", err)
+		return nil, dbErr
 	}
 
 	return user.ToSafeUser(), nil
@@ -400,15 +438,16 @@ func (s *ServiceImpl) GetUser(ctx context.Context, id string) (*entities.User, e
 func (s *ServiceImpl) GetUserByEmail(ctx context.Context, email string) (*entities.User, error) {
 	email = strings.ToLower(strings.TrimSpace(email))
 	if email == "" {
-		return nil, errors.New("email cannot be empty")
+		return nil, apperrors.NewBadRequestError("email cannot be empty")
 	}
 
 	user, err := s.userRepo.GetByEmail(ctx, email)
 	if err != nil {
-		if strings.Contains(err.Error(), "not found") {
-			return nil, ErrUserNotFound
+		dbErr := apperrors.ClassifyDatabaseError(err, "GetUserByEmail")
+		if appErr, ok := dbErr.(*apperrors.AppError); ok {
+			appErr.WithContext("email", email)
 		}
-		return nil, fmt.Errorf("failed to get user by email: %w", err)
+		return nil, dbErr
 	}
 
 	return user.ToSafeUser(), nil
@@ -547,26 +586,30 @@ func (s *ServiceImpl) Login(ctx context.Context, req *LoginRequest) (*LoginRespo
 	// Get user by email
 	user, err := s.userRepo.GetByEmail(ctx, strings.ToLower(strings.TrimSpace(req.Email)))
 	if err != nil {
-		if strings.Contains(err.Error(), "not found") {
-			return nil, ErrInvalidCredentials
-		}
-		return nil, fmt.Errorf("failed to get user: %w", err)
+		// Don't reveal whether user exists - return generic error
+		return nil, apperrors.NewUnauthorizedError("invalid credentials").
+			WithContext("operation", "Login")
 	}
 
 	// Check if user is active
 	if !user.IsActive {
-		return nil, ErrInvalidCredentials
+		return nil, apperrors.NewUnauthorizedError("invalid credentials").
+			WithContext("operation", "Login")
 	}
 
 	// Verify password
 	if !s.passwordSvc.CheckPassword(req.Password, user.PasswordHash) {
-		return nil, ErrInvalidCredentials
+		return nil, apperrors.NewUnauthorizedError("invalid credentials").
+			WithContext("operation", "Login").
+			WithContext("user_id", user.ID.String())
 	}
 
 	// Get user roles
 	roles, err := s.userRepo.GetUserRoles(ctx, user.ID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get user roles: %w", err)
+		return nil, apperrors.WrapInternalError(err, "failed to get user roles").
+			WithContext("operation", "Login").
+			WithContext("user_id", user.ID.String())
 	}
 
 	// Update last login
@@ -577,7 +620,9 @@ func (s *ServiceImpl) Login(ctx context.Context, req *LoginRequest) (*LoginRespo
 	// Generate tokens
 	accessToken, refreshToken, err := s.jwtSvc.GenerateTokenPair(user.ID, user.Email, user.Username, roles)
 	if err != nil {
-		return nil, fmt.Errorf("failed to generate tokens: %w", err)
+		return nil, apperrors.WrapInternalError(err, "failed to generate tokens").
+			WithContext("operation", "Login").
+			WithContext("user_id", user.ID.String())
 	}
 
 	return &LoginResponse{
@@ -848,26 +893,46 @@ func (s *ServiceImpl) AssignRole(ctx context.Context, userID, roleID string) err
 		return fmt.Errorf("invalid role ID: %w", err)
 	}
 
-	// Check if user exists
-	_, err = s.userRepo.GetByID(ctx, userUUID)
-	if err != nil {
-		if strings.Contains(err.Error(), "not found") {
-			return ErrUserNotFound
+	// Execute role assignment within a transaction
+	return s.txManager.WithRetryTransaction(ctx, func(tx pgx.Tx) error {
+		// Check if user exists
+		_, err := s.userRepo.GetByID(ctx, userUUID)
+		if err != nil {
+			if strings.Contains(err.Error(), "not found") {
+				return ErrUserNotFound
+			}
+			return fmt.Errorf("failed to get user: %w", err)
 		}
-		return fmt.Errorf("failed to get user: %w", err)
-	}
 
-	// Check if role exists
-	_, err = s.roleRepo.GetRoleByID(ctx, roleUUID)
-	if err != nil {
-		if strings.Contains(err.Error(), "not found") {
-			return ErrRoleNotFound
+		// Check if role exists
+		_, err = s.roleRepo.GetRoleByID(ctx, roleUUID)
+		if err != nil {
+			if strings.Contains(err.Error(), "not found") {
+				return ErrRoleNotFound
+			}
+			return fmt.Errorf("failed to get role: %w", err)
 		}
-		return fmt.Errorf("failed to get role: %w", err)
-	}
 
-	// Assign role
-	return s.userRoleRepo.AssignRole(ctx, userID, roleID, userID)
+		// Assign role
+		if err := s.userRoleRepo.AssignRole(ctx, userID, roleID, userID); err != nil {
+			return fmt.Errorf("failed to assign role: %w", err)
+		}
+
+		// Invalidate user permission and role cache (Requirement 7.3)
+		if s.permissionCache != nil {
+			// Invalidate both permissions and roles since role assignment affects both
+			if err := s.permissionCache.InvalidateUser(ctx, userUUID); err != nil {
+				// Log error but don't fail the transaction
+				// Cache invalidation failure should not prevent role assignment
+			}
+		} else if s.cache != nil {
+			// Fallback to old cache invalidation method
+			cacheKey := fmt.Sprintf("user:permissions:%s", userID)
+			s.cache.Delete(ctx, cacheKey)
+		}
+
+		return nil
+	})
 }
 
 // RemoveRole removes a role from a user
@@ -877,17 +942,37 @@ func (s *ServiceImpl) RemoveRole(ctx context.Context, userID, roleID string) err
 		return fmt.Errorf("invalid user ID: %w", err)
 	}
 
-	// Check if user exists
-	_, err = s.userRepo.GetByID(ctx, userUUID)
-	if err != nil {
-		if strings.Contains(err.Error(), "not found") {
-			return ErrUserNotFound
+	// Execute role removal within a transaction
+	return s.txManager.WithRetryTransaction(ctx, func(tx pgx.Tx) error {
+		// Check if user exists
+		_, err := s.userRepo.GetByID(ctx, userUUID)
+		if err != nil {
+			if strings.Contains(err.Error(), "not found") {
+				return ErrUserNotFound
+			}
+			return fmt.Errorf("failed to get user: %w", err)
 		}
-		return fmt.Errorf("failed to get user: %w", err)
-	}
 
-	// Remove role
-	return s.userRoleRepo.RemoveRole(ctx, userID, roleID)
+		// Remove role
+		if err := s.userRoleRepo.RemoveRole(ctx, userID, roleID); err != nil {
+			return fmt.Errorf("failed to remove role: %w", err)
+		}
+
+		// Invalidate user permission and role cache (Requirement 7.3)
+		if s.permissionCache != nil {
+			// Invalidate both permissions and roles since role removal affects both
+			if err := s.permissionCache.InvalidateUser(ctx, userUUID); err != nil {
+				// Log error but don't fail the transaction
+				// Cache invalidation failure should not prevent role removal
+			}
+		} else if s.cache != nil {
+			// Fallback to old cache invalidation method
+			cacheKey := fmt.Sprintf("user:permissions:%s", userID)
+			s.cache.Delete(ctx, cacheKey)
+		}
+
+		return nil
+	})
 }
 
 // GetUserRoles retrieves roles for a user
@@ -1043,13 +1128,37 @@ func (s *ServiceImpl) ListRoles(ctx context.Context, req *ListRolesRequest) (*Li
 // Permission management implementation
 
 // GetUserPermissions retrieves all permissions for a user
+// Uses cache with 5 minute TTL per Requirement 7.1
 func (s *ServiceImpl) GetUserPermissions(ctx context.Context, userID string) ([]string, error) {
 	userUUID, err := uuid.Parse(userID)
 	if err != nil {
 		return nil, fmt.Errorf("invalid user ID: %w", err)
 	}
 
-	return s.roleRepo.GetUserPermissions(ctx, userUUID)
+	// Try to get from cache first
+	if s.permissionCache != nil {
+		cachedPermissions, err := s.permissionCache.GetUserPermissions(ctx, userUUID)
+		if err == nil && cachedPermissions != nil {
+			// Cache hit
+			return cachedPermissions, nil
+		}
+	}
+
+	// Cache miss or cache unavailable - fetch from database
+	permissions, err := s.roleRepo.GetUserPermissions(ctx, userUUID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Store in cache for future requests
+	if s.permissionCache != nil {
+		if cacheErr := s.permissionCache.SetUserPermissions(ctx, userUUID, permissions); cacheErr != nil {
+			// Log error but don't fail the request
+			// Cache failure should not prevent the operation
+		}
+	}
+
+	return permissions, nil
 }
 
 // UserHasPermission checks if a user has a specific permission

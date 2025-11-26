@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(xargs:*)",
+      "Bash(go list:*)",
+      "Bash(go mod download:*)",
+      "Bash(find:*)",
+      "Bash(go test:*)",
+      "Bash(go mod tidy:*)",
+      "Bash(go build:*)",
+      "Bash(go doc:*)",
+      "Bash(go get:*)",
+      "Bash(openssl:*)",
+      "Bash(chmod:*)",
+      "Bash(go install:*)",
+      "Bash(go vet:*)",
+      "Bash(/Users/m/Desktop/Go_ERP/scripts/basic-security-scan.sh:*)",
+      "Bash(curl:*)",
+      "Bash(./scripts/basic-security-scan.sh:*)",
+      "Bash(mkdir:*)",
+      "Bash(gofmt:*)",
+      "Bash(go run:*)",
+      "Bash(./scripts/test-security.sh:*)",
+      "Bash(./verify_database_connection_pooling:*)",
+      "Bash(./verify_database_health_checks:*)",
+      "Bash(./verify_database_retry_logic:*)",
+      "Bash(for:*)",
+      "Bash(do mv:*)",
+      "Bash(done:*)",
+      "Bash(/Users/m/Desktop/Go_ERP/pkg/logger/middleware.go)",
+      "Bash(swag init:*)",
+      "Bash(~/go/bin/swag init:*)",
+      "Bash(go version:*)",
+      "Bash(git add:*)",
+      "Bash(rm:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

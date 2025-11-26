@@ -11,21 +11,29 @@ import (
 	"erpgo/internal/domain/users/entities"
 	"erpgo/internal/domain/users/repositories"
 	"erpgo/internal/interfaces/http/dto"
+	"erpgo/pkg/audit"
 	"erpgo/pkg/auth"
 )
 
 // RoleHandler handles role management HTTP requests
 type RoleHandler struct {
-	roleRepo repositories.RoleRepository
-	logger   zerolog.Logger
+	roleRepo    repositories.RoleRepository
+	logger      zerolog.Logger
+	auditLogger audit.AuditLogger
 }
 
 // NewRoleHandler creates a new role handler
 func NewRoleHandler(roleRepo repositories.RoleRepository, logger zerolog.Logger) *RoleHandler {
 	return &RoleHandler{
-		roleRepo: roleRepo,
-		logger:   logger,
+		roleRepo:    roleRepo,
+		logger:      logger,
+		auditLogger: nil, // Will be set via SetAuditLogger if needed
 	}
+}
+
+// SetAuditLogger sets the audit logger for the role handler
+func (h *RoleHandler) SetAuditLogger(logger audit.AuditLogger) {
+	h.auditLogger = logger
 }
 
 // CreateRole handles role creation
@@ -276,6 +284,9 @@ func (h *RoleHandler) UpdateRole(c *gin.Context) {
 		if err != nil {
 			h.logger.Error().Err(err).Str("role_id", roleID.String()).Msg("Failed to get current permissions")
 		} else {
+			// Get current user ID for audit logging
+			currentUserID, _ := auth.GetCurrentUserID(c)
+			
 			// Remove permissions that are no longer needed
 			for _, perm := range currentPermissions {
 				if !contains(req.Permissions, perm) {
@@ -284,6 +295,25 @@ func (h *RoleHandler) UpdateRole(c *gin.Context) {
 							Str("role_id", roleID.String()).
 							Str("permission", perm).
 							Msg("Failed to remove permission from role")
+					} else {
+						// Log permission change to audit log
+						if h.auditLogger != nil {
+							auditEvent := &audit.AuditEvent{
+								EventType:  audit.EventTypePermissionChange,
+								UserID:     &currentUserID,
+								ResourceID: roleID.String(),
+								Action:     "remove_permission",
+								IPAddress:  c.ClientIP(),
+								Success:    true,
+								Details: map[string]interface{}{
+									"role_name":  role.Name,
+									"permission": perm,
+								},
+							}
+							if auditErr := h.auditLogger.LogEvent(c.Request.Context(), auditEvent); auditErr != nil {
+								h.logger.Error().Err(auditErr).Msg("Failed to log audit event for permission removal")
+							}
+						}
 					}
 				}
 			}
@@ -296,6 +326,25 @@ func (h *RoleHandler) UpdateRole(c *gin.Context) {
 							Str("role_id", roleID.String()).
 							Str("permission", perm).
 							Msg("Failed to add permission to role")
+					} else {
+						// Log permission change to audit log
+						if h.auditLogger != nil {
+							auditEvent := &audit.AuditEvent{
+								EventType:  audit.EventTypePermissionChange,
+								UserID:     &currentUserID,
+								ResourceID: roleID.String(),
+								Action:     "add_permission",
+								IPAddress:  c.ClientIP(),
+								Success:    true,
+								Details: map[string]interface{}{
+									"role_name":  role.Name,
+									"permission": perm,
+								},
+							}
+							if auditErr := h.auditLogger.LogEvent(c.Request.Context(), auditEvent); auditErr != nil {
+								h.logger.Error().Err(auditErr).Msg("Failed to log audit event for permission addition")
+							}
+						}
 					}
 				}
 			}
@@ -402,6 +451,13 @@ func (h *RoleHandler) AssignRoleToUser(c *gin.Context) {
 		return
 	}
 
+	// Get role name for audit logging
+	role, _ := h.roleRepo.GetRoleByID(c, req.RoleID)
+	roleName := ""
+	if role != nil {
+		roleName = role.Name
+	}
+
 	// Assign role to user
 	if err := h.roleRepo.AssignRoleToUser(c, req.UserID, req.RoleID, currentUserID); err != nil {
 		h.logger.Error().Err(err).
@@ -413,6 +469,14 @@ func (h *RoleHandler) AssignRoleToUser(c *gin.Context) {
 			Details: "Internal server error",
 		})
 		return
+	}
+
+	// Log role assignment to audit log
+	if h.auditLogger != nil {
+		auditEvent := audit.NewRoleAssignmentEvent(currentUserID, req.UserID, roleName, c.ClientIP())
+		if auditErr := h.auditLogger.LogEvent(c.Request.Context(), auditEvent); auditErr != nil {
+			h.logger.Error().Err(auditErr).Msg("Failed to log audit event for role assignment")
+		}
 	}
 
 	c.JSON(http.StatusOK, dto.SuccessResponse{
@@ -442,8 +506,8 @@ func (h *RoleHandler) RemoveRoleFromUser(c *gin.Context) {
 		return
 	}
 
-	// Check if role exists
-	_, err := h.roleRepo.GetRoleByID(c, req.RoleID)
+	// Check if role exists and get role name for audit logging
+	role, err := h.roleRepo.GetRoleByID(c, req.RoleID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, dto.ErrorResponse{
 			Error:   "Role not found",
@@ -451,6 +515,9 @@ func (h *RoleHandler) RemoveRoleFromUser(c *gin.Context) {
 		})
 		return
 	}
+
+	// Get current user ID from context for audit logging
+	currentUserID, _ := auth.GetCurrentUserID(c)
 
 	// Remove role from user
 	if err := h.roleRepo.RemoveRoleFromUser(c, req.UserID, req.RoleID); err != nil {
@@ -463,6 +530,14 @@ func (h *RoleHandler) RemoveRoleFromUser(c *gin.Context) {
 			Details: "Internal server error",
 		})
 		return
+	}
+
+	// Log role revocation to audit log
+	if h.auditLogger != nil {
+		auditEvent := audit.NewRoleRevocationEvent(currentUserID, req.UserID, role.Name, c.ClientIP())
+		if auditErr := h.auditLogger.LogEvent(c.Request.Context(), auditEvent); auditErr != nil {
+			h.logger.Error().Err(auditErr).Msg("Failed to log audit event for role revocation")
+		}
 	}
 
 	c.JSON(http.StatusOK, dto.SuccessResponse{

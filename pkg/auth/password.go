@@ -16,9 +16,6 @@ const (
 	MinPasswordLength = 8
 	// MaxPasswordLength is the maximum allowed password length
 	MaxPasswordLength = 128
-	// Pepper is an additional secret that's mixed with passwords before hashing
-	// In production, this should be loaded from environment variables
-	Pepper = "erpgo-secret-pepper-change-in-production"
 )
 
 // PasswordValidator contains password validation rules

@@ -17,7 +17,7 @@ import (
 // OrderItemRepositoryTestSuite contains all tests for the order item repository
 type OrderItemRepositoryTestSuite struct {
 	suite.Suite
-	db          *database.Database
+	db          *testutil.TestDatabase
 	repo        repositories.OrderItemRepository
 	cleanupFunc func()
 }

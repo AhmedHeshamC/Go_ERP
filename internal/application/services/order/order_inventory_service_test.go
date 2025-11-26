@@ -12,9 +12,9 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	"erpgo/internal/domain/inventory/entities"
+	inventoryEntities "erpgo/internal/domain/inventory/entities"
 	inventoryRepositories "erpgo/internal/domain/inventory/repositories"
-	"erpgo/internal/domain/orders/entities"
+	orderEntities "erpgo/internal/domain/orders/entities"
 	orderRepositories "erpgo/internal/domain/orders/repositories"
 )
 

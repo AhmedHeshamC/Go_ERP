@@ -265,8 +265,16 @@ func (mr *MigrationRunner) Up(ctx context.Context) error {
 			Msg("Running migration UP")
 
 		start := time.Now()
-		_, err := mr.db.Exec(ctx, migration.UpSQL)
+		
+		// Run migration in a transaction for atomicity
+		// If the migration fails, all changes will be rolled back
+		err := mr.runMigrationInTransaction(ctx, migration)
 		if err != nil {
+			mr.logger.Error().
+				Err(err).
+				Int("version", migration.Version).
+				Str("name", migration.Name).
+				Msg("Migration failed and was rolled back")
 			return fmt.Errorf("failed to run migration %d (%s): %w", migration.Version, migration.Name, err)
 		}
 
@@ -276,14 +284,64 @@ func (mr *MigrationRunner) Up(ctx context.Context) error {
 			Str("name", migration.Name).
 			Str("duration", duration.String()).
 			Msg("Migration UP completed successfully")
-
-		// Record the migration
-		if err := mr.recordMigration(ctx, migration); err != nil {
-			return fmt.Errorf("failed to record migration %d: %w", migration.Version, err)
-		}
 	}
 
 	mr.logger.Info().Msg("All migrations completed successfully")
+	return nil
+}
+
+// runMigrationInTransaction runs a single migration within a transaction
+// This ensures that if the migration fails, all changes are rolled back
+func (mr *MigrationRunner) runMigrationInTransaction(ctx context.Context, migration Migration) error {
+	// Begin transaction
+	tx, err := mr.db.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+
+	// Ensure transaction is rolled back if we return an error
+	defer func() {
+		if err != nil {
+			if rbErr := tx.Rollback(ctx); rbErr != nil {
+				mr.logger.Error().
+					Err(rbErr).
+					Int("version", migration.Version).
+					Msg("Failed to rollback transaction")
+			}
+		}
+	}()
+
+	// Execute the migration SQL
+	_, err = tx.Exec(ctx, migration.UpSQL)
+	if err != nil {
+		return fmt.Errorf("migration SQL failed: %w", err)
+	}
+
+	// Record the migration in the same transaction
+	recordSQL := `
+		INSERT INTO schema_migrations (version, name, description, applied_at)
+		VALUES ($1, $2, $3, NOW())
+		ON CONFLICT (version) DO UPDATE SET
+			name = EXCLUDED.name,
+			description = EXCLUDED.description,
+			applied_at = NOW()
+	`
+	_, err = tx.Exec(ctx, recordSQL, migration.Version, migration.Name, migration.Description)
+	if err != nil {
+		return fmt.Errorf("failed to record migration: %w", err)
+	}
+
+	// Commit the transaction
+	err = tx.Commit(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	mr.logger.Info().
+		Int("version", migration.Version).
+		Str("name", migration.Name).
+		Msg("Migration recorded")
+
 	return nil
 }
 
@@ -341,8 +399,15 @@ func (mr *MigrationRunner) Down(ctx context.Context, steps int) error {
 			Msg("Running migration DOWN")
 
 		start := time.Now()
-		_, err := mr.db.Exec(ctx, migration.DownSQL)
+		
+		// Run rollback in a transaction for atomicity
+		err := mr.runRollbackInTransaction(ctx, migration)
 		if err != nil {
+			mr.logger.Error().
+				Err(err).
+				Int("version", migration.Version).
+				Str("name", migration.Name).
+				Msg("Migration rollback failed")
 			return fmt.Errorf("failed to rollback migration %d (%s): %w", migration.Version, migration.Name, err)
 		}
 
@@ -353,15 +418,60 @@ func (mr *MigrationRunner) Down(ctx context.Context, steps int) error {
 			Str("duration", duration.String()).
 			Msg("Migration DOWN completed successfully")
 
-		// Remove the migration record
-		if err := mr.removeMigration(ctx, migration.Version); err != nil {
-			return fmt.Errorf("failed to remove migration record %d: %w", migration.Version, err)
-		}
-
 		count++
 	}
 
 	mr.logger.Info().Int("count", count).Msg("Migrations rolled back successfully")
+	return nil
+}
+
+// runRollbackInTransaction runs a migration rollback within a transaction
+func (mr *MigrationRunner) runRollbackInTransaction(ctx context.Context, migration Migration) error {
+	// Begin transaction
+	tx, err := mr.db.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+
+	// Ensure transaction is rolled back if we return an error
+	defer func() {
+		if err != nil {
+			if rbErr := tx.Rollback(ctx); rbErr != nil {
+				mr.logger.Error().
+					Err(rbErr).
+					Int("version", migration.Version).
+					Msg("Failed to rollback transaction")
+			}
+		}
+	}()
+
+	// Execute the rollback SQL
+	_, err = tx.Exec(ctx, migration.DownSQL)
+	if err != nil {
+		return fmt.Errorf("rollback SQL failed: %w", err)
+	}
+
+	// Remove the migration record in the same transaction
+	removeSQL := `DELETE FROM schema_migrations WHERE version = $1`
+	result, err := tx.Exec(ctx, removeSQL, migration.Version)
+	if err != nil {
+		return fmt.Errorf("failed to remove migration record: %w", err)
+	}
+
+	if result.RowsAffected() == 0 {
+		return fmt.Errorf("migration %d not found in migrations table", migration.Version)
+	}
+
+	// Commit the transaction
+	err = tx.Commit(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	mr.logger.Info().
+		Int("version", migration.Version).
+		Msg("Migration record removed")
+
 	return nil
 }
 
@@ -423,6 +533,44 @@ func (mr *MigrationRunner) GetPendingMigrations(ctx context.Context) (int, error
 	for _, status := range statuses {
 		if !status.Applied {
 			pending++
+		}
+	}
+
+	return pending, nil
+}
+
+// RequireNoP endingMigrations checks if there are pending migrations and returns an error if there are
+// This should be called during application startup to prevent running with an outdated schema
+func (mr *MigrationRunner) RequireNoPendingMigrations(ctx context.Context) error {
+	pending, err := mr.GetPendingMigrations(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to check pending migrations: %w", err)
+	}
+
+	if pending > 0 {
+		return fmt.Errorf("cannot start application: %d pending migration(s) must be applied first", pending)
+	}
+
+	return nil
+}
+
+// GetPendingMigrationsList returns a list of pending migrations
+func (mr *MigrationRunner) GetPendingMigrationsList(ctx context.Context) ([]Migration, error) {
+	statuses, err := mr.Status(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var pending []Migration
+	for _, status := range statuses {
+		if !status.Applied {
+			// Find the migration
+			for _, m := range mr.migrations {
+				if m.Version == status.Version {
+					pending = append(pending, m)
+					break
+				}
+			}
 		}
 	}
 

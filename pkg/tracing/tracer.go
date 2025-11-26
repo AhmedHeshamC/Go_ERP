@@ -233,8 +233,8 @@ func NewTracer(config *Config, logger *zerolog.Logger) (*Tracer, error) {
 
 	// Start background flush routine
 	if config.AsyncExport {
-		go tracer.backgroundFlush()
 		tracer.flushTicker = time.NewTicker(config.FlushInterval)
+		go tracer.backgroundFlush()
 	}
 
 	return tracer, nil
@@ -613,7 +613,7 @@ func (t *Tracer) shouldSample(traceContext *SpanContext) bool {
 	}
 
 	// Apply local sampling
-	return rand.Float64() <= t.config.SampleRate
+	return rand.Float64() <= t.config.SampleRate // #nosec G404 - Used for trace sampling, not security
 }
 
 // addDefaultAttributes adds default attributes to a span
