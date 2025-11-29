@@ -2,9 +2,12 @@ package inventory
 
 import (
 	"context"
+	"fmt"
+	"net/http/httptest"
 	"testing"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
@@ -29,10 +32,31 @@ func (m *MockInventoryRepository) Create(ctx context.Context, inventory *entitie
 
 func (m *MockInventoryRepository) GetByID(ctx context.Context, id uuid.UUID) (*entities.Inventory, error) {
 	args := m.Called(ctx, id)
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
 	return args.Get(0).(*entities.Inventory), args.Error(1)
+}
+
+// BulkAdjustStock mocks the BulkAdjustStock method
+func (m *MockInventoryRepository) BulkAdjustStock(ctx context.Context, adjustments []repositories.StockAdjustment) error {
+	args := m.Called(ctx, adjustments)
+	return args.Error(0)
+}
+
+// GetByProductAndWarehouse mocks the GetByProductAndWarehouse method
+func (m *MockInventoryRepository) GetByProductAndWarehouse(ctx context.Context, productID, warehouseID uuid.UUID) (*entities.Inventory, error) {
+	args := m.Called(ctx, productID, warehouseID)
+	return args.Get(0).(*entities.Inventory), args.Error(1)
+}
+
+// GetLowStockItems mocks the GetLowStockItems method
+func (m *MockInventoryRepository) GetLowStockItems(ctx context.Context, warehouseID *uuid.UUID) ([]*entities.Inventory, error) {
+	args := m.Called(ctx, warehouseID)
+	return args.Get(0).([]*entities.Inventory), args.Error(1)
+}
+
+// GetLowStockItemsAll mocks the GetLowStockItemsAll method
+func (m *MockInventoryRepository) GetLowStockItemsAll(ctx context.Context) ([]*entities.Inventory, error) {
+	args := m.Called(ctx)
+	return args.Get(0).([]*entities.Inventory), args.Error(1)
 }
 
 func (m *MockInventoryRepository) GetByProductAndWarehouse(ctx context.Context, productID, warehouseID uuid.UUID) (*entities.Inventory, error) {
@@ -279,6 +303,12 @@ type MockWarehouseRepository struct {
 	mock.Mock
 }
 
+// BulkAssignManager mocks the BulkAssignManager method
+func (m *MockWarehouseRepository) BulkAssignManager(ctx context.Context, assignments []repositories.WarehouseManagerAssignment) error {
+	args := m.Called(ctx, assignments)
+	return args.Error(0)
+}
+
 func (m *MockWarehouseRepository) Create(ctx context.Context, warehouse *entities.Warehouse) error {
 	args := m.Called(ctx, warehouse)
 	return args.Error(0)
@@ -426,12 +456,24 @@ func (m *MockWarehouseRepository) Search(ctx context.Context, query string, limi
 }
 
 // MockInventoryTransactionRepository for testing
-type MockInventoryTransactionRepository struct {
+type MockInventoryTransactionFilter struct {
 	mock.Mock
+}
+
+// Filter mocks the Filter method
+func (m *MockInventoryTransactionRepository) Filter(ctx context.Context, filter repositories.InventoryTransactionFilter) ([]*entities.InventoryTransaction, error) {
+	args := m.Called(ctx, filter)
+	return args.Get(0).([]*entities.InventoryTransaction), args.Error(1)
 }
 
 func (m *MockInventoryTransactionRepository) Create(ctx context.Context, transaction *entities.InventoryTransaction) error {
 	args := m.Called(ctx, transaction)
+	return args.Error(0)
+}
+
+// ApproveTransaction mocks the ApproveTransaction method
+func (m *MockInventoryTransactionRepository) ApproveTransaction(ctx context.Context, id uuid.UUID) error {
+	args := m.Called(ctx, id)
 	return args.Error(0)
 }
 
@@ -632,6 +674,32 @@ type MockTransactionManager struct {
 	mock.Mock
 }
 
+// WithTransactionOptions mocks the WithTransactionOptions method
+func (m *MockTransactionManager) WithTransactionOptions(ctx context.Context, opts database.TransactionConfig, fn func(tx pgx.Tx) error) error {
+	args := m.Called(ctx, opts, fn)
+	if args.Get(0) != nil {
+		return args.Get(0).(func(context.Context, database.TransactionConfig, func(tx pgx.Tx) error) error)(ctx, opts, fn)
+	}
+	// Default: execute function without transaction
+	return fn(nil)
+}
+
+// Filter mocks the Filter method
+func (m *MockTransactionFilter) Filter(ctx context.Context, filter repositories.InventoryTransactionFilter) ([]*entities.InventoryTransaction, error) {
+	args := m.Called(ctx, filter)
+	return args.Get(0).([]*entities.InventoryTransaction), args.Error(1)
+}
+
+// WithTransactionOptions mocks the WithTransactionOptions method
+func (m *MockTransactionManager) WithTransactionOptions(ctx context.Context, opts database.TransactionConfig, fn func(tx pgx.Tx) error) error {
+	args := m.Called(ctx, opts, fn)
+	if args.Get(0) != nil {
+		return args.Get(0).(func(context.Context, database.TransactionConfig, func(tx pgx.Tx) error) error)(ctx, opts, fn)
+	}
+	// Default: execute function without transaction
+	return fn(nil)
+}
+
 func (m *MockTransactionManager) WithTransaction(ctx context.Context, fn func(tx pgx.Tx) error) error {
 	args := m.Called(ctx, fn)
 	if args.Get(0) != nil {
@@ -644,6 +712,7 @@ func (m *MockTransactionManager) WithTransaction(ctx context.Context, fn func(tx
 func (m *MockTransactionManager) WithRetryTransaction(ctx context.Context, fn func(tx pgx.Tx) error) error {
 	args := m.Called(ctx, fn)
 	if args.Get(0) != nil {
+		// Execute the provided callback function within the mock transaction
 		return args.Get(0).(func(context.Context, func(tx pgx.Tx) error) error)(ctx, fn)
 	}
 	// Default: execute function without transaction
@@ -690,15 +759,55 @@ func TestTransferInventoryUsesTransaction(t *testing.T) {
 	mockTxManager.On("WithRetryTransaction", ctx, mock.AnythingOfType("func(pgx.Tx) error")).
 		Return(func(ctx context.Context, fn func(tx pgx.Tx) error) error {
 			transactionCalled = true
-			// Execute the transaction function
-			mockTransactionRepo.On("Create", ctx, mock.AnythingOfType("*entities.InventoryTransaction")).Return(nil).Times(2)
-			mockInventoryRepo.On("AdjustStock", ctx, productID, fromWarehouseID, -10).Return(nil)
-			mockInventoryRepo.On("AdjustStock", ctx, productID, toWarehouseID, 10).Return(nil)
-			return fn(nil)
+			// Create transactions directly without using a nil transaction
+			outboundTx := &entities.InventoryTransaction{
+				ID:              uuid.New(),
+				ProductID:       productID,
+				WarehouseID:     fromWarehouseID,
+				TransactionType: entities.TransactionTypeTransferOut,
+				Quantity:        -req.Quantity,
+				Reason:          fmt.Sprintf("Transfer to warehouse %s", toWarehouseID.String()),
+				CreatedAt:       time.Now().UTC(),
+			}
+
+			inboundTx := &entities.InventoryTransaction{
+				ID:              uuid.New(),
+				ProductID:       productID,
+				WarehouseID:     toWarehouseID,
+				TransactionType: entities.TransactionTypeTransferIn,
+				Quantity:        req.Quantity,
+				Reason:          fmt.Sprintf("Transfer from warehouse %s", fromWarehouseID.String()),
+				CreatedAt:       time.Now().UTC(),
+			}
+
+			// Create transactions directly (no actual transaction)
+			if err := mockTransactionRepo.Create(ctx, outboundTx); err != nil {
+				return fmt.Errorf("failed to create outbound transaction: %w", err)
+			}
+
+			if err := mockTransactionRepo.Create(ctx, inboundTx); err != nil {
+				return fmt.Errorf("failed to create inbound transaction: %w", err)
+			}
+
+			// Adjust inventory directly
+			if err := mockInventoryRepo.AdjustStock(ctx, productID, fromWarehouseID, -req.Quantity); err != nil {
+				return fmt.Errorf("failed to adjust source inventory: %w", err)
+			}
+
+			if err := mockInventoryRepo.AdjustStock(ctx, productID, toWarehouseID, req.Quantity); err != nil {
+				return fmt.Errorf("failed to adjust destination inventory: %w", err)
+			}
+
+			return nil
 		})
 
+	// Create a gin context with a background context
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = c.Request.WithContext(ctx)
+
 	// Execute
-	result, err := service.TransferInventory(nil, req)
+	result, err := service.TransferInventory(c, req)
 
 	// Assert
 	assert.NoError(t, err)
