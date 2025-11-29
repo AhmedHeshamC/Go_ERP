@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"erpgo/pkg/security"
 	"fmt"
 	"io"
 	"mime"
@@ -61,11 +62,10 @@ func (ls *LocalStorage) Upload(ctx context.Context, key string, data io.Reader, 
 	// }
 
 	// Validate file path before creating
-	// TODO: Implement security.ValidatePath
-	// if err := security.ValidatePath(fullPath, ls.basePath); err != nil {
-	// 	ls.logger.Error().Err(err).Str("path", fullPath).Msg("Invalid file path for upload")
-	// 	return nil, fmt.Errorf("invalid file path: %w", err)
-	// }
+	if err := security.ValidatePath(fullPath, ls.basePath); err != nil {
+		ls.logger.Error().Err(err).Str("path", fullPath).Msg("Invalid file path for upload")
+		return nil, fmt.Errorf("invalid file path: %w", err)
+	}
 
 	// Create directory if it doesn't exist
 	if err := os.MkdirAll(dir, 0750); err != nil {
@@ -470,8 +470,8 @@ func (ls *LocalStorage) validateKey(key string) error {
 		return ErrInvalidKey
 	}
 
-	// Prevent directory traversal attacks
-	if strings.Contains(key, "..") {
+	// Validate path to prevent directory traversal attacks
+	if err := security.ValidatePath(key, ls.basePath); err != nil {
 		return ErrInvalidKey
 	}
 

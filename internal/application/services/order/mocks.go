@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
 
+	invEntities "erpgo/internal/domain/inventory/entities"
 	"erpgo/internal/domain/orders/entities"
 	"erpgo/internal/domain/orders/repositories"
 )
@@ -22,13 +23,13 @@ func NewMockOrderRepository() *MockOrderRepository {
 }
 
 // Create mocks the Create method
-func (m *MockOrderRepository) Create(ctx context.Context, order *entities.Order) error {
+func (m *MockOrderRepository) Create(ctx context.Context, order *entities.Order) (uuid.UUID, error) {
 	args := m.Called(ctx, order)
-	return args.Error(0)
+	return args.Get(0).(uuid.UUID), args.Error(1)
 }
 
 // GetByID mocks the GetByID method
-func (m *MockOrderRepository) GetByID(ctx context.Context, id uuid.UUID) (*entities.Order, error) {
+func (m *MockOrderRepository) Get(ctx context.Context, id uuid.UUID) (*entities.Order, error) {
 	args := m.Called(ctx, id)
 	return args.Get(0).(*entities.Order), args.Error(1)
 }
@@ -52,7 +53,7 @@ func (m *MockOrderRepository) List(ctx context.Context, filter *repositories.Ord
 }
 
 // GetByCustomerID mocks the GetByCustomerID method
-func (m *MockOrderRepository) GetByCustomerID(ctx context.Context, customerID uuid.UUID) ([]*entities.Order, error) {
+func (m *MockOrderRepository) GetByCustomer(ctx context.Context, customerID uuid.UUID, limit, offset int) ([]*entities.Order, error) {
 	args := m.Called(ctx, customerID)
 	return args.Get(0).([]*entities.Order), args.Error(1)
 }
@@ -64,7 +65,7 @@ func (m *MockOrderRepository) GetByNumber(ctx context.Context, number string) (*
 }
 
 // GetByStatus mocks the GetByStatus method
-func (m *MockOrderRepository) GetByStatus(ctx context.Context, status entities.OrderStatus) ([]*entities.Order, error) {
+func (m *MockOrderRepository) GetByStatus(ctx context.Context, status entities.OrderStatus, limit, offset int) ([]*entities.Order, error) {
 	args := m.Called(ctx, status)
 	return args.Get(0).([]*entities.Order), args.Error(1)
 }
@@ -78,14 +79,14 @@ func (m *MockOrderRepository) Count(ctx context.Context, filter *repositories.Or
 // GetOrderTotal mocks the GetOrderTotal method
 func (m *MockOrderRepository) GetOrderTotal(ctx context.Context, customerID uuid.UUID, startDate, endDate time.Time) (float64, error) {
 	args := m.Called(ctx, customerID, startDate, endDate)
-	return args.Float(0), args.Error(1)
+	return args.Get(0).(float64), args.Error(1)
 }
 
 // GetOrderStats mocks the GetOrderStats method
-func (m *MockOrderRepository) GetOrderStats(ctx context.Context, filter *repositories.OrderFilter) (*entities.OrderStats, error) {
-	args := m.Called(ctx, filter)
-	return args.Get(0).(*entities.OrderStats), args.Error(1)
-}
+// func (m *MockOrderRepository) GetOrderStats(ctx context.Context, filter *repositories.OrderFilter) (*entities.OrderStats, error) {
+// 	args := m.Called(ctx, filter)
+// 	return args.Get(0).(*entities.OrderStats), args.Error(1)
+// }
 
 // MockOrderItemRepository implements a mock for OrderItemRepository
 type MockOrderItemRepository struct {
@@ -128,9 +129,11 @@ func (m *MockOrderItemRepository) List(ctx context.Context, filter *repositories
 }
 
 // GetByOrderID mocks the GetByOrderID method
-func (m *MockOrderItemRepository) GetByOrderID(ctx context.Context, orderID uuid.UUID) ([]*entities.OrderItem, error) {
-	args := m.Called(ctx, orderID)
-	return args.Get(0).([]*entities.OrderItem), args.Error(1)
+// GetByProductID mocks the GetByProductID method
+// GetProductDetails mocks the GetProductDetails method
+func (m *MockOrderItemRepository) GetProductDetails(ctx context.Context, productID uuid.UUID) (*entities.OrderItem, error) {
+	args := m.Called(ctx, productID)
+	return args.Get(0).(*entities.OrderItem), args.Error(1)
 }
 
 // DeleteByOrderID mocks the DeleteByOrderID method
@@ -218,16 +221,16 @@ func NewMockOrderAnalyticsRepository() *MockOrderAnalyticsRepository {
 }
 
 // GetOrderStats mocks the GetOrderStats method
-func (m *MockOrderAnalyticsRepository) GetOrderStats(ctx context.Context, filter *repositories.OrderFilter) (*entities.OrderStats, error) {
-	args := m.Called(ctx, filter)
-	return args.Get(0).(*entities.OrderStats), args.Error(1)
-}
+// func (m *MockOrderAnalyticsRepository) GetOrderStats(ctx context.Context, filter *repositories.OrderFilter) (*entities.OrderStats, error) {
+// 	args := m.Called(ctx, filter)
+// 	return args.Get(0).(*entities.OrderStats), args.Error(1)
+// }
 
 // GetCustomerStats mocks the GetCustomerStats method
-func (m *MockOrderAnalyticsRepository) GetCustomerStats(ctx context.Context, customerID uuid.UUID, startDate, endDate time.Time) (*entities.CustomerStats, error) {
-	args := m.Called(ctx, customerID, startDate, endDate)
-	return args.Get(0).(*entities.CustomerStats), args.Error(1)
-}
+// func (m *MockOrderAnalyticsRepository) GetCustomerStats(ctx context.Context, customerID uuid.UUID, startDate, endDate time.Time) (*entities.CustomerStats, error) {
+// 	args := m.Called(ctx, customerID, startDate, endDate)
+// 	return args.Get(0).(*entities.CustomerStats), args.Error(1)
+// }
 
 // MockProductService implements a mock for ProductService
 type MockProductService struct {
@@ -240,10 +243,10 @@ func NewMockProductService() *MockProductService {
 }
 
 // GetProduct mocks the GetProduct method
-func (m *MockProductService) GetProduct(ctx context.Context, id uuid.UUID) (*entities.Product, error) {
-	args := m.Called(ctx, id)
-	return args.Get(0).(*entities.Product), args.Error(1)
-}
+// func (m *MockProductService) GetProduct(ctx context.Context, id uuid.UUID) (*entities.Product, error) {
+// 	args := m.Called(ctx, id)
+// 	return args.Get(0).(*entities.Product), args.Error(1)
+// }
 
 // UpdateStock mocks the UpdateStock method
 func (m *MockProductService) UpdateStock(ctx context.Context, id uuid.UUID, quantity int) error {
@@ -261,20 +264,22 @@ func NewMockInventoryService() *MockInventoryService {
 	return &MockInventoryService{mock.Mock{}}
 }
 
+// CheckAvailability mocks the CheckAvailability method
+func (m *MockInventoryService) CheckAvailability(ctx context.Context, productID uuid.UUID, warehouseID uuid.UUID, quantity int) (bool, error) {
+	args := m.Called(ctx, productID, warehouseID, quantity)
+	return args.Bool(0), args.Error(1)
+}
+
 // ReserveInventory mocks the ReserveInventory method
 func (m *MockInventoryService) ReserveInventory(ctx context.Context, productID, warehouseID uuid.UUID, quantity int) error {
 	args := m.Called(ctx, productID, warehouseID, quantity)
 	return args.Error(0)
 }
 
-// ReleaseInventory mocks the ReleaseInventory method
-func (m *MockInventoryService) ReleaseInventory(ctx context.Context, productID, warehouseID uuid.UUID, quantity int) error {
-	args := m.Called(ctx, productID, warehouseID, quantity)
-	return args.Error(0)
-}
+// }
 
-// CheckAvailability mocks the CheckAvailability method
-func (m *MockInventoryService) CheckAvailability(ctx context.Context, productID, warehouseID uuid.UUID, quantity int) (bool, error) {
+// IsAvailable mocks the IsAvailable method
+func (m *MockInventoryService) IsAvailable(ctx context.Context, productID uuid.UUID, warehouseID uuid.UUID, quantity int) (bool, error) {
 	args := m.Called(ctx, productID, warehouseID, quantity)
 	return args.Bool(0), args.Error(1)
 }
@@ -290,9 +295,16 @@ func NewMockUserService() *MockUserService {
 }
 
 // GetUser mocks the GetUser method
-func (m *MockUserService) GetUser(ctx context.Context, id uuid.UUID) (*entities.User, error) {
+// User represents a basic user entity for mocking
+type User struct {
+	ID    uuid.UUID `json:"id"`
+	Name  string    `json:"name"`
+	Email string    `json:"email"`
+}
+
+func (m *MockUserService) GetUser(ctx context.Context, id uuid.UUID) (*User, error) {
 	args := m.Called(ctx, id)
-	return args.Get(0).(*entities.User), args.Error(1)
+	return args.Get(0).(*User), args.Error(1)
 }
 
 // MockNotificationService implements a mock for NotificationService
@@ -312,7 +324,7 @@ func (m *MockNotificationService) SendOrderNotification(ctx context.Context, ord
 }
 
 // SendInventoryNotification mocks the SendInventoryNotification method
-func (m *MockNotificationService) SendInventoryNotification(ctx context.Context, inventory *entities.Inventory) error {
+func (m *MockNotificationService) SendInventoryNotification(ctx context.Context, inventory *invEntities.Inventory) error {
 	args := m.Called(ctx, inventory)
 	return args.Error(0)
 }
@@ -346,5 +358,5 @@ func NewMockTaxCalculator() *MockTaxCalculator {
 // CalculateTax mocks the CalculateTax method
 func (m *MockTaxCalculator) CalculateTax(ctx context.Context, order *entities.Order) (float64, error) {
 	args := m.Called(ctx, order)
-	return args.Float(0), args.Error(1)
+	return args.Get(0).(float64), args.Error(1)
 }

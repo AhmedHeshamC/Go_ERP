@@ -22,9 +22,30 @@ func ValidatePath(path, allowedRoot string) error {
 	cleanPath := filepath.Clean(path)
 	cleanRoot := filepath.Clean(allowedRoot)
 
+	// Check for null bytes in path
+	if strings.Contains(cleanPath, "\x00") {
+		return fmt.Errorf("path contains null bytes")
+	}
+
 	// For relative paths, join them with the root directory first
 	if !filepath.IsAbs(cleanPath) {
 		cleanPath = filepath.Join(cleanRoot, cleanPath)
+	}
+
+	// Check for URL-encoded path traversal attempts
+	// Common encoded traversal patterns
+	encodedPatterns := []string{
+		"%2e%2e%2f",          // ../
+		"%2e%2e%5c",          // ..\
+		"%2e%2e%5c%2e%2e%2f", // ..\/
+		"..%2f",              // ../ with URL encoding
+		"..%5c",              // ..\ with URL encoding
+	}
+
+	for _, pattern := range encodedPatterns {
+		if strings.Contains(cleanPath, pattern) {
+			return fmt.Errorf("path contains encoded traversal sequence")
+		}
 	}
 
 	// Convert to absolute paths
@@ -39,6 +60,7 @@ func ValidatePath(path, allowedRoot string) error {
 	}
 
 	// Check if absolute path is within the allowed root
+	// Make sure to normalize both paths for comparison
 	if !strings.HasPrefix(absPath, absRoot+string(os.PathSeparator)) && absPath != absRoot {
 		return fmt.Errorf("path %s is outside allowed root %s", absPath, absRoot)
 	}
@@ -51,6 +73,19 @@ func ValidatePath(path, allowedRoot string) error {
 func SanitizePath(path string) string {
 	// Remove any null bytes
 	path = strings.ReplaceAll(path, "\x00", "")
+
+	// Check for and remove URL-encoded path traversal patterns
+	encodedPatterns := []string{
+		"%2e%2e%2f",          // ../
+		"%2e%2e%5c",          // ..\
+		"%2e%2e%5c%2e%2e%2f", // ..\/
+		"..%2f",              // ../ with URL encoding
+		"..%5c",              // ..\ with URL encoding
+	}
+
+	for _, pattern := range encodedPatterns {
+		path = strings.ReplaceAll(path, pattern, "")
+	}
 
 	// Clean the path to remove any directory traversal attempts
 	path = filepath.Clean(path)

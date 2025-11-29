@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-11-30T01:31:51.9441+02:00",
+  "overall_score": 53.84615384615385,
+  "gate_status": {
+    "build": true,
+    "code_quality": false,
+    "compilation": true,
+    "integration_tests": false
+  },
+  "passed_gates": 2,
+  "total_gates": 4,
+  "critical_failures": [
+    "Integration test failures"
+  ],
+  "recommendations": [
+    "Address all critical failures before production deployment"
+  ],
+  "production_ready": false
+}

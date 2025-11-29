@@ -1,32 +1,10 @@
-// OrderFilter defines filter criteria for order queries
-type OrderFilter struct {
-	// Customer filter
-	CustomerID *uuid.UUID
+package repositories
 
-	// Status filter
-	Status *entities.OrderStatus
+import (
+	"github.com/google/uuid"
+)
 
-	// Date range filters
-	CreatedAfter  *time.Time
-	CreatedBefore *time.Time
-
-	// Pagination
-	Limit  *int
-	Offset *int
-
-	// Sorting
-	OrderBy *string
-	Order   *string
-}
-```
-<tool_call>edit_file
-<arg_key>display_description</arg_key>
-<arg_value>Create missing OrderItemFilter and OrderAddressFilter types</arg_value>
-<arg_key>path</arg_key>
-<arg_value>/Users/m/Desktop/Go_ERP/internal/domain/orders/repositories/order_filter.go</arg_value>
-<arg_key>mode</arg_key>
-<arg_value>edit</arg_value>
-</tool_call>
+// OrderItemFilter defines filter criteria for order item queries
 
 // OrderItemFilter defines filter criteria for order item queries
 type OrderItemFilter struct {
@@ -47,10 +25,9 @@ type OrderAddressFilter struct {
 	OrderID *uuid.UUID
 
 	// Address type filter
-	AddressType *entities.AddressType
+	AddressType *string
 
 	// Pagination
 	Limit  *int
 	Offset *int
 }
-
