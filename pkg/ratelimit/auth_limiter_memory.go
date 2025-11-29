@@ -29,7 +29,7 @@ type memoryAuthLimiter struct {
 
 // loginAttempts tracks login attempts for an identifier
 type loginAttempts struct {
-	count      int
+	count       int
 	windowStart time.Time
 }
 
@@ -130,7 +130,7 @@ func (l *memoryAuthLimiter) AllowLogin(ctx context.Context, identifier string) (
 	attempts, exists := l.attempts[identifier]
 	if !exists {
 		attempts = &loginAttempts{
-			count:      0,
+			count:       0,
 			windowStart: time.Now(),
 		}
 		l.attempts[identifier] = attempts
@@ -170,7 +170,7 @@ func (l *memoryAuthLimiter) RecordFailedLogin(ctx context.Context, identifier st
 	attempts, exists := l.attempts[identifier]
 	if !exists {
 		attempts = &loginAttempts{
-			count:      0,
+			count:       0,
 			windowStart: time.Now(),
 		}
 		l.attempts[identifier] = attempts

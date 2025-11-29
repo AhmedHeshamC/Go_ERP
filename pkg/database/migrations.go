@@ -25,8 +25,8 @@ type Migration struct {
 
 // MigrationRunner handles database migrations
 type MigrationRunner struct {
-	db        *Database
-	logger    *zerolog.Logger
+	db         *Database
+	logger     *zerolog.Logger
 	migrations []Migration
 }
 
@@ -265,7 +265,7 @@ func (mr *MigrationRunner) Up(ctx context.Context) error {
 			Msg("Running migration UP")
 
 		start := time.Now()
-		
+
 		// Run migration in a transaction for atomicity
 		// If the migration fails, all changes will be rolled back
 		err := mr.runMigrationInTransaction(ctx, migration)
@@ -399,7 +399,7 @@ func (mr *MigrationRunner) Down(ctx context.Context, steps int) error {
 			Msg("Running migration DOWN")
 
 		start := time.Now()
-		
+
 		// Run rollback in a transaction for atomicity
 		err := mr.runRollbackInTransaction(ctx, migration)
 		if err != nil {

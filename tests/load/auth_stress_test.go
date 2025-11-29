@@ -50,37 +50,37 @@ type AuthStressTestConfig struct {
 
 // AuthStressTestResult contains results from auth stress tests
 type AuthStressTestResult struct {
-	TestName              string
-	StartTime             time.Time
-	EndTime               time.Time
-	Duration              time.Duration
-	TotalRequests         int64
-	SuccessfulRequests    int64
-	FailedRequests        int64
-	RequestsPerSecond     float64
-	AverageResponseTime   time.Duration
-	P95ResponseTime       time.Duration
-	ErrorRate             float64
-	AuthMetrics           *AuthMetrics
-	SecurityEvents        []SecurityEvent
-	PerformanceBreakdown  map[string]*TestBreakdown
+	TestName             string
+	StartTime            time.Time
+	EndTime              time.Time
+	Duration             time.Duration
+	TotalRequests        int64
+	SuccessfulRequests   int64
+	FailedRequests       int64
+	RequestsPerSecond    float64
+	AverageResponseTime  time.Duration
+	P95ResponseTime      time.Duration
+	ErrorRate            float64
+	AuthMetrics          *AuthMetrics
+	SecurityEvents       []SecurityEvent
+	PerformanceBreakdown map[string]*TestBreakdown
 }
 
 // AuthMetrics tracks authentication-specific metrics
 type AuthMetrics struct {
-	LoginAttempts         int64
-	SuccessfulLogins      int64
-	FailedLogins          int64
-	TokenRefreshes        int64
-	RegistrationAttempts  int64
+	LoginAttempts           int64
+	SuccessfulLogins        int64
+	FailedLogins            int64
+	TokenRefreshes          int64
+	RegistrationAttempts    int64
 	SuccessfulRegistrations int64
-	PasswordResets        int64
-	RoleChanges           int64
-	PermissionChecks      int64
-	AuthorizationFailures  int64
-	BruteForceAttempts    int64
-	SessionCreations      int64
-	SessionInvalidations  int64
+	PasswordResets          int64
+	RoleChanges             int64
+	PermissionChecks        int64
+	AuthorizationFailures   int64
+	BruteForceAttempts      int64
+	SessionCreations        int64
+	SessionInvalidations    int64
 }
 
 // SecurityEvent represents a security-related event
@@ -149,9 +149,9 @@ func (a *AuthStressTestSuite) RunAuthStressTest() (*AuthStressTestResult, error)
 
 	// Run different stress test scenarios
 	testScenarios := []struct {
-		name        string
-		testFunc    func() error
-		weight      int // Relative weight in mixed workload
+		name     string
+		testFunc func() error
+		weight   int // Relative weight in mixed workload
 	}{
 		{"LoginStress", a.runLoginStressTest, 30},
 		{"TokenRefresh", a.runTokenRefreshTest, 20},
@@ -655,7 +655,11 @@ func (a *AuthStressTestSuite) runPermissionCheckTest() error {
 }
 
 // runMixedWorkloadTest runs a mixed workload of all auth operations
-func (a *AuthStressTestSuite) runMixedWorkloadTest(scenarios []struct{ name string; testFunc func() error; weight int }) error {
+func (a *AuthStressTestSuite) runMixedWorkloadTest(scenarios []struct {
+	name     string
+	testFunc func() error
+	weight   int
+}) error {
 	log.Printf("Running mixed workload test...")
 
 	config := LoadTestConfig{

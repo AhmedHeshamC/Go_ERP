@@ -14,11 +14,11 @@ func TestLoadSecretWithDefault(t *testing.T) {
 	t.Run("uses default when env var not set", func(t *testing.T) {
 		os.Unsetenv("TEST_SECRET_DEFAULT")
 		validator := NewJWTSecretValidator(256)
-		
+
 		// Generate a valid default
 		defaultValue, err := GenerateSecureSecret(48)
 		require.NoError(t, err)
-		
+
 		value, err := sm.LoadSecretWithDefault("TEST_SECRET_DEFAULT", defaultValue, validator)
 		require.NoError(t, err)
 		assert.Equal(t, defaultValue, value)
@@ -29,7 +29,7 @@ func TestLoadSecretWithDefault(t *testing.T) {
 		require.NoError(t, err)
 		os.Setenv("TEST_SECRET_ENV", envValue)
 		defer os.Unsetenv("TEST_SECRET_ENV")
-		
+
 		validator := NewJWTSecretValidator(256)
 		value, err := sm.LoadSecretWithDefault("TEST_SECRET_ENV", "default", validator)
 		require.NoError(t, err)
@@ -50,11 +50,11 @@ func TestGetSecret(t *testing.T) {
 		require.NoError(t, err)
 		os.Setenv("TEST_GET_SECRET", secret)
 		defer os.Unsetenv("TEST_GET_SECRET")
-		
+
 		validator := NewJWTSecretValidator(256)
 		_, err = sm.LoadSecret("TEST_GET_SECRET", validator)
 		require.NoError(t, err)
-		
+
 		value, exists := sm.GetSecret("TEST_GET_SECRET")
 		assert.True(t, exists)
 		assert.Equal(t, secret, value)
@@ -75,11 +75,11 @@ func TestValidateAll(t *testing.T) {
 		require.NoError(t, err)
 		os.Setenv("TEST_VALIDATE_ALL", secret)
 		defer os.Unsetenv("TEST_VALIDATE_ALL")
-		
+
 		validator := NewJWTSecretValidator(256)
 		_, err = sm.LoadSecret("TEST_VALIDATE_ALL", validator)
 		require.NoError(t, err)
-		
+
 		err = sm.ValidateAll()
 		assert.NoError(t, err)
 	})
@@ -99,16 +99,16 @@ func TestRotateSecret(t *testing.T) {
 		require.NoError(t, err)
 		os.Setenv("TEST_ROTATE", secret)
 		defer os.Unsetenv("TEST_ROTATE")
-		
+
 		validator := NewJWTSecretValidator(256)
 		_, err = sm.LoadSecret("TEST_ROTATE", validator)
 		require.NoError(t, err)
-		
+
 		newSecret, err := GenerateSecureSecret(48)
 		require.NoError(t, err)
 		err = sm.RotateSecret("TEST_ROTATE", newSecret)
 		require.NoError(t, err)
-		
+
 		value, exists := sm.GetSecret("TEST_ROTATE")
 		assert.True(t, exists)
 		assert.Equal(t, newSecret, value)
@@ -126,16 +126,16 @@ func TestListSecretKeys(t *testing.T) {
 	t.Run("returns all loaded secret keys", func(t *testing.T) {
 		secret1, _ := GenerateSecureSecret(48)
 		secret2, _ := GenerateSecureSecret(48)
-		
+
 		os.Setenv("TEST_KEY1", secret1)
 		os.Setenv("TEST_KEY2", secret2)
 		defer os.Unsetenv("TEST_KEY1")
 		defer os.Unsetenv("TEST_KEY2")
-		
+
 		validator := NewJWTSecretValidator(256)
 		sm.LoadSecret("TEST_KEY1", validator)
 		sm.LoadSecret("TEST_KEY2", validator)
-		
+
 		keys := sm.ListSecretKeys()
 		assert.Len(t, keys, 2)
 		assert.Contains(t, keys, "TEST_KEY1")

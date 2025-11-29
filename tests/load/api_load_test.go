@@ -11,18 +11,18 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/stretchr/testify/require"
 	"github.com/shopspring/decimal"
+	"github.com/stretchr/testify/require"
 )
 
 // APILoadTestSuite contains all API load tests
 type APILoadTestSuite struct {
-	baseURL     string
-	authToken   string
-	framework   *LoadTestFramework
-	userTokens  []string
-	productIDs  []string
-	orderIDs    []string
+	baseURL    string
+	authToken  string
+	framework  *LoadTestFramework
+	userTokens []string
+	productIDs []string
+	orderIDs   []string
 }
 
 // NewAPILoadTestSuite creates a new API load test suite
@@ -160,9 +160,9 @@ func (suite *APILoadTestSuite) TestProductAPIPerformance(t *testing.T) {
 	suite.setupTestData(t)
 
 	testCases := []struct {
-		name            string
-		config          LoadTestConfig
-		requestFunc     func(user int, iteration int) (*http.Request, error)
+		name        string
+		config      LoadTestConfig
+		requestFunc func(user int, iteration int) (*http.Request, error)
 	}{
 		{
 			name: "GetProductsList",
@@ -274,9 +274,9 @@ func (suite *APILoadTestSuite) TestOrderAPIPerformance(t *testing.T) {
 	suite.setupTestData(t)
 
 	testCases := []struct {
-		name            string
-		config          LoadTestConfig
-		requestFunc     func(user int, iteration int) (*http.Request, error)
+		name        string
+		config      LoadTestConfig
+		requestFunc func(user int, iteration int) (*http.Request, error)
 	}{
 		{
 			name: "CreateOrder",
@@ -440,16 +440,16 @@ func (suite *APILoadTestSuite) TestAuthAPIPerformance(t *testing.T) {
 		email := fmt.Sprintf("authtest%d@example.com", i)
 		token := suite.createTestUser(t, fmt.Sprintf("authtest%d", i), email, "password123")
 		testUsers = append(testUsers, map[string]string{
-			"email": email,
+			"email":    email,
 			"password": "password123",
-			"token": token,
+			"token":    token,
 		})
 	}
 
 	testCases := []struct {
-		name            string
-		config          LoadTestConfig
-		requestFunc     func(user int, iteration int) (*http.Request, error)
+		name        string
+		config      LoadTestConfig
+		requestFunc func(user int, iteration int) (*http.Request, error)
 	}{
 		{
 			name: "LoginLoadTest",
@@ -545,8 +545,8 @@ func (suite *APILoadTestSuite) TestMixedWorkload(t *testing.T) {
 
 	// Define workload distribution (60% reads, 30% searches, 10% writes)
 	workloadDistribution := []struct {
-		weight       int
-		requestFunc  func(user int, iteration int) (*http.Request, error)
+		weight      int
+		requestFunc func(user int, iteration int) (*http.Request, error)
 	}{
 		{
 			weight: 60, // 60% reads

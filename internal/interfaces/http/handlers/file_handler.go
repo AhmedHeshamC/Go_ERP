@@ -209,7 +209,7 @@ func (h *FileHandler) UploadMultipleFiles(c *gin.Context) {
 	// Limit number of files
 	if len(files) > 20 {
 		c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-			Error: "Too many files uploaded",
+			Error:   "Too many files uploaded",
 			Details: "Maximum 20 files can be uploaded at once",
 		})
 		return
@@ -316,11 +316,11 @@ func (h *FileHandler) UploadMultipleFiles(c *gin.Context) {
 		Msg("Batch file upload completed")
 
 	response := dto.BatchFileUploadResponse{
-		Results:      results,
-		Errors:       errors,
-		TotalFiles:   len(files),
-		Successful:   len(results),
-		Failed:       len(errors),
+		Results:    results,
+		Errors:     errors,
+		TotalFiles: len(files),
+		Successful: len(results),
+		Failed:     len(errors),
 	}
 
 	c.JSON(http.StatusCreated, response)
@@ -559,7 +559,7 @@ func (h *FileHandler) ListFiles(c *gin.Context) {
 	options := &storage.ListOptions{
 		Prefix:            prefix,
 		Recursive:         recursive,
-		MaxKeys:          limit,
+		MaxKeys:           limit,
 		ContinuationToken: c.Query("continuation_token"),
 	}
 
@@ -597,7 +597,7 @@ func (h *FileHandler) ListFiles(c *gin.Context) {
 		Prefixes:              result.Prefixes,
 		IsTruncated:           result.IsTruncated,
 		NextContinuationToken: result.NextContinuationToken,
-		TotalFiles:           len(files),
+		TotalFiles:            len(files),
 	}
 
 	c.JSON(http.StatusOK, response)
@@ -642,15 +642,15 @@ func (h *FileHandler) GetFileMetadata(c *gin.Context) {
 	}
 
 	response := dto.FileMetadataResponse{
-		Key:           metadata.Key,
-		Size:          metadata.Size,
-		LastModified:  metadata.LastModified,
-		ContentType:   metadata.ContentType,
-		ETag:          metadata.ETag,
-		StorageClass:  metadata.StorageClass,
-		Metadata:      metadata.Metadata,
-		Tags:          metadata.Tags,
-		CacheControl:  metadata.CacheControl,
+		Key:          metadata.Key,
+		Size:         metadata.Size,
+		LastModified: metadata.LastModified,
+		ContentType:  metadata.ContentType,
+		ETag:         metadata.ETag,
+		StorageClass: metadata.StorageClass,
+		Metadata:     metadata.Metadata,
+		Tags:         metadata.Tags,
+		CacheControl: metadata.CacheControl,
 		URL: func() string {
 			url, err := h.storageProvider.GetURL(c, key)
 			if err != nil {

@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/uuid"
+	"erpgo/internal/domain/users/entities"
+	"erpgo/internal/domain/users/repositories"
 	"erpgo/pkg/auth"
 	"erpgo/pkg/cache"
 	"erpgo/pkg/config"
-	"erpgo/internal/domain/users/entities"
-	"erpgo/internal/domain/users/repositories"
+	"github.com/google/uuid"
 )
 
 // SimpleAuthService handles authentication operations with minimal logging
@@ -48,9 +48,9 @@ type SimpleLoginRequest struct {
 
 // SimpleLoginResponse represents a login response
 type SimpleLoginResponse struct {
-	AccessToken  string       `json:"access_token"`
-	RefreshToken string       `json:"refresh_token"`
-	ExpiresAt    time.Time    `json:"expires_at"`
+	AccessToken  string          `json:"access_token"`
+	RefreshToken string          `json:"refresh_token"`
+	ExpiresAt    time.Time       `json:"expires_at"`
 	User         *SimpleUserInfo `json:"user"`
 }
 

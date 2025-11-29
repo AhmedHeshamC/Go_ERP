@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	apperrors "erpgo/pkg/errors"
+	"github.com/google/uuid"
 )
 
 // User represents a user in the system
@@ -193,4 +193,3 @@ func (u *User) HasPermission(permission string) bool {
 	// 3. Return true if any role has the requested permission
 	return false
 }
-

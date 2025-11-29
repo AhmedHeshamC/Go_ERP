@@ -156,12 +156,12 @@ func (suite *OrderWorkflowTestSuite) TestCustomerOrderHistory() {
 
 func (suite *OrderWorkflowTestSuite) createCustomer() *Customer {
 	customerRequest := map[string]interface{}{
-		"customer_code":  fmt.Sprintf("CUST-%d", time.Now().Unix()),
-		"name":           "Test Customer",
-		"email":          fmt.Sprintf("customer-%d@example.com", time.Now().Unix()),
-		"phone":          "+1234567890",
+		"customer_code":   fmt.Sprintf("CUST-%d", time.Now().Unix()),
+		"name":            "Test Customer",
+		"email":           fmt.Sprintf("customer-%d@example.com", time.Now().Unix()),
+		"phone":           "+1234567890",
 		"billing_address": "123 Test St, Test City, TC 12345",
-		"credit_limit":   10000.00,
+		"credit_limit":    10000.00,
 	}
 
 	resp, err := suite.makeAuthenticatedRequest("POST", "/api/v1/customers", customerRequest, suite.adminToken)
@@ -176,9 +176,9 @@ func (suite *OrderWorkflowTestSuite) createCustomer() *Customer {
 
 	data := response["data"].(map[string]interface{})
 	return &Customer{
-		ID:       parseUUID(data["id"].(string)),
-		Name:     data["name"].(string),
-		Email:    data["email"].(string),
+		ID:           parseUUID(data["id"].(string)),
+		Name:         data["name"].(string),
+		Email:        data["email"].(string),
 		CustomerCode: data["customer_code"].(string),
 	}
 }
@@ -219,10 +219,10 @@ func (suite *OrderWorkflowTestSuite) createProductWithInventory(quantity int) *P
 
 	// Set up inventory for the product
 	inventoryRequest := map[string]interface{}{
-		"product_id":        productID.String(),
-		"warehouse_id":      suite.testUtil.GetDefaultWarehouseID().String(),
+		"product_id":         productID.String(),
+		"warehouse_id":       suite.testUtil.GetDefaultWarehouseID().String(),
 		"quantity_available": quantity,
-		"reorder_level":     5,
+		"reorder_level":      5,
 	}
 
 	resp, err = suite.makeAuthenticatedRequest("POST", "/api/v1/inventory/set", inventoryRequest, suite.adminToken)
@@ -265,9 +265,9 @@ func (suite *OrderWorkflowTestSuite) createOrder(customerID uuid.UUID, products 
 
 	data := response["data"].(map[string]interface{})
 	return &Order{
-		ID:         parseUUID(data["id"].(string)),
-		CustomerID: customerID,
-		Status:     data["status"].(string),
+		ID:          parseUUID(data["id"].(string)),
+		CustomerID:  customerID,
+		Status:      data["status"].(string),
 		TotalAmount: data["total_amount"].(float64),
 	}
 }
@@ -307,8 +307,8 @@ func (suite *OrderWorkflowTestSuite) processPayment(orderID uuid.UUID) {
 func (suite *OrderWorkflowTestSuite) shipOrder(orderID uuid.UUID) {
 	shippingRequest := map[string]interface{}{
 		"tracking_number": "TRACK123456",
-		"carrier":        "UPS",
-		"shipped_at":     time.Now().Format(time.RFC3339),
+		"carrier":         "UPS",
+		"shipped_at":      time.Now().Format(time.RFC3339),
 	}
 
 	resp, err := suite.makeAuthenticatedRequest(
@@ -356,11 +356,11 @@ func (suite *OrderWorkflowTestSuite) generateInvoice(orderID uuid.UUID) *Invoice
 
 	data := response["data"].(map[string]interface{})
 	return &Invoice{
-	 ID:          parseUUID(data["id"].(string)),
-	 OrderID:     &orderID,
-	 InvoiceNumber: data["invoice_number"].(string),
-	 TotalAmount: data["total_amount"].(float64),
-	 Status:     data["status"].(string),
+		ID:            parseUUID(data["id"].(string)),
+		OrderID:       &orderID,
+		InvoiceNumber: data["invoice_number"].(string),
+		TotalAmount:   data["total_amount"].(float64),
+		Status:        data["status"].(string),
 	}
 }
 

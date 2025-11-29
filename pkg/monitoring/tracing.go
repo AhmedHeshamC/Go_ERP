@@ -9,18 +9,18 @@ import (
 
 // Span represents a distributed tracing span
 type Span struct {
-	TraceID      string                 `json:"trace_id"`
-	SpanID       string                 `json:"span_id"`
-	ParentSpanID string                 `json:"parent_span_id,omitempty"`
-	OperationName string                `json:"operation_name"`
-	StartTime    time.Time              `json:"start_time"`
-	EndTime      time.Time              `json:"end_time"`
-	Duration     time.Duration          `json:"duration"`
-	Tags         map[string]interface{} `json:"tags,omitempty"`
-	Logs         []SpanLog              `json:"logs,omitempty"`
-	Status       SpanStatus             `json:"status"`
-	ServiceName  string                 `json:"service_name"`
-	Resource     string                 `json:"resource,omitempty"`
+	TraceID       string                 `json:"trace_id"`
+	SpanID        string                 `json:"span_id"`
+	ParentSpanID  string                 `json:"parent_span_id,omitempty"`
+	OperationName string                 `json:"operation_name"`
+	StartTime     time.Time              `json:"start_time"`
+	EndTime       time.Time              `json:"end_time"`
+	Duration      time.Duration          `json:"duration"`
+	Tags          map[string]interface{} `json:"tags,omitempty"`
+	Logs          []SpanLog              `json:"logs,omitempty"`
+	Status        SpanStatus             `json:"status"`
+	ServiceName   string                 `json:"service_name"`
+	Resource      string                 `json:"resource,omitempty"`
 }
 
 // SpanLog represents a log entry within a span

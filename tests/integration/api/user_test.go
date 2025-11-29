@@ -29,12 +29,12 @@ import (
 
 type UserAPITestSuite struct {
 	suite.Suite
-	server         *httptest.Server
-	db             *erpgoDatabase.Database
-	userService    userService.Service
+	server          *httptest.Server
+	db              *erpgoDatabase.Database
+	userService     userService.Service
 	passwordService *auth.PasswordService
-	jwtService     *auth.JWTService
-	testDB         *testutil.TestDatabase
+	jwtService      *auth.JWTService
+	testDB          *testutil.TestDatabase
 }
 
 func (suite *UserAPITestSuite) SetupSuite() {
@@ -82,21 +82,21 @@ func (suite *UserAPITestSuite) TestCreateUser() {
 		{
 			name: "valid user creation",
 			requestBody: map[string]interface{}{
-				"email":     "test@example.com",
-				"username":  "testuser",
-				"password":  "password123!",
+				"email":      "test@example.com",
+				"username":   "testuser",
+				"password":   "password123!",
 				"first_name": "Test",
 				"last_name":  "User",
-				"phone":     "+1234567890",
+				"phone":      "+1234567890",
 			},
 			expectedStatus: http.StatusCreated,
 		},
 		{
 			name: "invalid email",
 			requestBody: map[string]interface{}{
-				"email":     "invalid-email",
-				"username":  "testuser",
-				"password":  "password123!",
+				"email":      "invalid-email",
+				"username":   "testuser",
+				"password":   "password123!",
 				"first_name": "Test",
 				"last_name":  "User",
 			},
@@ -310,7 +310,7 @@ func (suite *UserAPITestSuite) createAuthToken(userID uuid.UUID, email, username
 // Mock implementations for testing
 
 type MockUserRepository struct {
-	db *erpgoDatabase.Database
+	db    *erpgoDatabase.Database
 	users map[uuid.UUID]*entities.User
 }
 
@@ -402,7 +402,7 @@ func (m *MockUserRepository) AssignRole(ctx context.Context, userID uuid.UUID, r
 }
 
 type MockRoleRepository struct {
-	db *erpgoDatabase.Database
+	db    *erpgoDatabase.Database
 	roles map[string]*entities.Role
 }
 

@@ -6,13 +6,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
-	"github.com/shopspring/decimal"
 	"erpgo/internal/domain/products/entities"
 	"erpgo/internal/domain/products/repositories"
 	"erpgo/pkg/database"
 	"erpgo/pkg/validation"
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+	"github.com/shopspring/decimal"
 )
 
 // PostgresProductRepository implements ProductRepository for PostgreSQL

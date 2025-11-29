@@ -126,15 +126,15 @@ func TestProduct_ComprehensiveCoverage(t *testing.T) {
 
 	t.Run("ToSafeProduct", func(t *testing.T) {
 		product := &Product{
-			ID:               uuid.New(),
-			SKU:              "TEST-001",
-			Name:             "Test Product",
-			CategoryID:       uuid.New(),
-			Price:            decimal.NewFromFloat(100.00),
-			Cost:             decimal.NewFromFloat(60.00),
-			TrackInventory:   true,
-			StockQuantity:    50,
-			IsActive:         true,
+			ID:             uuid.New(),
+			SKU:            "TEST-001",
+			Name:           "Test Product",
+			CategoryID:     uuid.New(),
+			Price:          decimal.NewFromFloat(100.00),
+			Cost:           decimal.NewFromFloat(60.00),
+			TrackInventory: true,
+			StockQuantity:  50,
+			IsActive:       true,
 		}
 
 		safe := product.ToSafeProduct()
@@ -780,7 +780,6 @@ func TestProductVariant_AdditionalCoverage(t *testing.T) {
 	})
 }
 
-
 // TestProduct_ValidationCoverage adds more validation coverage
 func TestProduct_ValidationCoverage(t *testing.T) {
 	t.Run("validateBarcode_AllCases", func(t *testing.T) {
@@ -889,18 +888,18 @@ func TestProduct_ValidationCoverage(t *testing.T) {
 
 	t.Run("validateDigitalSettings_AllCases", func(t *testing.T) {
 		product := &Product{
-			ID:              uuid.New(),
-			SKU:             "TEST-001",
-			Name:            "Test Product",
-			CategoryID:      uuid.New(),
-			Price:           decimal.NewFromFloat(100.00),
-			Cost:            decimal.NewFromFloat(60.00),
-			IsDigital:       true,
-			DownloadURL:     "https://example.com/download",
-			MaxDownloads:    10,
-			ExpiryDays:      30,
+			ID:               uuid.New(),
+			SKU:              "TEST-001",
+			Name:             "Test Product",
+			CategoryID:       uuid.New(),
+			Price:            decimal.NewFromFloat(100.00),
+			Cost:             decimal.NewFromFloat(60.00),
+			IsDigital:        true,
+			DownloadURL:      "https://example.com/download",
+			MaxDownloads:     10,
+			ExpiryDays:       30,
 			RequiresShipping: false,
-			IsActive:        true,
+			IsActive:         true,
 		}
 
 		// Valid digital product
@@ -1111,7 +1110,6 @@ func TestProduct_ValidationCoverage(t *testing.T) {
 		assert.True(t, margin.IsZero())
 	})
 }
-
 
 // TestProduct_EdgeCases adds more edge case coverage
 func TestProduct_EdgeCases(t *testing.T) {

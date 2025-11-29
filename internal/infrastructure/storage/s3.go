@@ -20,14 +20,14 @@ import (
 
 // S3Storage implements StorageProvider for AWS S3 storage
 type S3Storage struct {
-	client    *s3.Client
-	uploader  *manager.Uploader
+	client     *s3.Client
+	uploader   *manager.Uploader
 	downloader *manager.Downloader
-	bucket    string
-	publicURL string
-	region    string
-	logger    zerolog.Logger
-	config    *StorageConfig
+	bucket     string
+	publicURL  string
+	region     string
+	logger     zerolog.Logger
+	config     *StorageConfig
 }
 
 // NewS3Storage creates a new S3 storage provider
@@ -56,14 +56,14 @@ func NewS3Storage(config *StorageConfig, logger zerolog.Logger) (*S3Storage, err
 	downloader := manager.NewDownloader(client)
 
 	return &S3Storage{
-		client:    client,
-		uploader:  uploader,
+		client:     client,
+		uploader:   uploader,
 		downloader: downloader,
-		bucket:    config.Bucket,
-		publicURL: config.PublicURL,
-		region:    config.Region,
-		logger:    logger,
-		config:    config,
+		bucket:     config.Bucket,
+		publicURL:  config.PublicURL,
+		region:     config.Region,
+		logger:     logger,
+		config:     config,
 	}, nil
 }
 
@@ -343,7 +343,7 @@ func (s *S3Storage) ListWithPagination(ctx context.Context, prefix string, optio
 	if maxKeys > 0x7FFFFFFF || maxKeys < 0 {
 		maxKeys = 1000 // Default to reasonable limit
 	}
-	
+
 	input := &s3.ListObjectsV2Input{
 		Bucket:            aws.String(s.bucket),
 		Prefix:            aws.String(prefix),
@@ -398,12 +398,12 @@ func (s *S3Storage) ListWithPagination(ctx context.Context, prefix string, optio
 	}
 
 	return &ListResult{
-		Objects:              objects,
-		Prefixes:             prefixes,
-		IsTruncated:          isTruncated,
+		Objects:               objects,
+		Prefixes:              prefixes,
+		IsTruncated:           isTruncated,
 		NextContinuationToken: aws.ToString(result.NextContinuationToken),
-		MaxKeys:              resultMaxKeys,
-		CommonPrefixes:       prefixes,
+		MaxKeys:               resultMaxKeys,
+		CommonPrefixes:        prefixes,
 	}, nil
 }
 
@@ -437,16 +437,16 @@ func (s *S3Storage) GetMetadata(ctx context.Context, key string) (*ObjectMetadat
 	}
 
 	return &ObjectMetadata{
-		Key:            key,
-		Size:           size,
-		LastModified:   aws.ToTime(result.LastModified),
-		ContentType:    aws.ToString(result.ContentType),
-		ETag:           aws.ToString(result.ETag),
-		StorageClass:   string(result.StorageClass),
-		Metadata:       result.Metadata,
-		CacheControl:   aws.ToString(result.CacheControl),
+		Key:             key,
+		Size:            size,
+		LastModified:    aws.ToTime(result.LastModified),
+		ContentType:     aws.ToString(result.ContentType),
+		ETag:            aws.ToString(result.ETag),
+		StorageClass:    string(result.StorageClass),
+		Metadata:        result.Metadata,
+		CacheControl:    aws.ToString(result.CacheControl),
 		ContentEncoding: aws.ToString(result.ContentEncoding),
-		Tags:           make(map[string]string), // TODO: Parse actual tags from result
+		Tags:            make(map[string]string), // TODO: Parse actual tags from result
 	}, nil
 }
 
@@ -597,9 +597,9 @@ func isNotFoundError(err error) bool {
 	var noSuchBucket *types.NoSuchBucket
 
 	return err.Error() == "NoSuchKey" ||
-		   err.Error() == "NoSuchBucket" ||
-		   noSuchKey != nil ||
-		   noSuchBucket != nil
+		err.Error() == "NoSuchBucket" ||
+		noSuchKey != nil ||
+		noSuchBucket != nil
 }
 
 // buildTagString builds a tag string from a map

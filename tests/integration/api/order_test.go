@@ -84,23 +84,23 @@ func TestOrderRoutes(t *testing.T) {
 		CancellationReason: nil,
 		Items: []entities.OrderItem{
 			{
-				ID:              uuid.New(),
-				ProductID:       testProductID,
-				ProductSKU:      "TEST-001",
-				ProductName:     "Test Product",
-				VariantID:       nil,
-				VariantName:     nil,
-				Quantity:        2,
-				UnitPrice:       decimal.NewFromFloat(50.00),
-				TotalPrice:      decimal.NewFromFloat(100.00),
-				TaxAmount:       decimal.NewFromFloat(8.00),
-				DiscountAmount:  decimal.Zero,
-				FinalPrice:      decimal.NewFromFloat(108.00),
-				Weight:          decimal.NewFromFloat(1.5),
-				Status:          entities.OrderItemStatusPending,
-				ShippedQuantity: 0,
+				ID:               uuid.New(),
+				ProductID:        testProductID,
+				ProductSKU:       "TEST-001",
+				ProductName:      "Test Product",
+				VariantID:        nil,
+				VariantName:      nil,
+				Quantity:         2,
+				UnitPrice:        decimal.NewFromFloat(50.00),
+				TotalPrice:       decimal.NewFromFloat(100.00),
+				TaxAmount:        decimal.NewFromFloat(8.00),
+				DiscountAmount:   decimal.Zero,
+				FinalPrice:       decimal.NewFromFloat(108.00),
+				Weight:           decimal.NewFromFloat(1.5),
+				Status:           entities.OrderItemStatusPending,
+				ShippedQuantity:  0,
 				ReturnedQuantity: 0,
-				Notes:           nil,
+				Notes:            nil,
 			},
 		},
 	}
@@ -120,13 +120,13 @@ func TestOrderRoutes(t *testing.T) {
 
 	// Create test order stats
 	testOrderStats := &repositories.OrderStats{
-		TotalOrders:         1,
-		TotalRevenue:        decimal.NewFromFloat(118.00),
-		OrdersByStatus:      map[string]int64{"DRAFT": 1},
-		OrdersByType:        map[string]int64{"SALES": 1},
-		TopProducts:         []repositories.ProductSalesStats{},
-		TopCustomers:        []repositories.CustomerOrderStats{},
-		AverageOrderValue:   decimal.NewFromFloat(118.00),
+		TotalOrders:       1,
+		TotalRevenue:      decimal.NewFromFloat(118.00),
+		OrdersByStatus:    map[string]int64{"DRAFT": 1},
+		OrdersByType:      map[string]int64{"SALES": 1},
+		TopProducts:       []repositories.ProductSalesStats{},
+		TopCustomers:      []repositories.CustomerOrderStats{},
+		AverageOrderValue: decimal.NewFromFloat(118.00),
 	}
 
 	t.Run("GetOrders - Success", func(t *testing.T) {
@@ -395,10 +395,10 @@ func TestOrderRoutes(t *testing.T) {
 
 		// Create request body
 		cancelReq := dto.CancelOrderRequest{
-			Reason:          "Customer requested cancellation",
-			NotifyCustomer:  true,
-			RefundPayment:   true,
-			RestockItems:    true,
+			Reason:         "Customer requested cancellation",
+			NotifyCustomer: true,
+			RefundPayment:  true,
+			RestockItems:   true,
 		}
 
 		reqBody, _ := json.Marshal(cancelReq)
@@ -506,7 +506,7 @@ func TestOrderRoutes(t *testing.T) {
 
 		// Create request body
 		deliverReq := dto.DeliverOrderRequest{
-			Signature:     stringPtr("John Doe"),
+			Signature:      stringPtr("John Doe"),
 			NotifyCustomer: true,
 		}
 

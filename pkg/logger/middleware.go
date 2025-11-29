@@ -13,11 +13,11 @@ import (
 
 // LoggingMiddleware provides request/response logging middleware
 type LoggingMiddleware struct {
-	logger         *Logger
-	skipPaths      []string
-	logRequestBody bool
+	logger          *Logger
+	skipPaths       []string
+	logRequestBody  bool
 	logResponseBody bool
-	maxBodySize    int64
+	maxBodySize     int64
 }
 
 // Config holds the logging middleware configuration
@@ -26,14 +26,14 @@ type MiddlewareConfig struct {
 	SkipPaths []string `json:"skip_paths"`
 
 	// Log request and response bodies
-	LogRequestBody    bool `json:"log_request_body"`
-	LogResponseBody   bool `json:"log_response_body"`
-	MaxBodySize       int64 `json:"max_body_size"` // bytes
+	LogRequestBody  bool  `json:"log_request_body"`
+	LogResponseBody bool  `json:"log_response_body"`
+	MaxBodySize     int64 `json:"max_body_size"` // bytes
 
 	// Additional context to log
-	LogUserAgent      bool `json:"log_user_agent"`
-	LogRemoteAddr     bool `json:"log_remote_addr"`
-	LogRequestHeaders bool `json:"log_request_headers"`
+	LogUserAgent       bool `json:"log_user_agent"`
+	LogRemoteAddr      bool `json:"log_remote_addr"`
+	LogRequestHeaders  bool `json:"log_request_headers"`
 	LogResponseHeaders bool `json:"log_response_headers"`
 
 	// Performance settings
@@ -53,15 +53,15 @@ func DefaultMiddlewareConfig() *MiddlewareConfig {
 			"/ready",
 			"/live",
 		},
-		LogRequestBody:     false,
-		LogResponseBody:    false,
-		MaxBodySize:        1024 * 64, // 64KB
-		LogUserAgent:       true,
-		LogRemoteAddr:      true,
-		LogRequestHeaders:  false,
-		LogResponseHeaders: false,
+		LogRequestBody:       false,
+		LogResponseBody:      false,
+		MaxBodySize:          1024 * 64, // 64KB
+		LogUserAgent:         true,
+		LogRemoteAddr:        true,
+		LogRequestHeaders:    false,
+		LogResponseHeaders:   false,
 		SlowRequestThreshold: 1 * time.Second,
-		LogSlowRequests:     true,
+		LogSlowRequests:      true,
 		SanitizeHeaders: []string{
 			"authorization",
 			"cookie",
@@ -77,11 +77,11 @@ func NewLoggingMiddleware(logger *Logger, config *MiddlewareConfig) *LoggingMidd
 	}
 
 	return &LoggingMiddleware{
-		logger:         logger,
-		skipPaths:      config.SkipPaths,
-		logRequestBody: config.LogRequestBody,
+		logger:          logger,
+		skipPaths:       config.SkipPaths,
+		logRequestBody:  config.LogRequestBody,
 		logResponseBody: config.LogResponseBody,
-		maxBodySize:    config.MaxBodySize,
+		maxBodySize:     config.MaxBodySize,
 	}
 }
 
@@ -128,7 +128,7 @@ func (m *LoggingMiddleware) Middleware(config *MiddlewareConfig) gin.HandlerFunc
 		// Capture response writer
 		responseWriter := &responseBodyWriter{
 			ResponseWriter: c.Writer,
-			body:          &bytes.Buffer{},
+			body:           &bytes.Buffer{},
 		}
 		c.Writer = responseWriter
 
@@ -369,7 +369,7 @@ func DefaultRequestLogging(logger *Logger) gin.HandlerFunc {
 // DevelopmentRequestLogging creates a request logging middleware for development
 func DevelopmentRequestLogging(logger *Logger) gin.HandlerFunc {
 	config := &MiddlewareConfig{
-		SkipPaths:           []string{"/health", "/metrics"},
+		SkipPaths:            []string{"/health", "/metrics"},
 		LogRequestBody:       true,
 		LogResponseBody:      true,
 		MaxBodySize:          1024 * 64, // 64KB
@@ -388,7 +388,7 @@ func DevelopmentRequestLogging(logger *Logger) gin.HandlerFunc {
 // ProductionRequestLogging creates a request logging middleware for production
 func ProductionRequestLogging(logger *Logger) gin.HandlerFunc {
 	config := &MiddlewareConfig{
-		SkipPaths:           []string{"/health", "/metrics", "/ready", "/live"},
+		SkipPaths:            []string{"/health", "/metrics", "/ready", "/live"},
 		LogRequestBody:       false,
 		LogResponseBody:      false,
 		MaxBodySize:          1024 * 32, // 32KB
@@ -398,7 +398,7 @@ func ProductionRequestLogging(logger *Logger) gin.HandlerFunc {
 		LogResponseHeaders:   false,
 		SlowRequestThreshold: 2 * time.Second,
 		LogSlowRequests:      true,
-		SanitizeHeaders:      []string{
+		SanitizeHeaders: []string{
 			"authorization", "cookie", "set-cookie",
 			"x-api-key", "x-auth-token",
 		},
@@ -406,6 +406,7 @@ func ProductionRequestLogging(logger *Logger) gin.HandlerFunc {
 
 	return RequestLogging(logger, config)
 }
+
 // CorrelationPropagationMiddleware creates middleware for correlation ID propagation
 func CorrelationPropagationMiddleware(serviceName string) gin.HandlerFunc {
 	return func(c *gin.Context) {

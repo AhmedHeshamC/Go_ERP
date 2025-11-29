@@ -19,30 +19,30 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
+	"erpgo/internal/application/services/customer"
 	"erpgo/internal/application/services/order"
 	"erpgo/internal/application/services/product"
-	"erpgo/internal/application/services/customer"
-	"erpgo/internal/domain/orders/entities"
-	productrepo "erpgo/internal/domain/products/repositories"
 	customerrepo "erpgo/internal/domain/customers/repositories"
+	"erpgo/internal/domain/orders/entities"
+	erporder "erpgo/internal/domain/orders/repositories"
+	productrepo "erpgo/internal/domain/products/repositories"
 	"erpgo/internal/infrastructure/database"
 	"erpgo/internal/infrastructure/logger"
-	erporder "erpgo/internal/domain/orders/repositories"
 	"erpgo/tests/load"
 )
 
 // APIPerformanceTestSuite tests API performance under various conditions
 type APIPerformanceTestSuite struct {
 	suite.Suite
-	db           *database.Database
-	orderRepo    erporder.OrderRepository
-	productRepo  productrepo.ProductRepository
-	customerRepo customerrepo.CustomerRepository
-	orderService order.Service
-	productService product.Service
+	db              *database.Database
+	orderRepo       erporder.OrderRepository
+	productRepo     productrepo.ProductRepository
+	customerRepo    customerrepo.CustomerRepository
+	orderService    order.Service
+	productService  product.Service
 	customerService customer.Service
-	router       *gin.Engine
-	testData     *TestData
+	router          *gin.Engine
+	testData        *TestData
 }
 
 // TestData holds test data for performance testing
@@ -359,7 +359,7 @@ func (suite *APIPerformanceTestSuite) TestOrderCreationPerformance() {
 					"items": []map[string]interface{}{
 						{
 							"product_id": product.ID.String(),
-							"quantity":  (j % 5) + 1,
+							"quantity":   (j % 5) + 1,
 						},
 					},
 					"notes": fmt.Sprintf("Performance test order %d-%d", workerID, j),

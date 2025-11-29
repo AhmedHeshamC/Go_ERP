@@ -90,12 +90,12 @@ type AddressResponse struct {
 
 // OrderRequest represents a request to create/update an order
 type OrderRequest struct {
-	CustomerID        uuid.UUID          `json:"customer_id" binding:"required,uuid"`
+	CustomerID        uuid.UUID          `json:"customer_id" binding:"required"`
 	Type              string             `json:"type" binding:"required,oneof=SALES PURCHASE RETURN EXCHANGE TRANSFER ADJUSTMENT"`
 	Priority          string             `json:"priority" binding:"omitempty,oneof=LOW NORMAL HIGH URGENT CRITICAL"`
 	ShippingMethod    string             `json:"shipping_method" binding:"required,oneof=STANDARD EXPRESS OVERNIGHT PICKUP DIGITAL"`
-	ShippingAddressID uuid.UUID          `json:"shipping_address_id" binding:"required,uuid"`
-	BillingAddressID  uuid.UUID          `json:"billing_address_id" binding:"required,uuid"`
+	ShippingAddressID uuid.UUID          `json:"shipping_address_id" binding:"required"`
+	BillingAddressID  uuid.UUID          `json:"billing_address_id" binding:"required"`
 	Currency          string             `json:"currency" binding:"required,len=3"`
 	RequiredDate      *time.Time         `json:"required_date,omitempty"`
 	Notes             *string            `json:"notes,omitempty"`
@@ -107,7 +107,7 @@ type OrderRequest struct {
 
 // OrderItemRequest represents a request to create/update an order item
 type OrderItemRequest struct {
-	ProductID uuid.UUID       `json:"product_id" binding:"required,uuid"`
+	ProductID uuid.UUID       `json:"product_id" binding:"required"`
 	VariantID *uuid.UUID      `json:"variant_id,omitempty"`
 	Quantity  int32           `json:"quantity" binding:"required,min=1"`
 	UnitPrice decimal.Decimal `json:"unit_price" binding:"required,gt=0"`
@@ -180,7 +180,7 @@ type PartialShipOrderRequest struct {
 
 // PartialShipItemRequest represents an item to be partially shipped
 type PartialShipItemRequest struct {
-	OrderItemID uuid.UUID `json:"order_item_id" binding:"required,uuid"`
+	OrderItemID uuid.UUID `json:"order_item_id" binding:"required"`
 	Quantity    int32     `json:"quantity" binding:"required,min=1"`
 }
 
@@ -196,7 +196,7 @@ type ReturnItemsRequest struct {
 
 // ReturnItemRequest represents an item to be returned
 type ReturnItemRequest struct {
-	OrderItemID uuid.UUID `json:"order_item_id" binding:"required,uuid"`
+	OrderItemID uuid.UUID `json:"order_item_id" binding:"required"`
 	Quantity    int32     `json:"quantity" binding:"required,min=1"`
 	Reason      *string   `json:"reason,omitempty"`
 }
@@ -230,7 +230,7 @@ type PartialRefundOrderRequest struct {
 
 // PartialRefundItemRequest represents an item to be partially refunded
 type PartialRefundItemRequest struct {
-	OrderItemID uuid.UUID       `json:"order_item_id" binding:"required,uuid"`
+	OrderItemID uuid.UUID       `json:"order_item_id" binding:"required"`
 	Quantity    int32           `json:"quantity" binding:"required,min=1"`
 	Amount      decimal.Decimal `json:"amount" binding:"required,gt=0"`
 	Reason      *string         `json:"reason,omitempty"`
@@ -238,7 +238,7 @@ type PartialRefundItemRequest struct {
 
 // AddOrderItemRequest represents a request to add an item to an order
 type AddOrderItemRequest struct {
-	ProductID uuid.UUID       `json:"product_id" binding:"required,uuid"`
+	ProductID uuid.UUID       `json:"product_id" binding:"required"`
 	VariantID *uuid.UUID      `json:"variant_id,omitempty"`
 	Quantity  int32           `json:"quantity" binding:"required,min=1"`
 	UnitPrice decimal.Decimal `json:"unit_price" binding:"required,gt=0"`
@@ -289,7 +289,7 @@ type SearchOrdersRequest struct {
 
 // GetCustomerOrdersRequest represents a request to get customer orders
 type GetCustomerOrdersRequest struct {
-	CustomerID    uuid.UUID  `json:"customer_id" binding:"required,uuid"`
+	CustomerID    uuid.UUID  `json:"customer_id" binding:"required"`
 	Status        *string    `json:"status,omitempty"`
 	Type          *string    `json:"type,omitempty"`
 	CreatedAfter  *time.Time `json:"created_after,omitempty"`

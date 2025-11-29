@@ -12,20 +12,20 @@ import (
 
 // Warehouse represents a storage location in the system
 type Warehouse struct {
-	ID         uuid.UUID `json:"id" db:"id"`
-	Name       string    `json:"name" db:"name"`
-	Code       string    `json:"code" db:"code"`
-	Address    string    `json:"address" db:"address"`
-	City       string    `json:"city" db:"city"`
-	State      string    `json:"state" db:"state"`
-	Country    string    `json:"country" db:"country"`
-	PostalCode string    `json:"postal_code" db:"postal_code"`
-	Phone      string    `json:"phone,omitempty" db:"phone"`
-	Email      string    `json:"email,omitempty" db:"email"`
+	ID         uuid.UUID  `json:"id" db:"id"`
+	Name       string     `json:"name" db:"name"`
+	Code       string     `json:"code" db:"code"`
+	Address    string     `json:"address" db:"address"`
+	City       string     `json:"city" db:"city"`
+	State      string     `json:"state" db:"state"`
+	Country    string     `json:"country" db:"country"`
+	PostalCode string     `json:"postal_code" db:"postal_code"`
+	Phone      string     `json:"phone,omitempty" db:"phone"`
+	Email      string     `json:"email,omitempty" db:"email"`
 	ManagerID  *uuid.UUID `json:"manager_id,omitempty" db:"manager_id"`
-	IsActive   bool      `json:"is_active" db:"is_active"`
-	CreatedAt  time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at" db:"updated_at"`
+	IsActive   bool       `json:"is_active" db:"is_active"`
+	CreatedAt  time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt  time.Time  `json:"updated_at" db:"updated_at"`
 }
 
 // Validate validates the warehouse entity
@@ -384,23 +384,23 @@ func (w *Warehouse) ToSafeWarehouse() *Warehouse {
 type WarehouseType string
 
 const (
-	WarehouseTypeRetail    WarehouseType = "RETAIL"
-	WarehouseTypeWholesale WarehouseType = "WHOLESALE"
+	WarehouseTypeRetail       WarehouseType = "RETAIL"
+	WarehouseTypeWholesale    WarehouseType = "WHOLESALE"
 	WarehouseTypeDistribution WarehouseType = "DISTRIBUTION"
-	WarehouseTypeFulfillment WarehouseType = "FULFILLMENT"
-	WarehouseTypeReturn    WarehouseType = "RETURN"
+	WarehouseTypeFulfillment  WarehouseType = "FULFILLMENT"
+	WarehouseTypeReturn       WarehouseType = "RETURN"
 )
 
 // WarehouseExtended represents an extended warehouse with additional metadata
 type WarehouseExtended struct {
 	Warehouse
-	Type        WarehouseType `json:"type" db:"type"`
-	Capacity    *int          `json:"capacity,omitempty" db:"capacity"`
-	SquareFootage *int        `json:"square_footage,omitempty" db:"square_footage"`
-	DockCount   *int          `json:"dock_count,omitempty" db:"dock_count"`
-	TemperatureControlled bool `json:"temperature_controlled" db:"temperature_controlled"`
-	SecurityLevel int        `json:"security_level" db:"security_level"`
-	Description  string       `json:"description,omitempty" db:"description"`
+	Type                  WarehouseType `json:"type" db:"type"`
+	Capacity              *int          `json:"capacity,omitempty" db:"capacity"`
+	SquareFootage         *int          `json:"square_footage,omitempty" db:"square_footage"`
+	DockCount             *int          `json:"dock_count,omitempty" db:"dock_count"`
+	TemperatureControlled bool          `json:"temperature_controlled" db:"temperature_controlled"`
+	SecurityLevel         int           `json:"security_level" db:"security_level"`
+	Description           string        `json:"description,omitempty" db:"description"`
 }
 
 // Validate validates the extended warehouse entity
@@ -467,11 +467,11 @@ func (we *WarehouseExtended) Validate() error {
 // validateType validates the warehouse type
 func (we *WarehouseExtended) validateType() error {
 	validTypes := map[WarehouseType]bool{
-		WarehouseTypeRetail:        true,
-		WarehouseTypeWholesale:     true,
-		WarehouseTypeDistribution:  true,
-		WarehouseTypeFulfillment:   true,
-		WarehouseTypeReturn:        true,
+		WarehouseTypeRetail:       true,
+		WarehouseTypeWholesale:    true,
+		WarehouseTypeDistribution: true,
+		WarehouseTypeFulfillment:  true,
+		WarehouseTypeReturn:       true,
 	}
 
 	if !validTypes[we.Type] {

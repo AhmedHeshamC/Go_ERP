@@ -7,14 +7,10 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
-	"strconv"
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
 	"erpgo/tests/security"
@@ -23,78 +19,80 @@ import (
 // ProductionGatesTestSuite validates that the project meets production readiness criteria
 type ProductionGatesTestSuite struct {
 	suite.Suite
-	projectRoot      string
-	qualityReport    *QualityReport
-	securityReport   *security.ScanReport
-	buildResults     *BuildResults
-	testResults      *TestResults
-	coverageResults  *CoverageResults
+	projectRoot     string
+	qualityReport   *QualityReport
+	securityReport  *security.ScanReport
+	buildResults    *BuildResults
+	testResults     *TestResults
+	coverageResults *CoverageResults
 }
 
 // QualityReport contains the overall quality assessment
 type QualityReport struct {
-	Timestamp           time.Time        `json:"timestamp"`
-	OverallScore        float64         `json:"overall_score"`
-	GateStatus          map[string]bool  `json:"gate_status"`
-	PassedGates         int             `json:"passed_gates"`
-	TotalGates          int             `json:"total_gates"`
-	CriticalFailures    []string        `json:"critical_failures"`
-	Recommendations     []string        `json:"recommendations"`
-	ProductionReady     bool            `json:"production_ready"`
+	Timestamp        time.Time       `json:"timestamp"`
+	OverallScore     float64         `json:"overall_score"`
+	GateStatus       map[string]bool `json:"gate_status"`
+	PassedGates      int             `json:"passed_gates"`
+	TotalGates       int             `json:"total_gates"`
+	CriticalFailures []string        `json:"critical_failures"`
+	Recommendations  []string        `json:"recommendations"`
+	ProductionReady  bool            `json:"production_ready"`
 }
 
 // BuildResults contains build validation results
 type BuildResults struct {
-	Success        bool              `json:"success"`
-	Duration       time.Duration     `json:"duration"`
-	Errors         []string          `json:"errors"`
-	Warnings       []string          `json:"warnings"`
-	BinarySize     map[string]int64  `json:"binary_size"`
-	BuildArtifacts []string          `json:"build_artifacts"`
+	Success        bool             `json:"success"`
+	Duration       time.Duration    `json:"duration"`
+	Errors         []string         `json:"errors"`
+	Warnings       []string         `json:"warnings"`
+	BinarySize     map[string]int64 `json:"binary_size"`
+	BuildArtifacts []string         `json:"build_artifacts"`
+	Passed         bool             `json:"passed"`
+	ErrorMessage   string           `json:"error_message"`
 }
 
 // TestResults contains test execution results
 type TestResults struct {
-	TotalTests     int               `json:"total_tests"`
-	PassedTests    int               `json:"passed_tests"`
-	FailedTests    int               `json:"failed_tests"`
-	SkippedTests   int               `json:"skipped_tests"`
-	Duration       time.Duration     `json:"duration"`
-	Coverage       float64           `json:"coverage"`
-	TestSuites     map[string]int    `json:"test_suites"`
-	PerformanceOK  bool              `json:"performance_ok"`
+	TotalTests    int            `json:"total_tests"`
+	PassedTests   int            `json:"passed_tests"`
+	FailedTests   int            `json:"failed_tests"`
+	SkippedTests  int            `json:"skipped_tests"`
+	Duration      time.Duration  `json:"duration"`
+	Coverage      float64        `json:"coverage"`
+	TestSuites    map[string]int `json:"test_suites"`
+	PerformanceOK bool           `json:"performance_ok"`
 }
 
 // CoverageResults contains detailed code coverage information
 type CoverageResults struct {
-	OverallCoverage  float64            `json:"overall_coverage"`
-	PackageCoverage  map[string]float64 `json:"package_coverage"`
-	CoveredLines     int                `json:"covered_lines"`
-	TotalLines       int                `json:"total_lines"`
+	OverallCoverage float64            `json:"overall_coverage"`
+	PackageCoverage map[string]float64 `json:"package_coverage"`
+	CoveredLines    int                `json:"covered_lines"`
+	TotalLines      int                `json:"total_lines"`
 	UncoveredFiles  []string           `json:"uncovered_files"`
 }
 
 // ProductionGate defines a quality gate with its criteria
 type ProductionGate struct {
-	Name         string  `json:"name"`
-	Description  string  `json:"description"`
-	Critical     bool    `json:"critical"`
-	Weight       float64 `json:"weight"`
-	MinScore     float64 `json:"min_score"`
-	Passed       bool    `json:"passed"`
-	Score        float64 `json:"score"`
-	Message      string  `json:"message"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Critical    bool    `json:"critical"`
+	Weight      float64 `json:"weight"`
+	MinScore    float64 `json:"min_score"`
+	Passed      bool    `json:"passed"`
+	Score       float64 `json:"score"`
+	Message     string  `json:"message"`
 }
 
 // QualityGate thresholds
 const (
-	MinTestCoverage      = 80.0  // Minimum test coverage percentage
-	MinOverallScore      = 80.0  // Minimum overall quality score
-	MaxCriticalFailures  = 0     // Maximum allowed critical failures
-	MaxBuildErrors       = 0     // Maximum allowed build errors
-	MinTestPassRate      = 95.0  // Minimum test pass rate percentage
-	MaxTestDuration      = 10 * time.Minute // Maximum test execution time
-	MaxBinarySize        = 100 * 1024 * 1024 // 100MB max binary size
+	MinTestCoverage     = 80.0              // Minimum test coverage percentage
+	MinOverallScore     = 80.0              // Minimum overall quality score
+	MaxCriticalFailures = 0                 // Maximum allowed critical failures
+	MaxBuildErrors      = 0                 // Maximum allowed build errors
+	MinTestPassRate     = 95.0              // Minimum test pass rate percentage
+	MaxTestDuration     = 10 * time.Minute  // Maximum test execution time
+	MaxBinarySize       = 100 * 1024 * 1024 // 100MB max binary size
 )
 
 // SetupSuite sets up the test suite
@@ -110,7 +108,7 @@ func (suite *ProductionGatesTestSuite) SetupSuite() {
 
 	// Initialize quality report
 	suite.qualityReport = &QualityReport{
-		Timestamp: time.Now(),
+		Timestamp:  time.Now(),
 		GateStatus: make(map[string]bool),
 	}
 }
@@ -190,7 +188,7 @@ func (suite *ProductionGatesTestSuite) TestCompilationGate() {
 
 	start := time.Now()
 	results := suite.checkCompilation()
-	duration := time.Since(start)
+	_ = time.Since(start) // duration not used, but we keep the timing for consistency
 
 	warningCount := len(results.Warnings)
 	if warningCount == 0 {
@@ -202,7 +200,7 @@ func (suite *ProductionGatesTestSuite) TestCompilationGate() {
 		gate.Passed = gate.Score >= gate.MinScore
 		gate.Message = fmt.Sprintf("%d compilation warnings", warningCount)
 	} else {
-		gate.Score = 90.0 - (float64(warningCount-5))
+		gate.Score = 90.0 - (float64(warningCount - 5))
 		gate.Passed = false
 		gate.Message = fmt.Sprintf("Too many compilation warnings: %d", warningCount)
 		suite.qualityReport.CriticalFailures = append(suite.qualityReport.CriticalFailures, "Excessive compilation warnings")
@@ -229,7 +227,7 @@ func (suite *ProductionGatesTestSuite) TestUnitTestsGate() {
 
 	start := time.Now()
 	results := suite.runUnitTests()
-	duration := time.Since(start)
+	_ = time.Since(start) // duration not used, but we keep the timing for consistency
 
 	suite.testResults = results
 
@@ -269,7 +267,7 @@ func (suite *ProductionGatesTestSuite) TestIntegrationTestsGate() {
 
 	start := time.Now()
 	results := suite.runIntegrationTests()
-	duration := time.Since(start)
+	_ = time.Since(start) // duration not used, but we keep the timing for consistency
 
 	if results.Success {
 		gate.Score = 100.0
@@ -366,7 +364,7 @@ func (suite *ProductionGatesTestSuite) TestPerformanceGate() {
 
 	start := time.Now()
 	results := suite.runPerformanceTests()
-	duration := time.Since(start)
+	_ = time.Since(start) // duration not used, but we keep the timing for consistency
 
 	if results.Passed {
 		gate.Score = 100.0
@@ -417,13 +415,13 @@ func (suite *ProductionGatesTestSuite) TestOverallProductionReadiness() {
 	weightedScore := 0.0
 
 	gates := map[string]float64{
-		"build":            20.0,
-		"compilation":      15.0,
-		"unit_tests":       25.0,
+		"build":             20.0,
+		"compilation":       15.0,
+		"unit_tests":        25.0,
 		"integration_tests": 20.0,
-		"security_scan":    20.0,
-		"performance":      10.0,
-		"code_quality":     10.0,
+		"security_scan":     20.0,
+		"performance":       10.0,
+		"code_quality":      10.0,
 	}
 
 	for gateName, weight := range gates {
@@ -448,10 +446,8 @@ func (suite *ProductionGatesTestSuite) TestOverallProductionReadiness() {
 	suite.qualityReport.TotalGates = len(suite.qualityReport.GateStatus)
 
 	// Determine production readiness
-	suite.qualityReport.ProductionReady = (
-		suite.qualityReport.OverallScore >= MinOverallScore &&
-		len(suite.qualityReport.CriticalFailures) == 0
-	)
+	suite.qualityReport.ProductionReady = (suite.qualityReport.OverallScore >= MinOverallScore &&
+		len(suite.qualityReport.CriticalFailures) == 0)
 
 	// Generate recommendations
 	suite.generateRecommendations()
@@ -565,7 +561,7 @@ func (suite *ProductionGatesTestSuite) runUnitTests() *TestResults {
 
 	// Run tests with coverage
 	cmd := exec.Command("go", "test", "-v", "-cover", "-coverprofile=coverage.out", "./...")
-	output, err := cmd.CombinedOutput()
+	output, _ := cmd.CombinedOutput() // err is handled by checking test results
 	results.Duration = time.Since(start)
 
 	// Parse test output

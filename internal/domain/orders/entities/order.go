@@ -7,41 +7,41 @@ import (
 	"strings"
 	"time"
 
+	apperrors "erpgo/pkg/errors"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
-	apperrors "erpgo/pkg/errors"
 )
 
 // OrderStatus represents the status of an order
 type OrderStatus string
 
 const (
-	OrderStatusDraft          OrderStatus = "DRAFT"
-	OrderStatusPending        OrderStatus = "PENDING"
-	OrderStatusConfirmed      OrderStatus = "CONFIRMED"
-	OrderStatusProcessing     OrderStatus = "PROCESSING"
-	OrderStatusShipped        OrderStatus = "SHIPPED"
-	OrderStatusDelivered      OrderStatus = "DELIVERED"
-	OrderStatusCancelled      OrderStatus = "CANCELLED"
-	OrderStatusRefunded       OrderStatus = "REFUNDED"
-	OrderStatusReturned       OrderStatus = "RETURNED"
-	OrderStatusOnHold         OrderStatus = "ON_HOLD"
+	OrderStatusDraft            OrderStatus = "DRAFT"
+	OrderStatusPending          OrderStatus = "PENDING"
+	OrderStatusConfirmed        OrderStatus = "CONFIRMED"
+	OrderStatusProcessing       OrderStatus = "PROCESSING"
+	OrderStatusShipped          OrderStatus = "SHIPPED"
+	OrderStatusDelivered        OrderStatus = "DELIVERED"
+	OrderStatusCancelled        OrderStatus = "CANCELLED"
+	OrderStatusRefunded         OrderStatus = "REFUNDED"
+	OrderStatusReturned         OrderStatus = "RETURNED"
+	OrderStatusOnHold           OrderStatus = "ON_HOLD"
 	OrderStatusPartiallyShipped OrderStatus = "PARTIALLY_SHIPPED"
 )
 
 // OrderStatusTransitions defines valid status transitions
 var OrderStatusTransitions = map[OrderStatus][]OrderStatus{
-	OrderStatusDraft:          {OrderStatusPending, OrderStatusCancelled},
-	OrderStatusPending:        {OrderStatusConfirmed, OrderStatusCancelled, OrderStatusOnHold},
-	OrderStatusConfirmed:      {OrderStatusProcessing, OrderStatusCancelled, OrderStatusOnHold},
-	OrderStatusProcessing:     {OrderStatusShipped, OrderStatusPartiallyShipped, OrderStatusCancelled, OrderStatusOnHold},
+	OrderStatusDraft:            {OrderStatusPending, OrderStatusCancelled},
+	OrderStatusPending:          {OrderStatusConfirmed, OrderStatusCancelled, OrderStatusOnHold},
+	OrderStatusConfirmed:        {OrderStatusProcessing, OrderStatusCancelled, OrderStatusOnHold},
+	OrderStatusProcessing:       {OrderStatusShipped, OrderStatusPartiallyShipped, OrderStatusCancelled, OrderStatusOnHold},
 	OrderStatusPartiallyShipped: {OrderStatusShipped, OrderStatusProcessing, OrderStatusCancelled, OrderStatusOnHold},
-	OrderStatusShipped:        {OrderStatusDelivered, OrderStatusReturned, OrderStatusOnHold},
-	OrderStatusDelivered:      {OrderStatusReturned, OrderStatusRefunded},
-	OrderStatusOnHold:         {OrderStatusPending, OrderStatusConfirmed, OrderStatusProcessing, OrderStatusCancelled},
-	OrderStatusCancelled:      {OrderStatusRefunded},
-	OrderStatusReturned:       {OrderStatusRefunded},
-	OrderStatusRefunded:       {}, // Terminal state
+	OrderStatusShipped:          {OrderStatusDelivered, OrderStatusReturned, OrderStatusOnHold},
+	OrderStatusDelivered:        {OrderStatusReturned, OrderStatusRefunded},
+	OrderStatusOnHold:           {OrderStatusPending, OrderStatusConfirmed, OrderStatusProcessing, OrderStatusCancelled},
+	OrderStatusCancelled:        {OrderStatusRefunded},
+	OrderStatusReturned:         {OrderStatusRefunded},
+	OrderStatusRefunded:         {}, // Terminal state
 }
 
 // IsValidStatusTransition checks if a status transition is valid
@@ -89,92 +89,92 @@ const (
 type OrderType string
 
 const (
-	OrderTypeSales       OrderType = "SALES"
-	OrderTypePurchase    OrderType = "PURCHASE"
-	OrderTypeReturn      OrderType = "RETURN"
-	OrderTypeExchange    OrderType = "EXCHANGE"
-	OrderTypeTransfer    OrderType = "TRANSFER"
-	OrderTypeAdjustment  OrderType = "ADJUSTMENT"
+	OrderTypeSales      OrderType = "SALES"
+	OrderTypePurchase   OrderType = "PURCHASE"
+	OrderTypeReturn     OrderType = "RETURN"
+	OrderTypeExchange   OrderType = "EXCHANGE"
+	OrderTypeTransfer   OrderType = "TRANSFER"
+	OrderTypeAdjustment OrderType = "ADJUSTMENT"
 )
 
 // PaymentStatus represents the payment status of an order
 type PaymentStatus string
 
 const (
-	PaymentStatusPending   PaymentStatus = "PENDING"
-	PaymentStatusPaid      PaymentStatus = "PAID"
+	PaymentStatusPending       PaymentStatus = "PENDING"
+	PaymentStatusPaid          PaymentStatus = "PAID"
 	PaymentStatusPartiallyPaid PaymentStatus = "PARTIALLY_PAID"
-	PaymentStatusOverdue   PaymentStatus = "OVERDUE"
-	PaymentStatusRefunded  PaymentStatus = "REFUNDED"
-	PaymentStatusFailed    PaymentStatus = "FAILED"
+	PaymentStatusOverdue       PaymentStatus = "OVERDUE"
+	PaymentStatusRefunded      PaymentStatus = "REFUNDED"
+	PaymentStatusFailed        PaymentStatus = "FAILED"
 )
 
 // ShippingMethod represents the shipping method
 type ShippingMethod string
 
 const (
-	ShippingMethodStandard    ShippingMethod = "STANDARD"
-	ShippingMethodExpress     ShippingMethod = "EXPRESS"
-	ShippingMethodOvernight   ShippingMethod = "OVERNIGHT"
+	ShippingMethodStandard      ShippingMethod = "STANDARD"
+	ShippingMethodExpress       ShippingMethod = "EXPRESS"
+	ShippingMethodOvernight     ShippingMethod = "OVERNIGHT"
 	ShippingMethodInternational ShippingMethod = "INTERNATIONAL"
-	ShippingMethodPickup      ShippingMethod = "PICKUP"
-	ShippingMethodDigital     ShippingMethod = "DIGITAL"
+	ShippingMethodPickup        ShippingMethod = "PICKUP"
+	ShippingMethodDigital       ShippingMethod = "DIGITAL"
 )
 
 // Order represents an order in the system
 type Order struct {
-	ID                uuid.UUID      `json:"id" db:"id"`
-	OrderNumber       string         `json:"order_number" db:"order_number"`
-	CustomerID        uuid.UUID      `json:"customer_id" db:"customer_id"`
-	Customer          *Customer      `json:"customer,omitempty" db:"-"`
-	Status            OrderStatus    `json:"status" db:"status"`
-	PreviousStatus    *OrderStatus   `json:"previous_status,omitempty" db:"previous_status"`
-	Priority          OrderPriority  `json:"priority" db:"priority"`
-	Type              OrderType      `json:"type" db:"type"`
-	PaymentStatus     PaymentStatus  `json:"payment_status" db:"payment_status"`
-	ShippingMethod    ShippingMethod `json:"shipping_method" db:"shipping_method"`
+	ID             uuid.UUID      `json:"id" db:"id"`
+	OrderNumber    string         `json:"order_number" db:"order_number"`
+	CustomerID     uuid.UUID      `json:"customer_id" db:"customer_id"`
+	Customer       *Customer      `json:"customer,omitempty" db:"-"`
+	Status         OrderStatus    `json:"status" db:"status"`
+	PreviousStatus *OrderStatus   `json:"previous_status,omitempty" db:"previous_status"`
+	Priority       OrderPriority  `json:"priority" db:"priority"`
+	Type           OrderType      `json:"type" db:"type"`
+	PaymentStatus  PaymentStatus  `json:"payment_status" db:"payment_status"`
+	ShippingMethod ShippingMethod `json:"shipping_method" db:"shipping_method"`
 
 	// Financial fields
-	Subtotal          decimal.Decimal `json:"subtotal" db:"subtotal"`
-	TaxAmount         decimal.Decimal `json:"tax_amount" db:"tax_amount"`
-	ShippingAmount    decimal.Decimal `json:"shipping_amount" db:"shipping_amount"`
-	DiscountAmount    decimal.Decimal `json:"discount_amount" db:"discount_amount"`
-	TotalAmount       decimal.Decimal `json:"total_amount" db:"total_amount"`
-	PaidAmount        decimal.Decimal `json:"paid_amount" db:"paid_amount"`
-	RefundedAmount    decimal.Decimal `json:"refunded_amount" db:"refunded_amount"`
-	Currency          string          `json:"currency" db:"currency"`
+	Subtotal       decimal.Decimal `json:"subtotal" db:"subtotal"`
+	TaxAmount      decimal.Decimal `json:"tax_amount" db:"tax_amount"`
+	ShippingAmount decimal.Decimal `json:"shipping_amount" db:"shipping_amount"`
+	DiscountAmount decimal.Decimal `json:"discount_amount" db:"discount_amount"`
+	TotalAmount    decimal.Decimal `json:"total_amount" db:"total_amount"`
+	PaidAmount     decimal.Decimal `json:"paid_amount" db:"paid_amount"`
+	RefundedAmount decimal.Decimal `json:"refunded_amount" db:"refunded_amount"`
+	Currency       string          `json:"currency" db:"currency"`
 
 	// Date fields
-	OrderDate         time.Time      `json:"order_date" db:"order_date"`
-	RequiredDate      *time.Time     `json:"required_date,omitempty" db:"required_date"`
-	ShippingDate      *time.Time     `json:"shipping_date,omitempty" db:"shipping_date"`
-	DeliveryDate      *time.Time     `json:"delivery_date,omitempty" db:"delivery_date"`
-	CancelledDate     *time.Time     `json:"cancelled_date,omitempty" db:"cancelled_date"`
+	OrderDate     time.Time  `json:"order_date" db:"order_date"`
+	RequiredDate  *time.Time `json:"required_date,omitempty" db:"required_date"`
+	ShippingDate  *time.Time `json:"shipping_date,omitempty" db:"shipping_date"`
+	DeliveryDate  *time.Time `json:"delivery_date,omitempty" db:"delivery_date"`
+	CancelledDate *time.Time `json:"cancelled_date,omitempty" db:"cancelled_date"`
 
 	// Address references
-	ShippingAddressID uuid.UUID      `json:"shipping_address_id" db:"shipping_address_id"`
-	BillingAddressID  uuid.UUID      `json:"billing_address_id" db:"billing_address_id"`
-	ShippingAddress   *OrderAddress  `json:"shipping_address,omitempty" db:"-"`
-	BillingAddress    *OrderAddress  `json:"billing_address,omitempty" db:"-"`
+	ShippingAddressID uuid.UUID     `json:"shipping_address_id" db:"shipping_address_id"`
+	BillingAddressID  uuid.UUID     `json:"billing_address_id" db:"billing_address_id"`
+	ShippingAddress   *OrderAddress `json:"shipping_address,omitempty" db:"-"`
+	BillingAddress    *OrderAddress `json:"billing_address,omitempty" db:"-"`
 
 	// Metadata
-	Notes             *string        `json:"notes,omitempty" db:"notes"`
-	InternalNotes     *string        `json:"internal_notes,omitempty" db:"internal_notes"`
-	CustomerNotes     *string        `json:"customer_notes,omitempty" db:"customer_notes"`
-	TrackingNumber    *string        `json:"tracking_number,omitempty" db:"tracking_number"`
-	Carrier           *string        `json:"carrier,omitempty" db:"carrier"`
+	Notes          *string `json:"notes,omitempty" db:"notes"`
+	InternalNotes  *string `json:"internal_notes,omitempty" db:"internal_notes"`
+	CustomerNotes  *string `json:"customer_notes,omitempty" db:"customer_notes"`
+	TrackingNumber *string `json:"tracking_number,omitempty" db:"tracking_number"`
+	Carrier        *string `json:"carrier,omitempty" db:"carrier"`
 
 	// System fields
-	CreatedBy         uuid.UUID      `json:"created_by" db:"created_by"`
-	ApprovedBy        *uuid.UUID     `json:"approved_by,omitempty" db:"approved_by"`
-	ShippedBy         *uuid.UUID     `json:"shipped_by,omitempty" db:"shipped_by"`
-	CreatedAt         time.Time      `json:"created_at" db:"created_at"`
-	UpdatedAt         time.Time      `json:"updated_at" db:"updated_at"`
-	ApprovedAt        *time.Time     `json:"approved_at,omitempty" db:"approved_at"`
-	ShippedAt         *time.Time     `json:"shipped_at,omitempty" db:"shipped_at"`
+	CreatedBy  uuid.UUID  `json:"created_by" db:"created_by"`
+	ApprovedBy *uuid.UUID `json:"approved_by,omitempty" db:"approved_by"`
+	ShippedBy  *uuid.UUID `json:"shipped_by,omitempty" db:"shipped_by"`
+	CreatedAt  time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt  time.Time  `json:"updated_at" db:"updated_at"`
+	ApprovedAt *time.Time `json:"approved_at,omitempty" db:"approved_at"`
+	ShippedAt  *time.Time `json:"shipped_at,omitempty" db:"shipped_at"`
 
 	// Relationships
-	Items             []OrderItem    `json:"items,omitempty" db:"-"`
+	Items []OrderItem `json:"items,omitempty" db:"-"`
 }
 
 // OrderItem represents an item in an order
@@ -192,124 +192,124 @@ type OrderItem struct {
 	TotalPrice     decimal.Decimal `json:"total_price" db:"total_price"`
 
 	// Additional fields
-	Weight         float64         `json:"weight" db:"weight"`
-	Dimensions     string          `json:"dimensions,omitempty" db:"dimensions"`
-	Barcode        *string         `json:"barcode,omitempty" db:"barcode"`
-	Notes          *string         `json:"notes,omitempty" db:"notes"`
+	Weight     float64 `json:"weight" db:"weight"`
+	Dimensions string  `json:"dimensions,omitempty" db:"dimensions"`
+	Barcode    *string `json:"barcode,omitempty" db:"barcode"`
+	Notes      *string `json:"notes,omitempty" db:"notes"`
 
 	// Status tracking
-	Status         string          `json:"status" db:"status"` // ORDERED, SHIPPED, DELIVERED, CANCELLED, RETURNED
-	QuantityShipped int            `json:"quantity_shipped" db:"quantity_shipped"`
-	QuantityReturned int           `json:"quantity_returned" db:"quantity_returned"`
+	Status           string `json:"status" db:"status"` // ORDERED, SHIPPED, DELIVERED, CANCELLED, RETURNED
+	QuantityShipped  int    `json:"quantity_shipped" db:"quantity_shipped"`
+	QuantityReturned int    `json:"quantity_returned" db:"quantity_returned"`
 
-	CreatedAt      time.Time       `json:"created_at" db:"created_at"`
-	UpdatedAt      time.Time       `json:"updated_at" db:"updated_at"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 }
 
 // Customer represents a customer in the system
 type Customer struct {
-	ID              uuid.UUID      `json:"id" db:"id"`
-	CustomerCode    string         `json:"customer_code" db:"customer_code"`
-	CompanyID       *uuid.UUID     `json:"company_id,omitempty" db:"company_id"`
-	Company         *Company       `json:"company,omitempty" db:"-"`
-	Type            string         `json:"type" db:"type"` // INDIVIDUAL, BUSINESS, GOVERNMENT, NON_PROFIT
+	ID           uuid.UUID  `json:"id" db:"id"`
+	CustomerCode string     `json:"customer_code" db:"customer_code"`
+	CompanyID    *uuid.UUID `json:"company_id,omitempty" db:"company_id"`
+	Company      *Company   `json:"company,omitempty" db:"-"`
+	Type         string     `json:"type" db:"type"` // INDIVIDUAL, BUSINESS, GOVERNMENT, NON_PROFIT
 
 	// Basic information
-	FirstName       string         `json:"first_name" db:"first_name"`
-	LastName        string         `json:"last_name" db:"last_name"`
-	Email           string         `json:"email,omitempty" db:"email"`
-	Phone           string         `json:"phone,omitempty" db:"phone"`
-	Website         *string        `json:"website,omitempty" db:"website"`
+	FirstName string  `json:"first_name" db:"first_name"`
+	LastName  string  `json:"last_name" db:"last_name"`
+	Email     string  `json:"email,omitempty" db:"email"`
+	Phone     string  `json:"phone,omitempty" db:"phone"`
+	Website   *string `json:"website,omitempty" db:"website"`
 
 	// Business information (for business customers)
-	CompanyName     *string        `json:"company_name,omitempty" db:"company_name"`
-	TaxID           *string        `json:"tax_id,omitempty" db:"tax_id"`
-	Industry        *string        `json:"industry,omitempty" db:"industry"`
+	CompanyName *string `json:"company_name,omitempty" db:"company_name"`
+	TaxID       *string `json:"tax_id,omitempty" db:"tax_id"`
+	Industry    *string `json:"industry,omitempty" db:"industry"`
 
 	// Financial information
-	CreditLimit     decimal.Decimal `json:"credit_limit" db:"credit_limit"`
-	CreditUsed      decimal.Decimal `json:"credit_used" db:"credit_used"`
-	Terms           string         `json:"terms" db:"terms"` // NET30, NET60, etc.
+	CreditLimit decimal.Decimal `json:"credit_limit" db:"credit_limit"`
+	CreditUsed  decimal.Decimal `json:"credit_used" db:"credit_used"`
+	Terms       string          `json:"terms" db:"terms"` // NET30, NET60, etc.
 
 	// Status and settings
-	IsActive        bool           `json:"is_active" db:"is_active"`
-	IsVATExempt     bool           `json:"is_vat_exempt" db:"is_vat_exempt"`
-	PreferredCurrency string        `json:"preferred_currency" db:"preferred_currency"`
+	IsActive          bool   `json:"is_active" db:"is_active"`
+	IsVATExempt       bool   `json:"is_vat_exempt" db:"is_vat_exempt"`
+	PreferredCurrency string `json:"preferred_currency" db:"preferred_currency"`
 
 	// Metadata
-	Notes           *string        `json:"notes,omitempty" db:"notes"`
-	Source          string         `json:"source" db:"source"` // WEB, PHONE, EMAIL, REFERRAL, etc.
+	Notes  *string `json:"notes,omitempty" db:"notes"`
+	Source string  `json:"source" db:"source"` // WEB, PHONE, EMAIL, REFERRAL, etc.
 
-	CreatedAt       time.Time      `json:"created_at" db:"created_at"`
-	UpdatedAt       time.Time      `json:"updated_at" db:"updated_at"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 
 	// Relationships
-	Addresses       []OrderAddress `json:"addresses,omitempty" db:"-"`
-	Orders          []Order        `json:"orders,omitempty" db:"-"`
+	Addresses []OrderAddress `json:"addresses,omitempty" db:"-"`
+	Orders    []Order        `json:"orders,omitempty" db:"-"`
 }
 
 // Company represents a company for business customers
 type Company struct {
-	ID              uuid.UUID      `json:"id" db:"id"`
-	CompanyName     string         `json:"company_name" db:"company_name"`
-	LegalName       string         `json:"legal_name" db:"legal_name"`
-	TaxID           string         `json:"tax_id" db:"tax_id"`
-	Industry        string         `json:"industry" db:"industry"`
-	Website         *string        `json:"website,omitempty" db:"website"`
-	Phone           string         `json:"phone" db:"phone"`
-	Email           string         `json:"email" db:"email"`
+	ID          uuid.UUID `json:"id" db:"id"`
+	CompanyName string    `json:"company_name" db:"company_name"`
+	LegalName   string    `json:"legal_name" db:"legal_name"`
+	TaxID       string    `json:"tax_id" db:"tax_id"`
+	Industry    string    `json:"industry" db:"industry"`
+	Website     *string   `json:"website,omitempty" db:"website"`
+	Phone       string    `json:"phone" db:"phone"`
+	Email       string    `json:"email" db:"email"`
 
 	// Address information
-	Address         string         `json:"address" db:"address"`
-	City            string         `json:"city" db:"city"`
-	State           string         `json:"state" db:"state"`
-	Country         string         `json:"country" db:"country"`
-	PostalCode      string         `json:"postal_code" db:"postal_code"`
+	Address    string `json:"address" db:"address"`
+	City       string `json:"city" db:"city"`
+	State      string `json:"state" db:"state"`
+	Country    string `json:"country" db:"country"`
+	PostalCode string `json:"postal_code" db:"postal_code"`
 
 	// Status
-	IsActive        bool           `json:"is_active" db:"is_active"`
+	IsActive bool `json:"is_active" db:"is_active"`
 
-	CreatedAt       time.Time      `json:"created_at" db:"created_at"`
-	UpdatedAt       time.Time      `json:"updated_at" db:"updated_at"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 }
 
 // OrderAddress represents an address for orders
 type OrderAddress struct {
-	ID            uuid.UUID      `json:"id" db:"id"`
-	CustomerID    *uuid.UUID     `json:"customer_id,omitempty" db:"customer_id"`
-	OrderID       *uuid.UUID     `json:"order_id,omitempty" db:"order_id"`
-	Type          string         `json:"type" db:"type"` // SHIPPING, BILLING, BOTH
+	ID         uuid.UUID  `json:"id" db:"id"`
+	CustomerID *uuid.UUID `json:"customer_id,omitempty" db:"customer_id"`
+	OrderID    *uuid.UUID `json:"order_id,omitempty" db:"order_id"`
+	Type       string     `json:"type" db:"type"` // SHIPPING, BILLING, BOTH
 
 	// Address fields
-	FirstName     string         `json:"first_name" db:"first_name"`
-	LastName      string         `json:"last_name" db:"last_name"`
-	Company       *string        `json:"company,omitempty" db:"company"`
-	AddressLine1  string         `json:"address_line_1" db:"address_line_1"`
-	AddressLine2  *string        `json:"address_line_2,omitempty" db:"address_line_2"`
-	City          string         `json:"city" db:"city"`
-	State         string         `json:"state" db:"state"`
-	PostalCode    string         `json:"postal_code" db:"postal_code"`
-	Country       string         `json:"country" db:"country"`
+	FirstName    string  `json:"first_name" db:"first_name"`
+	LastName     string  `json:"last_name" db:"last_name"`
+	Company      *string `json:"company,omitempty" db:"company"`
+	AddressLine1 string  `json:"address_line_1" db:"address_line_1"`
+	AddressLine2 *string `json:"address_line_2,omitempty" db:"address_line_2"`
+	City         string  `json:"city" db:"city"`
+	State        string  `json:"state" db:"state"`
+	PostalCode   string  `json:"postal_code" db:"postal_code"`
+	Country      string  `json:"country" db:"country"`
 
 	// Additional fields
-	Phone         *string        `json:"phone,omitempty" db:"phone"`
-	Email         *string        `json:"email,omitempty" db:"email"`
-	Instructions  *string        `json:"instructions,omitempty" db:"instructions"`
+	Phone        *string `json:"phone,omitempty" db:"phone"`
+	Email        *string `json:"email,omitempty" db:"email"`
+	Instructions *string `json:"instructions,omitempty" db:"instructions"`
 
 	// Metadata
-	IsDefault     bool           `json:"is_default" db:"is_default"`
-	IsActive      bool           `json:"is_active" db:"is_active"`
-	IsValidated   bool           `json:"is_validated" db:"is_validated"`
+	IsDefault   bool `json:"is_default" db:"is_default"`
+	IsActive    bool `json:"is_active" db:"is_active"`
+	IsValidated bool `json:"is_validated" db:"is_validated"`
 
-	CreatedAt     time.Time      `json:"created_at" db:"created_at"`
-	UpdatedAt     time.Time      `json:"updated_at" db:"updated_at"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 }
 
 // OrderValidation represents order validation results
 type OrderValidation struct {
-	IsValid    bool     `json:"is_valid"`
-	Errors     []string `json:"errors"`
-	Warnings   []string `json:"warnings"`
+	IsValid  bool     `json:"is_valid"`
+	Errors   []string `json:"errors"`
+	Warnings []string `json:"warnings"`
 }
 
 // OrderCalculation represents order calculation breakdown
@@ -321,7 +321,7 @@ type OrderCalculation struct {
 	TotalAmount    decimal.Decimal `json:"total_amount"`
 
 	// Tax breakdown by rate
-	TaxBreakdown   []TaxBreakdown  `json:"tax_breakdown"`
+	TaxBreakdown []TaxBreakdown `json:"tax_breakdown"`
 
 	// Discount breakdown
 	DiscountBreakdown []DiscountBreakdown `json:"discount_breakdown"`
@@ -329,10 +329,10 @@ type OrderCalculation struct {
 
 // TaxBreakdown represents tax calculation details
 type TaxBreakdown struct {
-	TaxRate      decimal.Decimal `json:"tax_rate"`
-	TaxAmount    decimal.Decimal `json:"tax_amount"`
+	TaxRate       decimal.Decimal `json:"tax_rate"`
+	TaxAmount     decimal.Decimal `json:"tax_amount"`
 	TaxableAmount decimal.Decimal `json:"taxable_amount"`
-	TaxName      string          `json:"tax_name"`
+	TaxName       string          `json:"tax_name"`
 }
 
 // DiscountBreakdown represents discount calculation details
@@ -344,10 +344,10 @@ type DiscountBreakdown struct {
 
 // OrderStatistics represents order statistics
 type OrderStatistics struct {
-	TotalOrders       int             `json:"total_orders"`
-	TotalAmount       decimal.Decimal `json:"total_amount"`
-	AverageOrderValue decimal.Decimal `json:"average_order_value"`
-	StatusBreakdown   map[OrderStatus]int `json:"status_breakdown"`
+	TotalOrders       int                   `json:"total_orders"`
+	TotalAmount       decimal.Decimal       `json:"total_amount"`
+	AverageOrderValue decimal.Decimal       `json:"average_order_value"`
+	StatusBreakdown   map[OrderStatus]int   `json:"status_breakdown"`
 	PaymentBreakdown  map[PaymentStatus]int `json:"payment_breakdown"`
 }
 
@@ -1988,11 +1988,11 @@ func CalculateOrderTotals(order *Order, taxRate decimal.Decimal, shippingCost de
 	}
 
 	calculation := &OrderCalculation{
-		Subtotal:       decimal.Zero,
-		TaxAmount:      decimal.Zero,
-		ShippingAmount: shippingCost,
-		DiscountAmount: decimal.Zero,
-		TaxBreakdown:   []TaxBreakdown{},
+		Subtotal:          decimal.Zero,
+		TaxAmount:         decimal.Zero,
+		ShippingAmount:    shippingCost,
+		DiscountAmount:    decimal.Zero,
+		TaxBreakdown:      []TaxBreakdown{},
 		DiscountBreakdown: []DiscountBreakdown{},
 	}
 
@@ -2143,16 +2143,16 @@ func CanOrderBeModified(order *Order) bool {
 
 // CustomerSummary represents a simplified customer view for analytics
 type CustomerSummary struct {
-	ID              uuid.UUID      `json:"id"`
-	CustomerCode    string         `json:"customer_code"`
-	CustomerName    string         `json:"customer_name"`
-	Email           string         `json:"email"`
-	CompanyName     *string        `json:"company_name,omitempty"`
-	Type            string         `json:"type"`
-	TotalOrders     int64          `json:"total_orders"`
-	TotalRevenue    decimal.Decimal `json:"total_revenue"`
-	LastOrderDate   *time.Time     `json:"last_order_date,omitempty"`
+	ID                uuid.UUID       `json:"id"`
+	CustomerCode      string          `json:"customer_code"`
+	CustomerName      string          `json:"customer_name"`
+	Email             string          `json:"email"`
+	CompanyName       *string         `json:"company_name,omitempty"`
+	Type              string          `json:"type"`
+	TotalOrders       int64           `json:"total_orders"`
+	TotalRevenue      decimal.Decimal `json:"total_revenue"`
+	LastOrderDate     *time.Time      `json:"last_order_date,omitempty"`
 	AverageOrderValue decimal.Decimal `json:"average_order_value"`
-	IsActive        bool           `json:"is_active"`
-	CreatedAt       time.Time      `json:"created_at"`
+	IsActive          bool            `json:"is_active"`
+	CreatedAt         time.Time       `json:"created_at"`
 }

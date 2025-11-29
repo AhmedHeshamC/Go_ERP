@@ -18,14 +18,14 @@ import (
 // ImageHandler handles image upload and management HTTP requests
 type ImageHandler struct {
 	fileService file.Service
-	logger     zerolog.Logger
+	logger      zerolog.Logger
 }
 
 // NewImageHandler creates a new image handler
 func NewImageHandler(fileService file.Service, logger zerolog.Logger) *ImageHandler {
 	return &ImageHandler{
 		fileService: fileService,
-		logger:     logger,
+		logger:      logger,
 	}
 }
 
@@ -285,9 +285,9 @@ func (h *ImageHandler) UploadMultipleImages(c *gin.Context) {
 		// Validate file size
 		if file.Size > 10*1024*1024 { // 10MB limit
 			errors = append(errors, dto.BatchUploadError{
-				Index:   i,
+				Index:    i,
 				Filename: file.Filename,
-				Error:   "File too large (maximum 10MB)",
+				Error:    "File too large (maximum 10MB)",
 			})
 			continue
 		}
@@ -301,9 +301,9 @@ func (h *ImageHandler) UploadMultipleImages(c *gin.Context) {
 				Int("index", i).
 				Msg("Failed to upload product image in batch")
 			errors = append(errors, dto.BatchUploadError{
-				Index:   i,
+				Index:    i,
 				Filename: file.Filename,
-				Error:   err.Error(),
+				Error:    err.Error(),
 			})
 			continue
 		}
@@ -329,11 +329,11 @@ func (h *ImageHandler) UploadMultipleImages(c *gin.Context) {
 		Msg("Batch image upload completed")
 
 	response := dto.BatchImageUploadResponse{
-		Results:      results,
-		Errors:       errors,
-		TotalFiles:   len(files),
-		Successful:   len(results),
-		Failed:       len(errors),
+		Results:    results,
+		Errors:     errors,
+		TotalFiles: len(files),
+		Successful: len(results),
+		Failed:     len(errors),
 	}
 
 	c.JSON(http.StatusCreated, response)

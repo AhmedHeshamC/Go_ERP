@@ -21,12 +21,12 @@ import (
 
 // OrderPerformanceTestSuite tests order system performance
 type OrderPerformanceTestSuite struct {
-	testContainer *testutil.PerformanceTestContainer
-	orderService  order.Service
-	workflowService order.WorkflowService
+	testContainer    *testutil.PerformanceTestContainer
+	orderService     order.Service
+	workflowService  order.WorkflowService
 	analyticsService order.AnalyticsService
-	bulkService    order.BulkService
-	exportService  order.ExportService
+	bulkService      order.BulkService
+	exportService    order.ExportService
 }
 
 // SetupSuite sets up the performance test suite
@@ -65,12 +65,12 @@ func (suite *OrderPerformanceTestSuite) TestOrderCreationPerformance(t *testing.
 
 	// Test configurations
 	testCases := []struct {
-		name           string
-		concurrency    int
-		totalOrders    int
-		maxDuration    time.Duration
-		minThroughput  float64
-		maxMemoryMB    int
+		name          string
+		concurrency   int
+		totalOrders   int
+		maxDuration   time.Duration
+		minThroughput float64
+		maxMemoryMB   int
 	}{
 		{
 			name:          "Light Load",
@@ -115,12 +115,12 @@ func (suite *OrderPerformanceTestSuite) TestOrderCreationPerformance(t *testing.
 
 // runOrderCreationPerformanceTest runs a single order creation performance test
 func (suite *OrderPerformanceTestSuite) runOrderCreationPerformanceTest(t *testing.T, ctx context.Context, tc struct {
-	name           string
-	concurrency    int
-	totalOrders    int
-	maxDuration    time.Duration
-	minThroughput  float64
-	maxMemoryMB    int
+	name          string
+	concurrency   int
+	totalOrders   int
+	maxDuration   time.Duration
+	minThroughput float64
+	maxMemoryMB   int
 }) {
 	log.Printf("Running %s: %d orders with %d goroutines", tc.name, tc.totalOrders, tc.concurrency)
 
@@ -185,7 +185,7 @@ func (suite *OrderPerformanceTestSuite) runOrderCreationPerformanceTest(t *testi
 	runtime.GC()
 	runtime.ReadMemStats(&finalMem)
 
-	memoryUsedMB := int(finalMem.Alloc - initialMem.Alloc) / 1024 / 1024
+	memoryUsedMB := int(finalMem.Alloc-initialMem.Alloc) / 1024 / 1024
 	throughput := float64(len(createdOrders)) / duration.Seconds()
 
 	// Log results
@@ -490,7 +490,7 @@ func (suite *OrderPerformanceTestSuite) TestExportPerformance(t *testing.T) {
 				{
 					OrderIDs: orderIDs[:500],
 					Format:   "json",
-					Options: &order.ExportOptions{IncludeItems: true},
+					Options:  &order.ExportOptions{IncludeItems: true},
 				},
 			},
 		}
@@ -530,8 +530,8 @@ func (suite *OrderPerformanceTestSuite) TestWorkflowPerformance(t *testing.T) {
 
 				req := &order.CompleteWorkflowRequest{
 					CustomerID:        uuid.New().String(),
-					CustomerFirstName:  fmt.Sprintf("Test%d", workflowID),
-					CustomerLastName:   "Customer",
+					CustomerFirstName: fmt.Sprintf("Test%d", workflowID),
+					CustomerLastName:  "Customer",
 					CustomerEmail:     fmt.Sprintf("test%d@example.com", workflowID),
 					Priority:          entities.OrderPriorityNormal,
 					ShippingMethod:    entities.ShippingMethodStandard,
@@ -844,21 +844,21 @@ func BenchmarkAnalyticsQuery(b *testing.B) {
 // createTestOrderForPerformance creates a test order for performance testing
 func (suite *OrderPerformanceTestSuite) createTestOrderForPerformance(ctx context.Context) *entities.Order {
 	order := &entities.Order{
-		ID:               uuid.New(),
-		OrderNumber:      entities.GenerateOrderNumber(),
-		CustomerID:       uuid.New(),
-		Status:           entities.OrderStatusDraft,
-		Priority:         entities.OrderPriorityNormal,
-		Type:             entities.OrderTypeSales,
-		PaymentStatus:    entities.PaymentStatusPending,
-		ShippingMethod:   entities.ShippingMethodStandard,
-		Currency:         "USD",
-		OrderDate:        time.Now(),
+		ID:                uuid.New(),
+		OrderNumber:       entities.GenerateOrderNumber(),
+		CustomerID:        uuid.New(),
+		Status:            entities.OrderStatusDraft,
+		Priority:          entities.OrderPriorityNormal,
+		Type:              entities.OrderTypeSales,
+		PaymentStatus:     entities.PaymentStatusPending,
+		ShippingMethod:    entities.ShippingMethodStandard,
+		Currency:          "USD",
+		OrderDate:         time.Now(),
 		ShippingAddressID: uuid.New(),
 		BillingAddressID:  uuid.New(),
-		CreatedBy:        uuid.New(),
-		CreatedAt:        time.Now(),
-		UpdatedAt:        time.Now(),
+		CreatedBy:         uuid.New(),
+		CreatedAt:         time.Now(),
+		UpdatedAt:         time.Now(),
 	}
 
 	// Create order items
@@ -872,20 +872,20 @@ func (suite *OrderPerformanceTestSuite) createTestOrderForPerformance(ctx contex
 		unitPrice := decimal.NewFromFloat(prices[i])
 
 		items[i] = entities.OrderItem{
-			ID:             uuid.New(),
-			OrderID:        order.ID,
-			ProductID:      productIDs[i],
-			ProductSKU:     fmt.Sprintf("SKU-%03d", i+1),
-			ProductName:    productNames[i],
-			Quantity:       quantity,
-			UnitPrice:      unitPrice,
-			TotalPrice:     unitPrice.Mul(decimal.NewFromInt(int64(quantity))),
-			Weight:         1.5,
-			Status:         "ORDERED",
-			QuantityShipped: 0,
+			ID:               uuid.New(),
+			OrderID:          order.ID,
+			ProductID:        productIDs[i],
+			ProductSKU:       fmt.Sprintf("SKU-%03d", i+1),
+			ProductName:      productNames[i],
+			Quantity:         quantity,
+			UnitPrice:        unitPrice,
+			TotalPrice:       unitPrice.Mul(decimal.NewFromInt(int64(quantity))),
+			Weight:           1.5,
+			Status:           "ORDERED",
+			QuantityShipped:  0,
 			QuantityReturned: 0,
-			CreatedAt:      time.Now(),
-			UpdatedAt:      time.Now(),
+			CreatedAt:        time.Now(),
+			UpdatedAt:        time.Now(),
 		}
 	}
 

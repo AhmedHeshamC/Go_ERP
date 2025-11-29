@@ -3,7 +3,6 @@ package order
 import (
 	"context"
 	"testing"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -12,7 +11,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"erpgo/internal/domain/orders/entities"
-	"erpgo/internal/domain/orders/repositories"
 )
 
 func TestServiceImpl_CreateOrder(t *testing.T) {
@@ -33,20 +31,20 @@ func TestServiceImpl_CreateOrder(t *testing.T) {
 	mockShippingCalculator := &MockShippingCalculator{}
 
 	service := &ServiceImpl{
-		orderRepo:          mockOrderRepo,
-		orderItemRepo:      mockOrderItemRepo,
-		customerRepo:       mockCustomerRepo,
-		addressRepo:        mockAddressRepo,
-		companyRepo:        mockCompanyRepo,
-		analyticsRepo:      mockAnalyticsRepo,
-		productService:     mockProductService,
-		inventoryService:   mockInventoryService,
-		userService:        mockUserService,
+		orderRepo:           mockOrderRepo,
+		orderItemRepo:       mockOrderItemRepo,
+		customerRepo:        mockCustomerRepo,
+		addressRepo:         mockAddressRepo,
+		companyRepo:         mockCompanyRepo,
+		analyticsRepo:       mockAnalyticsRepo,
+		productService:      mockProductService,
+		inventoryService:    mockInventoryService,
+		userService:         mockUserService,
 		notificationService: mockNotificationService,
-		paymentService:     mockPaymentService,
-		taxCalculator:      mockTaxCalculator,
-		shippingCalculator: mockShippingCalculator,
-		defaultCurrency:    "USD",
+		paymentService:      mockPaymentService,
+		taxCalculator:       mockTaxCalculator,
+		shippingCalculator:  mockShippingCalculator,
+		defaultCurrency:     "USD",
 	}
 
 	// Test data
@@ -54,7 +52,6 @@ func TestServiceImpl_CreateOrder(t *testing.T) {
 	shippingAddressID := uuid.New()
 	billingAddressID := uuid.New()
 	productID := uuid.New()
-	createdBy := uuid.New()
 
 	customer := CreateTestCustomer(customerID)
 	shippingAddress := CreateTestOrderAddress(shippingAddressID, customerID, "SHIPPING")
@@ -75,7 +72,6 @@ func TestServiceImpl_CreateOrder(t *testing.T) {
 				Quantity:  2,
 			},
 		},
-		CreatedBy: createdBy.String(),
 	}
 
 	t.Run("successful order creation", func(t *testing.T) {
@@ -89,12 +85,12 @@ func TestServiceImpl_CreateOrder(t *testing.T) {
 			Available: true,
 			Items: []CheckInventoryItemResponse{
 				{
-					ProductID: productID.String(),
+					ProductID:    productID.String(),
 					RequestedQty: 2,
 					AvailableQty: 100,
-					CanFulfill: true,
-					UnitPrice: decimal.NewFromFloat(50.00),
-					TotalValue: decimal.NewFromFloat(100.00),
+					CanFulfill:   true,
+					UnitPrice:    decimal.NewFromFloat(50.00),
+					TotalValue:   decimal.NewFromFloat(100.00),
 				},
 			},
 		}, nil)
@@ -138,7 +134,7 @@ func TestServiceImpl_CreateOrder(t *testing.T) {
 
 	t.Run("customer not found", func(t *testing.T) {
 		// Setup mocks
-		mockCustomerRepo.On("GetByID", ctx, customerID).Return(nil, repositories.ErrCustomerNotFound)
+		mockCustomerRepo.On("GetByID", ctx, customerID).Return(nil, ErrCustomerNotFound)
 
 		// Execute
 		order, err := service.CreateOrder(ctx, req)
@@ -174,7 +170,6 @@ func TestServiceImpl_CreateOrder(t *testing.T) {
 		mockProductService.On("GetProduct", ctx, productID.String()).Return(product, nil)
 		mockInventoryService.On("CheckAvailability", ctx, mock.AnythingOfType("*order.CheckInventoryRequest")).Return(&CheckInventoryResponse{
 			Available: false,
-			Reason: "Insufficient stock",
 		}, nil)
 
 		// Execute
@@ -277,7 +272,7 @@ func TestServiceImpl_GetOrder(t *testing.T) {
 
 	t.Run("order not found", func(t *testing.T) {
 		// Setup mocks
-		mockOrderRepo.On("GetByID", ctx, orderID).Return(nil, repositories.ErrOrderNotFound)
+		mockOrderRepo.On("GetByID", ctx, orderID).Return(nil, ErrOrderNotFound)
 
 		// Execute
 		result, err := service.GetOrder(ctx, orderID.String())
@@ -311,11 +306,11 @@ func TestServiceImpl_UpdateOrderStatus(t *testing.T) {
 	mockNotificationService := &MockNotificationService{}
 
 	service := &ServiceImpl{
-		orderRepo:          mockOrderRepo,
-		orderItemRepo:      mockOrderItemRepo,
-		customerRepo:       mockCustomerRepo,
-		addressRepo:        mockAddressRepo,
-		inventoryService:   mockInventoryService,
+		orderRepo:           mockOrderRepo,
+		orderItemRepo:       mockOrderItemRepo,
+		customerRepo:        mockCustomerRepo,
+		addressRepo:         mockAddressRepo,
+		inventoryService:    mockInventoryService,
 		notificationService: mockNotificationService,
 	}
 
@@ -419,12 +414,12 @@ func TestServiceImpl_CancelOrder(t *testing.T) {
 	mockNotificationService := &MockNotificationService{}
 
 	service := &ServiceImpl{
-		orderRepo:          mockOrderRepo,
-		orderItemRepo:      mockOrderItemRepo,
-		customerRepo:       mockCustomerRepo,
-		addressRepo:        mockAddressRepo,
-		inventoryService:   mockInventoryService,
-		paymentService:     mockPaymentService,
+		orderRepo:           mockOrderRepo,
+		orderItemRepo:       mockOrderItemRepo,
+		customerRepo:        mockCustomerRepo,
+		addressRepo:         mockAddressRepo,
+		inventoryService:    mockInventoryService,
+		paymentService:      mockPaymentService,
 		notificationService: mockNotificationService,
 	}
 
@@ -583,7 +578,6 @@ func TestServiceImpl_ValidateOrder(t *testing.T) {
 		mockCustomerRepo.On("GetByID", ctx, customerID).Return(customer, nil)
 		mockInventoryService.On("CheckAvailability", ctx, mock.AnythingOfType("*order.CheckInventoryRequest")).Return(&CheckInventoryResponse{
 			Available: false,
-			Reason:    "Out of stock",
 		}, nil)
 
 		// Execute
@@ -680,20 +674,20 @@ func BenchmarkServiceImpl_CreateOrder(b *testing.B) {
 	mockShippingCalculator := &MockShippingCalculator{}
 
 	service := &ServiceImpl{
-		orderRepo:          mockOrderRepo,
-		orderItemRepo:      mockOrderItemRepo,
-		customerRepo:       mockCustomerRepo,
-		addressRepo:        mockAddressRepo,
-		companyRepo:        mockCompanyRepo,
-		analyticsRepo:      mockAnalyticsRepo,
-		productService:     mockProductService,
-		inventoryService:   mockInventoryService,
-		userService:        mockUserService,
+		orderRepo:           mockOrderRepo,
+		orderItemRepo:       mockOrderItemRepo,
+		customerRepo:        mockCustomerRepo,
+		addressRepo:         mockAddressRepo,
+		companyRepo:         mockCompanyRepo,
+		analyticsRepo:       mockAnalyticsRepo,
+		productService:      mockProductService,
+		inventoryService:    mockInventoryService,
+		userService:         mockUserService,
 		notificationService: mockNotificationService,
-		paymentService:     mockPaymentService,
-		taxCalculator:      mockTaxCalculator,
-		shippingCalculator: mockShippingCalculator,
-		defaultCurrency:    "USD",
+		paymentService:      mockPaymentService,
+		taxCalculator:       mockTaxCalculator,
+		shippingCalculator:  mockShippingCalculator,
+		defaultCurrency:     "USD",
 	}
 
 	// Setup test data
@@ -701,7 +695,6 @@ func BenchmarkServiceImpl_CreateOrder(b *testing.B) {
 	shippingAddressID := uuid.New()
 	billingAddressID := uuid.New()
 	productID := uuid.New()
-	createdBy := uuid.New()
 
 	customer := CreateTestCustomer(customerID)
 	shippingAddress := CreateTestOrderAddress(shippingAddressID, customerID, "SHIPPING")
@@ -722,7 +715,6 @@ func BenchmarkServiceImpl_CreateOrder(b *testing.B) {
 				Quantity:  2,
 			},
 		},
-		CreatedBy: createdBy.String(),
 	}
 
 	// Setup mocks

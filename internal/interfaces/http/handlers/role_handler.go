@@ -264,7 +264,6 @@ func (h *RoleHandler) UpdateRole(c *gin.Context) {
 		role.Description = req.Description
 	}
 
-	
 	role.UpdatedAt = time.Now()
 
 	// Update role in database
@@ -286,7 +285,7 @@ func (h *RoleHandler) UpdateRole(c *gin.Context) {
 		} else {
 			// Get current user ID for audit logging
 			currentUserID, _ := auth.GetCurrentUserID(c)
-			
+
 			// Remove permissions that are no longer needed
 			for _, perm := range currentPermissions {
 				if !contains(req.Permissions, perm) {

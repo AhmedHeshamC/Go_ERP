@@ -6,22 +6,22 @@ import (
 	"fmt"
 	"time"
 
+	"erpgo/pkg/monitoring"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"erpgo/pkg/monitoring"
 )
 
 // HealthCheckLog represents a health check log entry
 type HealthCheckLog struct {
-	ID            uuid.UUID              `json:"id" db:"id"`
-	ServiceName   string                 `json:"service_name" db:"service_name"`
-	Status        monitoring.HealthStatus `json:"status" db:"status"`
-	ResponseTime  time.Duration          `json:"response_time" db:"response_time_ms"`
-	Message       *string                `json:"message,omitempty" db:"message"`
-	ErrorDetails  *string                `json:"error_details,omitempty" db:"error_details"`
-	CheckDetails  map[string]interface{} `json:"check_details,omitempty" db:"check_details"`
-	Timestamp     time.Time              `json:"timestamp" db:"timestamp"`
-	CreatedAt     time.Time              `json:"created_at" db:"created_at"`
+	ID           uuid.UUID               `json:"id" db:"id"`
+	ServiceName  string                  `json:"service_name" db:"service_name"`
+	Status       monitoring.HealthStatus `json:"status" db:"status"`
+	ResponseTime time.Duration           `json:"response_time" db:"response_time_ms"`
+	Message      *string                 `json:"message,omitempty" db:"message"`
+	ErrorDetails *string                 `json:"error_details,omitempty" db:"error_details"`
+	CheckDetails map[string]interface{}  `json:"check_details,omitempty" db:"check_details"`
+	Timestamp    time.Time               `json:"timestamp" db:"timestamp"`
+	CreatedAt    time.Time               `json:"created_at" db:"created_at"`
 }
 
 // HealthCheckMetric represents aggregated health check metrics

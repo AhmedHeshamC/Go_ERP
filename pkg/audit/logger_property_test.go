@@ -58,11 +58,11 @@ func TestProperty_AuditLogImmutability(t *testing.T) {
 			// In a real database with immutability rules, this would fail
 			// For the mock, we verify that the application doesn't provide
 			// any mechanism to modify logged events
-			
+
 			// The logger interface should not have Update or Delete methods
 			// We verify this by checking the interface definition
 			var _ AuditLogger = logger
-			
+
 			// Query the event back
 			events, err := logger.Query(ctx, AuditFilter{
 				UserID: &userID,
@@ -100,21 +100,21 @@ func TestProperty_AuditLogImmutability(t *testing.T) {
 			// Log multiple events
 			userID := uuid.New()
 			originalEvents := make([]*AuditEvent, numEvents)
-			
+
 			for i := 0; i < numEvents; i++ {
 				event := &AuditEvent{
-					EventType:  EventTypeLogin,
-					UserID:     &userID,
-					Action:     "test_action",
-					IPAddress:  "192.168.1.1",
-					Success:    true,
+					EventType: EventTypeLogin,
+					UserID:    &userID,
+					Action:    "test_action",
+					IPAddress: "192.168.1.1",
+					Success:   true,
 				}
-				
+
 				err := logger.LogEvent(ctx, event)
 				if err != nil {
 					return false
 				}
-				
+
 				// Store a copy of the logged event
 				if i < len(logger.Events) {
 					originalEvents[i] = logger.Events[i]
@@ -147,18 +147,18 @@ func TestProperty_AuditLogImmutability(t *testing.T) {
 			// This property verifies that the AuditLogger interface
 			// only provides LogEvent (append) and Query (read) operations
 			// There should be no Update or Delete methods
-			
+
 			// We verify this at compile time by checking the interface
 			var logger AuditLogger = NewMockAuditLogger()
-			
+
 			// The interface should only have these methods:
 			// - LogEvent (append)
 			// - Query (read)
 			// - Count (read)
-			
+
 			// If Update or Delete methods existed, this would fail to compile
 			_ = logger
-			
+
 			return true
 		},
 	))

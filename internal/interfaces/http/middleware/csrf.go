@@ -29,15 +29,15 @@ type CSRFConfig struct {
 	SameSite      string        `json:"same_site"`
 
 	// Exclusions
-	ExcludedMethods []string          `json:"excluded_methods"`
-	ExcludedPaths   []string          `json:"excluded_paths"`
-	TrustedOrigins  []string          `json:"trusted_origins"`
-	TrustedIPs      []string          `json:"trusted_ips"`
+	ExcludedMethods []string `json:"excluded_methods"`
+	ExcludedPaths   []string `json:"excluded_paths"`
+	TrustedOrigins  []string `json:"trusted_origins"`
+	TrustedIPs      []string `json:"trusted_ips"`
 
 	// Security settings
-	Enabled        bool `json:"enabled"`
-	RequireDouble  bool `json:"require_double"` // Require double submit cookie pattern
-	IgnoreGET      bool `json:"ignore_get"`     // Ignore CSRF for GET requests
+	Enabled       bool `json:"enabled"`
+	RequireDouble bool `json:"require_double"` // Require double submit cookie pattern
+	IgnoreGET     bool `json:"ignore_get"`     // Ignore CSRF for GET requests
 }
 
 // DefaultCSRFConfig returns a secure default configuration

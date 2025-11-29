@@ -242,7 +242,7 @@ func TestSecurityMonitoring(t *testing.T) {
 	t.Run("Log Suspicious Activity", func(t *testing.T) {
 		metadata := map[string]interface{}{
 			"pattern": "SQL injection attempt",
-			"payload":  "' OR 1=1 --",
+			"payload": "' OR 1=1 --",
 		}
 		monitor.SuspiciousActivity("192.168.1.102", "sqlmap/1.0", "", "SQL injection detected", metadata)
 

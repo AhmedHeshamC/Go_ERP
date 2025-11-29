@@ -14,50 +14,50 @@ import (
 // BenchmarkSuite collects performance benchmarks and comparisons
 type BenchmarkSuite struct {
 	// Performance benchmark metrics
-	benchmarkDuration *prometheus.HistogramVec
+	benchmarkDuration   *prometheus.HistogramVec
 	benchmarkThroughput *prometheus.GaugeVec
-	benchmarkLatency *prometheus.HistogramVec
-	benchmarkErrorRate *prometheus.GaugeVec
+	benchmarkLatency    *prometheus.HistogramVec
+	benchmarkErrorRate  *prometheus.GaugeVec
 
 	// Resource utilization metrics
-	cpuUsage *prometheus.GaugeVec
-	memoryUsage *prometheus.GaugeVec
-	goroutineCount *prometheus.GaugeVec
+	cpuUsage        *prometheus.GaugeVec
+	memoryUsage     *prometheus.GaugeVec
+	goroutineCount  *prometheus.GaugeVec
 	gcPauseDuration *prometheus.HistogramVec
 
 	// Database performance benchmarks
-	dbQueryLatency *prometheus.HistogramVec
-	dbThroughput *prometheus.GaugeVec
+	dbQueryLatency   *prometheus.HistogramVec
+	dbThroughput     *prometheus.GaugeVec
 	dbConnectionPool *prometheus.GaugeVec
 
 	// Cache performance benchmarks
-	cacheHitRatio *prometheus.GaugeVec
-	cacheLatency *prometheus.HistogramVec
+	cacheHitRatio   *prometheus.GaugeVec
+	cacheLatency    *prometheus.HistogramVec
 	cacheThroughput *prometheus.GaugeVec
 
 	// API endpoint benchmarks
-	apiRequestLatency *prometheus.HistogramVec
+	apiRequestLatency    *prometheus.HistogramVec
 	apiRequestThroughput *prometheus.GaugeVec
-	apiErrorRate *prometheus.GaugeVec
+	apiErrorRate         *prometheus.GaugeVec
 
-	mu sync.RWMutex
+	mu               sync.RWMutex
 	activeBenchmarks map[string]*BenchmarkResult
 }
 
 // BenchmarkResult represents a single benchmark result
 type BenchmarkResult struct {
-	Name         string                 `json:"name"`
-	StartTime    time.Time              `json:"start_time"`
-	EndTime      time.Time              `json:"end_time"`
-	Duration     time.Duration          `json:"duration"`
-	Operations   int64                  `json:"operations"`
-	Throughput   float64                `json:"throughput"`
-	AvgLatency   time.Duration          `json:"avg_latency"`
-	P95Latency   time.Duration          `json:"p95_latency"`
-	P99Latency   time.Duration          `json:"p99_latency"`
-	ErrorCount   int64                  `json:"error_count"`
-	SuccessRate  float64                `json:"success_rate"`
-	Metadata     map[string]interface{} `json:"metadata,omitempty"`
+	Name        string                 `json:"name"`
+	StartTime   time.Time              `json:"start_time"`
+	EndTime     time.Time              `json:"end_time"`
+	Duration    time.Duration          `json:"duration"`
+	Operations  int64                  `json:"operations"`
+	Throughput  float64                `json:"throughput"`
+	AvgLatency  time.Duration          `json:"avg_latency"`
+	P95Latency  time.Duration          `json:"p95_latency"`
+	P99Latency  time.Duration          `json:"p99_latency"`
+	ErrorCount  int64                  `json:"error_count"`
+	SuccessRate float64                `json:"success_rate"`
+	Metadata    map[string]interface{} `json:"metadata,omitempty"`
 }
 
 // BenchmarkConfig holds configuration for benchmark runs

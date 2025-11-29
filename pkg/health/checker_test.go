@@ -74,7 +74,7 @@ func TestProperty13_ReadinessCheckDatabaseVerification(t *testing.T) {
 
 			// Verify status
 			assert.Equal(t, tt.expectedStatus, status.Status)
-			
+
 			// Verify HTTP status code mapping
 			httpCode := status.HTTPStatusCode()
 			assert.Equal(t, tt.expectedCode, httpCode)
@@ -86,10 +86,10 @@ func TestProperty13_ReadinessCheckDatabaseVerification(t *testing.T) {
 // Validates: Requirements 8.1
 func TestLivenessProbe(t *testing.T) {
 	checker := NewHealthChecker()
-	
+
 	ctx := context.Background()
 	status := checker.CheckLiveness(ctx)
-	
+
 	assert.Equal(t, StatusHealthy, status.Status)
 	assert.Equal(t, 200, status.HTTPStatusCode())
 	assert.NotEmpty(t, status.Timestamp)
@@ -103,29 +103,29 @@ func TestReadinessProbeChecksDatabase(t *testing.T) {
 			name:    "database",
 			healthy: true,
 		}
-		
+
 		checker := NewHealthChecker()
 		checker.RegisterCheck("database", dbCheck)
-		
+
 		ctx := context.Background()
 		status := checker.CheckReadiness(ctx)
-		
+
 		assert.Equal(t, StatusHealthy, status.Status)
 		assert.True(t, dbCheck.called)
 	})
-	
+
 	t.Run("database unhealthy", func(t *testing.T) {
 		dbCheck := &mockHealthCheck{
 			name:    "database",
 			healthy: false,
 		}
-		
+
 		checker := NewHealthChecker()
 		checker.RegisterCheck("database", dbCheck)
-		
+
 		ctx := context.Background()
 		status := checker.CheckReadiness(ctx)
-		
+
 		assert.Equal(t, StatusUnhealthy, status.Status)
 		assert.True(t, dbCheck.called)
 		assert.Contains(t, status.Checks, "database")
@@ -144,14 +144,14 @@ func TestReadinessProbeChecksRedis(t *testing.T) {
 		name:    "redis",
 		healthy: true,
 	}
-	
+
 	checker := NewHealthChecker()
 	checker.RegisterCheck("database", dbCheck)
 	checker.RegisterCheck("redis", redisCheck)
-	
+
 	ctx := context.Background()
 	status := checker.CheckReadiness(ctx)
-	
+
 	assert.Equal(t, StatusHealthy, status.Status)
 	assert.True(t, dbCheck.called)
 	assert.True(t, redisCheck.called)
@@ -165,18 +165,18 @@ func TestHealthCheckTimeout(t *testing.T) {
 		healthy: true,
 		delay:   2 * time.Second, // Intentionally slow
 	}
-	
+
 	checker := NewHealthChecker()
 	checker.RegisterCheck("slow", slowCheck)
-	
+
 	ctx := context.Background()
 	start := time.Now()
 	status := checker.CheckReadiness(ctx)
 	duration := time.Since(start)
-	
+
 	// Should timeout within 1 second
 	assert.Less(t, duration, 1500*time.Millisecond, "Health check should timeout within 1 second")
-	
+
 	// Check should be marked as unhealthy due to timeout
 	assert.Contains(t, status.Checks, "slow")
 	checkResult := status.Checks["slow"]
@@ -192,16 +192,16 @@ func TestHealthCheckReturns503WithDetails(t *testing.T) {
 		healthy: false,
 		err:     errors.New("connection refused"),
 	}
-	
+
 	checker := NewHealthChecker()
 	checker.RegisterCheck("database", dbCheck)
-	
+
 	ctx := context.Background()
 	status := checker.CheckReadiness(ctx)
-	
+
 	assert.Equal(t, StatusUnhealthy, status.Status)
 	assert.Equal(t, 503, status.HTTPStatusCode())
-	
+
 	// Verify details are included
 	assert.Contains(t, status.Checks, "database")
 	dbResult := status.Checks["database"]
@@ -217,19 +217,19 @@ func TestShutdownUpdatesReadiness(t *testing.T) {
 		name:    "database",
 		healthy: true,
 	}
-	
+
 	checker := NewHealthChecker()
 	checker.RegisterCheck("database", dbCheck)
-	
+
 	ctx := context.Background()
-	
+
 	// Before shutdown - should be healthy
 	status := checker.CheckReadiness(ctx)
 	assert.Equal(t, StatusHealthy, status.Status)
-	
+
 	// Initiate shutdown
 	checker.SetShuttingDown(true)
-	
+
 	// After shutdown - should be unhealthy
 	status = checker.CheckReadiness(ctx)
 	assert.Equal(t, StatusUnhealthy, status.Status)
@@ -243,12 +243,12 @@ func TestLivenessNotAffectedByDependencies(t *testing.T) {
 		name:    "database",
 		healthy: false,
 	}
-	
+
 	checker := NewHealthChecker()
 	checker.RegisterCheck("database", dbCheck)
-	
+
 	ctx := context.Background()
-	
+
 	// Liveness should still be healthy even if database is down
 	status := checker.CheckLiveness(ctx)
 	assert.Equal(t, StatusHealthy, status.Status)
@@ -267,17 +267,17 @@ func TestMultipleDependencyFailures(t *testing.T) {
 		healthy: false,
 		err:     errors.New("redis connection failed"),
 	}
-	
+
 	checker := NewHealthChecker()
 	checker.RegisterCheck("database", dbCheck)
 	checker.RegisterCheck("redis", redisCheck)
-	
+
 	ctx := context.Background()
 	status := checker.CheckReadiness(ctx)
-	
+
 	assert.Equal(t, StatusUnhealthy, status.Status)
 	assert.Len(t, status.Checks, 2)
-	
+
 	// Both checks should be present with details
 	assert.Contains(t, status.Checks, "database")
 	assert.Contains(t, status.Checks, "redis")
@@ -292,17 +292,17 @@ func TestHealthCheckWithContext(t *testing.T) {
 		healthy: true,
 		delay:   5 * time.Second,
 	}
-	
+
 	checker := NewHealthChecker()
 	checker.RegisterCheck("slow", slowCheck)
-	
+
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
 	defer cancel()
-	
+
 	start := time.Now()
 	status := checker.CheckReadiness(ctx)
 	duration := time.Since(start)
-	
+
 	// Should respect context timeout
 	assert.Less(t, duration, 1*time.Second)
 	assert.Contains(t, status.Checks, "slow")
@@ -323,7 +323,7 @@ func (m *mockHealthCheck) Name() string {
 
 func (m *mockHealthCheck) Check(ctx context.Context) error {
 	m.called = true
-	
+
 	// Simulate delay if specified
 	if m.delay > 0 {
 		select {
@@ -332,14 +332,14 @@ func (m *mockHealthCheck) Check(ctx context.Context) error {
 			return ctx.Err()
 		}
 	}
-	
+
 	if !m.healthy {
 		if m.err != nil {
 			return m.err
 		}
 		return errors.New("health check failed")
 	}
-	
+
 	return nil
 }
 

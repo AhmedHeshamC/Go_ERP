@@ -40,7 +40,7 @@ func TestReporter_Report(t *testing.T) {
 		ctx := context.Background()
 		err := errors.New("test error")
 		reporter.Report(ctx, err, SeverityError, ErrorTypeSystem, "test message", nil, nil)
-		
+
 		stats := reporter.GetStats()
 		assert.Greater(t, stats["buffer_size"].(int), 0)
 	})
@@ -50,11 +50,11 @@ func TestReporter_Report(t *testing.T) {
 		config.Enabled = false
 		config.AsyncReporting = false
 		disabledReporter, _ := NewReporter(config, &logger)
-		
+
 		ctx := context.Background()
 		err := errors.New("test error")
 		disabledReporter.Report(ctx, err, SeverityError, ErrorTypeSystem, "test", nil, nil)
-		
+
 		stats := disabledReporter.GetStats()
 		assert.Equal(t, 0, stats["buffer_size"].(int))
 	})
@@ -70,7 +70,7 @@ func TestReporter_ReportHTTPError(t *testing.T) {
 		ctx := context.Background()
 		err := errors.New("http error")
 		reporter.ReportHTTPError(ctx, err, 500, "internal server error", nil)
-		
+
 		stats := reporter.GetStats()
 		assert.Greater(t, stats["buffer_size"].(int), 0)
 	})
@@ -80,11 +80,11 @@ func TestReporter_ReportHTTPError(t *testing.T) {
 		config.IgnoreStatusCodes = []int{404}
 		config.AsyncReporting = false
 		reporter, _ := NewReporter(config, &logger)
-		
+
 		ctx := context.Background()
 		err := errors.New("not found")
 		reporter.ReportHTTPError(ctx, err, 404, "not found", nil)
-		
+
 		stats := reporter.GetStats()
 		assert.Equal(t, 0, stats["buffer_size"].(int))
 	})
@@ -100,9 +100,9 @@ func TestReporter_ReportPanic(t *testing.T) {
 		ctx := context.Background()
 		recovered := "panic: something went wrong"
 		stack := []byte("goroutine 1 [running]:\nmain.main()\n\t/path/to/file.go:10 +0x123")
-		
+
 		reporter.ReportPanic(ctx, recovered, stack, nil)
-		
+
 		stats := reporter.GetStats()
 		assert.Greater(t, stats["buffer_size"].(int), 0)
 	})
@@ -191,10 +191,10 @@ func TestSanitizeData(t *testing.T) {
 			"password": "secret123",
 			"email":    "john@example.com",
 		}
-		
+
 		sanitized := reporter.sanitizeData(data)
 		sanitizedMap := sanitized.(map[string]interface{})
-		
+
 		assert.Equal(t, "john", sanitizedMap["username"])
 		assert.Equal(t, "[REDACTED]", sanitizedMap["password"])
 		assert.Equal(t, "john@example.com", sanitizedMap["email"])
@@ -207,11 +207,11 @@ func TestSanitizeData(t *testing.T) {
 				"password": "secret123",
 			},
 		}
-		
+
 		sanitized := reporter.sanitizeData(data)
 		sanitizedMap := sanitized.(map[string]interface{})
 		userMap := sanitizedMap["user"].(map[string]interface{})
-		
+
 		assert.Equal(t, "john", userMap["name"])
 		assert.Equal(t, "[REDACTED]", userMap["password"])
 	})
@@ -229,7 +229,7 @@ func TestGenerateFingerprint(t *testing.T) {
 				{Function: "main", File: "main.go", Line: 10},
 			},
 		}
-		
+
 		report2 := &ErrorReport{
 			Type:  ErrorTypeSystem,
 			Error: "test error",
@@ -237,10 +237,10 @@ func TestGenerateFingerprint(t *testing.T) {
 				{Function: "main", File: "main.go", Line: 10},
 			},
 		}
-		
+
 		fp1 := reporter.generateFingerprint(report1)
 		fp2 := reporter.generateFingerprint(report2)
-		
+
 		assert.Equal(t, fp1, fp2)
 	})
 
@@ -249,15 +249,15 @@ func TestGenerateFingerprint(t *testing.T) {
 			Type:  ErrorTypeSystem,
 			Error: "error 1",
 		}
-		
+
 		report2 := &ErrorReport{
 			Type:  ErrorTypeSystem,
 			Error: "error 2",
 		}
-		
+
 		fp1 := reporter.generateFingerprint(report1)
 		fp2 := reporter.generateFingerprint(report2)
-		
+
 		assert.NotEqual(t, fp1, fp2)
 	})
 }
@@ -268,13 +268,13 @@ func TestUpdateErrorCount(t *testing.T) {
 
 	t.Run("tracks error occurrences", func(t *testing.T) {
 		fingerprint := "test-fingerprint"
-		
+
 		count1 := reporter.updateErrorCount(fingerprint)
 		assert.Equal(t, 1, count1)
-		
+
 		count2 := reporter.updateErrorCount(fingerprint)
 		assert.Equal(t, 2, count2)
-		
+
 		count3 := reporter.updateErrorCount(fingerprint)
 		assert.Equal(t, 3, count3)
 	})
@@ -298,7 +298,7 @@ func TestCaptureStackFrames(t *testing.T) {
 
 	frames := reporter.captureStackFrames()
 	assert.NotEmpty(t, frames)
-	
+
 	for _, frame := range frames {
 		assert.NotEmpty(t, frame.Function)
 		assert.NotEmpty(t, frame.File)
@@ -312,7 +312,7 @@ func TestGlobalReporter(t *testing.T) {
 		config := DefaultConfig()
 		err := InitGlobalReporter(config, &logger)
 		require.NoError(t, err)
-		
+
 		reporter := GetGlobalReporter()
 		assert.NotNil(t, reporter)
 	})
@@ -334,7 +334,7 @@ func TestGlobalConvenienceFunctions(t *testing.T) {
 		ctx := context.Background()
 		err := errors.New("test error")
 		Report(ctx, err, SeverityError, ErrorTypeSystem, "test", nil, nil)
-		
+
 		reporter := GetGlobalReporter()
 		stats := reporter.GetStats()
 		assert.Greater(t, stats["buffer_size"].(int), 0)

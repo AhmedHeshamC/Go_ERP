@@ -35,12 +35,12 @@ func (h *HTTPServerHook) Priority() int {
 
 func (h *HTTPServerHook) Shutdown(ctx context.Context) error {
 	h.logger.Info().Msg("Shutting down HTTP server...")
-	
+
 	if err := h.server.Shutdown(ctx); err != nil {
 		h.logger.Error().Err(err).Msg("HTTP server shutdown failed")
 		return fmt.Errorf("http server shutdown failed: %w", err)
 	}
-	
+
 	h.logger.Info().Msg("HTTP server shut down successfully")
 	return nil
 }
@@ -71,13 +71,13 @@ func (h *DatabaseHook) Priority() int {
 
 func (h *DatabaseHook) Shutdown(ctx context.Context) error {
 	h.logger.Info().Msg("Closing database connections...")
-	
+
 	// Create a channel to handle the close operation
 	done := make(chan error, 1)
 	go func() {
 		done <- h.closeFunc()
 	}()
-	
+
 	select {
 	case err := <-done:
 		if err != nil {
@@ -118,13 +118,13 @@ func (h *CacheHook) Priority() int {
 
 func (h *CacheHook) Shutdown(ctx context.Context) error {
 	h.logger.Info().Msg("Closing cache connections...")
-	
+
 	// Create a channel to handle the close operation
 	done := make(chan error, 1)
 	go func() {
 		done <- h.closeFunc()
 	}()
-	
+
 	select {
 	case err := <-done:
 		if err != nil {
@@ -141,10 +141,10 @@ func (h *CacheHook) Shutdown(ctx context.Context) error {
 
 // GenericHook is a generic shutdown hook for custom cleanup operations
 type GenericHook struct {
-	name      string
-	priority  int
+	name         string
+	priority     int
 	shutdownFunc func(ctx context.Context) error
-	logger    *zerolog.Logger
+	logger       *zerolog.Logger
 }
 
 // NewGenericHook creates a new generic shutdown hook
@@ -167,11 +167,11 @@ func (h *GenericHook) Priority() int {
 
 func (h *GenericHook) Shutdown(ctx context.Context) error {
 	h.logger.Info().Str("hook", h.name).Msg("Executing shutdown hook...")
-	
+
 	start := time.Now()
 	err := h.shutdownFunc(ctx)
 	duration := time.Since(start)
-	
+
 	if err != nil {
 		h.logger.Error().
 			Err(err).
@@ -180,7 +180,7 @@ func (h *GenericHook) Shutdown(ctx context.Context) error {
 			Msg("Shutdown hook failed")
 		return err
 	}
-	
+
 	h.logger.Info().
 		Str("hook", h.name).
 		Dur("duration", duration).

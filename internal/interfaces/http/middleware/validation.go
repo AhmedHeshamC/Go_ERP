@@ -41,7 +41,7 @@ type ValidationConfig struct {
 	BlacklistedPatterns []*regexp.Regexp `json:"blacklisted_patterns"`
 
 	// Pagination limits
-	MaxPaginationLimit int `json:"max_pagination_limit"`
+	MaxPaginationLimit     int `json:"max_pagination_limit"`
 	DefaultPaginationLimit int `json:"default_pagination_limit"`
 }
 
@@ -61,12 +61,12 @@ type ValidationResult struct {
 // DefaultValidationConfig returns a secure default configuration
 func DefaultValidationConfig() ValidationConfig {
 	return ValidationConfig{
-		MaxRequestBodySize:             10 * 1024 * 1024, // 10MB
-		AllowedContentTypes:            []string{"application/json", "application/x-www-form-urlencoded", "multipart/form-data"},
-		EnableXSSProtection:            true,
-		EnableSQLInjectionProtection:   true,
-		MaxPaginationLimit:             1000,
-		DefaultPaginationLimit:         50,
+		MaxRequestBodySize:           10 * 1024 * 1024, // 10MB
+		AllowedContentTypes:          []string{"application/json", "application/x-www-form-urlencoded", "multipart/form-data"},
+		EnableXSSProtection:          true,
+		EnableSQLInjectionProtection: true,
+		MaxPaginationLimit:           1000,
+		DefaultPaginationLimit:       50,
 		MaxFieldLengths: map[string]int{
 			"name":     100,
 			"email":    255,
@@ -79,10 +79,10 @@ func DefaultValidationConfig() ValidationConfig {
 			"content":  10000,
 		},
 		RequiredFields: map[string][]string{
-			"POST:/api/v1/users/register":    {"email", "password", "username"},
-			"POST:/api/v1/users/login":       {"email", "password"},
-			"POST:/api/v1/products":          {"name", "price"},
-			"POST:/api/v1/orders":            {"customer_id", "items"},
+			"POST:/api/v1/users/register": {"email", "password", "username"},
+			"POST:/api/v1/users/login":    {"email", "password"},
+			"POST:/api/v1/products":       {"name", "price"},
+			"POST:/api/v1/orders":         {"customer_id", "items"},
 		},
 		FieldPatterns: map[string]*regexp.Regexp{
 			"email":    regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`),
@@ -568,7 +568,7 @@ func CSRFProtectionMiddleware(exemptPaths []string) gin.HandlerFunc {
 
 		// Only apply to state-changing methods
 		if c.Request.Method != "POST" && c.Request.Method != "PUT" &&
-		   c.Request.Method != "DELETE" && c.Request.Method != "PATCH" {
+			c.Request.Method != "DELETE" && c.Request.Method != "PATCH" {
 			c.Next()
 			return
 		}

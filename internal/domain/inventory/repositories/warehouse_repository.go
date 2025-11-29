@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/google/uuid"
 	"erpgo/internal/domain/inventory/entities"
+	"github.com/google/uuid"
 )
 
 // WarehouseRepository defines the interface for warehouse data operations
@@ -94,14 +94,14 @@ type WarehouseStats struct {
 
 // CapacityUtilization contains capacity utilization information
 type CapacityUtilization struct {
-	WarehouseID       uuid.UUID `json:"warehouse_id"`
-	WarehouseName     string    `json:"warehouse_name"`
-	WarehouseCode     string    `json:"warehouse_code"`
-	Capacity          *int      `json:"capacity,omitempty"`
-	CurrentStock      int       `json:"current_stock"`
-	UtilizationPercent float64  `json:"utilization_percent"`
-	AvailableSpace    *int      `json:"available_space,omitempty"`
-	LastCalculated    time.Time `json:"last_calculated"`
+	WarehouseID        uuid.UUID `json:"warehouse_id"`
+	WarehouseName      string    `json:"warehouse_name"`
+	WarehouseCode      string    `json:"warehouse_code"`
+	Capacity           *int      `json:"capacity,omitempty"`
+	CurrentStock       int       `json:"current_stock"`
+	UtilizationPercent float64   `json:"utilization_percent"`
+	AvailableSpace     *int      `json:"available_space,omitempty"`
+	LastCalculated     time.Time `json:"last_calculated"`
 }
 
 // WarehouseSortUpdate defines a sort order update for warehouses

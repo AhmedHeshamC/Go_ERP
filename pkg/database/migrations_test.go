@@ -196,7 +196,7 @@ func TestMigrationRunner_GetPendingMigrations(t *testing.T) {
 	// Since we don't have a real database, this will fail, but we can test
 	// the method structure
 	pending, err := mr.GetPendingMigrations(ctx)
-	assert.Error(t, err) // Expected to fail without a real database
+	assert.Error(t, err)        // Expected to fail without a real database
 	assert.Equal(t, 0, pending) // Default value when error occurs
 }
 
@@ -214,7 +214,7 @@ func TestMigrationRunner_Status_Structure(t *testing.T) {
 	// Test the structure (will fail without real DB, but tests the interface)
 	ctx := context.Background()
 	statuses, err := mr.Status(ctx)
-	assert.Error(t, err) // Expected to fail without a real database
+	assert.Error(t, err)    // Expected to fail without a real database
 	assert.Nil(t, statuses) // Should be nil when error occurs
 }
 

@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
+	"erpgo/pkg/secrets"
 	"github.com/caarlos0/env/v10"
 	"github.com/joho/godotenv"
-	"erpgo/pkg/secrets"
 )
 
 // Config holds the application configuration
@@ -24,7 +24,7 @@ type Config struct {
 	DatabaseURL     string `env:"DATABASE_URL" envDefault:"postgres://localhost/erp?sslmode=disable"`
 	MaxConnections  int    `env:"MAX_CONNECTIONS" envDefault:"20"`
 	MinConnections  int    `env:"MIN_CONNECTIONS" envDefault:"5"`
-	ConnMaxLifetime int    `env:"CONN_MAX_LIFETIME" envDefault:"3600"` // seconds
+	ConnMaxLifetime int    `env:"CONN_MAX_LIFETIME" envDefault:"3600"`  // seconds
 	ConnMaxIdleTime int    `env:"CONN_MAX_IDLE_TIME" envDefault:"1800"` // seconds
 
 	// SSL Configuration
@@ -51,8 +51,8 @@ type Config struct {
 	CORSHeaders []string `env:"CORS_HEADERS" envDefault:"Origin,Content-Type,Accept,Authorization"`
 
 	// Production CORS configuration
-	ProductionCORSOrigins []string `env:"PRODUCTION_CORS_ORIGINS"`
-	CORSEnvironmentWhitelist  bool     `env:"CORS_ENVIRONMENT_WHITELIST" envDefault:"true"`
+	ProductionCORSOrigins    []string `env:"PRODUCTION_CORS_ORIGINS"`
+	CORSEnvironmentWhitelist bool     `env:"CORS_ENVIRONMENT_WHITELIST" envDefault:"true"`
 	CORSMaxAge               int      `env:"CORS_MAX_AGE" envDefault:"86400"`
 	CORSCredentialsEnabled   bool     `env:"CORS_CREDENTIALS_ENABLED" envDefault:"true"`
 
@@ -100,10 +100,10 @@ type Config struct {
 	APIDocsPath    string `env:"API_DOCS_PATH" envDefault:"/docs"`
 
 	// Cache configuration
-	CacheEnabled     bool          `env:"CACHE_ENABLED" envDefault:"true"`
-	CacheDefaultTTL  time.Duration `env:"CACHE_DEFAULT_TTL" envDefault:"5m"`
-	CacheUserTTL     time.Duration `env:"CACHE_USER_TTL" envDefault:"10m"`
-	CacheProductTTL  time.Duration `env:"CACHE_PRODUCT_TTL" envDefault:"15m"`
+	CacheEnabled      bool          `env:"CACHE_ENABLED" envDefault:"true"`
+	CacheDefaultTTL   time.Duration `env:"CACHE_DEFAULT_TTL" envDefault:"5m"`
+	CacheUserTTL      time.Duration `env:"CACHE_USER_TTL" envDefault:"10m"`
+	CacheProductTTL   time.Duration `env:"CACHE_PRODUCT_TTL" envDefault:"15m"`
 	CacheInventoryTTL time.Duration `env:"CACHE_INVENTORY_TTL" envDefault:"1m"`
 
 	// Background jobs
@@ -328,10 +328,10 @@ func (c *Config) populateStructuredConfigs() {
 
 	// Populate Redis config
 	c.Redis = &RedisConfig{
-		URL:       c.RedisURL,
-		Password:  c.RedisPassword,
-		DB:        c.RedisDB,
-		PoolSize:  c.RedisPoolSize,
+		URL:      c.RedisURL,
+		Password: c.RedisPassword,
+		DB:       c.RedisDB,
+		PoolSize: c.RedisPoolSize,
 	}
 }
 
@@ -372,8 +372,8 @@ func (c *Config) GetRedisConfig() RedisConfig {
 // GetJWTConfig returns JWT configuration
 func (c *Config) GetJWTConfig() JWTConfig {
 	return JWTConfig{
-		Secret:     c.JWTSecret,
-		Expiry:     c.JWTExpiry,
+		Secret:        c.JWTSecret,
+		Expiry:        c.JWTExpiry,
 		RefreshExpiry: c.RefreshExpiry,
 	}
 }
@@ -386,24 +386,24 @@ func (c *Config) GetCORSConfig() CORSConfig {
 			origins = c.CORSOrigins
 		}
 		return CORSConfig{
-			Origins:         origins,
-			Methods:         c.CORSMethods,
-			Headers:         c.CORSHeaders,
-			MaxAge:          c.CORSMaxAge,
-			Credentials:     c.CORSCredentialsEnabled,
+			Origins:              origins,
+			Methods:              c.CORSMethods,
+			Headers:              c.CORSHeaders,
+			MaxAge:               c.CORSMaxAge,
+			Credentials:          c.CORSCredentialsEnabled,
 			EnvironmentWhitelist: c.CORSEnvironmentWhitelist,
-			IsProduction:    true,
+			IsProduction:         true,
 		}
 	}
 
 	return CORSConfig{
-		Origins:         c.CORSOrigins,
-		Methods:         c.CORSMethods,
-		Headers:         c.CORSHeaders,
-		MaxAge:          c.CORSMaxAge,
-		Credentials:     c.CORSCredentialsEnabled,
+		Origins:              c.CORSOrigins,
+		Methods:              c.CORSMethods,
+		Headers:              c.CORSHeaders,
+		MaxAge:               c.CORSMaxAge,
+		Credentials:          c.CORSCredentialsEnabled,
 		EnvironmentWhitelist: c.CORSEnvironmentWhitelist,
-		IsProduction:    false,
+		IsProduction:         false,
 	}
 }
 
@@ -449,12 +449,12 @@ type CORSConfig struct {
 
 // RateLimitConfig holds rate limiting configuration
 type RateLimitConfig struct {
-	Enabled           bool    `json:"enabled"`
-	RequestsPerSecond float64 `json:"requests_per_second"`
-	BurstSize         int     `json:"burst_size"`
-	StorageType       string  `json:"storage_type"`
-	LogRequests       bool    `json:"log_requests"`
-	LogRejections     bool    `json:"log_rejections"`
+	Enabled           bool          `json:"enabled"`
+	RequestsPerSecond float64       `json:"requests_per_second"`
+	BurstSize         int           `json:"burst_size"`
+	StorageType       string        `json:"storage_type"`
+	LogRequests       bool          `json:"log_requests"`
+	LogRejections     bool          `json:"log_rejections"`
 	TTL               time.Duration `json:"ttl"`
 }
 

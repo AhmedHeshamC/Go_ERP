@@ -252,18 +252,18 @@ func TestMonitoringIntegration(t *testing.T) {
 
 	// Create monitoring service config
 	config := monitoring.MonitoringConfig{
-		Version:              "test-version",
-		BuildTime:            "2023-01-01T00:00:00Z",
-		Commit:               "test-commit",
-		LogLevel:             "info",
-		Environment:          "test",
-		ServiceName:          "erpgo-test",
-		EnableMetrics:        true,
-		EnableTracing:        true,
-		EnableErrorTracking:  true,
-		TracingSampleRate:    1.0,
-		MetricsPath:          "/metrics",
-		HealthPath:           "/health",
+		Version:             "test-version",
+		BuildTime:           "2023-01-01T00:00:00Z",
+		Commit:              "test-commit",
+		LogLevel:            "info",
+		Environment:         "test",
+		ServiceName:         "erpgo-test",
+		EnableMetrics:       true,
+		EnableTracing:       true,
+		EnableErrorTracking: true,
+		TracingSampleRate:   1.0,
+		MetricsPath:         "/metrics",
+		HealthPath:          "/health",
 	}
 
 	// Create monitoring service
@@ -344,14 +344,14 @@ func TestMonitoringHTTPMiddleware(t *testing.T) {
 
 	// Create monitoring service
 	config := monitoring.MonitoringConfig{
-		Version:              "test-version",
-		ServiceName:          "erpgo-test",
-		EnableMetrics:        true,
-		EnableTracing:        true,
-		EnableErrorTracking:  true,
-		TracingSampleRate:    1.0,
-		MetricsPath:          "/metrics",
-		HealthPath:           "/health",
+		Version:             "test-version",
+		ServiceName:         "erpgo-test",
+		EnableMetrics:       true,
+		EnableTracing:       true,
+		EnableErrorTracking: true,
+		TracingSampleRate:   1.0,
+		MetricsPath:         "/metrics",
+		HealthPath:          "/health",
 	}
 
 	ms := monitoring.NewMonitoringService(config, logger)

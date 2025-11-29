@@ -23,48 +23,48 @@ func TestSQLInjectionPrevention(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	tests := []struct {
-		name           string
-		queryParam     string
+		name            string
+		queryParam      string
 		shouldBeBlocked bool
 	}{
 		{
-			name:           "Normal query",
-			queryParam:     "name",
+			name:            "Normal query",
+			queryParam:      "name",
 			shouldBeBlocked: false,
 		},
 		{
-			name:           "SQL injection with OR",
-			queryParam:     "name' OR '1'='1",
+			name:            "SQL injection with OR",
+			queryParam:      "name' OR '1'='1",
 			shouldBeBlocked: true,
 		},
 		{
-			name:           "SQL injection with UNION",
-			queryParam:     "name' UNION SELECT * FROM users--",
+			name:            "SQL injection with UNION",
+			queryParam:      "name' UNION SELECT * FROM users--",
 			shouldBeBlocked: true,
 		},
 		{
-			name:           "SQL injection with DROP",
-			queryParam:     "name'; DROP TABLE users--",
+			name:            "SQL injection with DROP",
+			queryParam:      "name'; DROP TABLE users--",
 			shouldBeBlocked: true,
 		},
 		{
-			name:           "SQL injection with comment",
-			queryParam:     "name'--",
+			name:            "SQL injection with comment",
+			queryParam:      "name'--",
 			shouldBeBlocked: true,
 		},
 		{
-			name:           "SQL injection with semicolon",
-			queryParam:     "name'; DELETE FROM users WHERE 1=1--",
+			name:            "SQL injection with semicolon",
+			queryParam:      "name'; DELETE FROM users WHERE 1=1--",
 			shouldBeBlocked: true,
 		},
 		{
-			name:           "SQL injection with hex encoding",
-			queryParam:     "name' OR 0x31=0x31--",
+			name:            "SQL injection with hex encoding",
+			queryParam:      "name' OR 0x31=0x31--",
 			shouldBeBlocked: true,
 		},
 		{
-			name:           "SQL injection with EXEC",
-			queryParam:     "name'; EXEC sp_executesql--",
+			name:            "SQL injection with EXEC",
+			queryParam:      "name'; EXEC sp_executesql--",
 			shouldBeBlocked: true,
 		},
 	}
@@ -199,73 +199,73 @@ func TestXSSPrevention(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	tests := []struct {
-		name           string
-		input          string
+		name            string
+		input           string
 		shouldBeBlocked bool
 	}{
 		{
-			name:           "Normal text",
-			input:          "Hello World",
+			name:            "Normal text",
+			input:           "Hello World",
 			shouldBeBlocked: false,
 		},
 		{
-			name:           "XSS with script tag",
-			input:          "<script>alert('XSS')</script>",
+			name:            "XSS with script tag",
+			input:           "<script>alert('XSS')</script>",
 			shouldBeBlocked: true,
 		},
 		{
-			name:           "XSS with img onerror",
-			input:          "<img src=x onerror=alert('XSS')>",
+			name:            "XSS with img onerror",
+			input:           "<img src=x onerror=alert('XSS')>",
 			shouldBeBlocked: true,
 		},
 		{
-			name:           "XSS with javascript protocol",
-			input:          "<a href='javascript:alert(1)'>Click</a>",
+			name:            "XSS with javascript protocol",
+			input:           "<a href='javascript:alert(1)'>Click</a>",
 			shouldBeBlocked: true,
 		},
 		{
-			name:           "XSS with event handler",
-			input:          "<div onload=alert('XSS')>",
+			name:            "XSS with event handler",
+			input:           "<div onload=alert('XSS')>",
 			shouldBeBlocked: true,
 		},
 		{
-			name:           "XSS with onclick",
-			input:          "<button onclick='alert(1)'>Click</button>",
+			name:            "XSS with onclick",
+			input:           "<button onclick='alert(1)'>Click</button>",
 			shouldBeBlocked: true,
 		},
 		{
-			name:           "XSS with onmouseover",
-			input:          "<div onmouseover='alert(1)'>Hover</div>",
+			name:            "XSS with onmouseover",
+			input:           "<div onmouseover='alert(1)'>Hover</div>",
 			shouldBeBlocked: true,
 		},
 		{
-			name:           "XSS with iframe",
-			input:          "<iframe src='javascript:alert(1)'></iframe>",
+			name:            "XSS with iframe",
+			input:           "<iframe src='javascript:alert(1)'></iframe>",
 			shouldBeBlocked: true,
 		},
 		{
-			name:           "XSS with embed",
-			input:          "<embed src='javascript:alert(1)'>",
+			name:            "XSS with embed",
+			input:           "<embed src='javascript:alert(1)'>",
 			shouldBeBlocked: true,
 		},
 		{
-			name:           "XSS with object",
-			input:          "<object data='javascript:alert(1)'>",
+			name:            "XSS with object",
+			input:           "<object data='javascript:alert(1)'>",
 			shouldBeBlocked: true,
 		},
 		{
-			name:           "XSS with SVG",
-			input:          "<svg onload=alert(1)>",
+			name:            "XSS with SVG",
+			input:           "<svg onload=alert(1)>",
 			shouldBeBlocked: true,
 		},
 		{
-			name:           "XSS with data URI",
-			input:          "<img src='data:text/html,<script>alert(1)</script>'>",
+			name:            "XSS with data URI",
+			input:           "<img src='data:text/html,<script>alert(1)</script>'>",
 			shouldBeBlocked: true,
 		},
 		{
-			name:           "Safe HTML with allowed tags",
-			input:          "<p>This is a paragraph</p>",
+			name:            "Safe HTML with allowed tags",
+			input:           "<p>This is a paragraph</p>",
 			shouldBeBlocked: false,
 		},
 	}
@@ -455,7 +455,7 @@ func TestRateLimitWithRealLimiter(t *testing.T) {
 	t.Run("Allow requests within limit", func(t *testing.T) {
 		// Use unique identifier for this test
 		identifier := "test-user-allow-" + time.Now().Format("20060102150405.000000")
-		
+
 		// First 3 attempts should be allowed
 		for i := 0; i < 3; i++ {
 			allowed, err := limiter.AllowLogin(ctx, identifier)
@@ -467,12 +467,12 @@ func TestRateLimitWithRealLimiter(t *testing.T) {
 	t.Run("Block requests exceeding limit", func(t *testing.T) {
 		// Use unique identifier for this test
 		identifier := "test-user-block-" + time.Now().Format("20060102150405.000000")
-		
+
 		// Exhaust the limit
 		for i := 0; i < 3; i++ {
 			limiter.AllowLogin(ctx, identifier)
 		}
-		
+
 		// 4th attempt should be blocked
 		allowed, _ := limiter.AllowLogin(ctx, identifier)
 		assert.False(t, allowed, "Attempt exceeding limit should be blocked")
@@ -501,28 +501,28 @@ func TestRateLimitHeaderSpoofing(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	tests := []struct {
-		name              string
-		xForwardedFor     string
-		realIP            string
-		shouldUseRealIP   bool
+		name            string
+		xForwardedFor   string
+		realIP          string
+		shouldUseRealIP bool
 	}{
 		{
-			name:              "No X-Forwarded-For header",
-			xForwardedFor:     "",
-			realIP:            "192.168.1.1",
-			shouldUseRealIP:   true,
+			name:            "No X-Forwarded-For header",
+			xForwardedFor:   "",
+			realIP:          "192.168.1.1",
+			shouldUseRealIP: true,
 		},
 		{
-			name:              "Single X-Forwarded-For IP",
-			xForwardedFor:     "10.0.0.1",
-			realIP:            "192.168.1.1",
-			shouldUseRealIP:   false,
+			name:            "Single X-Forwarded-For IP",
+			xForwardedFor:   "10.0.0.1",
+			realIP:          "192.168.1.1",
+			shouldUseRealIP: false,
 		},
 		{
-			name:              "Multiple X-Forwarded-For IPs",
-			xForwardedFor:     "10.0.0.1, 10.0.0.2",
-			realIP:            "192.168.1.1",
-			shouldUseRealIP:   false,
+			name:            "Multiple X-Forwarded-For IPs",
+			xForwardedFor:   "10.0.0.1, 10.0.0.2",
+			realIP:          "192.168.1.1",
+			shouldUseRealIP: false,
 		},
 	}
 

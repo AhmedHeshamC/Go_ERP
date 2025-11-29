@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/google/uuid"
-	"github.com/shopspring/decimal"
 	"erpgo/internal/domain/products/entities"
 	"erpgo/internal/domain/products/repositories"
+	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 // Benchmark suite for repository performance testing

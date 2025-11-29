@@ -44,7 +44,7 @@ func TestImageUploadEndpoints(t *testing.T) {
 				"error": "Product ID is required",
 			})
 			return
-			}
+		}
 
 		// Validate product ID
 		if _, err := uuid.Parse(productID); err != nil {
@@ -52,7 +52,7 @@ func TestImageUploadEndpoints(t *testing.T) {
 				"error": "Invalid product ID",
 			})
 			return
-			}
+		}
 
 		// Get uploaded file
 		file, err := c.FormFile("image")
@@ -70,10 +70,10 @@ func TestImageUploadEndpoints(t *testing.T) {
 		result := map[string]interface{}{
 			"filename":      "test_" + uuid.New().String()[:8] + ".png",
 			"original_name": file.Filename,
-			"size":         file.Size,
-			"mime_type":    "image/png",
-			"url":          fmt.Sprintf("/uploads/products/%s/test.png", productID),
-			"directory":    fmt.Sprintf("products/%s", productID),
+			"size":          file.Size,
+			"mime_type":     "image/png",
+			"url":           fmt.Sprintf("/uploads/products/%s/test.png", productID),
+			"directory":     fmt.Sprintf("products/%s", productID),
 			"uploaded_at":   time.Now().UTC(),
 		}
 
@@ -216,7 +216,7 @@ func TestBatchImageUpload(t *testing.T) {
 				"error": "Failed to parse multipart form",
 			})
 			return
-			}
+		}
 
 		files := form.File["images"]
 		if len(files) == 0 {
@@ -237,9 +237,9 @@ func TestBatchImageUpload(t *testing.T) {
 			result := map[string]interface{}{
 				"filename":      fmt.Sprintf("test_%d.png", i),
 				"original_name": file.Filename,
-				"size":         file.Size,
-				"mime_type":    "image/png",
-				"url":          fmt.Sprintf("/uploads/products/%s/test_%d.png", productID, i),
+				"size":          file.Size,
+				"mime_type":     "image/png",
+				"url":           fmt.Sprintf("/uploads/products/%s/test_%d.png", productID, i),
 				"uploaded_at":   time.Now().UTC(),
 			}
 
@@ -247,11 +247,11 @@ func TestBatchImageUpload(t *testing.T) {
 		}
 
 		response := map[string]interface{}{
-			"results":      results,
-			"errors":       errors,
-			"total_files":  len(files),
-			"successful":   len(results),
-			"failed":       len(errors),
+			"results":     results,
+			"errors":      errors,
+			"total_files": len(files),
+			"successful":  len(results),
+			"failed":      len(errors),
 		}
 
 		c.JSON(http.StatusCreated, response)
@@ -272,7 +272,7 @@ func TestBatchImageUpload(t *testing.T) {
 			_, err = io.Copy(part, file)
 			require.NoError(t, err)
 			file.Close()
-					}
+		}
 
 		writer.Close()
 
@@ -337,7 +337,7 @@ func TestImageFileValidation(t *testing.T) {
 				"error": "No file uploaded",
 			})
 			return
-			}
+		}
 
 		// Validate file size
 		maxSize := int64(10 * 1024 * 1024) // 10MB
@@ -373,7 +373,7 @@ func TestImageFileValidation(t *testing.T) {
 		_, err = io.Copy(part, file)
 		require.NoError(t, err)
 		file.Close()
-				writer.Close()
+		writer.Close()
 
 		productID := uuid.New().String()
 		req, _ := http.NewRequest("POST", fmt.Sprintf("/api/v1/products/%s/images", productID), body)
@@ -401,7 +401,7 @@ func TestImageFileValidation(t *testing.T) {
 		_, err = io.Copy(part, file)
 		require.NoError(t, err)
 		file.Close()
-				writer.Close()
+		writer.Close()
 
 		productID := uuid.New().String()
 		req, _ := http.NewRequest("POST", fmt.Sprintf("/api/v1/products/%s/images", productID), body)
@@ -429,7 +429,7 @@ func TestImageFileValidation(t *testing.T) {
 		_, err = io.Copy(part, file)
 		require.NoError(t, err)
 		file.Close()
-				writer.Close()
+		writer.Close()
 
 		productID := uuid.New().String()
 		req, _ := http.NewRequest("POST", fmt.Sprintf("/api/v1/products/%s/images", productID), body)
@@ -506,7 +506,7 @@ func BenchmarkImageUpload(b *testing.B) {
 		_, err = io.Copy(part, file)
 		require.NoError(b, err)
 		file.Close()
-				writer.Close()
+		writer.Close()
 
 		productID := uuid.New().String()
 		req, _ := http.NewRequest("POST", fmt.Sprintf("/api/v1/products/%s/images", productID), body)

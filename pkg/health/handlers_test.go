@@ -45,7 +45,7 @@ func TestLivenessEndpoint(t *testing.T) {
 // Validates: Requirements 8.2
 func TestReadinessEndpointHealthy(t *testing.T) {
 	checker := NewHealthChecker()
-	
+
 	// Register healthy database check
 	dbCheck := &mockHealthCheck{
 		name:    "database",
@@ -76,7 +76,7 @@ func TestReadinessEndpointHealthy(t *testing.T) {
 // Validates: Requirements 8.2, 8.3
 func TestReadinessEndpointUnhealthy(t *testing.T) {
 	checker := NewHealthChecker()
-	
+
 	// Register unhealthy database check
 	dbCheck := &mockHealthCheck{
 		name:    "database",
@@ -102,12 +102,12 @@ func TestReadinessEndpointUnhealthy(t *testing.T) {
 
 	assert.Equal(t, "unhealthy", response["status"])
 	assert.Equal(t, "Service is not ready", response["message"])
-	
+
 	// Verify detailed status is included
 	checks, ok := response["checks"].(map[string]interface{})
 	assert.True(t, ok)
 	assert.Contains(t, checks, "database")
-	
+
 	dbCheckResult, ok := checks["database"].(map[string]interface{})
 	assert.True(t, ok)
 	assert.Equal(t, "unhealthy", dbCheckResult["status"])
@@ -118,7 +118,7 @@ func TestReadinessEndpointUnhealthy(t *testing.T) {
 // Validates: Requirements 8.3
 func TestReadinessEndpointWithDetails(t *testing.T) {
 	checker := NewHealthChecker()
-	
+
 	// Register multiple checks
 	dbCheck := &mockHealthCheck{
 		name:    "database",
@@ -129,7 +129,7 @@ func TestReadinessEndpointWithDetails(t *testing.T) {
 		healthy: false,
 		err:     errors.New("redis connection timeout"),
 	}
-	
+
 	checker.RegisterCheck("database", dbCheck)
 	checker.RegisterCheck("redis", redisCheck)
 
@@ -150,14 +150,14 @@ func TestReadinessEndpointWithDetails(t *testing.T) {
 	assert.True(t, ok)
 	assert.Contains(t, checks, "database")
 	assert.Contains(t, checks, "redis")
-	
+
 	// Verify database check details
 	dbCheckResult, ok := checks["database"].(map[string]interface{})
 	assert.True(t, ok)
 	assert.Equal(t, "healthy", dbCheckResult["status"])
 	assert.NotNil(t, dbCheckResult["duration"])
 	assert.NotNil(t, dbCheckResult["timestamp"])
-	
+
 	// Verify redis check details (including error details)
 	redisCheckResult, ok := checks["redis"].(map[string]interface{})
 	assert.True(t, ok)
@@ -170,7 +170,7 @@ func TestReadinessEndpointWithDetails(t *testing.T) {
 // Validates: Requirements 8.4
 func TestReadinessEndpointDuringShutdown(t *testing.T) {
 	checker := NewHealthChecker()
-	
+
 	// Register healthy database check
 	dbCheck := &mockHealthCheck{
 		name:    "database",
@@ -228,7 +228,7 @@ func TestRegisterRoutes(t *testing.T) {
 // Validates: Requirements 8.1
 func TestLivenessNotAffectedByDatabaseFailure(t *testing.T) {
 	checker := NewHealthChecker()
-	
+
 	// Register unhealthy database check
 	dbCheck := &mockHealthCheck{
 		name:    "database",
@@ -269,7 +269,7 @@ func (m *mockHealthCheckHandler) Name() string {
 
 func (m *mockHealthCheckHandler) Check(ctx context.Context) error {
 	m.called = true
-	
+
 	if m.delay > 0 {
 		select {
 		case <-time.After(m.delay):
@@ -277,14 +277,14 @@ func (m *mockHealthCheckHandler) Check(ctx context.Context) error {
 			return ctx.Err()
 		}
 	}
-	
+
 	if !m.healthy {
 		if m.err != nil {
 			return m.err
 		}
 		return errors.New("health check failed")
 	}
-	
+
 	return nil
 }
 

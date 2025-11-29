@@ -36,24 +36,24 @@ const (
 
 // ErrorEvent represents a tracked error event
 type ErrorEvent struct {
-	ID           string                 `json:"id"`
-	Timestamp    time.Time              `json:"timestamp"`
-	Message      string                 `json:"message"`
-	ErrorType    string                 `json:"error_type"`
-	Severity     ErrorSeverity          `json:"severity"`
-	Category     ErrorCategory          `json:"category"`
-	Component    string                 `json:"component"`
-	UserID       string                 `json:"user_id,omitempty"`
-	RequestID    string                 `json:"request_id,omitempty"`
-	TraceID      string                 `json:"trace_id,omitempty"`
-	StackTrace   string                 `json:"stack_trace,omitempty"`
-	Context      map[string]interface{} `json:"context,omitempty"`
-	Recoverable  bool                   `json:"recoverable"`
-	Count        int                    `json:"count"`
-	FirstSeen    time.Time              `json:"first_seen"`
-	LastSeen     time.Time              `json:"last_seen"`
+	ID            string                 `json:"id"`
+	Timestamp     time.Time              `json:"timestamp"`
+	Message       string                 `json:"message"`
+	ErrorType     string                 `json:"error_type"`
+	Severity      ErrorSeverity          `json:"severity"`
+	Category      ErrorCategory          `json:"category"`
+	Component     string                 `json:"component"`
+	UserID        string                 `json:"user_id,omitempty"`
+	RequestID     string                 `json:"request_id,omitempty"`
+	TraceID       string                 `json:"trace_id,omitempty"`
+	StackTrace    string                 `json:"stack_trace,omitempty"`
+	Context       map[string]interface{} `json:"context,omitempty"`
+	Recoverable   bool                   `json:"recoverable"`
+	Count         int                    `json:"count"`
+	FirstSeen     time.Time              `json:"first_seen"`
+	LastSeen      time.Time              `json:"last_seen"`
 	AffectedUsers []string               `json:"affected_users,omitempty"`
-	Tags         []string               `json:"tags,omitempty"`
+	Tags          []string               `json:"tags,omitempty"`
 }
 
 // ErrorAggregation represents aggregated error statistics
@@ -72,13 +72,13 @@ type ErrorAggregation struct {
 
 // ErrorTracker tracks and aggregates errors
 type ErrorTracker struct {
-	errors      map[string]*ErrorEvent
-	errorsMutex sync.RWMutex
-	aggregations map[string]*ErrorAggregation
+	errors            map[string]*ErrorEvent
+	errorsMutex       sync.RWMutex
+	aggregations      map[string]*ErrorAggregation
 	aggregationsMutex sync.RWMutex
-	maxErrors   int
-	maxAge      time.Duration
-	exporters   []ErrorExporter
+	maxErrors         int
+	maxAge            time.Duration
+	exporters         []ErrorExporter
 }
 
 // ErrorExporter exports error events to external systems
@@ -214,9 +214,9 @@ func (et *ErrorTracker) TrackPanic(ctx context.Context, recovered interface{}, c
 	}
 
 	context := map[string]interface{}{
-		"panic":        true,
-		"stack_trace":  getStackTrace(),
-		"recovered":    fmt.Sprintf("%v", recovered),
+		"panic":       true,
+		"stack_trace": getStackTrace(),
+		"recovered":   fmt.Sprintf("%v", recovered),
 	}
 
 	et.TrackError(ctx, err, component, ErrorSeverityCritical, ErrorCategorySystem, context)
@@ -265,10 +265,10 @@ func (et *ErrorTracker) GetErrorStats() map[string]interface{} {
 	defer et.aggregationsMutex.RUnlock()
 
 	stats := map[string]interface{}{
-		"total_errors":     len(et.errors),
-		"total_aggregated": len(et.aggregations),
-		"severity_breakdown": make(map[string]int),
-		"category_breakdown": make(map[string]int),
+		"total_errors":        len(et.errors),
+		"total_aggregated":    len(et.aggregations),
+		"severity_breakdown":  make(map[string]int),
+		"category_breakdown":  make(map[string]int),
 		"component_breakdown": make(map[string]int),
 	}
 
@@ -340,8 +340,8 @@ func (et *ErrorTracker) cleanOldErrors() {
 	if len(et.errors)-len(toDelete) > et.maxErrors {
 		// Sort by timestamp and remove oldest
 		type errorWithTime struct {
-			id       string
-			event    *ErrorEvent
+			id        string
+			event     *ErrorEvent
 			timestamp time.Time
 		}
 

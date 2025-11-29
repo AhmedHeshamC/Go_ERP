@@ -327,29 +327,29 @@ func TestOrderAddress_ComprehensiveCoverage(t *testing.T) {
 func TestOrder_AdditionalCoverage(t *testing.T) {
 	t.Run("validateTrackingInfo_Carrier", func(t *testing.T) {
 		order := generateTestOrder(t)
-		
+
 		// Carrier too long
 		longCarrier := string(make([]byte, 51))
 		order.Carrier = &longCarrier
-		
+
 		err := order.Validate()
 		assert.Error(t, err)
 	})
 
 	t.Run("validateWebsite", func(t *testing.T) {
 		customer := generateTestCustomer(t)
-		
+
 		// Invalid website
 		invalidWebsite := "not-a-url"
 		customer.Website = &invalidWebsite
-		
+
 		err := customer.Validate()
 		assert.Error(t, err)
-		
+
 		// Valid website
 		validWebsite := "https://example.com"
 		customer.Website = &validWebsite
-		
+
 		err = customer.Validate()
 		assert.NoError(t, err)
 	})

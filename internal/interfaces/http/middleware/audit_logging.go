@@ -12,11 +12,11 @@ import (
 
 // AuditConfig holds configuration for audit logging middleware
 type AuditConfig struct {
-	Enabled           bool          `json:"enabled"`
-	LogAllRequests    bool          `json:"log_all_requests"`
-	LogSensitiveData  bool          `json:"log_sensitive_data"`
-	ExcludePaths      []string      `json:"exclude_paths"`
-	CacheTTL          time.Duration `json:"cache_ttl"`
+	Enabled          bool          `json:"enabled"`
+	LogAllRequests   bool          `json:"log_all_requests"`
+	LogSensitiveData bool          `json:"log_sensitive_data"`
+	ExcludePaths     []string      `json:"exclude_paths"`
+	CacheTTL         time.Duration `json:"cache_ttl"`
 }
 
 // DefaultAuditConfig returns default audit configuration

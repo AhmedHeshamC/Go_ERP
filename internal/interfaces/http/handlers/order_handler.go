@@ -294,12 +294,12 @@ func (h *OrderHandler) ListOrders(c *gin.Context) {
 
 	// Convert to service request
 	serviceReq := &order.ListOrdersRequest{
-		CustomerID:        uuidPtrToPtrString(req.CustomerID),
-		Search:            ptrStringToString(req.Search),
-		Page:              req.Page,
-		Limit:             req.Limit,
-		SortBy:            ptrStringToString(req.SortBy),
-		SortOrder:         ptrStringToString(req.SortOrder),
+		CustomerID: uuidPtrToPtrString(req.CustomerID),
+		Search:     ptrStringToString(req.Search),
+		Page:       req.Page,
+		Limit:      req.Limit,
+		SortBy:     ptrStringToString(req.SortBy),
+		SortOrder:  ptrStringToString(req.SortOrder),
 	}
 
 	result, err := h.orderService.ListOrders(c, serviceReq)
@@ -493,9 +493,9 @@ func (h *OrderHandler) CancelOrder(c *gin.Context) {
 	}
 
 	serviceReq := &order.CancelOrderRequest{
-		Reason:     req.Reason,
-		Refund:     req.RefundPayment,
-		Notify:     req.NotifyCustomer,
+		Reason:      req.Reason,
+		Refund:      req.RefundPayment,
+		Notify:      req.NotifyCustomer,
 		CancelledBy: "", // TODO: Get from authenticated user context
 	}
 
@@ -736,21 +736,21 @@ func (h *OrderHandler) orderToResponse(o *entities.Order) *dto.OrderResponse {
 		if returnedQty > 0x7FFFFFFF || returnedQty < -0x80000000 {
 			returnedQty = 0
 		}
-		
+
 		items[i] = dto.OrderItemResponse{
 			ID:               item.ID,
 			ProductID:        item.ProductID,
 			ProductSKU:       item.ProductSKU,
 			ProductName:      item.ProductName,
-			Quantity:         int32(quantity),         // #nosec G115 - Validated above
+			Quantity:         int32(quantity), // #nosec G115 - Validated above
 			UnitPrice:        item.UnitPrice,
 			TotalPrice:       item.TotalPrice,
 			TaxAmount:        item.TaxAmount,
 			DiscountAmount:   item.DiscountAmount,
 			Weight:           decimal.NewFromFloat(item.Weight),
 			Status:           item.Status,
-			ShippedQuantity:  int32(shippedQty),       // #nosec G115 - Validated above
-			ReturnedQuantity: int32(returnedQty),      // #nosec G115 - Validated above
+			ShippedQuantity:  int32(shippedQty),  // #nosec G115 - Validated above
+			ReturnedQuantity: int32(returnedQty), // #nosec G115 - Validated above
 			Notes:            item.Notes,
 		}
 	}

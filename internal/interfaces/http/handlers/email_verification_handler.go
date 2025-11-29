@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"erpgo/internal/application/services/email"
 	"erpgo/internal/domain/users/entities"
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 // EmailVerificationHandler handles email verification endpoints

@@ -28,10 +28,10 @@ func TestInputValidation(t *testing.T) {
 		expectedError  string
 	}{
 		{
-			name:           "Valid JSON request",
-			method:         "POST",
-			path:           "/api/v1/users/register",
-			contentType:    "application/json",
+			name:        "Valid JSON request",
+			method:      "POST",
+			path:        "/api/v1/users/register",
+			contentType: "application/json",
 			body: map[string]interface{}{
 				"email":    "test@example.com",
 				"password": "password123",
@@ -40,10 +40,10 @@ func TestInputValidation(t *testing.T) {
 			expectedStatus: 200,
 		},
 		{
-			name:           "Missing required field",
-			method:         "POST",
-			path:           "/api/v1/users/register",
-			contentType:    "application/json",
+			name:        "Missing required field",
+			method:      "POST",
+			path:        "/api/v1/users/register",
+			contentType: "application/json",
 			body: map[string]interface{}{
 				"email":    "test@example.com",
 				"password": "password123",
@@ -53,10 +53,10 @@ func TestInputValidation(t *testing.T) {
 			expectedError:  "VALIDATION_ERROR",
 		},
 		{
-			name:           "Invalid email format",
-			method:         "POST",
-			path:           "/api/v1/users/register",
-			contentType:    "application/json",
+			name:        "Invalid email format",
+			method:      "POST",
+			path:        "/api/v1/users/register",
+			contentType: "application/json",
 			body: map[string]interface{}{
 				"email":    "invalid-email",
 				"password": "password123",
@@ -66,10 +66,10 @@ func TestInputValidation(t *testing.T) {
 			expectedError:  "VALIDATION_ERROR",
 		},
 		{
-			name:           "XSS attempt",
-			method:         "POST",
-			path:           "/api/v1/users/register",
-			contentType:    "application/json",
+			name:        "XSS attempt",
+			method:      "POST",
+			path:        "/api/v1/users/register",
+			contentType: "application/json",
 			body: map[string]interface{}{
 				"email":    "test@example.com",
 				"password": "password123",
@@ -79,10 +79,10 @@ func TestInputValidation(t *testing.T) {
 			expectedError:  "VALIDATION_ERROR",
 		},
 		{
-			name:           "SQL injection attempt",
-			method:         "POST",
-			path:           "/api/v1/users/register",
-			contentType:    "application/json",
+			name:        "SQL injection attempt",
+			method:      "POST",
+			path:        "/api/v1/users/register",
+			contentType: "application/json",
 			body: map[string]interface{}{
 				"email":    "test@example.com",
 				"password": "password123",
@@ -101,10 +101,10 @@ func TestInputValidation(t *testing.T) {
 			expectedError:  "UNSUPPORTED_MEDIA_TYPE",
 		},
 		{
-			name:           "Field too long",
-			method:         "POST",
-			path:           "/api/v1/users/register",
-			contentType:    "application/json",
+			name:        "Field too long",
+			method:      "POST",
+			path:        "/api/v1/users/register",
+			contentType: "application/json",
 			body: map[string]interface{}{
 				"email":    "test@example.com",
 				"password": "password123",

@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
+	"erpgo/internal/domain/products/entities"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
-	"erpgo/internal/domain/products/entities"
 )
 
 // ProductRepository defines the interface for product data operations
@@ -120,13 +120,13 @@ type ProductFilter struct {
 
 // CategoryFilter defines filtering options for category queries
 type CategoryFilter struct {
-	Search   string
-	ParentID *uuid.UUID
-	IsActive *bool
-	Level    *int
-	Page     int
-	Limit    int
-	SortBy   string
+	Search    string
+	ParentID  *uuid.UUID
+	IsActive  *bool
+	Level     *int
+	Page      int
+	Limit     int
+	SortBy    string
 	SortOrder string
 }
 
@@ -150,18 +150,18 @@ type ProductVariantFilter struct {
 
 // ProductStats represents product statistics
 type ProductStats struct {
-	TotalProducts    int     `json:"total_products"`
-	ActiveProducts   int     `json:"active_products"`
-	InactiveProducts int     `json:"inactive_products"`
-	FeaturedProducts int     `json:"featured_products"`
-	LowStockProducts int     `json:"low_stock_products"`
-	OutOfStockProducts int   `json:"out_of_stock_products"`
-	DigitalProducts  int     `json:"digital_products"`
-	PhysicalProducts int     `json:"physical_products"`
-	AveragePrice     decimal.Decimal `json:"average_price"`
-	MinPrice         decimal.Decimal `json:"min_price"`
-	MaxPrice         decimal.Decimal `json:"max_price"`
-	TotalStockValue  decimal.Decimal `json:"total_stock_value"`
+	TotalProducts      int             `json:"total_products"`
+	ActiveProducts     int             `json:"active_products"`
+	InactiveProducts   int             `json:"inactive_products"`
+	FeaturedProducts   int             `json:"featured_products"`
+	LowStockProducts   int             `json:"low_stock_products"`
+	OutOfStockProducts int             `json:"out_of_stock_products"`
+	DigitalProducts    int             `json:"digital_products"`
+	PhysicalProducts   int             `json:"physical_products"`
+	AveragePrice       decimal.Decimal `json:"average_price"`
+	MinPrice           decimal.Decimal `json:"min_price"`
+	MaxPrice           decimal.Decimal `json:"max_price"`
+	TotalStockValue    decimal.Decimal `json:"total_stock_value"`
 }
 
 // CategorySortUpdate represents a category sort order update
@@ -172,11 +172,11 @@ type CategorySortUpdate struct {
 
 // RepositoryResult represents a paginated repository result
 type RepositoryResult[T any] struct {
-	Items       []T   `json:"items"`
-	TotalCount  int   `json:"total_count"`
-	Page        int   `json:"page"`
-	Limit       int   `json:"limit"`
-	TotalPages  int   `json:"total_pages"`
-	HasNext     bool  `json:"has_next"`
-	HasPrevious bool  `json:"has_previous"`
+	Items       []T  `json:"items"`
+	TotalCount  int  `json:"total_count"`
+	Page        int  `json:"page"`
+	Limit       int  `json:"limit"`
+	TotalPages  int  `json:"total_pages"`
+	HasNext     bool `json:"has_next"`
+	HasPrevious bool `json:"has_previous"`
 }

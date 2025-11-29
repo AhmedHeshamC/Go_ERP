@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/google/uuid"
 	"erpgo/internal/domain/users/entities"
+	"github.com/google/uuid"
 )
 
 // EmailVerificationRepository defines the interface for email verification data operations
@@ -32,13 +32,13 @@ type EmailVerificationRepository interface {
 
 // VerificationStats represents statistics for user verifications
 type VerificationStats struct {
-	TotalVerifications      int64     `json:"total_verifications"`
-	ActiveVerifications     int64     `json:"active_verifications"`
-	UsedVerifications       int64     `json:"used_verifications"`
-	ExpiredVerifications    int64     `json:"expired_verifications"`
-	LastVerificationSent    *time.Time `json:"last_verification_sent,omitempty"`
-	LastVerificationUsed    *time.Time `json:"last_verification_used,omitempty"`
-	VerificationTokenType   string    `json:"verification_token_type"`
+	TotalVerifications    int64      `json:"total_verifications"`
+	ActiveVerifications   int64      `json:"active_verifications"`
+	UsedVerifications     int64      `json:"used_verifications"`
+	ExpiredVerifications  int64      `json:"expired_verifications"`
+	LastVerificationSent  *time.Time `json:"last_verification_sent,omitempty"`
+	LastVerificationUsed  *time.Time `json:"last_verification_used,omitempty"`
+	VerificationTokenType string     `json:"verification_token_type"`
 }
 
 // EmailRepository defines the interface for email sending operations
@@ -75,28 +75,28 @@ type EmailStatsFilter struct {
 
 // EmailStats represents email sending statistics
 type EmailStats struct {
-	TotalSent     int64 `json:"total_sent"`
-	TotalDelivered int64 `json:"total_delivered"`
-	TotalOpened   int64 `json:"total_opened"`
-	TotalClicked  int64 `json:"total_clicked"`
-	DeliveryRate  float64 `json:"delivery_rate"`
-	OpenRate      float64 `json:"open_rate"`
-	ClickRate     float64 `json:"click_rate"`
+	TotalSent      int64   `json:"total_sent"`
+	TotalDelivered int64   `json:"total_delivered"`
+	TotalOpened    int64   `json:"total_opened"`
+	TotalClicked   int64   `json:"total_clicked"`
+	DeliveryRate   float64 `json:"delivery_rate"`
+	OpenRate       float64 `json:"open_rate"`
+	ClickRate      float64 `json:"click_rate"`
 }
 
 // EmailLog represents an email delivery log entry
 type EmailLog struct {
-	ID          uuid.UUID  `json:"id" db:"id"`
-	EmailID     uuid.UUID  `json:"email_id" db:"email_id"`
-	ToEmail     string     `json:"to_email" db:"to_email"`
-	TemplateType string    `json:"template_type" db:"template_type"`
-	Status      string     `json:"status" db:"status"` // 'sent', 'delivered', 'opened', 'clicked', 'failed'
-	SentAt      time.Time  `json:"sent_at" db:"sent_at"`
-	DeliveredAt *time.Time `json:"delivered_at,omitempty" db:"delivered_at"`
-	OpenedAt    *time.Time `json:"opened_at,omitempty" db:"opened_at"`
-	ClickedAt   *time.Time `json:"clicked_at,omitempty" db:"clicked_at"`
+	ID           uuid.UUID  `json:"id" db:"id"`
+	EmailID      uuid.UUID  `json:"email_id" db:"email_id"`
+	ToEmail      string     `json:"to_email" db:"to_email"`
+	TemplateType string     `json:"template_type" db:"template_type"`
+	Status       string     `json:"status" db:"status"` // 'sent', 'delivered', 'opened', 'clicked', 'failed'
+	SentAt       time.Time  `json:"sent_at" db:"sent_at"`
+	DeliveredAt  *time.Time `json:"delivered_at,omitempty" db:"delivered_at"`
+	OpenedAt     *time.Time `json:"opened_at,omitempty" db:"opened_at"`
+	ClickedAt    *time.Time `json:"clicked_at,omitempty" db:"clicked_at"`
 	ErrorMessage string     `json:"error_message,omitempty" db:"error_message"`
-	CreatedAt   time.Time  `json:"created_at" db:"created_at"`
+	CreatedAt    time.Time  `json:"created_at" db:"created_at"`
 }
 
 // EmailLogRepository defines the interface for email logging operations

@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
+	"erpgo/internal/domain/inventory/entities"
+	"erpgo/internal/domain/inventory/repositories"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"erpgo/internal/domain/inventory/entities"
 )
 
 func TestPostgresWarehouseRepository_Create(t *testing.T) {
@@ -84,7 +84,7 @@ func TestPostgresWarehouseRepository_List(t *testing.T) {
 
 	ctx := context.Background()
 	warehouse1 := createTestWarehouse(t, db, "Warehouse A", "WH001")
-	warehouse2 := createTestWarehouse(t, db, "Warehouse B", "WH002")
+	_ = createTestWarehouse(t, db, "Warehouse B", "WH002") // Created but not used in this test
 
 	// Test list all
 	warehouses, err := repo.List(ctx, nil)
@@ -92,7 +92,7 @@ func TestPostgresWarehouseRepository_List(t *testing.T) {
 	assert.Len(t, warehouses, 2)
 
 	// Test filter by name
-	filter := &WarehouseFilter{
+	filter := &repositories.WarehouseFilter{
 		Name: "Warehouse A",
 	}
 	warehouses, err = repo.List(ctx, filter)
@@ -101,7 +101,7 @@ func TestPostgresWarehouseRepository_List(t *testing.T) {
 	assert.Equal(t, warehouse1.ID, warehouses[0].ID)
 
 	// Test filter by active status
-	activeFilter := &WarehouseFilter{
+	activeFilter := &repositories.WarehouseFilter{
 		IsActive: &[]bool{true}[0],
 	}
 	warehouses, err = repo.List(ctx, activeFilter)
@@ -183,7 +183,7 @@ func TestPostgresInventoryRepository_AdjustStock(t *testing.T) {
 	ctx := context.Background()
 	warehouse := createTestWarehouse(t, db, "Test Warehouse", "TEST001")
 	product := createTestProduct(t, db, "Test Product", "TEST001")
-	inventory := createTestInventory(t, db, product.ID, warehouse.ID, 100, 10, 20)
+	_ = createTestInventory(t, db, product.ID, warehouse.ID, 100, 10, 20) // Created but not used in this test
 
 	// Adjust stock up
 	err := repo.AdjustStock(ctx, product.ID, warehouse.ID, 50)
@@ -211,7 +211,7 @@ func TestPostgresInventoryRepository_ReserveStock(t *testing.T) {
 	ctx := context.Background()
 	warehouse := createTestWarehouse(t, db, "Test Warehouse", "TEST001")
 	product := createTestProduct(t, db, "Test Product", "TEST001")
-	inventory := createTestInventory(t, db, product.ID, warehouse.ID, 100, 10, 20)
+	_ = createTestInventory(t, db, product.ID, warehouse.ID, 100, 10, 20) // Created but not used in this test
 
 	// Reserve stock
 	err := repo.ReserveStock(ctx, product.ID, warehouse.ID, 30)
@@ -303,7 +303,7 @@ func TestPostgresInventoryRepository_BulkOperations(t *testing.T) {
 	}
 
 	// Test bulk adjust
-	adjustments := []StockAdjustment{
+	adjustments := []repositories.StockAdjustment{
 		{
 			ProductID:   product1.ID,
 			WarehouseID: warehouse.ID,
@@ -374,10 +374,10 @@ func TestPostgresInventoryTransactionRepository_GetByProduct(t *testing.T) {
 	product := createTestProduct(t, db, "Test Product", "TEST001")
 
 	// Create multiple transactions
-	transaction1 := createTestTransaction(t, db, product.ID, warehouse.ID, entities.TransactionTypePurchase, 100)
-	transaction2 := createTestTransaction(t, db, product.ID, warehouse.ID, entities.TransactionTypeSale, -50)
+	_ = createTestTransaction(t, db, product.ID, warehouse.ID, entities.TransactionTypePurchase, 100)
+	_ = createTestTransaction(t, db, product.ID, warehouse.ID, entities.TransactionTypeSale, -50)
 
-	filter := &TransactionFilter{
+	filter := &repositories.TransactionFilter{
 		ProductIDs: []uuid.UUID{product.ID},
 	}
 
@@ -455,7 +455,7 @@ func TestPostgresInventoryTransactionRepository_GetTransactionSummary(t *testing
 
 	startDate := time.Now().Add(-24 * time.Hour)
 	endDate := time.Now().Add(24 * time.Hour)
-	filter := &TransactionFilter{
+	filter := &repositories.TransactionFilter{
 		DateFrom: &startDate,
 		DateTo:   &endDate,
 	}
@@ -464,7 +464,7 @@ func TestPostgresInventoryTransactionRepository_GetTransactionSummary(t *testing
 	assert.NoError(t, err)
 	assert.Equal(t, 3, summary.TotalTransactions)
 	assert.Equal(t, 150, summary.TotalQuantityIn) // 100 + 50
-	assert.Equal(t, 75, summary.TotalQuantityOut)  // 75
+	assert.Equal(t, 75, summary.TotalQuantityOut) // 75
 	assert.Contains(t, summary.TransactionsByType, entities.TransactionTypePurchase)
 	assert.Contains(t, summary.TransactionsByType, entities.TransactionTypeSale)
 }
@@ -480,12 +480,12 @@ func TestPostgresInventoryTransactionRepository_GetAuditTrail(t *testing.T) {
 	userID := uuid.New()
 
 	// Create transactions
-	transaction1 := createTestTransactionWithUser(t, db, product.ID, warehouse.ID, entities.TransactionTypePurchase, 100, userID)
-	transaction2 := createTestTransactionWithUser(t, db, product.ID, warehouse.ID, entities.TransactionTypeSale, -50, userID)
+	_ = createTestTransactionWithUser(t, db, product.ID, warehouse.ID, entities.TransactionTypePurchase, 100, userID)
+	_ = createTestTransactionWithUser(t, db, product.ID, warehouse.ID, entities.TransactionTypeSale, -50, userID)
 
 	startDate := time.Now().Add(-24 * time.Hour)
 	endDate := time.Now().Add(24 * time.Hour)
-	filter := &AuditFilter{
+	filter := &repositories.AuditFilter{
 		UserIDs:         []uuid.UUID{userID},
 		StartDate:       startDate,
 		EndDate:         endDate,

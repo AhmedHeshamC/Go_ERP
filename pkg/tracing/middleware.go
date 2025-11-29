@@ -21,36 +21,36 @@ type TracingMiddleware struct {
 // MiddlewareConfig holds the tracing middleware configuration
 type MiddlewareConfig struct {
 	// Basic settings
-	OperationName   string `json:"operation_name"`
-	ComponentName   string `json:"component_name"`
-	ServiceName     string `json:"service_name"`
+	OperationName string `json:"operation_name"`
+	ComponentName string `json:"component_name"`
+	ServiceName   string `json:"service_name"`
 
 	// Span settings
-	CreateClientSpans   bool   `json:"create_client_spans"`
-	IncludeRequestBody bool   `json:"include_request_body"`
+	CreateClientSpans   bool  `json:"create_client_spans"`
+	IncludeRequestBody  bool  `json:"include_request_body"`
 	IncludeResponseBody bool  `json:"include_response_body"`
-	MaxRequestBodySize  int64  `json:"max_request_body_size"`
-	MaxResponseBodySize int64  `json:"max_response_body_size"`
+	MaxRequestBodySize  int64 `json:"max_request_body_size"`
+	MaxResponseBodySize int64 `json:"max_response_body_size"`
 
 	// Attribute settings
-	IncludeUserAttributes bool     `json:"include_user_attributes"`
-	IncludeHeaders        bool     `json:"include_headers"`
-	HeaderBlacklist       []string `json:"header_blacklist"`
+	IncludeUserAttributes bool                   `json:"include_user_attributes"`
+	IncludeHeaders        bool                   `json:"include_headers"`
+	HeaderBlacklist       []string               `json:"header_blacklist"`
 	CustomAttributes      map[string]interface{} `json:"custom_attributes"`
 
 	// Event settings
 	RecordRequestEvents  bool `json:"record_request_events"`
 	RecordResponseEvents bool `json:"record_response_events"`
-	RecordErrorEvents     bool `json:"record_error_events"`
+	RecordErrorEvents    bool `json:"record_error_events"`
 
 	// Sampling settings
-	IgnorePaths          []string `json:"ignore_paths"`
-	IgnoreUserAgents     []string `json:"ignore_user_agents"`
-	SampleRateOverride   *float64 `json:"sample_rate_override"`
+	IgnorePaths        []string `json:"ignore_paths"`
+	IgnoreUserAgents   []string `json:"ignore_user_agents"`
+	SampleRateOverride *float64 `json:"sample_rate_override"`
 
 	// Error handling
-	IgnoreErrors         bool     `json:"ignore_errors"`
-	ErrorStatusCodes     []int    `json:"error_status_codes"`
+	IgnoreErrors     bool  `json:"ignore_errors"`
+	ErrorStatusCodes []int `json:"error_status_codes"`
 
 	// Performance settings
 	SlowRequestThreshold time.Duration `json:"slow_request_threshold"`
@@ -60,35 +60,35 @@ type MiddlewareConfig struct {
 // DefaultMiddlewareConfig returns a default middleware configuration
 func DefaultMiddlewareConfig() *MiddlewareConfig {
 	return &MiddlewareConfig{
-		OperationName:      "HTTP Request",
-		ComponentName:      "gin",
-		ServiceName:        "erp-go-api",
-		CreateClientSpans:  false,
-		IncludeRequestBody: false,
-		IncludeResponseBody: false,
-		MaxRequestBodySize:  1024 * 32, // 32KB
-		MaxResponseBodySize: 1024 * 64, // 64KB
+		OperationName:         "HTTP Request",
+		ComponentName:         "gin",
+		ServiceName:           "erp-go-api",
+		CreateClientSpans:     false,
+		IncludeRequestBody:    false,
+		IncludeResponseBody:   false,
+		MaxRequestBodySize:    1024 * 32, // 32KB
+		MaxResponseBodySize:   1024 * 64, // 64KB
 		IncludeUserAttributes: true,
-		IncludeHeaders:     false,
+		IncludeHeaders:        false,
 		HeaderBlacklist: []string{
 			"authorization", "cookie", "set-cookie",
 			"x-api-key", "x-auth-token",
 		},
-		CustomAttributes:    make(map[string]interface{}),
-		RecordRequestEvents: true,
+		CustomAttributes:     make(map[string]interface{}),
+		RecordRequestEvents:  true,
 		RecordResponseEvents: true,
 		RecordErrorEvents:    true,
-		IgnorePaths:         []string{
+		IgnorePaths: []string{
 			"/health", "/metrics", "/ready", "/live",
 		},
-		IgnoreUserAgents:    []string{
+		IgnoreUserAgents: []string{
 			"HealthChecker", "kube-probe", "UptimeRobot",
 		},
-		SampleRateOverride: nil,
-		IgnoreErrors:        false,
-		ErrorStatusCodes:    []int{404}, // Ignore 404s by default
+		SampleRateOverride:   nil,
+		IgnoreErrors:         false,
+		ErrorStatusCodes:     []int{404}, // Ignore 404s by default
 		SlowRequestThreshold: 1 * time.Second,
-		RecordSlowRequests:  true,
+		RecordSlowRequests:   true,
 	}
 }
 
@@ -135,7 +135,7 @@ func (m *TracingMiddleware) Middleware() gin.HandlerFunc {
 		// Set up response writer to capture response
 		responseWriter := &responseWriter{
 			ResponseWriter: c.Writer,
-			body:          make([]byte, 0),
+			body:           make([]byte, 0),
 		}
 		c.Writer = responseWriter
 
@@ -145,9 +145,9 @@ func (m *TracingMiddleware) Middleware() gin.HandlerFunc {
 		// Record request start event
 		if m.config.RecordRequestEvents {
 			m.tracer.AddEvent(span, "request.started", map[string]interface{}{
-				"http.method":     c.Request.Method,
-				"http.url":        c.Request.URL.String(),
-				"http.user_agent": c.Request.UserAgent(),
+				"http.method":      c.Request.Method,
+				"http.url":         c.Request.URL.String(),
+				"http.user_agent":  c.Request.UserAgent(),
 				"http.remote_addr": c.ClientIP(),
 			})
 		}
@@ -161,7 +161,7 @@ func (m *TracingMiddleware) Middleware() gin.HandlerFunc {
 		// Record response end event
 		if m.config.RecordResponseEvents {
 			m.tracer.AddEvent(span, "request.completed", map[string]interface{}{
-				"http.status_code": c.Writer.Status(),
+				"http.status_code":   c.Writer.Status(),
 				"http.response_size": len(responseWriter.body),
 			})
 		}
@@ -179,8 +179,8 @@ func (m *TracingMiddleware) Middleware() gin.HandlerFunc {
 		// Check for slow requests
 		if m.config.RecordSlowRequests && span.Duration > m.config.SlowRequestThreshold {
 			m.tracer.AddEvent(span, "request.slow", map[string]interface{}{
-				"duration_ms":      span.Duration.Milliseconds(),
-				"threshold_ms":    m.config.SlowRequestThreshold.Milliseconds(),
+				"duration_ms":  span.Duration.Milliseconds(),
+				"threshold_ms": m.config.SlowRequestThreshold.Milliseconds(),
 			})
 		}
 
@@ -397,23 +397,23 @@ func Tracing(tracer *Tracer, logger *zerolog.Logger) gin.HandlerFunc {
 // DevelopmentTracing creates a tracing middleware for development
 func DevelopmentTracing(tracer *Tracer, logger *zerolog.Logger) gin.HandlerFunc {
 	config := &MiddlewareConfig{
-		OperationName:       "HTTP Request",
-		ComponentName:       "gin",
-		ServiceName:         "erp-go-api",
-		CreateClientSpans:    true,
-		IncludeRequestBody:   true,
-		IncludeResponseBody:  true,
-		MaxRequestBodySize:   1024 * 64, // 64KB
-		MaxResponseBodySize:  1024 * 128, // 128KB
+		OperationName:         "HTTP Request",
+		ComponentName:         "gin",
+		ServiceName:           "erp-go-api",
+		CreateClientSpans:     true,
+		IncludeRequestBody:    true,
+		IncludeResponseBody:   true,
+		MaxRequestBodySize:    1024 * 64,  // 64KB
+		MaxResponseBodySize:   1024 * 128, // 128KB
 		IncludeUserAttributes: true,
-		IncludeHeaders:       true,
-		HeaderBlacklist:      []string{"authorization", "cookie"},
-		CustomAttributes:     map[string]interface{}{
+		IncludeHeaders:        true,
+		HeaderBlacklist:       []string{"authorization", "cookie"},
+		CustomAttributes: map[string]interface{}{
 			"environment": "development",
 		},
 		RecordRequestEvents:  true,
 		RecordResponseEvents: true,
-		RecordErrorEvents:     true,
+		RecordErrorEvents:    true,
 		IgnorePaths:          []string{"/health"},
 		IgnoreUserAgents:     []string{},
 		SampleRateOverride:   nil,
@@ -430,31 +430,31 @@ func DevelopmentTracing(tracer *Tracer, logger *zerolog.Logger) gin.HandlerFunc 
 // ProductionTracing creates a tracing middleware for production
 func ProductionTracing(tracer *Tracer, logger *zerolog.Logger) gin.HandlerFunc {
 	config := &MiddlewareConfig{
-		OperationName:       "HTTP Request",
-		ComponentName:       "gin",
-		ServiceName:         "erp-go-api",
-		CreateClientSpans:    false,
-		IncludeRequestBody:   false,
-		IncludeResponseBody:  false,
-		MaxRequestBodySize:   0,
-		MaxResponseBodySize:  0,
+		OperationName:         "HTTP Request",
+		ComponentName:         "gin",
+		ServiceName:           "erp-go-api",
+		CreateClientSpans:     false,
+		IncludeRequestBody:    false,
+		IncludeResponseBody:   false,
+		MaxRequestBodySize:    0,
+		MaxResponseBodySize:   0,
 		IncludeUserAttributes: false, // Don't include user data in production
-		IncludeHeaders:       false,
-		HeaderBlacklist:      []string{
+		IncludeHeaders:        false,
+		HeaderBlacklist: []string{
 			"authorization", "cookie", "set-cookie",
 			"x-api-key", "x-auth-token", "x-session-id",
 		},
-		CustomAttributes:     map[string]interface{}{
+		CustomAttributes: map[string]interface{}{
 			"environment": "production",
 		},
 		RecordRequestEvents:  false, // Usually handled by APM
 		RecordResponseEvents: false,
-		RecordErrorEvents:     false,
-		IgnorePaths:          []string{
+		RecordErrorEvents:    false,
+		IgnorePaths: []string{
 			"/health", "/metrics", "/ready", "/live",
 			"/ping",
 		},
-		IgnoreUserAgents:     []string{
+		IgnoreUserAgents: []string{
 			"HealthChecker", "kube-probe", "UptimeRobot",
 			"GoogleHC", "AWS HealthChecker",
 		},

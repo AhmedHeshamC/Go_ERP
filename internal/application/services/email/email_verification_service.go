@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/uuid"
 	"erpgo/internal/domain/users/entities"
 	"erpgo/internal/domain/users/repositories"
 	"erpgo/pkg/email"
+	"github.com/google/uuid"
 )
 
 // Service defines the interface for email verification operations
@@ -31,10 +31,10 @@ type Service interface {
 
 // ServiceImpl implements the email verification service
 type ServiceImpl struct {
-	userRepo             repositories.UserRepository
+	userRepo              repositories.UserRepository
 	emailVerificationRepo repositories.EmailVerificationRepository
 	emailService          *email.SMTPService
-	rateLimiter          *email.EmailRateLimiter
+	rateLimiter           *email.EmailRateLimiter
 }
 
 // NewService creates a new email verification service
@@ -44,15 +44,15 @@ func NewService(
 	emailService *email.SMTPService,
 ) Service {
 	rateLimiter := email.NewEmailRateLimiter(
-		5,                // max 5 attempts
-		1*time.Hour,      // per hour
+		5,           // max 5 attempts
+		1*time.Hour, // per hour
 	)
 
 	return &ServiceImpl{
-		userRepo:             userRepo,
+		userRepo:              userRepo,
 		emailVerificationRepo: emailVerificationRepo,
 		emailService:          emailService,
-		rateLimiter:          rateLimiter,
+		rateLimiter:           rateLimiter,
 	}
 }
 
@@ -218,8 +218,8 @@ func (s *ServiceImpl) ResendVerificationEmail(ctx context.Context, req *entities
 
 	// Generate new token
 	verificationReq := &entities.EmailVerificationRequest{
-		Email:    req.Email,
-		UserID:   user.ID.String(),
+		Email:     req.Email,
+		UserID:    user.ID.String(),
 		TokenType: entities.TokenTypeVerification,
 	}
 
@@ -290,23 +290,23 @@ func (s *ServiceImpl) GetVerificationStatus(ctx context.Context, userID uuid.UUI
 	}
 
 	return &VerificationStatus{
-		UserID:            userID,
-		Email:             user.Email,
-		IsVerified:        user.IsVerified,
-		HasActiveToken:    stats.ActiveVerifications > 0,
-		LastSentAt:        stats.LastVerificationSent,
-		CanResend:         s.rateLimiter.CanSendEmail(user.Email),
+		UserID:             userID,
+		Email:              user.Email,
+		IsVerified:         user.IsVerified,
+		HasActiveToken:     stats.ActiveVerifications > 0,
+		LastSentAt:         stats.LastVerificationSent,
+		CanResend:          s.rateLimiter.CanSendEmail(user.Email),
 		TotalVerifications: stats.TotalVerifications,
 	}, nil
 }
 
 // VerificationStatus represents the verification status of a user
 type VerificationStatus struct {
-	UserID            uuid.UUID  `json:"user_id"`
-	Email             string     `json:"email"`
-	IsVerified        bool       `json:"is_verified"`
-	HasActiveToken    bool       `json:"has_active_token"`
-	LastSentAt        *time.Time `json:"last_sent_at,omitempty"`
-	CanResend         bool       `json:"can_resend"`
-	TotalVerifications int64     `json:"total_verifications"`
+	UserID             uuid.UUID  `json:"user_id"`
+	Email              string     `json:"email"`
+	IsVerified         bool       `json:"is_verified"`
+	HasActiveToken     bool       `json:"has_active_token"`
+	LastSentAt         *time.Time `json:"last_sent_at,omitempty"`
+	CanResend          bool       `json:"can_resend"`
+	TotalVerifications int64      `json:"total_verifications"`
 }

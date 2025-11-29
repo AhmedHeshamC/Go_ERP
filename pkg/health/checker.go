@@ -34,9 +34,9 @@ type CheckResult struct {
 
 // HealthStatus represents the overall health status
 type HealthReport struct {
-	Status    HealthStatus            `json:"status"`
-	Checks    map[string]CheckResult  `json:"checks"`
-	Timestamp time.Time               `json:"timestamp"`
+	Status    HealthStatus           `json:"status"`
+	Checks    map[string]CheckResult `json:"checks"`
+	Timestamp time.Time              `json:"timestamp"`
 }
 
 // HTTPStatusCode returns the appropriate HTTP status code for the health status

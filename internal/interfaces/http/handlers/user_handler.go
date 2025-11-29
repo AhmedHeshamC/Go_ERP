@@ -16,14 +16,14 @@ import (
 // UserHandler handles user HTTP requests
 type UserHandler struct {
 	userService user.Service
-	logger       zerolog.Logger
+	logger      zerolog.Logger
 }
 
 // NewUserHandler creates a new user handler
 func NewUserHandler(userService user.Service, logger zerolog.Logger) *UserHandler {
 	return &UserHandler{
 		userService: userService,
-		logger:       logger,
+		logger:      logger,
 	}
 }
 
@@ -49,9 +49,9 @@ func NewUserHandler(userService user.Service, logger zerolog.Logger) *UserHandle
 func (h *UserHandler) GetUsers(c *gin.Context) {
 	// Parse query parameters
 	req := &user.ListUsersRequest{
-		Search:     c.Query("search"),
-		SortBy:     c.Query("sort_by"),
-		SortOrder:  c.Query("sort_order"),
+		Search:    c.Query("search"),
+		SortBy:    c.Query("sort_by"),
+		SortOrder: c.Query("sort_order"),
 	}
 
 	// Parse boolean parameters
@@ -442,17 +442,17 @@ func (h *UserHandler) userToDTO(user *entities.User) *dto.UserInfo {
 	// In a real implementation, we would get roles from the user entity directly
 	// or make an additional service call
 	return &dto.UserInfo{
-		ID:        user.ID,
-		Email:     user.Email,
-		Username:  user.Username,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Phone:     user.Phone,
-		Roles:     []string{"user"}, // Default role for now
-		IsActive:  user.IsActive,
+		ID:         user.ID,
+		Email:      user.Email,
+		Username:   user.Username,
+		FirstName:  user.FirstName,
+		LastName:   user.LastName,
+		Phone:      user.Phone,
+		Roles:      []string{"user"}, // Default role for now
+		IsActive:   user.IsActive,
 		IsVerified: user.IsVerified,
-		LastLogin: user.LastLoginAt,
-		CreatedAt: user.CreatedAt,
+		LastLogin:  user.LastLoginAt,
+		CreatedAt:  user.CreatedAt,
 	}
 }
 

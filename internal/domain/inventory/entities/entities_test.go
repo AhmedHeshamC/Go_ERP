@@ -73,15 +73,15 @@ func TestWarehouse(t *testing.T) {
 
 	t.Run("BusinessLogic", func(t *testing.T) {
 		warehouse := &Warehouse{
-			ID:        warehouseID,
-			Name:      "Main Warehouse",
-			Code:      "WH001",
-			Address:   "123 Storage Lane",
-			City:      "Atlanta",
-			State:     "GA",
-			Country:   "USA",
+			ID:         warehouseID,
+			Name:       "Main Warehouse",
+			Code:       "WH001",
+			Address:    "123 Storage Lane",
+			City:       "Atlanta",
+			State:      "GA",
+			Country:    "USA",
 			PostalCode: "30301",
-			IsActive:  true,
+			IsActive:   true,
 		}
 
 		// Test IsActiveWarehouse
@@ -137,22 +137,22 @@ func TestWarehouseExtended(t *testing.T) {
 		capacity := 10000
 		warehouse := &WarehouseExtended{
 			Warehouse: Warehouse{
-				ID:        warehouseID,
-				Name:      "Distribution Center",
-				Code:      "DC001",
-				Address:   "456 Logistics Blvd",
-				City:      "Chicago",
-				State:     "IL",
-				Country:   "USA",
+				ID:         warehouseID,
+				Name:       "Distribution Center",
+				Code:       "DC001",
+				Address:    "456 Logistics Blvd",
+				City:       "Chicago",
+				State:      "IL",
+				Country:    "USA",
 				PostalCode: "60601",
-				IsActive:  true,
+				IsActive:   true,
 			},
-			Type:                 WarehouseTypeDistribution,
-			Capacity:             &capacity,
-			SquareFootage:        &[]int{50000}[0],
-			DockCount:            &[]int{20}[0],
+			Type:                  WarehouseTypeDistribution,
+			Capacity:              &capacity,
+			SquareFootage:         &[]int{50000}[0],
+			DockCount:             &[]int{20}[0],
 			TemperatureControlled: true,
-			SecurityLevel:        5,
+			SecurityLevel:         5,
 		}
 
 		err := warehouse.Validate()
@@ -173,7 +173,7 @@ func TestWarehouseExtended(t *testing.T) {
 				Country:  "TC",
 				IsActive: true,
 			},
-			Type:         "INVALID_TYPE",
+			Type:          "INVALID_TYPE",
 			SecurityLevel: 3,
 		}
 
@@ -196,8 +196,8 @@ func TestWarehouseExtended(t *testing.T) {
 				Country:  "TC",
 				IsActive: true,
 			},
-			Type:         WarehouseTypeRetail,
-			Capacity:     &capacity,
+			Type:          WarehouseTypeRetail,
+			Capacity:      &capacity,
 			SecurityLevel: 3,
 		}
 
@@ -594,11 +594,11 @@ func TestInventoryTransactionFilter(t *testing.T) {
 		productID := uuid.New()
 
 		filter := &InventoryTransactionFilter{
-			ProductID:   &productID,
-			FromDate:    &fromDate,
-			ToDate:      &toDate,
-			Limit:       &[]int{50}[0],
-			Offset:      &[]int{0}[0],
+			ProductID: &productID,
+			FromDate:  &fromDate,
+			ToDate:    &toDate,
+			Limit:     &[]int{50}[0],
+			Offset:    &[]int{0}[0],
 		}
 
 		err := filter.Validate()

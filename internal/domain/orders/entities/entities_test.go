@@ -15,22 +15,22 @@ import (
 // Test data generators
 func generateTestCustomer(t *testing.T) *Customer {
 	return &Customer{
-		ID:              uuid.New(),
-		CustomerCode:    "CUST001",
-		Type:            "INDIVIDUAL",
-		FirstName:       "John",
-		LastName:        "Doe",
-		Email:           "john.doe@example.com",
-		Phone:           "+1234567890",
-		CreditLimit:     decimal.NewFromFloat(1000.00),
-		CreditUsed:      decimal.Zero,
-		Terms:           "NET30",
-		IsActive:        true,
-		IsVATExempt:     false,
+		ID:                uuid.New(),
+		CustomerCode:      "CUST001",
+		Type:              "INDIVIDUAL",
+		FirstName:         "John",
+		LastName:          "Doe",
+		Email:             "john.doe@example.com",
+		Phone:             "+1234567890",
+		CreditLimit:       decimal.NewFromFloat(1000.00),
+		CreditUsed:        decimal.Zero,
+		Terms:             "NET30",
+		IsActive:          true,
+		IsVATExempt:       false,
 		PreferredCurrency: "USD",
-		Source:          "WEB",
-		CreatedAt:       time.Now(),
-		UpdatedAt:       time.Now(),
+		Source:            "WEB",
+		CreatedAt:         time.Now(),
+		UpdatedAt:         time.Now(),
 	}
 }
 
@@ -60,26 +60,26 @@ func generateTestOrderAddress(t *testing.T, customerID *uuid.UUID) *OrderAddress
 
 func generateTestOrderItem(t *testing.T, orderID uuid.UUID) *OrderItem {
 	return &OrderItem{
-		ID:             uuid.New(),
-		OrderID:        orderID,
-		ProductID:      uuid.New(),
-		ProductSKU:     "PROD001",
-		ProductName:    "Test Product",
-		Quantity:       2,
-		UnitPrice:      decimal.NewFromFloat(29.99),
-		DiscountAmount: decimal.NewFromFloat(5.00),
-		TaxRate:        decimal.NewFromFloat(8.25),
-		TaxAmount:      decimal.NewFromFloat(4.12),
-		TotalPrice:     decimal.NewFromFloat(59.10),
-		Weight:         1.5,
-		Dimensions:     "10 x 8 x 2",
-		Barcode:        stringPtr("1234567890123"),
-		Notes:          stringPtr("Handle with care"),
-		Status:         "ORDERED",
-		QuantityShipped: 0,
+		ID:               uuid.New(),
+		OrderID:          orderID,
+		ProductID:        uuid.New(),
+		ProductSKU:       "PROD001",
+		ProductName:      "Test Product",
+		Quantity:         2,
+		UnitPrice:        decimal.NewFromFloat(29.99),
+		DiscountAmount:   decimal.NewFromFloat(5.00),
+		TaxRate:          decimal.NewFromFloat(8.25),
+		TaxAmount:        decimal.NewFromFloat(4.12),
+		TotalPrice:       decimal.NewFromFloat(59.10),
+		Weight:           1.5,
+		Dimensions:       "10 x 8 x 2",
+		Barcode:          stringPtr("1234567890123"),
+		Notes:            stringPtr("Handle with care"),
+		Status:           "ORDERED",
+		QuantityShipped:  0,
 		QuantityReturned: 0,
-		CreatedAt:      time.Now(),
-		UpdatedAt:      time.Now(),
+		CreatedAt:        time.Now(),
+		UpdatedAt:        time.Now(),
 	}
 }
 
@@ -244,23 +244,23 @@ func TestOrder_Validate(t *testing.T) {
 		errorMsg    string
 	}{
 		{
-			name:  "valid order",
-			order: generateTestOrder(t),
+			name:        "valid order",
+			order:       generateTestOrder(t),
 			expectError: false,
 		},
 		{
 			name: "missing ID",
 			order: &Order{
-				OrderNumber: "2024-000001",
-				CustomerID:  uuid.New(),
-				Status:      OrderStatusPending,
-				Currency:    "USD",
-				OrderDate:   time.Now(),
+				OrderNumber:       "2024-000001",
+				CustomerID:        uuid.New(),
+				Status:            OrderStatusPending,
+				Currency:          "USD",
+				OrderDate:         time.Now(),
 				ShippingAddressID: uuid.New(),
 				BillingAddressID:  uuid.New(),
-				CreatedBy:   uuid.New(),
-				CreatedAt:   time.Now(),
-				UpdatedAt:   time.Now(),
+				CreatedBy:         uuid.New(),
+				CreatedAt:         time.Now(),
+				UpdatedAt:         time.Now(),
 			},
 			expectError: true,
 			errorMsg:    "order ID cannot be empty",
@@ -268,17 +268,17 @@ func TestOrder_Validate(t *testing.T) {
 		{
 			name: "invalid order number format",
 			order: &Order{
-				ID:          uuid.New(),
-				OrderNumber: "INVALID",
-				CustomerID:  uuid.New(),
-				Status:      OrderStatusPending,
-				Currency:    "USD",
-				OrderDate:   time.Now(),
+				ID:                uuid.New(),
+				OrderNumber:       "INVALID",
+				CustomerID:        uuid.New(),
+				Status:            OrderStatusPending,
+				Currency:          "USD",
+				OrderDate:         time.Now(),
 				ShippingAddressID: uuid.New(),
 				BillingAddressID:  uuid.New(),
-				CreatedBy:   uuid.New(),
-				CreatedAt:   time.Now(),
-				UpdatedAt:   time.Now(),
+				CreatedBy:         uuid.New(),
+				CreatedAt:         time.Now(),
+				UpdatedAt:         time.Now(),
 			},
 			expectError: true,
 			errorMsg:    "order number must be in format YYYY-NNNNNN",
@@ -286,16 +286,16 @@ func TestOrder_Validate(t *testing.T) {
 		{
 			name: "missing customer ID",
 			order: &Order{
-				ID:          uuid.New(),
-				OrderNumber: "2024-000001",
-				Status:      OrderStatusPending,
-				Currency:    "USD",
-				OrderDate:   time.Now(),
+				ID:                uuid.New(),
+				OrderNumber:       "2024-000001",
+				Status:            OrderStatusPending,
+				Currency:          "USD",
+				OrderDate:         time.Now(),
 				ShippingAddressID: uuid.New(),
 				BillingAddressID:  uuid.New(),
-				CreatedBy:   uuid.New(),
-				CreatedAt:   time.Now(),
-				UpdatedAt:   time.Now(),
+				CreatedBy:         uuid.New(),
+				CreatedAt:         time.Now(),
+				UpdatedAt:         time.Now(),
 			},
 			expectError: true,
 			errorMsg:    "customer ID cannot be empty",
@@ -322,17 +322,17 @@ func TestOrder_Validate(t *testing.T) {
 		{
 			name: "invalid currency format",
 			order: &Order{
-				ID:          uuid.New(),
-				OrderNumber: "2024-000001",
-				CustomerID:  uuid.New(),
-				Status:      OrderStatusPending,
-				Currency:    "INVALID",
-				OrderDate:   time.Now(),
+				ID:                uuid.New(),
+				OrderNumber:       "2024-000001",
+				CustomerID:        uuid.New(),
+				Status:            OrderStatusPending,
+				Currency:          "INVALID",
+				OrderDate:         time.Now(),
 				ShippingAddressID: uuid.New(),
 				BillingAddressID:  uuid.New(),
-				CreatedBy:   uuid.New(),
-				CreatedAt:   time.Now(),
-				UpdatedAt:   time.Now(),
+				CreatedBy:         uuid.New(),
+				CreatedAt:         time.Now(),
+				UpdatedAt:         time.Now(),
 			},
 			expectError: true,
 			errorMsg:    "currency must be a valid 3-letter ISO 4217 code",
@@ -340,17 +340,17 @@ func TestOrder_Validate(t *testing.T) {
 		{
 			name: "order date in future",
 			order: &Order{
-				ID:          uuid.New(),
-				OrderNumber: "2024-000001",
-				CustomerID:  uuid.New(),
-				Status:      OrderStatusPending,
-				Currency:    "USD",
-				OrderDate:   time.Now().Add(24 * time.Hour),
+				ID:                uuid.New(),
+				OrderNumber:       "2024-000001",
+				CustomerID:        uuid.New(),
+				Status:            OrderStatusPending,
+				Currency:          "USD",
+				OrderDate:         time.Now().Add(24 * time.Hour),
 				ShippingAddressID: uuid.New(),
 				BillingAddressID:  uuid.New(),
-				CreatedBy:   uuid.New(),
-				CreatedAt:   time.Now(),
-				UpdatedAt:   time.Now(),
+				CreatedBy:         uuid.New(),
+				CreatedAt:         time.Now(),
+				UpdatedAt:         time.Now(),
 			},
 			expectError: true,
 			errorMsg:    "order date cannot be in the future",
@@ -511,8 +511,8 @@ func TestOrderItem_Validate(t *testing.T) {
 		errorMsg    string
 	}{
 		{
-			name:  "valid order item",
-			item:  generateTestOrderItem(t, uuid.New()),
+			name:        "valid order item",
+			item:        generateTestOrderItem(t, uuid.New()),
 			expectError: false,
 		},
 		{
@@ -644,7 +644,7 @@ func TestOrderItem_CalculateTotals(t *testing.T) {
 
 	item.CalculateTotals()
 
-	expectedSubtotal := decimal.NewFromFloat(60.00) // 3 * 20.00
+	expectedSubtotal := decimal.NewFromFloat(60.00)                            // 3 * 20.00
 	expectedAfterDiscount := expectedSubtotal.Sub(decimal.NewFromFloat(15.00)) // 60.00 - 5.00 per item
 	expectedTax := expectedAfterDiscount.Mul(decimal.NewFromFloat(0.10))
 	expectedTotal := expectedAfterDiscount.Add(expectedTax)
@@ -663,43 +663,43 @@ func TestCustomer_Validate(t *testing.T) {
 		errorMsg    string
 	}{
 		{
-			name:     "valid individual customer",
-			customer: generateTestCustomer(t),
+			name:        "valid individual customer",
+			customer:    generateTestCustomer(t),
 			expectError: false,
 		},
 		{
 			name: "valid business customer",
 			customer: &Customer{
-				ID:           uuid.New(),
-				CustomerCode: "BUS001",
-				Type:         "BUSINESS",
-				FirstName:    "John",
-				LastName:     "Doe",
-				CompanyName:  stringPtr("Acme Corporation"),
-				Email:        "john@acme.com",
-				Phone:        "+1234567890",
-				CreditLimit:  decimal.NewFromFloat(5000.00),
-				CreditUsed:   decimal.Zero,
-				Terms:        "NET30",
-				IsActive:     true,
+				ID:                uuid.New(),
+				CustomerCode:      "BUS001",
+				Type:              "BUSINESS",
+				FirstName:         "John",
+				LastName:          "Doe",
+				CompanyName:       stringPtr("Acme Corporation"),
+				Email:             "john@acme.com",
+				Phone:             "+1234567890",
+				CreditLimit:       decimal.NewFromFloat(5000.00),
+				CreditUsed:        decimal.Zero,
+				Terms:             "NET30",
+				IsActive:          true,
 				PreferredCurrency: "USD",
-				Source:       "REFERRAL",
-				CreatedAt:    time.Now(),
-				UpdatedAt:    time.Now(),
+				Source:            "REFERRAL",
+				CreatedAt:         time.Now(),
+				UpdatedAt:         time.Now(),
 			},
 			expectError: false,
 		},
 		{
 			name: "missing customer code",
 			customer: &Customer{
-				ID:         uuid.New(),
-				Type:       "INDIVIDUAL",
-				FirstName:  "John",
-				LastName:   "Doe",
-				Terms:      "NET30",
-				IsActive:   true,
-				CreatedAt:  time.Now(),
-				UpdatedAt:  time.Now(),
+				ID:        uuid.New(),
+				Type:      "INDIVIDUAL",
+				FirstName: "John",
+				LastName:  "Doe",
+				Terms:     "NET30",
+				IsActive:  true,
+				CreatedAt: time.Now(),
+				UpdatedAt: time.Now(),
 			},
 			expectError: true,
 			errorMsg:    "customer code cannot be empty",
@@ -817,8 +817,8 @@ func TestOrderAddress_Validate(t *testing.T) {
 		errorMsg    string
 	}{
 		{
-			name:    "valid shipping address",
-			address: generateTestOrderAddress(t, &customerID),
+			name:        "valid shipping address",
+			address:     generateTestOrderAddress(t, &customerID),
 			expectError: false,
 		},
 		{
@@ -1133,21 +1133,21 @@ func TestValidateOrder(t *testing.T) {
 		item.TaxRate = decimal.NewFromFloat(8.00)
 		item.CalculateTotals()
 		order.Items = []OrderItem{*item}
-		
+
 		// Calculate totals properly
 		err := order.CalculateTotals()
 		require.NoError(t, err)
-		
+
 		// Set required date to past to trigger warning (but after order date to pass validation)
 		order.OrderDate = time.Now().Add(-48 * time.Hour) // Order date 2 days ago
-		pastDate := time.Now().Add(-24 * time.Hour) // Required date yesterday (after order date but before now)
+		pastDate := time.Now().Add(-24 * time.Hour)       // Required date yesterday (after order date but before now)
 		order.RequiredDate = &pastDate
 
 		validation := ValidateOrder(order)
 		if !validation.IsValid {
 			t.Logf("Validation errors: %v", validation.Errors)
 		}
-		assert.True(t, validation.IsValid) // Warnings don't make order invalid
+		assert.True(t, validation.IsValid)                    // Warnings don't make order invalid
 		assert.GreaterOrEqual(t, len(validation.Warnings), 1) // At least one warning
 		// Check for the warnings we expect
 		hasRequiredDateWarning := false

@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
+	"erpgo/internal/domain/users/entities"
 	"github.com/google/uuid"
 	"github.com/jordan-wright/email"
-	"erpgo/internal/domain/users/entities"
 )
 
 // SMTPService implements EmailService using SMTP

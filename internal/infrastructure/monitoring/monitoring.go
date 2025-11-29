@@ -15,29 +15,29 @@ import (
 // MetricsCollector collects and exports application metrics
 type MetricsCollector struct {
 	// Order metrics
-	ordersCreated          prometheus.Counter
-	ordersCompleted        prometheus.Counter
-	ordersCancelled        prometheus.Counter
+	ordersCreated           prometheus.Counter
+	ordersCompleted         prometheus.Counter
+	ordersCancelled         prometheus.Counter
 	orderProcessingDuration prometheus.Histogram
 
 	// Performance metrics
-	requestDuration        prometheus.Histogram
-	concurrentRequests     prometheus.Gauge
-	errorRate             prometheus.Counter
+	requestDuration    prometheus.Histogram
+	concurrentRequests prometheus.Gauge
+	errorRate          prometheus.Counter
 
 	// Business metrics
-	revenueTotal          prometheus.Counter
-	customerAcquisition   prometheus.Counter
-	notificationSent      prometheus.Counter
+	revenueTotal        prometheus.Counter
+	customerAcquisition prometheus.Counter
+	notificationSent    prometheus.Counter
 
 	// System metrics
-	memoryUsage           prometheus.Gauge
-	cpuUsage              prometheus.Gauge
-	databaseConnections   prometheus.Gauge
+	memoryUsage         prometheus.Gauge
+	cpuUsage            prometheus.Gauge
+	databaseConnections prometheus.Gauge
 
 	// Custom metrics
-	customMetrics         map[string]prometheus.Metric
-	customMetricsMutex    sync.RWMutex
+	customMetrics      map[string]prometheus.Metric
+	customMetricsMutex sync.RWMutex
 }
 
 // NewMetricsCollector creates a new metrics collector
@@ -179,18 +179,18 @@ func (mc *MetricsCollector) GetMetricsSummary() map[string]interface{} {
 	defer mc.customMetricsMutex.RUnlock()
 
 	return map[string]interface{}{
-		"orders_created":           mc.ordersCreated.Desc().String(),
-		"orders_completed":         mc.ordersCompleted.Desc().String(),
-		"orders_cancelled":         mc.ordersCancelled.Desc().String(),
-		"revenue":                  mc.revenueTotal.Desc().String(),
-		"customer_acquisition":     mc.customerAcquisition.Desc().String(),
-		"notifications_sent":       mc.notificationSent.Desc().String(),
-		"concurrent_requests":      mc.concurrentRequests.Desc().String(),
-		"errors":                   mc.errorRate.Desc().String(),
-		"memory_usage":             mc.memoryUsage.Desc().String(),
-		"cpu_usage":                mc.cpuUsage.Desc().String(),
-		"database_connections":     mc.databaseConnections.Desc().String(),
-		"custom_metrics_count":     len(mc.customMetrics),
+		"orders_created":       mc.ordersCreated.Desc().String(),
+		"orders_completed":     mc.ordersCompleted.Desc().String(),
+		"orders_cancelled":     mc.ordersCancelled.Desc().String(),
+		"revenue":              mc.revenueTotal.Desc().String(),
+		"customer_acquisition": mc.customerAcquisition.Desc().String(),
+		"notifications_sent":   mc.notificationSent.Desc().String(),
+		"concurrent_requests":  mc.concurrentRequests.Desc().String(),
+		"errors":               mc.errorRate.Desc().String(),
+		"memory_usage":         mc.memoryUsage.Desc().String(),
+		"cpu_usage":            mc.cpuUsage.Desc().String(),
+		"database_connections": mc.databaseConnections.Desc().String(),
+		"custom_metrics_count": len(mc.customMetrics),
 	}
 }
 
@@ -268,9 +268,9 @@ func (hc *HealthChecker) GetOverallHealth(ctx context.Context) HealthStatus {
 		Status:  overallStatus,
 		Message: message,
 		Details: map[string]interface{}{
-			"healthy_checks":  healthyCount,
-			"total_checks":    totalCount,
-			"check_results":   results,
+			"healthy_checks": healthyCount,
+			"total_checks":   totalCount,
+			"check_results":  results,
 		},
 	}
 }

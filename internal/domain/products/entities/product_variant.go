@@ -13,36 +13,36 @@ import (
 
 // ProductVariant represents a variant of a product (e.g., different sizes, colors)
 type ProductVariant struct {
-	ID                uuid.UUID       `json:"id" db:"id"`
-	ProductID         uuid.UUID       `json:"product_id" db:"product_id"`
-	SKU               string          `json:"sku" db:"sku"`
-	Name              string          `json:"name" db:"name"`
-	Price             decimal.Decimal `json:"price" db:"price"`
-	Cost              decimal.Decimal `json:"cost" db:"cost"`
-	Weight            float64         `json:"weight" db:"weight"`
-	Dimensions        string          `json:"dimensions" db:"dimensions"`
-	Length            float64         `json:"length" db:"length"`
-	Width             float64         `json:"width" db:"width"`
-	Height            float64         `json:"height" db:"height"`
-	Volume            float64         `json:"volume" db:"volume"`
-	Barcode           string          `json:"barcode" db:"barcode"`
-	ImageURL          string          `json:"image_url" db:"image_url"`
-	TrackInventory    bool            `json:"track_inventory" db:"track_inventory"`
-	StockQuantity     int             `json:"stock_quantity" db:"stock_quantity"`
-	MinStockLevel     int             `json:"min_stock_level" db:"min_stock_level"`
-	MaxStockLevel     int             `json:"max_stock_level" db:"max_stock_level"`
-	AllowBackorder    bool            `json:"allow_backorder" db:"allow_backorder"`
-	RequiresShipping  bool            `json:"requires_shipping" db:"requires_shipping"`
-	Taxable           bool            `json:"taxable" db:"taxable"`
-	TaxRate           decimal.Decimal `json:"tax_rate" db:"tax_rate"`
-	IsActive          bool            `json:"is_active" db:"is_active"`
-	IsDigital         bool            `json:"is_digital" db:"is_digital"`
-	DownloadURL       string          `json:"download_url" db:"download_url"`
-	MaxDownloads      int             `json:"max_downloads" db:"max_downloads"`
-	ExpiryDays        int             `json:"expiry_days" db:"expiry_days"`
-	SortOrder         int             `json:"sort_order" db:"sort_order"`
-	CreatedAt         time.Time       `json:"created_at" db:"created_at"`
-	UpdatedAt         time.Time       `json:"updated_at" db:"updated_at"`
+	ID               uuid.UUID       `json:"id" db:"id"`
+	ProductID        uuid.UUID       `json:"product_id" db:"product_id"`
+	SKU              string          `json:"sku" db:"sku"`
+	Name             string          `json:"name" db:"name"`
+	Price            decimal.Decimal `json:"price" db:"price"`
+	Cost             decimal.Decimal `json:"cost" db:"cost"`
+	Weight           float64         `json:"weight" db:"weight"`
+	Dimensions       string          `json:"dimensions" db:"dimensions"`
+	Length           float64         `json:"length" db:"length"`
+	Width            float64         `json:"width" db:"width"`
+	Height           float64         `json:"height" db:"height"`
+	Volume           float64         `json:"volume" db:"volume"`
+	Barcode          string          `json:"barcode" db:"barcode"`
+	ImageURL         string          `json:"image_url" db:"image_url"`
+	TrackInventory   bool            `json:"track_inventory" db:"track_inventory"`
+	StockQuantity    int             `json:"stock_quantity" db:"stock_quantity"`
+	MinStockLevel    int             `json:"min_stock_level" db:"min_stock_level"`
+	MaxStockLevel    int             `json:"max_stock_level" db:"max_stock_level"`
+	AllowBackorder   bool            `json:"allow_backorder" db:"allow_backorder"`
+	RequiresShipping bool            `json:"requires_shipping" db:"requires_shipping"`
+	Taxable          bool            `json:"taxable" db:"taxable"`
+	TaxRate          decimal.Decimal `json:"tax_rate" db:"tax_rate"`
+	IsActive         bool            `json:"is_active" db:"is_active"`
+	IsDigital        bool            `json:"is_digital" db:"is_digital"`
+	DownloadURL      string          `json:"download_url" db:"download_url"`
+	MaxDownloads     int             `json:"max_downloads" db:"max_downloads"`
+	ExpiryDays       int             `json:"expiry_days" db:"expiry_days"`
+	SortOrder        int             `json:"sort_order" db:"sort_order"`
+	CreatedAt        time.Time       `json:"created_at" db:"created_at"`
+	UpdatedAt        time.Time       `json:"updated_at" db:"updated_at"`
 }
 
 // VariantAttribute represents an attribute for a product variant

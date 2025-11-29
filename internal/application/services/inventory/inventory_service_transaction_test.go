@@ -3,6 +3,7 @@ package inventory
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -101,6 +102,178 @@ func (m *MockInventoryRepository) GetLowStockItemsAll(ctx context.Context) ([]*e
 	return args.Get(0).([]*entities.Inventory), args.Error(1)
 }
 
+func (m *MockInventoryRepository) BulkAdjustStock(ctx context.Context, adjustments []repositories.StockAdjustment) error {
+	args := m.Called(ctx, adjustments)
+	return args.Error(0)
+}
+
+func (m *MockInventoryRepository) BulkCreate(ctx context.Context, inventories []*entities.Inventory) error {
+	args := m.Called(ctx, inventories)
+	return args.Error(0)
+}
+
+func (m *MockInventoryRepository) BulkDelete(ctx context.Context, inventoryIDs []uuid.UUID) error {
+	args := m.Called(ctx, inventoryIDs)
+	return args.Error(0)
+}
+
+func (m *MockInventoryRepository) BulkReserveStock(ctx context.Context, reservations []repositories.StockReservation) error {
+	args := m.Called(ctx, reservations)
+	return args.Error(0)
+}
+
+func (m *MockInventoryRepository) BulkUpdate(ctx context.Context, inventories []*entities.Inventory) error {
+	args := m.Called(ctx, inventories)
+	return args.Error(0)
+}
+
+func (m *MockInventoryRepository) CountByProduct(ctx context.Context, productID uuid.UUID) (int, error) {
+	args := m.Called(ctx, productID)
+	return args.Int(0), args.Error(1)
+}
+
+func (m *MockInventoryRepository) CountByWarehouse(ctx context.Context, warehouseID uuid.UUID) (int, error) {
+	args := m.Called(ctx, warehouseID)
+	return args.Int(0), args.Error(1)
+}
+
+func (m *MockInventoryRepository) ExistsByProductAndWarehouse(ctx context.Context, productID, warehouseID uuid.UUID) (bool, error) {
+	args := m.Called(ctx, productID, warehouseID)
+	return args.Bool(0), args.Error(1)
+}
+
+func (m *MockInventoryRepository) GetAgingInventory(ctx context.Context, warehouseID *uuid.UUID, days int) ([]*repositories.AgingInventoryItem, error) {
+	args := m.Called(ctx, warehouseID, days)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*repositories.AgingInventoryItem), args.Error(1)
+}
+
+func (m *MockInventoryRepository) GetByProduct(ctx context.Context, productID uuid.UUID) ([]*entities.Inventory, error) {
+	args := m.Called(ctx, productID)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.Inventory), args.Error(1)
+}
+
+func (m *MockInventoryRepository) GetByWarehouse(ctx context.Context, warehouseID uuid.UUID) ([]*entities.Inventory, error) {
+	args := m.Called(ctx, warehouseID)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.Inventory), args.Error(1)
+}
+
+func (m *MockInventoryRepository) GetInventoryLevels(ctx context.Context, productID uuid.UUID) ([]*repositories.InventoryLevel, error) {
+	args := m.Called(ctx, productID)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*repositories.InventoryLevel), args.Error(1)
+}
+
+func (m *MockInventoryRepository) GetInventoryTurnover(ctx context.Context, productID uuid.UUID, warehouseID *uuid.UUID, days int) (*repositories.InventoryTurnover, error) {
+	args := m.Called(ctx, productID, warehouseID, days)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*repositories.InventoryTurnover), args.Error(1)
+}
+
+func (m *MockInventoryRepository) GetItemsForCycleCount(ctx context.Context, warehouseID uuid.UUID, limit int) ([]*entities.Inventory, error) {
+	args := m.Called(ctx, warehouseID, limit)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.Inventory), args.Error(1)
+}
+
+func (m *MockInventoryRepository) GetLastCycleCountDate(ctx context.Context, inventoryID uuid.UUID) (*time.Time, error) {
+	args := m.Called(ctx, inventoryID)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*time.Time), args.Error(1)
+}
+
+func (m *MockInventoryRepository) GetOutOfStockItems(ctx context.Context, warehouseID uuid.UUID) ([]*entities.Inventory, error) {
+	args := m.Called(ctx, warehouseID)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.Inventory), args.Error(1)
+}
+
+func (m *MockInventoryRepository) GetOverstockItems(ctx context.Context, warehouseID uuid.UUID) ([]*entities.Inventory, error) {
+	args := m.Called(ctx, warehouseID)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.Inventory), args.Error(1)
+}
+
+func (m *MockInventoryRepository) GetProductInventory(ctx context.Context, productID uuid.UUID) ([]*entities.Inventory, error) {
+	args := m.Called(ctx, productID)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.Inventory), args.Error(1)
+}
+
+func (m *MockInventoryRepository) GetWarehouseInventory(ctx context.Context, warehouseID uuid.UUID) ([]*entities.Inventory, error) {
+	args := m.Called(ctx, warehouseID)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.Inventory), args.Error(1)
+}
+
+func (m *MockInventoryRepository) ReconcileStock(ctx context.Context, inventoryID uuid.UUID, systemQuantity, physicalQuantity int, reason string, reconciledBy uuid.UUID) error {
+	args := m.Called(ctx, inventoryID, systemQuantity, physicalQuantity, reason, reconciledBy)
+	return args.Error(0)
+}
+
+func (m *MockInventoryRepository) GetReconciliationHistory(ctx context.Context, inventoryID uuid.UUID, limit int) ([]*repositories.InventoryReconciliation, error) {
+	args := m.Called(ctx, inventoryID, limit)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*repositories.InventoryReconciliation), args.Error(1)
+}
+
+func (m *MockInventoryRepository) Search(ctx context.Context, query string, limit int) ([]*entities.Inventory, error) {
+	args := m.Called(ctx, query, limit)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.Inventory), args.Error(1)
+}
+
+func (m *MockInventoryRepository) UpdateCycleCount(ctx context.Context, inventoryID uuid.UUID, countedQuantity int, countedBy uuid.UUID) error {
+	args := m.Called(ctx, inventoryID, countedQuantity, countedBy)
+	return args.Error(0)
+}
+
+func (m *MockInventoryRepository) UpdateStock(ctx context.Context, productID, warehouseID uuid.UUID, quantity int) error {
+	args := m.Called(ctx, productID, warehouseID, quantity)
+	return args.Error(0)
+}
+
+func (m *MockInventoryRepository) GetStockLevels(ctx context.Context, filter *repositories.InventoryFilter) ([]*repositories.StockLevel, error) {
+	args := m.Called(ctx, filter)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*repositories.StockLevel), args.Error(1)
+}
+
+func (m *MockInventoryRepository) GetInventoryValue(ctx context.Context, warehouseID *uuid.UUID) (float64, error) {
+	args := m.Called(ctx, warehouseID)
+	return args.Get(0).(float64), args.Error(1)
+}
+
 // MockWarehouseRepository for testing
 type MockWarehouseRepository struct {
 	mock.Mock
@@ -142,6 +315,116 @@ func (m *MockWarehouseRepository) Count(ctx context.Context, filter *repositorie
 	return args.Int(0), args.Error(1)
 }
 
+func (m *MockWarehouseRepository) BulkAssignManager(ctx context.Context, warehouseIDs []uuid.UUID, managerID uuid.UUID) error {
+	args := m.Called(ctx, warehouseIDs, managerID)
+	return args.Error(0)
+}
+
+func (m *MockWarehouseRepository) BulkUpdateStatus(ctx context.Context, warehouseIDs []uuid.UUID, isActive bool) error {
+	args := m.Called(ctx, warehouseIDs, isActive)
+	return args.Error(0)
+}
+
+func (m *MockWarehouseRepository) CreateExtended(ctx context.Context, warehouse *entities.WarehouseExtended) error {
+	args := m.Called(ctx, warehouse)
+	return args.Error(0)
+}
+
+func (m *MockWarehouseRepository) GetExtendedByID(ctx context.Context, id uuid.UUID) (*entities.WarehouseExtended, error) {
+	args := m.Called(ctx, id)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*entities.WarehouseExtended), args.Error(1)
+}
+
+func (m *MockWarehouseRepository) UpdateExtended(ctx context.Context, warehouse *entities.WarehouseExtended) error {
+	args := m.Called(ctx, warehouse)
+	return args.Error(0)
+}
+
+func (m *MockWarehouseRepository) GetByType(ctx context.Context, warehouseType entities.WarehouseType) ([]*entities.WarehouseExtended, error) {
+	args := m.Called(ctx, warehouseType)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.WarehouseExtended), args.Error(1)
+}
+
+func (m *MockWarehouseRepository) ExistsByCode(ctx context.Context, code string) (bool, error) {
+	args := m.Called(ctx, code)
+	return args.Bool(0), args.Error(1)
+}
+
+func (m *MockWarehouseRepository) ExistsByID(ctx context.Context, id uuid.UUID) (bool, error) {
+	args := m.Called(ctx, id)
+	return args.Bool(0), args.Error(1)
+}
+
+func (m *MockWarehouseRepository) GetActive(ctx context.Context) ([]*entities.Warehouse, error) {
+	args := m.Called(ctx)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.Warehouse), args.Error(1)
+}
+
+func (m *MockWarehouseRepository) GetAllWarehouseStats(ctx context.Context) ([]*repositories.WarehouseStats, error) {
+	args := m.Called(ctx)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*repositories.WarehouseStats), args.Error(1)
+}
+
+func (m *MockWarehouseRepository) GetByCode(ctx context.Context, code string) (*entities.Warehouse, error) {
+	args := m.Called(ctx, code)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*entities.Warehouse), args.Error(1)
+}
+
+func (m *MockWarehouseRepository) GetByLocation(ctx context.Context, city, state, country string) ([]*entities.Warehouse, error) {
+	args := m.Called(ctx, city, state, country)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.Warehouse), args.Error(1)
+}
+
+func (m *MockWarehouseRepository) GetByManager(ctx context.Context, managerID uuid.UUID) ([]*entities.Warehouse, error) {
+	args := m.Called(ctx, managerID)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.Warehouse), args.Error(1)
+}
+
+func (m *MockWarehouseRepository) GetCapacityUtilization(ctx context.Context, warehouseID uuid.UUID) (*repositories.CapacityUtilization, error) {
+	args := m.Called(ctx, warehouseID)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*repositories.CapacityUtilization), args.Error(1)
+}
+
+func (m *MockWarehouseRepository) GetWarehouseStats(ctx context.Context, warehouseID uuid.UUID) (*repositories.WarehouseStats, error) {
+	args := m.Called(ctx, warehouseID)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*repositories.WarehouseStats), args.Error(1)
+}
+
+func (m *MockWarehouseRepository) Search(ctx context.Context, query string, limit int) ([]*entities.Warehouse, error) {
+	args := m.Called(ctx, query, limit)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.Warehouse), args.Error(1)
+}
+
 // MockInventoryTransactionRepository for testing
 type MockInventoryTransactionRepository struct {
 	mock.Mock
@@ -160,7 +443,7 @@ func (m *MockInventoryTransactionRepository) GetByID(ctx context.Context, id uui
 	return args.Get(0).(*entities.InventoryTransaction), args.Error(1)
 }
 
-func (m *MockInventoryTransactionRepository) List(ctx context.Context, filter *repositories.InventoryTransactionFilter) ([]*entities.InventoryTransaction, error) {
+func (m *MockInventoryTransactionRepository) List(ctx context.Context, filter *repositories.TransactionFilter) ([]*entities.InventoryTransaction, error) {
 	args := m.Called(ctx, filter)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
@@ -168,9 +451,180 @@ func (m *MockInventoryTransactionRepository) List(ctx context.Context, filter *r
 	return args.Get(0).([]*entities.InventoryTransaction), args.Error(1)
 }
 
-func (m *MockInventoryTransactionRepository) Count(ctx context.Context, filter *repositories.InventoryTransactionFilter) (int, error) {
+func (m *MockInventoryTransactionRepository) Count(ctx context.Context, filter *repositories.TransactionFilter) (int, error) {
 	args := m.Called(ctx, filter)
 	return args.Int(0), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) ApproveTransaction(ctx context.Context, transactionID uuid.UUID, approvedBy uuid.UUID) error {
+	args := m.Called(ctx, transactionID, approvedBy)
+	return args.Error(0)
+}
+
+func (m *MockInventoryTransactionRepository) BulkApprove(ctx context.Context, transactionIDs []uuid.UUID, approvedBy uuid.UUID) error {
+	args := m.Called(ctx, transactionIDs, approvedBy)
+	return args.Error(0)
+}
+
+func (m *MockInventoryTransactionRepository) BulkCreate(ctx context.Context, transactions []*entities.InventoryTransaction) error {
+	args := m.Called(ctx, transactions)
+	return args.Error(0)
+}
+
+func (m *MockInventoryTransactionRepository) Delete(ctx context.Context, id uuid.UUID) error {
+	args := m.Called(ctx, id)
+	return args.Error(0)
+}
+
+func (m *MockInventoryTransactionRepository) GetAuditTrail(ctx context.Context, filter *repositories.AuditFilter) ([]*entities.InventoryTransaction, error) {
+	args := m.Called(ctx, filter)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.InventoryTransaction), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) GetByBatch(ctx context.Context, batchNumber string) ([]*entities.InventoryTransaction, error) {
+	args := m.Called(ctx, batchNumber)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.InventoryTransaction), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) GetByDateRange(ctx context.Context, warehouseID *uuid.UUID, startDate, endDate time.Time, filter *repositories.TransactionFilter) ([]*entities.InventoryTransaction, error) {
+	args := m.Called(ctx, warehouseID, startDate, endDate, filter)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.InventoryTransaction), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) GetByReference(ctx context.Context, referenceType string, referenceID uuid.UUID) ([]*entities.InventoryTransaction, error) {
+	args := m.Called(ctx, referenceType, referenceID)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.InventoryTransaction), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) GetByType(ctx context.Context, transactionType entities.TransactionType, filter *repositories.TransactionFilter) ([]*entities.InventoryTransaction, error) {
+	args := m.Called(ctx, transactionType, filter)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.InventoryTransaction), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) GetByWarehouse(ctx context.Context, warehouseID uuid.UUID, filter *repositories.TransactionFilter) ([]*entities.InventoryTransaction, error) {
+	args := m.Called(ctx, warehouseID, filter)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.InventoryTransaction), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) GetByProduct(ctx context.Context, productID uuid.UUID, filter *repositories.TransactionFilter) ([]*entities.InventoryTransaction, error) {
+	args := m.Called(ctx, productID, filter)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.InventoryTransaction), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) GetComplianceReport(ctx context.Context, startDate, endDate time.Time) (*repositories.ComplianceReport, error) {
+	args := m.Called(ctx, startDate, endDate)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*repositories.ComplianceReport), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) GetCostOfGoodsSold(ctx context.Context, startDate, endDate time.Time) (float64, error) {
+	args := m.Called(ctx, startDate, endDate)
+	return args.Get(0).(float64), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) GetInventoryMovement(ctx context.Context, filter *repositories.MovementFilter) ([]*repositories.InventoryMovement, error) {
+	args := m.Called(ctx, filter)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*repositories.InventoryMovement), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) GetPendingApproval(ctx context.Context, warehouseID *uuid.UUID) ([]*entities.InventoryTransaction, error) {
+	args := m.Called(ctx, warehouseID)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.InventoryTransaction), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) RejectTransaction(ctx context.Context, transactionID uuid.UUID, rejectedBy uuid.UUID, reason string) error {
+	args := m.Called(ctx, transactionID, rejectedBy, reason)
+	return args.Error(0)
+}
+
+func (m *MockInventoryTransactionRepository) GetTransactionSummary(ctx context.Context, filter *repositories.TransactionFilter) (*repositories.TransactionSummary, error) {
+	args := m.Called(ctx, filter)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*repositories.TransactionSummary), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) Update(ctx context.Context, transaction *entities.InventoryTransaction) error {
+	args := m.Called(ctx, transaction)
+	return args.Error(0)
+}
+
+func (m *MockInventoryTransactionRepository) GetRecentTransactions(ctx context.Context, warehouseID *uuid.UUID, hours int, limit int) ([]*entities.InventoryTransaction, error) {
+	args := m.Called(ctx, warehouseID, hours, limit)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.InventoryTransaction), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) GetTransferTransactions(ctx context.Context, fromWarehouseID, toWarehouseID uuid.UUID) ([]*entities.InventoryTransaction, error) {
+	args := m.Called(ctx, fromWarehouseID, toWarehouseID)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.InventoryTransaction), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) GetPendingTransfers(ctx context.Context, warehouseID *uuid.UUID) ([]*entities.InventoryTransaction, error) {
+	args := m.Called(ctx, warehouseID)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.InventoryTransaction), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) GetByProductAndWarehouse(ctx context.Context, productID, warehouseID uuid.UUID, filter *repositories.TransactionFilter) ([]*entities.InventoryTransaction, error) {
+	args := m.Called(ctx, productID, warehouseID, filter)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.InventoryTransaction), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) GetTransactionHistory(ctx context.Context, productID uuid.UUID, warehouseID *uuid.UUID, limit int) ([]*entities.InventoryTransaction, error) {
+	args := m.Called(ctx, productID, warehouseID, limit)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.InventoryTransaction), args.Error(1)
+}
+
+func (m *MockInventoryTransactionRepository) Search(ctx context.Context, query string, limit int) ([]*entities.InventoryTransaction, error) {
+	args := m.Called(ctx, query, limit)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*entities.InventoryTransaction), args.Error(1)
 }
 
 // MockTransactionManager for testing
@@ -230,7 +684,7 @@ func TestTransferInventoryUsesTransaction(t *testing.T) {
 
 	// Mock expectations
 	mockInventoryRepo.On("GetAvailableStock", ctx, productID, fromWarehouseID).Return(20, nil)
-	
+
 	// Verify that WithRetryTransaction is called
 	transactionCalled := false
 	mockTxManager.On("WithRetryTransaction", ctx, mock.AnythingOfType("func(pgx.Tx) error")).
@@ -250,7 +704,7 @@ func TestTransferInventoryUsesTransaction(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
 	assert.True(t, transactionCalled, "WithRetryTransaction should have been called")
-	
+
 	mockInventoryRepo.AssertExpectations(t)
 	mockTransactionRepo.AssertExpectations(t)
 	mockTxManager.AssertExpectations(t)

@@ -3,8 +3,8 @@ package repositories
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"erpgo/internal/domain/users/entities"
+	"github.com/google/uuid"
 )
 
 // RoleRepository defines the interface for role data operations

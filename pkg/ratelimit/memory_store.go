@@ -10,8 +10,8 @@ import (
 
 // MemoryStore implements an in-memory rate limiter store
 type MemoryStore struct {
-	config *Config
-	logger *zerolog.Logger
+	config  *Config
+	logger  *zerolog.Logger
 	buckets map[string]*TokenBucket
 	mu      sync.RWMutex
 	stats   *StoreStats
@@ -22,7 +22,7 @@ type StoreStats struct {
 	ActiveBuckets int
 	TotalBuckets  int
 	PeakKeys      int
-	LastCleanup    time.Time
+	LastCleanup   time.Time
 }
 
 // NewMemoryStore creates a new memory store

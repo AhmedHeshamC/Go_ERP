@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"erpgo/internal/domain/users/entities"
 	"erpgo/internal/domain/users/repositories"
 	"erpgo/pkg/database"
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 )
 
 // PostgresEmailVerificationRepository implements EmailVerificationRepository for PostgreSQL
@@ -365,10 +365,10 @@ func (r *PostgresEmailVerificationRepository) GetVerificationStats(ctx context.C
 		if err == pgx.ErrNoRows {
 			// Return empty stats for user with no verifications
 			return &repositories.VerificationStats{
-				TotalVerifications:   0,
-				ActiveVerifications:  0,
-				UsedVerifications:    0,
-				ExpiredVerifications: 0,
+				TotalVerifications:    0,
+				ActiveVerifications:   0,
+				UsedVerifications:     0,
+				ExpiredVerifications:  0,
 				VerificationTokenType: entities.TokenTypeVerification,
 			}, nil
 		}

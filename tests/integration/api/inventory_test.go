@@ -115,7 +115,7 @@ func TestWarehouseEndpoints(t *testing.T) {
 	// Test PUT /api/v1/warehouses/:id
 	t.Run("Update Warehouse", func(t *testing.T) {
 		updateReq := dto.UpdateWarehouseRequest{
-			Name: strPtr("Updated Warehouse Name"),
+			Name:  strPtr("Updated Warehouse Name"),
 			Phone: strPtr("+1987654321"),
 		}
 
@@ -223,10 +223,10 @@ func TestInventoryEndpoints(t *testing.T) {
 	// Test POST /api/v1/inventory/adjust
 	t.Run("Adjust Inventory", func(t *testing.T) {
 		adjustReq := dto.AdjustInventoryRequest{
-			ProductID:    testProductID,
-			WarehouseID:  testWarehouseID,
-			Adjustment:   10,
-			Reason:       "Initial stock",
+			ProductID:     testProductID,
+			WarehouseID:   testWarehouseID,
+			Adjustment:    10,
+			Reason:        "Initial stock",
 			ReferenceType: "adjustment",
 		}
 
@@ -313,7 +313,7 @@ func TestInventoryEndpoints(t *testing.T) {
 	// Test POST /api/v1/inventory/transfer
 	t.Run("Transfer Inventory", func(t *testing.T) {
 		transferReq := dto.TransferInventoryRequest{
-			ProductID:      testProductID,
+			ProductID:       testProductID,
 			FromWarehouseID: testWarehouseID,
 			ToWarehouseID:   uuid.New(),
 			Quantity:        3,
@@ -431,17 +431,17 @@ func TestInventoryEndpoints(t *testing.T) {
 		bulkReq := dto.BulkInventoryAdjustmentRequest{
 			Adjustments: []dto.AdjustInventoryRequest{
 				{
-					ProductID:    testProductID,
-					WarehouseID:  testWarehouseID,
-					Adjustment:   5,
-					Reason:       "Bulk adjustment 1",
+					ProductID:     testProductID,
+					WarehouseID:   testWarehouseID,
+					Adjustment:    5,
+					Reason:        "Bulk adjustment 1",
 					ReferenceType: "adjustment",
 				},
 				{
-					ProductID:    uuid.New(),
-					WarehouseID:  testWarehouseID,
-					Adjustment:   -2,
-					Reason:       "Bulk adjustment 2",
+					ProductID:     uuid.New(),
+					WarehouseID:   testWarehouseID,
+					Adjustment:    -2,
+					Reason:        "Bulk adjustment 2",
 					ReferenceType: "adjustment",
 				},
 			},
@@ -707,7 +707,7 @@ func TestInventoryErrorHandling(t *testing.T) {
 	t.Run("Validation Error", func(t *testing.T) {
 		// Invalid warehouse creation request
 		invalidReq := map[string]interface{}{
-			"name": "", // Empty name should fail validation
+			"name": "",  // Empty name should fail validation
 			"code": "A", // Too short code should fail validation
 		}
 
@@ -988,16 +988,16 @@ func (m *mockInventoryService) ReleaseInventory(ctx *gin.Context, req *dto.Relea
 
 func (m *mockInventoryService) TransferInventory(ctx *gin.Context, req *dto.TransferInventoryRequest) (*dto.InventoryTransactionResponse, error) {
 	return &dto.InventoryTransactionResponse{
-		ID:               uuid.New(),
-		ProductID:        req.ProductID,
-		WarehouseID:      req.FromWarehouseID,
-		TransactionType:  "OUT",
-		Quantity:         req.Quantity,
-		Reason:           req.Reason,
-		ReferenceType:    req.ReferenceType,
-		CreatedBy:        uuid.New(),
-		CreatedAt:        time.Now(),
-		UpdatedAt:        time.Now(),
+		ID:              uuid.New(),
+		ProductID:       req.ProductID,
+		WarehouseID:     req.FromWarehouseID,
+		TransactionType: "OUT",
+		Quantity:        req.Quantity,
+		Reason:          req.Reason,
+		ReferenceType:   req.ReferenceType,
+		CreatedBy:       uuid.New(),
+		CreatedAt:       time.Now(),
+		UpdatedAt:       time.Now(),
 	}, nil
 }
 
@@ -1034,12 +1034,12 @@ func (m *mockInventoryService) GetInventoryByProductAndWarehouse(ctx *gin.Contex
 
 func (m *mockInventoryService) GetInventoryStats(ctx *gin.Context) (*dto.InventoryStatsResponse, error) {
 	return &dto.InventoryStatsResponse{
-		TotalProducts:       100,
-		TotalWarehouses:     5,
-		TotalStockQuantity:  1000,
-		LowStockItems:       10,
-		OutOfStockItems:     2,
-		TotalReservations:   50,
+		TotalProducts:        100,
+		TotalWarehouses:      5,
+		TotalStockQuantity:   1000,
+		LowStockItems:        10,
+		OutOfStockItems:      2,
+		TotalReservations:    50,
 		TopWarehousesByStock: []dto.WarehouseStockInfo{},
 		TopProductsByValue:   []dto.ProductValueInfo{},
 	}, nil
@@ -1066,11 +1066,11 @@ func (m *mockInventoryService) BulkInventoryAdjustment(ctx *gin.Context, req *dt
 		TotalCount:   len(req.Adjustments),
 		Results:      make([]dto.BulkInventoryOperationResult, len(req.Adjustments)),
 		Summary: &dto.BulkOperationSummary{
-			TotalAdjustments:      len(req.Adjustments),
-			PositiveAdjustments:   1,
-			NegativeAdjustments:   1,
-			AffectedProducts:      len(req.Adjustments),
-			AffectedWarehouses:    1,
+			TotalAdjustments:    len(req.Adjustments),
+			PositiveAdjustments: 1,
+			NegativeAdjustments: 1,
+			AffectedProducts:    len(req.Adjustments),
+			AffectedWarehouses:  1,
 		},
 	}, nil
 }
@@ -1093,15 +1093,15 @@ type mockTransactionService struct{}
 
 func (m *mockTransactionService) GetTransaction(ctx *gin.Context, id uuid.UUID) (*dto.InventoryTransactionResponse, error) {
 	return &dto.InventoryTransactionResponse{
-		ID:               id,
-		ProductID:        uuid.New(),
-		WarehouseID:      uuid.New(),
-		TransactionType:  "ADJUSTMENT",
-		Quantity:         10,
-		Reason:           "Test transaction",
-		CreatedBy:        uuid.New(),
-		CreatedAt:        time.Now(),
-		UpdatedAt:        time.Now(),
+		ID:              id,
+		ProductID:       uuid.New(),
+		WarehouseID:     uuid.New(),
+		TransactionType: "ADJUSTMENT",
+		Quantity:        10,
+		Reason:          "Test transaction",
+		CreatedBy:       uuid.New(),
+		CreatedAt:       time.Now(),
+		UpdatedAt:       time.Now(),
 	}, nil
 }
 
@@ -1132,25 +1132,25 @@ func (m *mockTransactionService) ApproveTransaction(ctx *gin.Context, id uuid.UU
 
 func (m *mockTransactionService) RejectTransaction(ctx *gin.Context, id uuid.UUID, reason string) (*dto.InventoryTransactionResponse, error) {
 	return &dto.InventoryTransactionResponse{
-		ID:         id,
-		Reason:     reason,
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
+		ID:        id,
+		Reason:    reason,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}, nil
 }
 
 func (m *mockTransactionService) GetTransactionStats(ctx *gin.Context, warehouseID, productID *uuid.UUID) (*dto.TransactionStatsResponse, error) {
 	return &dto.TransactionStatsResponse{
-		TotalTransactions:     100,
-		PendingApprovals:      5,
-		ApprovedTransactions:  90,
-		RejectedTransactions:  5,
-		TransactionsByType:    map[string]int{"ADJUSTMENT": 30, "RESERVATION": 40, "TRANSFER": 30},
-		TotalQuantityIn:       500,
-		TotalQuantityOut:      400,
-		NetQuantityChange:     100,
-		MostActiveProducts:    []dto.ProductTransactionStats{},
-		MostActiveWarehouses:  []dto.WarehouseTransactionStats{},
+		TotalTransactions:    100,
+		PendingApprovals:     5,
+		ApprovedTransactions: 90,
+		RejectedTransactions: 5,
+		TransactionsByType:   map[string]int{"ADJUSTMENT": 30, "RESERVATION": 40, "TRANSFER": 30},
+		TotalQuantityIn:      500,
+		TotalQuantityOut:     400,
+		NetQuantityChange:    100,
+		MostActiveProducts:   []dto.ProductTransactionStats{},
+		MostActiveWarehouses: []dto.WarehouseTransactionStats{},
 	}, nil
 }
 
@@ -1170,15 +1170,15 @@ func (m *mockTransactionService) GetPendingApprovals(ctx *gin.Context, warehouse
 
 func (m *mockTransactionService) CreateLowStockAlert(ctx *gin.Context, req *dto.LowStockAlertRequest) (*dto.LowStockAlertResponse, error) {
 	return &dto.LowStockAlertResponse{
-		ID:              uuid.New(),
-		ProductID:       *req.ProductID,
-		WarehouseID:     *req.WarehouseID,
-		CurrentStock:    5,
-		MinStockLevel:   10,
-		Threshold:       *req.Threshold,
-		IsActive:        *req.IsActive,
-		CreatedAt:       time.Now(),
-		UpdatedAt:       time.Now(),
+		ID:            uuid.New(),
+		ProductID:     *req.ProductID,
+		WarehouseID:   *req.WarehouseID,
+		CurrentStock:  5,
+		MinStockLevel: 10,
+		Threshold:     *req.Threshold,
+		IsActive:      *req.IsActive,
+		CreatedAt:     time.Now(),
+		UpdatedAt:     time.Now(),
 	}, nil
 }
 

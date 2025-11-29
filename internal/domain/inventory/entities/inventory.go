@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/uuid"
 	apperrors "erpgo/pkg/errors"
+	"github.com/google/uuid"
 )
 
 // Inventory represents inventory levels for a product in a warehouse

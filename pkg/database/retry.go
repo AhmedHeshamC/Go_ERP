@@ -14,30 +14,30 @@ import (
 // RetryConfig defines configuration for database retry logic
 type RetryConfig struct {
 	// Basic retry settings
-	MaxAttempts      int           `json:"max_attempts"`
-	InitialDelay     time.Duration `json:"initial_delay"`
-	MaxDelay         time.Duration `json:"max_delay"`
-	Multiplier       float64       `json:"multiplier"`
-	Jitter           bool          `json:"jitter"`
-	JitterFactor     float64       `json:"jitter_factor"`
+	MaxAttempts  int           `json:"max_attempts"`
+	InitialDelay time.Duration `json:"initial_delay"`
+	MaxDelay     time.Duration `json:"max_delay"`
+	Multiplier   float64       `json:"multiplier"`
+	Jitter       bool          `json:"jitter"`
+	JitterFactor float64       `json:"jitter_factor"`
 
 	// Backoff strategy
 	BackoffStrategy BackoffStrategy `json:"backoff_strategy"`
 
 	// Retry conditions
-	RetryOnTimeout      bool `json:"retry_on_timeout"`
+	RetryOnTimeout        bool `json:"retry_on_timeout"`
 	RetryOnConnectionLoss bool `json:"retry_on_connection_loss"`
-	RetryOnDeadlock     bool `json:"retry_on_deadlock"`
-	RetryOnQueryCancel  bool `json:"retry_on_query_cancel"`
+	RetryOnDeadlock       bool `json:"retry_on_deadlock"`
+	RetryOnQueryCancel    bool `json:"retry_on_query_cancel"`
 
 	// Logging settings
-	LogRetries          bool `json:"log_retries"`
-	LogRetryAttempts    bool `json:"log_retry_attempts"`
-	LogSuccessfulRetry  bool `json:"log_successful_retry"`
+	LogRetries         bool `json:"log_retries"`
+	LogRetryAttempts   bool `json:"log_retry_attempts"`
+	LogSuccessfulRetry bool `json:"log_successful_retry"`
 
 	// Advanced settings
-	EnableCircuitBreaker bool          `json:"enable_circuit_breaker"`
-	CircuitBreakerThreshold int       `json:"circuit_breaker_threshold"`
+	EnableCircuitBreaker    bool          `json:"enable_circuit_breaker"`
+	CircuitBreakerThreshold int           `json:"circuit_breaker_threshold"`
 	CircuitBreakerTimeout   time.Duration `json:"circuit_breaker_timeout"`
 }
 
@@ -45,31 +45,31 @@ type RetryConfig struct {
 type BackoffStrategy string
 
 const (
-	BackoffStrategyFixed     BackoffStrategy = "fixed"
-	BackoffStrategyLinear    BackoffStrategy = "linear"
+	BackoffStrategyFixed       BackoffStrategy = "fixed"
+	BackoffStrategyLinear      BackoffStrategy = "linear"
 	BackoffStrategyExponential BackoffStrategy = "exponential"
 )
 
 // DefaultRetryConfig returns a default retry configuration
 func DefaultRetryConfig() *RetryConfig {
 	return &RetryConfig{
-		MaxAttempts:        3,
-		InitialDelay:       100 * time.Millisecond,
-		MaxDelay:           5 * time.Second,
-		Multiplier:         2.0,
-		Jitter:             true,
-		JitterFactor:       0.1,
-		BackoffStrategy:    BackoffStrategyExponential,
-		RetryOnTimeout:     true,
-		RetryOnConnectionLoss: true,
-		RetryOnDeadlock:    true,
-		RetryOnQueryCancel: false,
-		LogRetries:         true,
-		LogRetryAttempts:   true,
-		LogSuccessfulRetry: true,
-		EnableCircuitBreaker: false,
+		MaxAttempts:             3,
+		InitialDelay:            100 * time.Millisecond,
+		MaxDelay:                5 * time.Second,
+		Multiplier:              2.0,
+		Jitter:                  true,
+		JitterFactor:            0.1,
+		BackoffStrategy:         BackoffStrategyExponential,
+		RetryOnTimeout:          true,
+		RetryOnConnectionLoss:   true,
+		RetryOnDeadlock:         true,
+		RetryOnQueryCancel:      false,
+		LogRetries:              true,
+		LogRetryAttempts:        true,
+		LogSuccessfulRetry:      true,
+		EnableCircuitBreaker:    false,
 		CircuitBreakerThreshold: 5,
-		CircuitBreakerTimeout: 30 * time.Second,
+		CircuitBreakerTimeout:   30 * time.Second,
 	}
 }
 
@@ -83,11 +83,11 @@ type RetryableError interface {
 // RetryOptions defines options for a specific retry operation
 type RetryOptions struct {
 	// Override default config
-	MaxAttempts   *int
-	InitialDelay  *time.Duration
-	MaxDelay      *time.Duration
-	Multiplier    *float64
-	Jitter        *bool
+	MaxAttempts  *int
+	InitialDelay *time.Duration
+	MaxDelay     *time.Duration
+	Multiplier   *float64
+	Jitter       *bool
 
 	// Operation-specific settings
 	Context       context.Context
@@ -98,10 +98,10 @@ type RetryOptions struct {
 
 // RetryResult contains information about the retry operation
 type RetryResult struct {
-	Success       bool          `json:"success"`
-	Attempts      int           `json:"attempts"`
-	TotalDuration time.Duration `json:"total_duration"`
-	FinalError    error         `json:"final_error,omitempty"`
+	Success       bool           `json:"success"`
+	Attempts      int            `json:"attempts"`
+	TotalDuration time.Duration  `json:"total_duration"`
+	FinalError    error          `json:"final_error,omitempty"`
 	RetryHistory  []RetryAttempt `json:"retry_history"`
 }
 
@@ -116,13 +116,13 @@ type RetryAttempt struct {
 
 // CircuitBreaker implements the circuit breaker pattern
 type CircuitBreaker struct {
-	name           string
-	config         *RetryConfig
-	logger         *zerolog.Logger
-	state          CircuitBreakerState
-	failures       int
-	lastFailure    time.Time
-	nextAttempt    time.Time
+	name        string
+	config      *RetryConfig
+	logger      *zerolog.Logger
+	state       CircuitBreakerState
+	failures    int
+	lastFailure time.Time
+	nextAttempt time.Time
 }
 
 // CircuitBreakerState represents the state of the circuit breaker
@@ -491,8 +491,8 @@ func containsString(s, substr string) bool {
 	return len(s) >= len(substr) && (s == substr ||
 		(len(s) > len(substr) &&
 			(s[:len(substr)] == substr ||
-			 s[len(s)-len(substr):] == substr ||
-			 findSubstring(s, substr))))
+				s[len(s)-len(substr):] == substr ||
+				findSubstring(s, substr))))
 }
 
 func findSubstring(s, substr string) bool {
@@ -523,26 +523,26 @@ func (rm *RetryManager) GetCircuitBreakerStatus() map[string]interface{} {
 	}
 
 	return map[string]interface{}{
-		"enabled":          true,
-		"state":            state,
-		"failures":         rm.circuitBreaker.failures,
-		"last_failure":     rm.circuitBreaker.lastFailure,
-		"next_attempt":     rm.circuitBreaker.nextAttempt,
-		"threshold":        rm.config.CircuitBreakerThreshold,
-		"timeout":          rm.config.CircuitBreakerTimeout,
+		"enabled":      true,
+		"state":        state,
+		"failures":     rm.circuitBreaker.failures,
+		"last_failure": rm.circuitBreaker.lastFailure,
+		"next_attempt": rm.circuitBreaker.nextAttempt,
+		"threshold":    rm.config.CircuitBreakerThreshold,
+		"timeout":      rm.config.CircuitBreakerTimeout,
 	}
 }
 
 // GetRetryStats returns retry statistics
 func (rm *RetryManager) GetRetryStats() map[string]interface{} {
 	return map[string]interface{}{
-		"max_attempts":      rm.config.MaxAttempts,
-		"initial_delay":     rm.config.InitialDelay.String(),
-		"max_delay":         rm.config.MaxDelay.String(),
-		"multiplier":        rm.config.Multiplier,
-		"jitter":            rm.config.Jitter,
-		"backoff_strategy":  rm.config.BackoffStrategy,
-		"circuit_breaker":   rm.GetCircuitBreakerStatus(),
+		"max_attempts":     rm.config.MaxAttempts,
+		"initial_delay":    rm.config.InitialDelay.String(),
+		"max_delay":        rm.config.MaxDelay.String(),
+		"multiplier":       rm.config.Multiplier,
+		"jitter":           rm.config.Jitter,
+		"backoff_strategy": rm.config.BackoffStrategy,
+		"circuit_breaker":  rm.GetCircuitBreakerStatus(),
 	}
 }
 

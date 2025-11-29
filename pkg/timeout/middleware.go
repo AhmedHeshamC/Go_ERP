@@ -40,18 +40,18 @@ type Config struct {
 // DefaultConfig returns a default timeout configuration
 func DefaultConfig() *Config {
 	return &Config{
-		DefaultTimeout:     30 * time.Second,
+		DefaultTimeout: 30 * time.Second,
 		MethodTimeouts: map[string]time.Duration{
-			http.MethodGet:     10 * time.Second,
-			http.MethodPost:    30 * time.Second,
-			http.MethodPut:     30 * time.Second,
-			http.MethodPatch:   30 * time.Second,
-			http.MethodDelete:  30 * time.Second,
+			http.MethodGet:    10 * time.Second,
+			http.MethodPost:   30 * time.Second,
+			http.MethodPut:    30 * time.Second,
+			http.MethodPatch:  30 * time.Second,
+			http.MethodDelete: 30 * time.Second,
 		},
-		PathTimeouts: make(map[string]time.Duration),
-		TimeoutMessage:       "Request timeout",
-		TimeoutStatusCode:    http.StatusRequestTimeout,
-		LogTimeouts:          true,
+		PathTimeouts:          make(map[string]time.Duration),
+		TimeoutMessage:        "Request timeout",
+		TimeoutStatusCode:     http.StatusRequestTimeout,
+		LogTimeouts:           true,
 		IncludeRequestDetails: false,
 		ResponseHeaders: map[string]string{
 			"X-Timeout": "true",
@@ -288,12 +288,12 @@ var (
 // FastAPI returns middleware optimized for fast API endpoints
 func FastAPI(logger *zerolog.Logger) gin.HandlerFunc {
 	config := &Config{
-		DefaultTimeout:     FastAPITimeout,
-		MethodTimeouts:     map[string]time.Duration{},
-		PathTimeouts:       make(map[string]time.Duration),
-		TimeoutMessage:     "API request timeout",
-		TimeoutStatusCode:  http.StatusRequestTimeout,
-		LogTimeouts:        true,
+		DefaultTimeout:        FastAPITimeout,
+		MethodTimeouts:        map[string]time.Duration{},
+		PathTimeouts:          make(map[string]time.Duration),
+		TimeoutMessage:        "API request timeout",
+		TimeoutStatusCode:     http.StatusRequestTimeout,
+		LogTimeouts:           true,
 		IncludeRequestDetails: false,
 		ResponseHeaders: map[string]string{
 			"X-Timeout-Type": "fast-api",
@@ -306,18 +306,18 @@ func FastAPI(logger *zerolog.Logger) gin.HandlerFunc {
 // StandardAPI returns middleware for standard API endpoints
 func StandardAPI(logger *zerolog.Logger) gin.HandlerFunc {
 	config := &Config{
-		DefaultTimeout:     StandardAPITimeout,
+		DefaultTimeout: StandardAPITimeout,
 		MethodTimeouts: map[string]time.Duration{
-			http.MethodGet:     10 * time.Second,
-			http.MethodPost:    30 * time.Second,
-			http.MethodPut:     30 * time.Second,
-			http.MethodPatch:   30 * time.Second,
-			http.MethodDelete:  30 * time.Second,
+			http.MethodGet:    10 * time.Second,
+			http.MethodPost:   30 * time.Second,
+			http.MethodPut:    30 * time.Second,
+			http.MethodPatch:  30 * time.Second,
+			http.MethodDelete: 30 * time.Second,
 		},
-		PathTimeouts:       make(map[string]time.Duration),
-		TimeoutMessage:     "Request timeout",
-		TimeoutStatusCode:  http.StatusRequestTimeout,
-		LogTimeouts:        true,
+		PathTimeouts:          make(map[string]time.Duration),
+		TimeoutMessage:        "Request timeout",
+		TimeoutStatusCode:     http.StatusRequestTimeout,
+		LogTimeouts:           true,
 		IncludeRequestDetails: false,
 		ResponseHeaders: map[string]string{
 			"X-Timeout-Type": "standard-api",
@@ -330,16 +330,16 @@ func StandardAPI(logger *zerolog.Logger) gin.HandlerFunc {
 // SlowAPI returns middleware for slow API endpoints
 func SlowAPI(logger *zerolog.Logger) gin.HandlerFunc {
 	config := &Config{
-		DefaultTimeout:     SlowAPITimeout,
+		DefaultTimeout: SlowAPITimeout,
 		MethodTimeouts: map[string]time.Duration{
-			http.MethodPost:    10 * time.Minute,  // File uploads
-			http.MethodPut:     10 * time.Minute,  // File updates
-			http.MethodPatch:   5 * time.Minute,   // Complex updates
+			http.MethodPost:  10 * time.Minute, // File uploads
+			http.MethodPut:   10 * time.Minute, // File updates
+			http.MethodPatch: 5 * time.Minute,  // Complex updates
 		},
-		PathTimeouts:       make(map[string]time.Duration),
-		TimeoutMessage:     "Request timeout. This may be due to a large file upload or complex processing.",
-		TimeoutStatusCode:  http.StatusRequestTimeout,
-		LogTimeouts:        true,
+		PathTimeouts:          make(map[string]time.Duration),
+		TimeoutMessage:        "Request timeout. This may be due to a large file upload or complex processing.",
+		TimeoutStatusCode:     http.StatusRequestTimeout,
+		LogTimeouts:           true,
 		IncludeRequestDetails: true,
 		ResponseHeaders: map[string]string{
 			"X-Timeout-Type": "slow-api",
@@ -352,12 +352,12 @@ func SlowAPI(logger *zerolog.Logger) gin.HandlerFunc {
 // Custom returns middleware with custom timeout configuration
 func Custom(timeout time.Duration, logger *zerolog.Logger) gin.HandlerFunc {
 	config := &Config{
-		DefaultTimeout:     timeout,
-		MethodTimeouts:     make(map[string]time.Duration),
-		PathTimeouts:       make(map[string]time.Duration),
-		TimeoutMessage:     fmt.Sprintf("Request timeout after %v", timeout),
-		TimeoutStatusCode:  http.StatusRequestTimeout,
-		LogTimeouts:        true,
+		DefaultTimeout:        timeout,
+		MethodTimeouts:        make(map[string]time.Duration),
+		PathTimeouts:          make(map[string]time.Duration),
+		TimeoutMessage:        fmt.Sprintf("Request timeout after %v", timeout),
+		TimeoutStatusCode:     http.StatusRequestTimeout,
+		LogTimeouts:           true,
 		IncludeRequestDetails: false,
 		ResponseHeaders: map[string]string{
 			"X-Timeout-Type": "custom",

@@ -311,25 +311,21 @@ func TestIsRetryableError(t *testing.T) {
 	}
 }
 
-
-
-
-
 // Test Reporter functionality - Additional coverage for edge cases
 func TestReporter_DisabledReporting(t *testing.T) {
 	logger := zerolog.Nop()
 	config := DefaultConfig()
 	config.Enabled = false
 	config.AsyncReporting = false
-	
+
 	reporter, err := NewReporter(config, &logger)
 	assert.NoError(t, err)
-	
+
 	ctx := context.Background()
 	testErr := errors.New("test error")
-	
+
 	reporter.Report(ctx, testErr, SeverityError, ErrorTypeSystem, "test", nil, nil)
-	
+
 	// Should not be buffered when disabled
 	reporter.bufferMu.RLock()
 	assert.Equal(t, 0, len(reporter.buffer))

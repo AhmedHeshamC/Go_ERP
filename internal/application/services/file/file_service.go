@@ -3,6 +3,7 @@ package file
 import (
 	"context"
 	"crypto/rand"
+	"erpgo/pkg/security"
 	"fmt"
 	"image"
 	"image/jpeg"
@@ -42,57 +43,57 @@ type Service interface {
 
 // UploadResult represents the result of a file upload
 type UploadResult struct {
-	Filename    string    `json:"filename"`
-	OriginalName string   `json:"original_name"`
-	Size        int64     `json:"size"`
-	MimeType    string    `json:"mime_type"`
-	URL         string    `json:"url"`
-	Path        string    `json:"path"`
-	Directory   string    `json:"directory"`
-	UploadedAt  time.Time `json:"uploaded_at"`
+	Filename     string    `json:"filename"`
+	OriginalName string    `json:"original_name"`
+	Size         int64     `json:"size"`
+	MimeType     string    `json:"mime_type"`
+	URL          string    `json:"url"`
+	Path         string    `json:"path"`
+	Directory    string    `json:"directory"`
+	UploadedAt   time.Time `json:"uploaded_at"`
 }
 
 // File represents a file entity
 type File struct {
-	ID          uuid.UUID `json:"id"`
-	Filename    string    `json:"filename"`
-	OriginalName string   `json:"original_name"`
-	Path        string    `json:"path"`
-	URL         string    `json:"url"`
-	Size        int64     `json:"size"`
-	MimeType    string    `json:"mime_type"`
-	Directory   string    `json:"directory"`
-	IsPublic    bool      `json:"is_public"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	ID           uuid.UUID `json:"id"`
+	Filename     string    `json:"filename"`
+	OriginalName string    `json:"original_name"`
+	Path         string    `json:"path"`
+	URL          string    `json:"url"`
+	Size         int64     `json:"size"`
+	MimeType     string    `json:"mime_type"`
+	Directory    string    `json:"directory"`
+	IsPublic     bool      `json:"is_public"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
 }
 
 // ImageProcessingOptions contains options for image processing
 type ImageProcessingOptions struct {
-	Width       int     `json:"width,omitempty"`
-	Height      int     `json:"height,omitempty"`
-	Quality     int     `json:"quality,omitempty"` // JPEG quality (1-100)
-	Format      string  `json:"format,omitempty"`  // jpeg, png, webp
-	ResizeMode  string  `json:"resize_mode,omitempty"` // fit, fill, crop
-	MaxFileSize int64   `json:"max_file_size,omitempty"`
+	Width       int    `json:"width,omitempty"`
+	Height      int    `json:"height,omitempty"`
+	Quality     int    `json:"quality,omitempty"`     // JPEG quality (1-100)
+	Format      string `json:"format,omitempty"`      // jpeg, png, webp
+	ResizeMode  string `json:"resize_mode,omitempty"` // fit, fill, crop
+	MaxFileSize int64  `json:"max_file_size,omitempty"`
 }
 
 // FileUploadConfig contains configuration for file uploads
 type FileUploadConfig struct {
-	MaxFileSize      int64    `json:"max_file_size"`       // Maximum file size in bytes
+	MaxFileSize      int64    `json:"max_file_size"`      // Maximum file size in bytes
 	AllowedMimeTypes []string `json:"allowed_mime_types"` // Allowed MIME types
-	UploadPath       string   `json:"upload_path"`         // Base upload directory
-	PublicURL        string   `json:"public_url"`          // Base URL for public access
-	MaxImageWidth    int      `json:"max_image_width"`     // Maximum image width
-	MaxImageHeight   int      `json:"max_image_height"`    // Maximum image height
-	ThumbnailWidth   int      `json:"thumbnail_width"`     // Thumbnail width
-	ThumbnailHeight  int      `json:"thumbnail_height"`    // Thumbnail height
-	EnableWebP       bool     `json:"enable_webp"`         // Enable WebP conversion
+	UploadPath       string   `json:"upload_path"`        // Base upload directory
+	PublicURL        string   `json:"public_url"`         // Base URL for public access
+	MaxImageWidth    int      `json:"max_image_width"`    // Maximum image width
+	MaxImageHeight   int      `json:"max_image_height"`   // Maximum image height
+	ThumbnailWidth   int      `json:"thumbnail_width"`    // Thumbnail width
+	ThumbnailHeight  int      `json:"thumbnail_height"`   // Thumbnail height
+	EnableWebP       bool     `json:"enable_webp"`        // Enable WebP conversion
 }
 
 // Default configuration
 var DefaultConfig = FileUploadConfig{
-	MaxFileSize:      10 * 1024 * 1024, // 10MB
+	MaxFileSize: 10 * 1024 * 1024, // 10MB
 	AllowedMimeTypes: []string{
 		"image/jpeg",
 		"image/jpg",
@@ -137,7 +138,13 @@ func (s *ServiceImpl) UploadFile(ctx context.Context, file *multipart.FileHeader
 
 	// Create upload directory if it doesn't exist
 	uploadDir := filepath.Join(s.config.UploadPath, directory)
-	if err := os.MkdirAll(uploadDir, 0755); err != nil {
+
+	// Validate upload directory path
+	if err := security.ValidatePath(uploadDir, s.config.UploadPath); err != nil {
+		return nil, fmt.Errorf("invalid upload directory path: %w", err)
+	}
+
+	if err := os.MkdirAll(uploadDir, 0750); err != nil {
 		return nil, fmt.Errorf("failed to create upload directory: %w", err)
 	}
 
@@ -145,6 +152,11 @@ func (s *ServiceImpl) UploadFile(ctx context.Context, file *multipart.FileHeader
 	ext := filepath.Ext(file.Filename)
 	uniqueFilename := s.generateUniqueFilename(ext)
 	filePath := filepath.Join(uploadDir, uniqueFilename)
+
+	// Validate destination file path
+	if err := security.ValidatePath(filePath, s.config.UploadPath); err != nil {
+		return nil, fmt.Errorf("invalid file path for upload: %w", err)
+	}
 
 	// Open uploaded file
 	src, err := file.Open()
@@ -168,28 +180,40 @@ func (s *ServiceImpl) UploadFile(ctx context.Context, file *multipart.FileHeader
 	// Process image if it's an image file
 	if s.isImageFile(file.Header.Get("Content-Type")) {
 		processedPath := filepath.Join(uploadDir, "processed", uniqueFilename)
-		if err := os.MkdirAll(filepath.Dir(processedPath), 0755); err != nil {
+
+		// Validate processed directory path
+		if err := security.ValidatePath(filepath.Dir(processedPath), s.config.UploadPath); err != nil {
 			s.logger.Warn().Err(err).Msg("Failed to create processed directory, using original file")
 		} else {
-			if err := s.ProcessImage(ctx, filePath, processedPath, &ImageProcessingOptions{
-				Width:    s.config.MaxImageWidth,
-				Height:   s.config.MaxImageHeight,
-				Quality:  85,
-				Format:   "jpeg",
-				ResizeMode: "fit",
-			}); err != nil {
-				s.logger.Warn().Err(err).Msg("Failed to process image, using original file")
+			if err := os.MkdirAll(filepath.Dir(processedPath), 0750); err != nil {
+				s.logger.Warn().Err(err).Msg("Failed to create processed directory, using original file")
 			} else {
-				filePath = processedPath
-			}
+				if err := s.ProcessImage(ctx, filePath, processedPath, &ImageProcessingOptions{
+					Width:      s.config.MaxImageWidth,
+					Height:     s.config.MaxImageHeight,
+					Quality:    85,
+					Format:     "jpeg",
+					ResizeMode: "fit",
+				}); err != nil {
+					s.logger.Warn().Err(err).Msg("Failed to process image, using original file")
+				} else {
+					filePath = processedPath
+				}
 
-			// Generate thumbnail
-			thumbnailPath := filepath.Join(uploadDir, "thumbnails", uniqueFilename)
-			if err := os.MkdirAll(filepath.Dir(thumbnailPath), 0755); err != nil {
-				s.logger.Warn().Err(err).Msg("Failed to create thumbnail directory")
-			} else {
-				if err := s.GenerateThumbnail(ctx, filePath, thumbnailPath, s.config.ThumbnailWidth, s.config.ThumbnailHeight); err != nil {
-					s.logger.Warn().Err(err).Msg("Failed to generate thumbnail")
+				// Generate thumbnail
+				thumbnailPath := filepath.Join(uploadDir, "thumbnails", uniqueFilename)
+
+				// Validate thumbnail directory path
+				if err := security.ValidatePath(filepath.Dir(thumbnailPath), s.config.UploadPath); err != nil {
+					s.logger.Warn().Err(err).Msg("Failed to create thumbnail directory")
+				} else {
+					if err := os.MkdirAll(filepath.Dir(thumbnailPath), 0750); err != nil {
+						s.logger.Warn().Err(err).Msg("Failed to create thumbnail directory")
+					} else {
+						if err := s.GenerateThumbnail(ctx, filePath, thumbnailPath, s.config.ThumbnailWidth, s.config.ThumbnailHeight); err != nil {
+							s.logger.Warn().Err(err).Msg("Failed to generate thumbnail")
+						}
+					}
 				}
 			}
 		}
@@ -233,9 +257,19 @@ func (s *ServiceImpl) UploadProductVariantImage(ctx context.Context, file *multi
 
 // GetFile retrieves a file by filename
 func (s *ServiceImpl) GetFile(ctx context.Context, filename string) (*File, error) {
+	// Validate filename path
+	if err := security.ValidatePath(filename, s.config.UploadPath); err != nil {
+		return nil, fmt.Errorf("invalid file path: %w", err)
+	}
+
 	// This would typically fetch from a database
 	// For now, we'll create a basic file object
 	filePath := filepath.Join(s.config.UploadPath, filename)
+
+	// Validate full file path
+	if err := security.ValidatePath(filePath, s.config.UploadPath); err != nil {
+		return nil, fmt.Errorf("invalid file path: %w", err)
+	}
 
 	fileInfo, err := os.Stat(filePath)
 	if err != nil {
@@ -273,7 +307,17 @@ func (s *ServiceImpl) GetFileURL(ctx context.Context, filename string) (string, 
 
 // DeleteFile deletes a file
 func (s *ServiceImpl) DeleteFile(ctx context.Context, filename string) error {
+	// Validate filename path
+	if err := security.ValidatePath(filename, s.config.UploadPath); err != nil {
+		return fmt.Errorf("invalid file path: %w", err)
+	}
+
 	filePath := filepath.Join(s.config.UploadPath, filename)
+
+	// Validate full file path
+	if err := security.ValidatePath(filePath, s.config.UploadPath); err != nil {
+		return fmt.Errorf("invalid file path: %w", err)
+	}
 
 	if err := os.Remove(filePath); err != nil {
 		return fmt.Errorf("failed to delete file: %w", err)
@@ -281,13 +325,17 @@ func (s *ServiceImpl) DeleteFile(ctx context.Context, filename string) error {
 
 	// Also delete processed versions
 	processedPath := filepath.Join(s.config.UploadPath, "processed", filename)
-	if err := os.Remove(processedPath); err != nil && !os.IsNotExist(err) {
-		s.logger.Warn().Err(err).Str("path", processedPath).Msg("Failed to delete processed file")
+	if err := security.ValidatePath(processedPath, s.config.UploadPath); err == nil {
+		if err := os.Remove(processedPath); err != nil && !os.IsNotExist(err) {
+			s.logger.Warn().Err(err).Str("path", processedPath).Msg("Failed to delete processed file")
+		}
 	}
 
 	thumbnailPath := filepath.Join(s.config.UploadPath, "thumbnails", filename)
-	if err := os.Remove(thumbnailPath); err != nil && !os.IsNotExist(err) {
-		s.logger.Warn().Err(err).Str("path", thumbnailPath).Msg("Failed to delete thumbnail file")
+	if err := security.ValidatePath(thumbnailPath, s.config.UploadPath); err == nil {
+		if err := os.Remove(thumbnailPath); err != nil && !os.IsNotExist(err) {
+			s.logger.Warn().Err(err).Str("path", thumbnailPath).Msg("Failed to delete thumbnail file")
+		}
 	}
 
 	s.logger.Info().Str("filename", filename).Msg("File deleted successfully")
@@ -296,6 +344,16 @@ func (s *ServiceImpl) DeleteFile(ctx context.Context, filename string) error {
 
 // ProcessImage processes an image with the given options
 func (s *ServiceImpl) ProcessImage(ctx context.Context, srcPath, dstPath string, options *ImageProcessingOptions) error {
+	// Validate source path
+	if err := security.ValidatePath(srcPath, s.config.UploadPath); err != nil {
+		return fmt.Errorf("invalid source image path: %w", err)
+	}
+
+	// Validate destination path
+	if err := security.ValidatePath(dstPath, s.config.UploadPath); err != nil {
+		return fmt.Errorf("invalid destination image path: %w", err)
+	}
+
 	// Open source image file
 	srcFile, err := os.Open(srcPath)
 	if err != nil {
@@ -315,7 +373,7 @@ func (s *ServiceImpl) ProcessImage(ctx context.Context, srcPath, dstPath string,
 	}
 
 	// Create destination directory
-	if err := os.MkdirAll(filepath.Dir(dstPath), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(dstPath), 0750); err != nil {
 		return fmt.Errorf("failed to create destination directory: %w", err)
 	}
 

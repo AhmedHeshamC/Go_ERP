@@ -16,19 +16,19 @@ type BenchmarkConfig struct {
 	Duration time.Duration `json:"duration"`
 
 	// Concurrency settings
-	ConcurrentReaders  int `json:"concurrent_readers"`
-	ConcurrentWriters  int `json:"concurrent_writers"`
-	ConcurrentMixed    int `json:"concurrent_mixed"`
+	ConcurrentReaders int `json:"concurrent_readers"`
+	ConcurrentWriters int `json:"concurrent_writers"`
+	ConcurrentMixed   int `json:"concurrent_mixed"`
 
 	// Query patterns
-	SelectQueries      []QueryPattern `json:"select_queries"`
-	InsertQueries      []QueryPattern `json:"insert_queries"`
-	UpdateQueries      []QueryPattern `json:"update_queries"`
-	DeleteQueries      []QueryPattern `json:"delete_queries"`
+	SelectQueries []QueryPattern `json:"select_queries"`
+	InsertQueries []QueryPattern `json:"insert_queries"`
+	UpdateQueries []QueryPattern `json:"update_queries"`
+	DeleteQueries []QueryPattern `json:"delete_queries"`
 
 	// Data size settings
-	InitialRecords     int `json:"initial_records"`
-	BatchSize          int `json:"batch_size"`
+	InitialRecords int `json:"initial_records"`
+	BatchSize      int `json:"batch_size"`
 
 	// Performance targets
 	TargetResponseTime time.Duration `json:"target_response_time"`
@@ -37,28 +37,28 @@ type BenchmarkConfig struct {
 
 // QueryPattern represents a test query pattern
 type QueryPattern struct {
-	Name        string `json:"name"`
-	Query       string `json:"query"`
-	Args        []interface{} `json:"args"`
-	Weight      int    `json:"weight"` // Weight for selection in random tests
+	Name   string        `json:"name"`
+	Query  string        `json:"query"`
+	Args   []interface{} `json:"args"`
+	Weight int           `json:"weight"` // Weight for selection in random tests
 }
 
 // BenchmarkResult holds the results of a performance benchmark
 type BenchmarkResult struct {
-	TestName          string        `json:"test_name"`
-	Duration          time.Duration `json:"duration"`
-	TotalQueries      int64         `json:"total_queries"`
-	SuccessfulQueries int64         `json:"successful_queries"`
-	FailedQueries     int64         `json:"failed_queries"`
-	AvgResponseTime   time.Duration `json:"avg_response_time"`
-	MinResponseTime   time.Duration `json:"min_response_time"`
-	MaxResponseTime   time.Duration `json:"max_response_time"`
-	P95ResponseTime   time.Duration `json:"p95_response_time"`
-	P99ResponseTime   time.Duration `json:"p99_response_time"`
-	Throughput        float64       `json:"throughput_qps"`
-	Errors            []string      `json:"errors"`
-	CPUUsage          float64       `json:"cpu_usage"`
-	MemoryUsage       int64         `json:"memory_usage"`
+	TestName          string                 `json:"test_name"`
+	Duration          time.Duration          `json:"duration"`
+	TotalQueries      int64                  `json:"total_queries"`
+	SuccessfulQueries int64                  `json:"successful_queries"`
+	FailedQueries     int64                  `json:"failed_queries"`
+	AvgResponseTime   time.Duration          `json:"avg_response_time"`
+	MinResponseTime   time.Duration          `json:"min_response_time"`
+	MaxResponseTime   time.Duration          `json:"max_response_time"`
+	P95ResponseTime   time.Duration          `json:"p95_response_time"`
+	P99ResponseTime   time.Duration          `json:"p99_response_time"`
+	Throughput        float64                `json:"throughput_qps"`
+	Errors            []string               `json:"errors"`
+	CPUUsage          float64                `json:"cpu_usage"`
+	MemoryUsage       int64                  `json:"memory_usage"`
 	ConnectionStats   map[string]interface{} `json:"connection_stats"`
 }
 

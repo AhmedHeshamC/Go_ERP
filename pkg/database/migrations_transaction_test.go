@@ -31,7 +31,7 @@ func TestMigrationTransactionRollback_Integration(t *testing.T) {
 	// Create a migration that will fail
 	tableName := "test_rollback_table"
 	version := 9999 // Use a high version to avoid conflicts
-	
+
 	// This migration creates a table, then fails
 	migrationSQL := fmt.Sprintf(`
 		CREATE TABLE %s (id INT PRIMARY KEY, name VARCHAR(255));
@@ -63,7 +63,7 @@ func TestMigrationTransactionRollback_Integration(t *testing.T) {
 			AND table_name = '%s'
 		);
 	`, tableName)
-	
+
 	queryErr := db.QueryRow(ctx, checkSQL).Scan(&exists)
 	if queryErr != nil {
 		t.Fatalf("Error checking if table exists: %v", queryErr)
@@ -110,7 +110,7 @@ func TestMigrationTransactionSuccess_Integration(t *testing.T) {
 	// Create a migration that will succeed
 	tableName := "test_success_table"
 	version := 9998 // Use a high version to avoid conflicts
-	
+
 	migrationSQL := fmt.Sprintf(`
 		CREATE TABLE %s (id INT PRIMARY KEY, name VARCHAR(255));
 	`, tableName)
@@ -140,7 +140,7 @@ func TestMigrationTransactionSuccess_Integration(t *testing.T) {
 			AND table_name = '%s'
 		);
 	`, tableName)
-	
+
 	queryErr := db.QueryRow(ctx, checkSQL).Scan(&exists)
 	if queryErr != nil {
 		t.Fatalf("Error checking if table exists: %v", queryErr)

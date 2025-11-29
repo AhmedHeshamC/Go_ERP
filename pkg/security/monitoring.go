@@ -60,15 +60,15 @@ type SecurityEventType string
 const (
 	EventTypeAuthentication      SecurityEventType = "authentication"
 	EventTypeAuthorization       SecurityEventType = "authorization"
-	EventTypeInjection          SecurityEventType = "injection"
-	EventTypeXSS                SecurityEventType = "xss"
-	EventTypeCSRF               SecurityEventType = "csrf"
-	EventTypeRateLimit          SecurityEventType = "rate_limit"
-	EventTypeSuspiciousActivity SecurityEventType = "suspicious_activity"
-	EventTypeDataBreach         SecurityEventType = "data_breach"
-	EventTypeMalware            SecurityEventType = "malware"
-	EventTypeDoS                SecurityEventType = "dos"
-	EventTypeConfigChange       SecurityEventType = "config_change"
+	EventTypeInjection           SecurityEventType = "injection"
+	EventTypeXSS                 SecurityEventType = "xss"
+	EventTypeCSRF                SecurityEventType = "csrf"
+	EventTypeRateLimit           SecurityEventType = "rate_limit"
+	EventTypeSuspiciousActivity  SecurityEventType = "suspicious_activity"
+	EventTypeDataBreach          SecurityEventType = "data_breach"
+	EventTypeMalware             SecurityEventType = "malware"
+	EventTypeDoS                 SecurityEventType = "dos"
+	EventTypeConfigChange        SecurityEventType = "config_change"
 	EventTypePrivilegeEscalation SecurityEventType = "privilege_escalation"
 )
 
@@ -76,11 +76,11 @@ const (
 type SecurityEventCategory string
 
 const (
-	CategoryThreat     SecurityEventCategory = "threat"
+	CategoryThreat        SecurityEventCategory = "threat"
 	CategoryVulnerability SecurityEventCategory = "vulnerability"
-	CategoryIncident   SecurityEventCategory = "incident"
-	CategoryAnomaly    SecurityEventCategory = "anomaly"
-	CategoryCompliance SecurityEventCategory = "compliance"
+	CategoryIncident      SecurityEventCategory = "incident"
+	CategoryAnomaly       SecurityEventCategory = "anomaly"
+	CategoryCompliance    SecurityEventCategory = "compliance"
 )
 
 // SecuritySeverity represents the severity of a security event
@@ -96,53 +96,53 @@ const (
 // SecurityConfig holds configuration for security monitoring
 type SecurityConfig struct {
 	// Event collection
-	Enabled                 bool          `json:"enabled"`
-	RetentionPeriod         time.Duration `json:"retention_period"`
-	MaxEventsPerSecond      int           `json:"max_events_per_second"`
-	BufferSize              int           `json:"buffer_size"`
-	FlushInterval           time.Duration `json:"flush_interval"`
+	Enabled            bool          `json:"enabled"`
+	RetentionPeriod    time.Duration `json:"retention_period"`
+	MaxEventsPerSecond int           `json:"max_events_per_second"`
+	BufferSize         int           `json:"buffer_size"`
+	FlushInterval      time.Duration `json:"flush_interval"`
 
 	// Alerting
-	AlertEnabled            bool          `json:"alert_enabled"`
-	AlertThresholds         map[SecurityLevel]int `json:"alert_thresholds"`
-	AlertCooldown           time.Duration `json:"alert_cooldown"`
-	AlertChannels           []string      `json:"alert_channels"`
+	AlertEnabled    bool                  `json:"alert_enabled"`
+	AlertThresholds map[SecurityLevel]int `json:"alert_thresholds"`
+	AlertCooldown   time.Duration         `json:"alert_cooldown"`
+	AlertChannels   []string              `json:"alert_channels"`
 
 	// Alert channel configurations
-	EmailConfig             *EmailAlertConfig    `json:"email_config,omitempty"`
-	SlackConfig             *SlackAlertConfig    `json:"slack_config,omitempty"`
-	WebhookConfig           *WebhookAlertConfig  `json:"webhook_config,omitempty"`
+	EmailConfig   *EmailAlertConfig   `json:"email_config,omitempty"`
+	SlackConfig   *SlackAlertConfig   `json:"slack_config,omitempty"`
+	WebhookConfig *WebhookAlertConfig `json:"webhook_config,omitempty"`
 
 	// Risk scoring
-	RiskScoringEnabled      bool          `json:"risk_scoring_enabled"`
-	BaseRiskScore           int           `json:"base_risk_score"`
-	MaliciousIPScore        int           `json:"malicious_ip_score"`
-	SuspiciousPatternScore  int           `json:"suspicious_pattern_score"`
-	FailedAuthScore         int           `json:"failed_auth_score"`
-	PrivilegeEscalationScore int          `json:"privilege_escalation_score"`
+	RiskScoringEnabled       bool `json:"risk_scoring_enabled"`
+	BaseRiskScore            int  `json:"base_risk_score"`
+	MaliciousIPScore         int  `json:"malicious_ip_score"`
+	SuspiciousPatternScore   int  `json:"suspicious_pattern_score"`
+	FailedAuthScore          int  `json:"failed_auth_score"`
+	PrivilegeEscalationScore int  `json:"privilege_escalation_score"`
 
 	// Detection rules
-	FailedAuthThreshold     int           `json:"failed_auth_threshold"`
-	FailedAuthWindow        time.Duration `json:"failed_auth_window"`
-	RateLimitThreshold      int           `json:"rate_limit_threshold"`
-	RateLimitWindow         time.Duration `json:"rate_limit_window"`
-	SuspiciousPatterns      []string      `json:"suspicious_patterns"`
-	MaliciousIPs            []string      `json:"malicious_ips"`
+	FailedAuthThreshold int           `json:"failed_auth_threshold"`
+	FailedAuthWindow    time.Duration `json:"failed_auth_window"`
+	RateLimitThreshold  int           `json:"rate_limit_threshold"`
+	RateLimitWindow     time.Duration `json:"rate_limit_window"`
+	SuspiciousPatterns  []string      `json:"suspicious_patterns"`
+	MaliciousIPs        []string      `json:"malicious_ips"`
 
 	// Threat intelligence
-	ThreatIntelEnabled      bool          `json:"threat_intel_enabled"`
-	ThreatIntelSources      []string      `json:"threat_intel_sources"`
-	ThreatIntelCacheTTL     time.Duration `json:"threat_intel_cache_ttl"`
+	ThreatIntelEnabled  bool          `json:"threat_intel_enabled"`
+	ThreatIntelSources  []string      `json:"threat_intel_sources"`
+	ThreatIntelCacheTTL time.Duration `json:"threat_intel_cache_ttl"`
 
 	// Storage
-	StoreInCache            bool          `json:"store_in_cache"`
-	StoreInFile             bool          `json:"store_in_file"`
-	StoreInDatabase         bool          `json:"store_in_database"`
+	StoreInCache    bool `json:"store_in_cache"`
+	StoreInFile     bool `json:"store_in_file"`
+	StoreInDatabase bool `json:"store_in_database"`
 
 	// Logging
-	LogLevel                SecurityLevel `json:"log_level"`
-	LogSecurityEvents       bool          `json:"log_security_events"`
-	LogThreatIntelligence   bool          `json:"log_threat_intelligence"`
+	LogLevel              SecurityLevel `json:"log_level"`
+	LogSecurityEvents     bool          `json:"log_security_events"`
+	LogThreatIntelligence bool          `json:"log_threat_intelligence"`
 }
 
 // EmailAlertConfig holds configuration for email alerts
@@ -167,66 +167,66 @@ type SlackAlertConfig struct {
 
 // WebhookAlertConfig holds configuration for webhook alerts
 type WebhookAlertConfig struct {
-	URL      string            `json:"url"`
-	Method   string            `json:"method"`
-	Headers  map[string]string `json:"headers"`
-	Timeout  time.Duration     `json:"timeout"`
-	Retries  int               `json:"retries"`
+	URL     string            `json:"url"`
+	Method  string            `json:"method"`
+	Headers map[string]string `json:"headers"`
+	Timeout time.Duration     `json:"timeout"`
+	Retries int               `json:"retries"`
 }
 
 // ThreatIntelResponse represents a threat intelligence response
 type ThreatIntelResponse struct {
-	IsMalicious   bool      `json:"is_malicious"`
-	Confidence    float64   `json:"confidence"`
-	LastSeen      time.Time `json:"last_seen"`
-	ThreatTypes   []string  `json:"threat_types"`
-	Reputation    int       `json:"reputation"` // -100 to 100
-	Source        string    `json:"source"`
-	FirstSeen     time.Time `json:"first_seen"`
-	ASN           string    `json:"asn"`
-	Country       string    `json:"country"`
-	Organization  string    `json:"organization"`
+	IsMalicious  bool      `json:"is_malicious"`
+	Confidence   float64   `json:"confidence"`
+	LastSeen     time.Time `json:"last_seen"`
+	ThreatTypes  []string  `json:"threat_types"`
+	Reputation   int       `json:"reputation"` // -100 to 100
+	Source       string    `json:"source"`
+	FirstSeen    time.Time `json:"first_seen"`
+	ASN          string    `json:"asn"`
+	Country      string    `json:"country"`
+	Organization string    `json:"organization"`
 }
 
 // PatternMatcher represents a compiled pattern for security detection
 type PatternMatcher struct {
-	Pattern     *regexp.Regexp `json:"-"`
-	RawPattern  string         `json:"raw_pattern"`
-	Description string         `json:"description"`
+	Pattern     *regexp.Regexp   `json:"-"`
+	RawPattern  string           `json:"raw_pattern"`
+	Description string           `json:"description"`
 	Severity    SecuritySeverity `json:"severity"`
-	ThreatType  string         `json:"threat_type"`
+	ThreatType  string           `json:"threat_type"`
 }
 
 // DefaultSecurityConfig returns a secure default configuration
 func DefaultSecurityConfig() SecurityConfig {
 	return SecurityConfig{
-		Enabled:                true,
-		RetentionPeriod:        30 * 24 * time.Hour, // 30 days
-		MaxEventsPerSecond:     1000,
-		BufferSize:             10000,
-		FlushInterval:          5 * time.Second,
+		Enabled:            true,
+		RetentionPeriod:    30 * 24 * time.Hour, // 30 days
+		MaxEventsPerSecond: 1000,
+		BufferSize:         10000,
+		FlushInterval:      5 * time.Second,
 
-		AlertEnabled:           true,
+		AlertEnabled: true,
 		AlertThresholds: map[SecurityLevel]int{
-			SecurityLevelInfo:     0,   // No alert for info
-			SecurityLevelWarning:  10,  // Alert after 10 warnings
-			SecurityLevelError:    5,   // Alert after 5 errors
-			SecurityLevelCritical: 1,   // Alert immediately for critical
+			SecurityLevelInfo:     0,  // No alert for info
+			SecurityLevelWarning:  10, // Alert after 10 warnings
+			SecurityLevelError:    5,  // Alert after 5 errors
+			SecurityLevelCritical: 1,  // Alert immediately for critical
 		},
-		AlertCooldown:          15 * time.Minute,
-		AlertChannels:          []string{"email", "slack", "webhook"},
+		AlertCooldown: 15 * time.Minute,
+		AlertChannels: []string{"email", "slack", "webhook"},
 
-		RiskScoringEnabled:     true,
-		BaseRiskScore:          10,
-		MaliciousIPScore:       50,
-		SuspiciousPatternScore: 30,
-		FailedAuthScore:        20,
+		RiskScoringEnabled:       true,
+		BaseRiskScore:            10,
+		MaliciousIPScore:         50,
+		SuspiciousPatternScore:   30,
+		FailedAuthScore:          20,
 		PrivilegeEscalationScore: 40,
 
-		FailedAuthThreshold:    5,
-		FailedAuthWindow:       5 * time.Minute,
-		RateLimitThreshold:     100,
-		RateLimitWindow:        time.Minute,
+		FailedAuthThreshold: 5,
+		FailedAuthWindow:    5 * time.Minute,
+		RateLimitThreshold:  100,
+		RateLimitWindow:     time.Minute,
 		SuspiciousPatterns: []string{
 			`(?i)(union\s+select|select\s+.*\s+from\s+|insert\s+into)`,
 			`(?i)(<script|javascript:|vbscript:)`,
@@ -235,54 +235,54 @@ func DefaultSecurityConfig() SecurityConfig {
 		},
 		MaliciousIPs: []string{},
 
-		StoreInCache:           true,
-		StoreInFile:            true,
-		StoreInDatabase:        false, // Implement if needed
+		StoreInCache:    true,
+		StoreInFile:     true,
+		StoreInDatabase: false, // Implement if needed
 
-		LogLevel:               SecurityLevelWarning,
-		LogSecurityEvents:      true,
-		LogThreatIntelligence:  true,
+		LogLevel:              SecurityLevelWarning,
+		LogSecurityEvents:     true,
+		LogThreatIntelligence: true,
 	}
 }
 
 // SecurityMonitor represents a security monitoring system
 type SecurityMonitor struct {
-	config     SecurityConfig
-	cache      cache.Cache
-	logger     zerolog.Logger
-	eventChan  chan *SecurityEvent
-	stopChan   chan struct{}
-	wg         sync.WaitGroup
-	mu         sync.RWMutex
+	config    SecurityConfig
+	cache     cache.Cache
+	logger    zerolog.Logger
+	eventChan chan *SecurityEvent
+	stopChan  chan struct{}
+	wg        sync.WaitGroup
+	mu        sync.RWMutex
 
 	// State tracking
-	failedAuths        map[string][]time.Time       // IP -> failed auth attempts
-	rateLimitHits      map[string][]time.Time       // IP -> rate limit hits
-	alertCounters      map[SecurityLevel]int        // Level -> count since last alert
-	lastAlertTimes     map[SecurityLevel]time.Time  // Level -> last alert time
-	threatCache        map[string]bool              // IP -> is malicious (simple cache)
-	threatIntelCache   map[string]*ThreatIntelResponse // IP -> detailed threat intel
+	failedAuths      map[string][]time.Time          // IP -> failed auth attempts
+	rateLimitHits    map[string][]time.Time          // IP -> rate limit hits
+	alertCounters    map[SecurityLevel]int           // Level -> count since last alert
+	lastAlertTimes   map[SecurityLevel]time.Time     // Level -> last alert time
+	threatCache      map[string]bool                 // IP -> is malicious (simple cache)
+	threatIntelCache map[string]*ThreatIntelResponse // IP -> detailed threat intel
 
 	// Pattern matching
-	compiledPatterns   []*PatternMatcher            // Pre-compiled regex patterns
-	httpClient         *http.Client                 // HTTP client for external services
+	compiledPatterns []*PatternMatcher // Pre-compiled regex patterns
+	httpClient       *http.Client      // HTTP client for external services
 }
 
 // NewSecurityMonitor creates a new security monitor
 func NewSecurityMonitor(config SecurityConfig, cache cache.Cache, logger zerolog.Logger) *SecurityMonitor {
 	monitor := &SecurityMonitor{
-		config:            config,
-		cache:             cache,
-		logger:            logger,
-		eventChan:         make(chan *SecurityEvent, config.BufferSize),
-		stopChan:          make(chan struct{}),
-		failedAuths:       make(map[string][]time.Time),
-		rateLimitHits:     make(map[string][]time.Time),
-		alertCounters:     make(map[SecurityLevel]int),
-		lastAlertTimes:    make(map[SecurityLevel]time.Time),
-		threatCache:       make(map[string]bool),
-		threatIntelCache:  make(map[string]*ThreatIntelResponse),
-		compiledPatterns:  compilePatterns(config.SuspiciousPatterns),
+		config:           config,
+		cache:            cache,
+		logger:           logger,
+		eventChan:        make(chan *SecurityEvent, config.BufferSize),
+		stopChan:         make(chan struct{}),
+		failedAuths:      make(map[string][]time.Time),
+		rateLimitHits:    make(map[string][]time.Time),
+		alertCounters:    make(map[SecurityLevel]int),
+		lastAlertTimes:   make(map[SecurityLevel]time.Time),
+		threatCache:      make(map[string]bool),
+		threatIntelCache: make(map[string]*ThreatIntelResponse),
+		compiledPatterns: compilePatterns(config.SuspiciousPatterns),
 		httpClient: &http.Client{
 			Timeout: 10 * time.Second,
 		},
@@ -755,10 +755,10 @@ func (m *SecurityMonitor) sendSlackAlert(event *SecurityEvent) {
 
 	// Create Slack message payload
 	payload := map[string]interface{}{
-		"channel":   m.config.SlackConfig.Channel,
-		"username":  m.config.SlackConfig.Username,
+		"channel":    m.config.SlackConfig.Channel,
+		"username":   m.config.SlackConfig.Username,
 		"icon_emoji": m.config.SlackConfig.IconEmoji,
-		"text":      fmt.Sprintf("🚨 Security Alert: %s", event.Type),
+		"text":       fmt.Sprintf("🚨 Security Alert: %s", event.Type),
 		"attachments": []map[string]interface{}{
 			{
 				"color": "danger",
@@ -1088,10 +1088,10 @@ func (m *SecurityMonitor) GetSecurityStats() map[string]interface{} {
 	defer m.mu.RUnlock()
 
 	return map[string]interface{}{
-		"failed_auth_count":      len(m.failedAuths),
-		"rate_limit_hits":        len(m.rateLimitHits),
-		"malicious_ips_cached":   len(m.threatCache),
-		"alert_counters":         m.alertCounters,
-		"last_alert_times":       m.lastAlertTimes,
+		"failed_auth_count":    len(m.failedAuths),
+		"rate_limit_hits":      len(m.rateLimitHits),
+		"malicious_ips_cached": len(m.threatCache),
+		"alert_counters":       m.alertCounters,
+		"last_alert_times":     m.lastAlertTimes,
 	}
 }

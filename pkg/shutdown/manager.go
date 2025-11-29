@@ -12,10 +12,10 @@ import (
 type ShutdownHook interface {
 	// Name returns the name of the hook for logging
 	Name() string
-	
+
 	// Shutdown performs the cleanup operation
 	Shutdown(ctx context.Context) error
-	
+
 	// Priority returns the priority of the hook (lower numbers run first)
 	Priority() int
 }
@@ -24,10 +24,10 @@ type ShutdownHook interface {
 type ShutdownManager interface {
 	// RegisterHook registers a shutdown hook
 	RegisterHook(hook ShutdownHook) error
-	
+
 	// Shutdown initiates graceful shutdown, executing all registered hooks
 	Shutdown(ctx context.Context) error
-	
+
 	// NotifyShutdown returns a channel that is closed when shutdown is initiated
 	NotifyShutdown() <-chan struct{}
 }
@@ -58,24 +58,24 @@ func (m *manager) RegisterHook(hook ShutdownHook) error {
 	if hook == nil {
 		return fmt.Errorf("hook cannot be nil")
 	}
-	
+
 	m.hooksMu.Lock()
 	defer m.hooksMu.Unlock()
-	
+
 	// Check if hook with same name already exists
 	for _, h := range m.hooks {
 		if h.Name() == hook.Name() {
 			return fmt.Errorf("hook with name %s already registered", hook.Name())
 		}
 	}
-	
+
 	m.hooks = append(m.hooks, hook)
-	
+
 	// Sort hooks by priority (lower priority number runs first)
 	sort.Slice(m.hooks, func(i, j int) bool {
 		return m.hooks[i].Priority() < m.hooks[j].Priority()
 	})
-	
+
 	return nil
 }
 
@@ -89,12 +89,12 @@ func (m *manager) Shutdown(ctx context.Context) error {
 	}
 	m.isShuttingDown = true
 	m.shutdownMu.Unlock()
-	
+
 	// Close shutdown notification channel once
 	m.shutdownOnce.Do(func() {
 		close(m.shutdownChan)
 	})
-	
+
 	// Create context with timeout if not already set
 	shutdownCtx := ctx
 	if _, hasDeadline := ctx.Deadline(); !hasDeadline {
@@ -102,15 +102,15 @@ func (m *manager) Shutdown(ctx context.Context) error {
 		shutdownCtx, cancel = context.WithTimeout(ctx, m.shutdownTimeout)
 		defer cancel()
 	}
-	
+
 	// Execute hooks in priority order
 	m.hooksMu.RLock()
 	hooks := make([]ShutdownHook, len(m.hooks))
 	copy(hooks, m.hooks)
 	m.hooksMu.RUnlock()
-	
+
 	var shutdownErrors []error
-	
+
 	for _, hook := range hooks {
 		// Check if context is cancelled
 		select {
@@ -119,7 +119,7 @@ func (m *manager) Shutdown(ctx context.Context) error {
 			return combineErrors(shutdownErrors)
 		default:
 		}
-		
+
 		// Execute hook with timeout protection
 		hookErr := m.executeHook(shutdownCtx, hook)
 		if hookErr != nil {
@@ -127,11 +127,11 @@ func (m *manager) Shutdown(ctx context.Context) error {
 			// Continue with other hooks even if one fails
 		}
 	}
-	
+
 	if len(shutdownErrors) > 0 {
 		return combineErrors(shutdownErrors)
 	}
-	
+
 	return nil
 }
 
@@ -139,11 +139,11 @@ func (m *manager) Shutdown(ctx context.Context) error {
 func (m *manager) executeHook(ctx context.Context, hook ShutdownHook) error {
 	// Create a channel to receive the result
 	done := make(chan error, 1)
-	
+
 	go func() {
 		done <- hook.Shutdown(ctx)
 	}()
-	
+
 	select {
 	case err := <-done:
 		return err
@@ -162,15 +162,15 @@ func combineErrors(errors []error) error {
 	if len(errors) == 0 {
 		return nil
 	}
-	
+
 	if len(errors) == 1 {
 		return errors[0]
 	}
-	
+
 	errMsg := fmt.Sprintf("%d errors occurred during shutdown:", len(errors))
 	for i, err := range errors {
 		errMsg += fmt.Sprintf("\n  %d. %v", i+1, err)
 	}
-	
+
 	return fmt.Errorf("%s", errMsg)
 }

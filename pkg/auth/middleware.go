@@ -6,12 +6,12 @@ import (
 	"strings"
 	"time"
 
+	"erpgo/internal/domain/users/repositories"
+	"erpgo/pkg/config"
+	"erpgo/pkg/ratelimit"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
-	"erpgo/internal/domain/users/repositories"
-	"erpgo/pkg/ratelimit"
-	"erpgo/pkg/config"
 )
 
 // ContextKey represents the type for context keys
@@ -596,7 +596,7 @@ func RateLimitMiddleware(cfg *config.Config, logger *zerolog.Logger) gin.Handler
 	if cfg != nil && cfg.RateLimit != nil {
 		rlConfig.DefaultLimit = ratelimit.RateLimit{
 			RequestsPerSecond: cfg.RateLimit.RequestsPerSecond,
-			BurstSize:        cfg.RateLimit.BurstSize,
+			BurstSize:         cfg.RateLimit.BurstSize,
 		}
 		rlConfig.StorageType = ratelimit.StorageType(cfg.RateLimit.StorageType)
 		rlConfig.RedisAddr = cfg.GetRedisAddress()
@@ -639,8 +639,8 @@ func RateLimitMiddleware(cfg *config.Config, logger *zerolog.Logger) gin.Handler
 				Msg("Rate limit exceeded")
 
 			c.JSON(http.StatusTooManyRequests, gin.H{
-				"error": "Rate limit exceeded",
-				"code":  "RATE_LIMIT_EXCEEDED",
+				"error":       "Rate limit exceeded",
+				"code":        "RATE_LIMIT_EXCEEDED",
 				"retry_after": "60s", // Suggest retry after 1 minute
 			})
 			c.Abort()
@@ -656,13 +656,13 @@ func RateLimitMiddlewareWithLimits(requestsPerSecond float64, burstSize int, sto
 	rlConfig := &ratelimit.Config{
 		DefaultLimit: ratelimit.RateLimit{
 			RequestsPerSecond: requestsPerSecond,
-			BurstSize:        burstSize,
+			BurstSize:         burstSize,
 		},
-		StorageType:       ratelimit.StorageType(storageType),
-		RedisAddr:        redisAddr,
-		LogRequests:      true,
-		LogRejections:    true,
-		CleanupInterval:  5 * time.Minute,
+		StorageType:     ratelimit.StorageType(storageType),
+		RedisAddr:       redisAddr,
+		LogRequests:     true,
+		LogRejections:   true,
+		CleanupInterval: 5 * time.Minute,
 	}
 
 	limiter, err := ratelimit.New(rlConfig, logger)

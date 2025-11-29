@@ -83,19 +83,19 @@ type Service interface {
 
 // CreateOrderRequest represents a request to create a new order
 type CreateOrderRequest struct {
-	CustomerID        string                    `json:"customer_id" validate:"required,uuid"`
+	CustomerID        string                   `json:"customer_id" validate:"required,uuid"`
 	Type              entities.OrderType       `json:"type" validate:"required"`
 	Priority          entities.OrderPriority   `json:"priority"`
 	ShippingMethod    entities.ShippingMethod  `json:"shipping_method" validate:"required"`
-	ShippingAddressID string                    `json:"shipping_address_id" validate:"required,uuid"`
-	BillingAddressID  string                    `json:"billing_address_id" validate:"required,uuid"`
-	Currency          string                    `json:"currency" validate:"required,len=3"`
-	RequiredDate      *time.Time                `json:"required_date,omitempty"`
-	Notes             *string                   `json:"notes,omitempty"`
-	CustomerNotes     *string                   `json:"customer_notes,omitempty"`
-	Items             []CreateOrderItemRequest  `json:"items" validate:"required,min=1"`
-	DiscountCode      *string                   `json:"discount_code,omitempty"`
-	PaymentMethod     *string                   `json:"payment_method,omitempty"`
+	ShippingAddressID string                   `json:"shipping_address_id" validate:"required,uuid"`
+	BillingAddressID  string                   `json:"billing_address_id" validate:"required,uuid"`
+	Currency          string                   `json:"currency" validate:"required,len=3"`
+	RequiredDate      *time.Time               `json:"required_date,omitempty"`
+	Notes             *string                  `json:"notes,omitempty"`
+	CustomerNotes     *string                  `json:"customer_notes,omitempty"`
+	Items             []CreateOrderItemRequest `json:"items" validate:"required,min=1"`
+	DiscountCode      *string                  `json:"discount_code,omitempty"`
+	PaymentMethod     *string                  `json:"payment_method,omitempty"`
 }
 
 // CreateOrderItemRequest represents a request to add an item to an order
@@ -125,25 +125,25 @@ type UpdateOrderRequest struct {
 
 // ListOrdersRequest represents a request to list orders
 type ListOrdersRequest struct {
-	Search            string                     `json:"search,omitempty"`
-	Status            []entities.OrderStatus    `json:"status,omitempty"`
-	PaymentStatus     []entities.PaymentStatus  `json:"payment_status,omitempty"`
-	Priority          []entities.OrderPriority  `json:"priority,omitempty"`
-	Type              []entities.OrderType      `json:"type,omitempty"`
-	ShippingMethod    []entities.ShippingMethod `json:"shipping_method,omitempty"`
-	CustomerID        *string                    `json:"customer_id,omitempty"`
-	CompanyID         *string                    `json:"company_id,omitempty"`
-	CustomerType      string                     `json:"customer_type,omitempty"`
-	StartDate         *time.Time                 `json:"start_date,omitempty"`
-	EndDate           *time.Time                 `json:"end_date,omitempty"`
-	MinTotalAmount    *decimal.Decimal           `json:"min_total_amount,omitempty"`
-	MaxTotalAmount    *decimal.Decimal           `json:"max_total_amount,omitempty"`
-	Currency          string                     `json:"currency,omitempty"`
-	CreatedBy         *string                    `json:"created_by,omitempty"`
-	Page              int                        `json:"page,omitempty" validate:"min=1"`
-	Limit             int                        `json:"limit,omitempty" validate:"min=1,max=100"`
-	SortBy            string                     `json:"sort_by,omitempty"`
-	SortOrder         string                     `json:"sort_order,omitempty" validate:"omitempty,oneof=asc desc"`
+	Search         string                    `json:"search,omitempty"`
+	Status         []entities.OrderStatus    `json:"status,omitempty"`
+	PaymentStatus  []entities.PaymentStatus  `json:"payment_status,omitempty"`
+	Priority       []entities.OrderPriority  `json:"priority,omitempty"`
+	Type           []entities.OrderType      `json:"type,omitempty"`
+	ShippingMethod []entities.ShippingMethod `json:"shipping_method,omitempty"`
+	CustomerID     *string                   `json:"customer_id,omitempty"`
+	CompanyID      *string                   `json:"company_id,omitempty"`
+	CustomerType   string                    `json:"customer_type,omitempty"`
+	StartDate      *time.Time                `json:"start_date,omitempty"`
+	EndDate        *time.Time                `json:"end_date,omitempty"`
+	MinTotalAmount *decimal.Decimal          `json:"min_total_amount,omitempty"`
+	MaxTotalAmount *decimal.Decimal          `json:"max_total_amount,omitempty"`
+	Currency       string                    `json:"currency,omitempty"`
+	CreatedBy      *string                   `json:"created_by,omitempty"`
+	Page           int                       `json:"page,omitempty" validate:"min=1"`
+	Limit          int                       `json:"limit,omitempty" validate:"min=1,max=100"`
+	SortBy         string                    `json:"sort_by,omitempty"`
+	SortOrder      string                    `json:"sort_order,omitempty" validate:"omitempty,oneof=asc desc"`
 }
 
 // ListOrdersResponse represents the response for listing orders
@@ -166,34 +166,34 @@ type SearchOrdersResponse struct {
 
 // UpdateOrderStatusRequest represents a request to update order status
 type UpdateOrderStatusRequest struct {
-	Status      entities.OrderStatus `json:"status" validate:"required"`
-	Reason      string               `json:"reason,omitempty"`
-	Notify      bool                 `json:"notify"`
-	UpdatedBy   string               `json:"updated_by" validate:"required,uuid"`
+	Status    entities.OrderStatus `json:"status" validate:"required"`
+	Reason    string               `json:"reason,omitempty"`
+	Notify    bool                 `json:"notify"`
+	UpdatedBy string               `json:"updated_by" validate:"required,uuid"`
 }
 
 // CancelOrderRequest represents a request to cancel an order
 type CancelOrderRequest struct {
-	Reason    string `json:"reason" validate:"required"`
-	Refund    bool   `json:"refund"`
-	Notify    bool   `json:"notify"`
+	Reason      string `json:"reason" validate:"required"`
+	Refund      bool   `json:"refund"`
+	Notify      bool   `json:"notify"`
 	CancelledBy string `json:"cancelled_by" validate:"required,uuid"`
 }
 
 // ShipOrderRequest represents a request to ship an order
 type ShipOrderRequest struct {
-	TrackingNumber string    `json:"tracking_number,omitempty"`
-	Carrier        string    `json:"carrier,omitempty"`
-	ShippingDate   *time.Time `json:"shipping_date,omitempty"`
-	Notify         bool       `json:"notify"`
-	ShippedBy      string     `json:"shipped_by" validate:"required,uuid"`
+	TrackingNumber string            `json:"tracking_number,omitempty"`
+	Carrier        string            `json:"carrier,omitempty"`
+	ShippingDate   *time.Time        `json:"shipping_date,omitempty"`
+	Notify         bool              `json:"notify"`
+	ShippedBy      string            `json:"shipped_by" validate:"required,uuid"`
 	Items          []ShipItemRequest `json:"items,omitempty"`
 }
 
 // ShipItemRequest represents shipping information for an order item
 type ShipItemRequest struct {
-	ItemID       string `json:"item_id" validate:"required,uuid"`
-	Quantity     int    `json:"quantity" validate:"required,min=1"`
+	ItemID         string `json:"item_id" validate:"required,uuid"`
+	Quantity       int    `json:"quantity" validate:"required,min=1"`
 	TrackingNumber string `json:"tracking_number,omitempty"`
 }
 
@@ -208,12 +208,12 @@ type DeliverOrderRequest struct {
 
 // PartialShipOrderRequest represents a request to partially ship an order
 type PartialShipOrderRequest struct {
-	Items        []ShipItemRequest `json:"items" validate:"required,min=1"`
-	TrackingNumber string          `json:"tracking_number,omitempty"`
-	Carrier      string            `json:"carrier,omitempty"`
-	ShippingDate *time.Time        `json:"shipping_date,omitempty"`
-	Notify       bool              `json:"notify"`
-	ShippedBy    string            `json:"shipped_by" validate:"required,uuid"`
+	Items          []ShipItemRequest `json:"items" validate:"required,min=1"`
+	TrackingNumber string            `json:"tracking_number,omitempty"`
+	Carrier        string            `json:"carrier,omitempty"`
+	ShippingDate   *time.Time        `json:"shipping_date,omitempty"`
+	Notify         bool              `json:"notify"`
+	ShippedBy      string            `json:"shipped_by" validate:"required,uuid"`
 }
 
 // ReturnItemsRequest represents a request to return order items
@@ -244,22 +244,22 @@ type ProcessPaymentRequest struct {
 
 // RefundOrderRequest represents a request to refund an order
 type RefundOrderRequest struct {
-	Amount       decimal.Decimal `json:"amount" validate:"required,gt=0"`
-	Reason       string          `json:"reason" validate:"required"`
-	RefundMethod string          `json:"refund_method,omitempty"`
-	TransactionID string         `json:"transaction_id,omitempty"`
-	Notes        *string         `json:"notes,omitempty"`
-	RefundedBy   string          `json:"refunded_by" validate:"required,uuid"`
+	Amount        decimal.Decimal `json:"amount" validate:"required,gt=0"`
+	Reason        string          `json:"reason" validate:"required"`
+	RefundMethod  string          `json:"refund_method,omitempty"`
+	TransactionID string          `json:"transaction_id,omitempty"`
+	Notes         *string         `json:"notes,omitempty"`
+	RefundedBy    string          `json:"refunded_by" validate:"required,uuid"`
 }
 
 // PartialRefundOrderRequest represents a request for partial refund
 type PartialRefundOrderRequest struct {
-	Items        []RefundItemRequest `json:"items" validate:"required,min=1"`
-	Reason       string              `json:"reason" validate:"required"`
-	RefundMethod string              `json:"refund_method,omitempty"`
-	TransactionID string             `json:"transaction_id,omitempty"`
-	Notes        *string             `json:"notes,omitempty"`
-	RefundedBy   string              `json:"refunded_by" validate:"required,uuid"`
+	Items         []RefundItemRequest `json:"items" validate:"required,min=1"`
+	Reason        string              `json:"reason" validate:"required"`
+	RefundMethod  string              `json:"refund_method,omitempty"`
+	TransactionID string              `json:"transaction_id,omitempty"`
+	Notes         *string             `json:"notes,omitempty"`
+	RefundedBy    string              `json:"refunded_by" validate:"required,uuid"`
 }
 
 // RefundItemRequest represents a refund request for an order item
@@ -282,22 +282,22 @@ type AddOrderItemRequest struct {
 
 // UpdateOrderItemRequest represents a request to update an order item
 type UpdateOrderItemRequest struct {
-	Quantity       *int            `json:"quantity,omitempty" validate:"omitempty,min=1"`
+	Quantity       *int             `json:"quantity,omitempty" validate:"omitempty,min=1"`
 	UnitPrice      *decimal.Decimal `json:"unit_price,omitempty" validate:"omitempty,gt=0"`
 	DiscountAmount *decimal.Decimal `json:"discount_amount,omitempty"`
 	TaxRate        *decimal.Decimal `json:"tax_rate,omitempty"`
-	Notes          *string         `json:"notes,omitempty"`
+	Notes          *string          `json:"notes,omitempty"`
 }
 
 // GetCustomerOrdersRequest represents a request to get customer orders
 type GetCustomerOrdersRequest struct {
-	Status         []entities.OrderStatus   `json:"status,omitempty"`
-	StartDate      *time.Time              `json:"start_date,omitempty"`
-	EndDate        *time.Time              `json:"end_date,omitempty"`
-	Page           int                     `json:"page,omitempty" validate:"min=1"`
-	Limit          int                     `json:"limit,omitempty" validate:"min=1,max=100"`
-	SortBy         string                  `json:"sort_by,omitempty"`
-	SortOrder      string                  `json:"sort_order,omitempty" validate:"omitempty,oneof=asc desc"`
+	Status    []entities.OrderStatus `json:"status,omitempty"`
+	StartDate *time.Time             `json:"start_date,omitempty"`
+	EndDate   *time.Time             `json:"end_date,omitempty"`
+	Page      int                    `json:"page,omitempty" validate:"min=1"`
+	Limit     int                    `json:"limit,omitempty" validate:"min=1,max=100"`
+	SortBy    string                 `json:"sort_by,omitempty"`
+	SortOrder string                 `json:"sort_order,omitempty" validate:"omitempty,oneof=asc desc"`
 }
 
 // GetCustomerOrdersResponse represents the response for customer orders
@@ -309,21 +309,21 @@ type GetCustomerOrdersResponse struct {
 
 // CustomerSummary represents a customer's order summary
 type CustomerSummary struct {
-	TotalOrders        int             `json:"total_orders"`
-	TotalAmount        decimal.Decimal `json:"total_amount"`
-	AverageOrderValue  decimal.Decimal `json:"average_order_value"`
-	FirstOrderDate     *time.Time      `json:"first_order_date,omitempty"`
-	LastOrderDate      *time.Time      `json:"last_order_date,omitempty"`
-	StatusBreakdown    map[string]int  `json:"status_breakdown"`
+	TotalOrders       int             `json:"total_orders"`
+	TotalAmount       decimal.Decimal `json:"total_amount"`
+	AverageOrderValue decimal.Decimal `json:"average_order_value"`
+	FirstOrderDate    *time.Time      `json:"first_order_date,omitempty"`
+	LastOrderDate     *time.Time      `json:"last_order_date,omitempty"`
+	StatusBreakdown   map[string]int  `json:"status_breakdown"`
 }
 
 // GetOrderStatsRequest represents a request to get order statistics
 type GetOrderStatsRequest struct {
-	StartDate  *time.Time              `json:"start_date,omitempty"`
-	EndDate    *time.Time              `json:"end_date,omitempty"`
-	Status     []entities.OrderStatus  `json:"status,omitempty"`
-	CustomerID *string                 `json:"customer_id,omitempty"`
-	CompanyID  *string                 `json:"company_id,omitempty"`
+	StartDate  *time.Time             `json:"start_date,omitempty"`
+	EndDate    *time.Time             `json:"end_date,omitempty"`
+	Status     []entities.OrderStatus `json:"status,omitempty"`
+	CustomerID *string                `json:"customer_id,omitempty"`
+	CompanyID  *string                `json:"company_id,omitempty"`
 }
 
 // GetRevenueByPeriodRequest represents a request to get revenue by period
@@ -342,28 +342,28 @@ type GetTopCustomersRequest struct {
 
 // GetSalesByProductRequest represents a request to get sales by product
 type GetSalesByProductRequest struct {
-	StartDate time.Time `json:"start_date" validate:"required"`
-	EndDate   time.Time `json:"end_date" validate:"required"`
-	Limit     int       `json:"limit,omitempty" validate:"omitempty,min=1,max=100"`
-	CategoryID *string  `json:"category_id,omitempty"`
+	StartDate  time.Time `json:"start_date" validate:"required"`
+	EndDate    time.Time `json:"end_date" validate:"required"`
+	Limit      int       `json:"limit,omitempty" validate:"omitempty,min=1,max=100"`
+	CategoryID *string   `json:"category_id,omitempty"`
 }
 
 // GetOrderAnalyticsRequest represents a request to get comprehensive order analytics
 type GetOrderAnalyticsRequest struct {
-	StartDate time.Time `json:"start_date" validate:"required"`
-	EndDate   time.Time `json:"end_date" validate:"required"`
-	GroupBy   string    `json:"group_by,omitempty" validate:"omitempty,oneof=day week month quarter year"`
-	CustomerID *string  `json:"customer_id,omitempty"`
-	CompanyID  *string  `json:"company_id,omitempty"`
+	StartDate  time.Time `json:"start_date" validate:"required"`
+	EndDate    time.Time `json:"end_date" validate:"required"`
+	GroupBy    string    `json:"group_by,omitempty" validate:"omitempty,oneof=day week month quarter year"`
+	CustomerID *string   `json:"customer_id,omitempty"`
+	CompanyID  *string   `json:"company_id,omitempty"`
 }
 
 // OrderAnalyticsResponse represents comprehensive order analytics
 type OrderAnalyticsResponse struct {
-	OrderStats      *repositories.OrderStats          `json:"order_stats"`
-	RevenueByPeriod []*repositories.RevenueByPeriod   `json:"revenue_by_period"`
+	OrderStats      *repositories.OrderStats           `json:"order_stats"`
+	RevenueByPeriod []*repositories.RevenueByPeriod    `json:"revenue_by_period"`
 	TopCustomers    []*repositories.CustomerOrderStats `json:"top_customers"`
 	TopProducts     []*repositories.ProductSalesStats  `json:"top_products"`
-	Trends          *OrderTrends                      `json:"trends,omitempty"`
+	Trends          *OrderTrends                       `json:"trends,omitempty"`
 }
 
 // OrderTrends represents order trends and patterns
@@ -383,77 +383,77 @@ type CheckInventoryRequest struct {
 
 // CheckInventoryItemRequest represents an item to check inventory for
 type CheckInventoryItemRequest struct {
-	ProductID string `json:"product_id" validate:"required,uuid"`
-	Quantity  int    `json:"quantity" validate:"required,min=1"`
+	ProductID   string  `json:"product_id" validate:"required,uuid"`
+	Quantity    int     `json:"quantity" validate:"required,min=1"`
 	WarehouseID *string `json:"warehouse_id,omitempty"`
 }
 
 // CheckInventoryResponse represents the response for inventory check
 type CheckInventoryResponse struct {
-	Available    bool                         `json:"available"`
-	Items        []CheckInventoryItemResponse  `json:"items"`
-	TotalValue   decimal.Decimal               `json:"total_value"`
-	Suggestions  []InventorySuggestion         `json:"suggestions,omitempty"`
+	Available   bool                         `json:"available"`
+	Items       []CheckInventoryItemResponse `json:"items"`
+	TotalValue  decimal.Decimal              `json:"total_value"`
+	Suggestions []InventorySuggestion        `json:"suggestions,omitempty"`
 }
 
 // CheckInventoryItemResponse represents inventory availability for an item
 type CheckInventoryItemResponse struct {
-	ProductID       string          `json:"product_id"`
-	ProductName     string          `json:"product_name"`
-	RequestedQty    int             `json:"requested_qty"`
-	AvailableQty    int             `json:"available_qty"`
-	CanFulfill      bool            `json:"can_fulfill"`
-	BackorderAllowed bool           `json:"backorder_allowed"`
-	UnitPrice       decimal.Decimal `json:"unit_price"`
-	TotalValue      decimal.Decimal `json:"total_value"`
-	Reason          string          `json:"reason,omitempty"`
-	Alternatives    []ProductAlternative `json:"alternatives,omitempty"`
+	ProductID        string               `json:"product_id"`
+	ProductName      string               `json:"product_name"`
+	RequestedQty     int                  `json:"requested_qty"`
+	AvailableQty     int                  `json:"available_qty"`
+	CanFulfill       bool                 `json:"can_fulfill"`
+	BackorderAllowed bool                 `json:"backorder_allowed"`
+	UnitPrice        decimal.Decimal      `json:"unit_price"`
+	TotalValue       decimal.Decimal      `json:"total_value"`
+	Reason           string               `json:"reason,omitempty"`
+	Alternatives     []ProductAlternative `json:"alternatives,omitempty"`
 }
 
 // ProductAlternative represents an alternative product suggestion
 type ProductAlternative struct {
-	ProductID   string          `json:"product_id"`
-	ProductName string          `json:"product_name"`
-	ProductSKU  string          `json:"product_sku"`
-	UnitPrice   decimal.Decimal `json:"unit_price"`
-	AvailableQty int            `json:"available_qty"`
+	ProductID    string          `json:"product_id"`
+	ProductName  string          `json:"product_name"`
+	ProductSKU   string          `json:"product_sku"`
+	UnitPrice    decimal.Decimal `json:"unit_price"`
+	AvailableQty int             `json:"available_qty"`
 	MatchScore   decimal.Decimal `json:"match_score"`
 }
 
 // InventorySuggestion represents inventory optimization suggestions
 type InventorySuggestion struct {
-	Type        string          `json:"type"` // "RESTOCK", "PROMOTE", "DISCONTINUE"
-	ProductID   string          `json:"product_id"`
-	ProductName string          `json:"product_name"`
-	CurrentStock int            `json:"current_stock"`
-	RecommendedAction string     `json:"recommended_action"`
-	PotentialRevenue decimal.Decimal `json:"potential_revenue"`
-	Priority    string          `json:"priority"` // "HIGH", "MEDIUM", "LOW"
+	Type              string          `json:"type"` // "RESTOCK", "PROMOTE", "DISCONTINUE"
+	ProductID         string          `json:"product_id"`
+	ProductName       string          `json:"product_name"`
+	CurrentStock      int             `json:"current_stock"`
+	RecommendedAction string          `json:"recommended_action"`
+	PotentialRevenue  decimal.Decimal `json:"potential_revenue"`
+	Priority          string          `json:"priority"` // "HIGH", "MEDIUM", "LOW"
 }
 
 // BulkUpdateStatusRequest represents a request to bulk update order status
 type BulkUpdateStatusRequest struct {
-	OrderIDs    []string               `json:"order_ids" validate:"required,min=1"`
-	Status      entities.OrderStatus   `json:"status" validate:"required"`
-	Reason      string                 `json:"reason,omitempty"`
-	Notify      bool                   `json:"notify"`
-	UpdatedBy   string                 `json:"updated_by" validate:"required,uuid"`
+	OrderIDs  []string             `json:"order_ids" validate:"required,min=1"`
+	Status    entities.OrderStatus `json:"status" validate:"required"`
+	Reason    string               `json:"reason,omitempty"`
+	Notify    bool                 `json:"notify"`
+	UpdatedBy string               `json:"updated_by" validate:"required,uuid"`
 }
 
 // BulkUpdateStatusResponse represents the response for bulk status update
 type BulkUpdateStatusResponse struct {
-	UpdatedCount int                  `json:"updated_count"`
-	FailedCount  int                  `json:"failed_count"`
-	Results      []BulkUpdateResult   `json:"results"`
+	UpdatedCount int                `json:"updated_count"`
+	FailedCount  int                `json:"failed_count"`
+	Results      []BulkUpdateResult `json:"results"`
 }
 
 // BulkCancelOrdersRequest represents a request to bulk cancel orders
 type BulkCancelOrdersRequest struct {
-	OrderIDs    []string          `json:"order_ids" validate:"required,min=1"`
-	Reason      string            `json:"reason" validate:"required"`
-	Refund      bool              `json:"refund"`
-	Notify      bool              `json:"notify"`
-	CancelledBy string            `json:"cancelled_by" validate:"required,uuid"`
+	OrderIDs    []string `json:"order_ids" validate:"required,min=1"`
+	Reason      string   `json:"reason" validate:"required"`
+	Refund      bool     `json:"refund"`
+	Notify      bool     `json:"notify"`
+	CancelledBy string   `json:"cancelled_by" validate:"required,uuid"`
 }
 
 // BulkCancelOrdersResponse represents the response for bulk cancel orders
@@ -472,12 +472,12 @@ type BulkUpdateResult struct {
 
 // CloneOrderRequest represents a request to clone an order
 type CloneOrderRequest struct {
-	CopyItems      bool   `json:"copy_items"`
-	CopyAddresses  bool   `json:"copy_addresses"`
-	CopyNotes      bool   `json:"copy_notes"`
-	CopyDiscounts  bool   `json:"copy_discounts"`
-	NewCustomerID  *string `json:"new_customer_id,omitempty"`
-	Notes          *string `json:"notes,omitempty"`
+	CopyItems     bool    `json:"copy_items"`
+	CopyAddresses bool    `json:"copy_addresses"`
+	CopyNotes     bool    `json:"copy_notes"`
+	CopyDiscounts bool    `json:"copy_discounts"`
+	NewCustomerID *string `json:"new_customer_id,omitempty"`
+	Notes         *string `json:"notes,omitempty"`
 }
 
 // Pagination represents pagination information
@@ -492,29 +492,29 @@ type Pagination struct {
 
 // Errors
 var (
-	ErrOrderNotFound           = errors.New("order not found")
-	ErrOrderAlreadyExists      = errors.New("order already exists")
-	ErrInvalidOrderStatus      = errors.New("invalid order status")
-	ErrInvalidStatusTransition = errors.New("invalid status transition")
-	ErrInvalidOrderNumber      = errors.New("invalid order number")
-	ErrInsufficientInventory   = errors.New("insufficient inventory")
-	ErrCustomerNotFound        = errors.New("customer not found")
-	ErrProductNotFound         = errors.New("product not found")
-	ErrInvalidPaymentAmount    = errors.New("invalid payment amount")
-	ErrOrderCannotBeCancelled  = errors.New("order cannot be cancelled")
-	ErrOrderCannotBeShipped    = errors.New("order cannot be shipped")
-	ErrOrderCannotBeReturned   = errors.New("order cannot be returned")
-	ErrInvalidQuantity         = errors.New("invalid quantity")
-	ErrInvalidAddress          = errors.New("invalid address")
-	ErrInvalidCurrency         = errors.New("invalid currency")
-	ErrPaymentFailed           = errors.New("payment failed")
-	ErrRefundFailed            = errors.New("refund failed")
-	ErrInvalidDiscount         = errors.New("invalid discount")
-	ErrInvalidTaxRate          = errors.New("invalid tax rate")
+	ErrOrderNotFound              = errors.New("order not found")
+	ErrOrderAlreadyExists         = errors.New("order already exists")
+	ErrInvalidOrderStatus         = errors.New("invalid order status")
+	ErrInvalidStatusTransition    = errors.New("invalid status transition")
+	ErrInvalidOrderNumber         = errors.New("invalid order number")
+	ErrInsufficientInventory      = errors.New("insufficient inventory")
+	ErrCustomerNotFound           = errors.New("customer not found")
+	ErrProductNotFound            = errors.New("product not found")
+	ErrInvalidPaymentAmount       = errors.New("invalid payment amount")
+	ErrOrderCannotBeCancelled     = errors.New("order cannot be cancelled")
+	ErrOrderCannotBeShipped       = errors.New("order cannot be shipped")
+	ErrOrderCannotBeReturned      = errors.New("order cannot be returned")
+	ErrInvalidQuantity            = errors.New("invalid quantity")
+	ErrInvalidAddress             = errors.New("invalid address")
+	ErrInvalidCurrency            = errors.New("invalid currency")
+	ErrPaymentFailed              = errors.New("payment failed")
+	ErrRefundFailed               = errors.New("refund failed")
+	ErrInvalidDiscount            = errors.New("invalid discount")
+	ErrInvalidTaxRate             = errors.New("invalid tax rate")
 	ErrInventoryReservationFailed = errors.New("inventory reservation failed")
-	ErrOrderAlreadyPaid        = errors.New("order is already paid")
-	ErrOrderNotPaid            = errors.New("order is not paid")
-	ErrInvalidShippingMethod   = errors.New("invalid shipping method")
-	ErrOrderAlreadyArchived    = errors.New("order is already archived")
-	ErrOrderNotArchived        = errors.New("order is not archived")
+	ErrOrderAlreadyPaid           = errors.New("order is already paid")
+	ErrOrderNotPaid               = errors.New("order is not paid")
+	ErrInvalidShippingMethod      = errors.New("invalid shipping method")
+	ErrOrderAlreadyArchived       = errors.New("order is already archived")
+	ErrOrderNotArchived           = errors.New("order is not archived")
 )

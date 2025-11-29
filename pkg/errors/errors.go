@@ -7,13 +7,13 @@ import (
 
 // Common application errors
 var (
-	ErrNotFound           = errors.New("resource not found")
-	ErrInvalidInput       = errors.New("invalid input")
-	ErrUnauthorized       = errors.New("unauthorized")
-	ErrForbidden          = errors.New("forbidden")
-	ErrConflict           = errors.New("conflict")
-	ErrInternalServer     = errors.New("internal server error")
-	ErrInsufficientStock  = errors.New("insufficient stock")
+	ErrNotFound          = errors.New("resource not found")
+	ErrInvalidInput      = errors.New("invalid input")
+	ErrUnauthorized      = errors.New("unauthorized")
+	ErrForbidden         = errors.New("forbidden")
+	ErrConflict          = errors.New("conflict")
+	ErrInternalServer    = errors.New("internal server error")
+	ErrInsufficientStock = errors.New("insufficient stock")
 )
 
 // Error represents an application error with HTTP status code

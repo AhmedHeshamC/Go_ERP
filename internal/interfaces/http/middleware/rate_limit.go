@@ -25,17 +25,17 @@ type RateLimitConfig struct {
 	Endpoints map[string]EndpointRateLimit `json:"endpoints"`
 
 	// IP-based rate limiting
-	IPBased       bool `json:"ip_based"`
-	IPWhitelist   []string `json:"ip_whitelist"`
-	IPBlacklist   []string `json:"ip_blacklist"`
+	IPBased     bool     `json:"ip_based"`
+	IPWhitelist []string `json:"ip_whitelist"`
+	IPBlacklist []string `json:"ip_blacklist"`
 
 	// User-based rate limiting
-	UserBased     bool `json:"user_based"`
-	AdminExempt   bool `json:"admin_exempt"`
+	UserBased   bool `json:"user_based"`
+	AdminExempt bool `json:"admin_exempt"`
 
 	// Redis configuration
-	KeyPrefix     string        `json:"key_prefix"`
-	KeyExpiry     time.Duration `json:"key_expiry"`
+	KeyPrefix string        `json:"key_prefix"`
+	KeyExpiry time.Duration `json:"key_expiry"`
 
 	// Security features
 	EnablePenalty bool          `json:"enable_penalty"`
@@ -120,11 +120,11 @@ func DefaultRateLimitConfig() RateLimitConfig {
 				IPBased:           true,
 			},
 		},
-		IPBased:     true,
-		UserBased:   false,
-		AdminExempt: true,
-		KeyPrefix:   "rate_limit:",
-		KeyExpiry:   time.Hour,
+		IPBased:       true,
+		UserBased:     false,
+		AdminExempt:   true,
+		KeyPrefix:     "rate_limit:",
+		KeyExpiry:     time.Hour,
 		EnablePenalty: true,
 		PenaltyTime:   5 * time.Minute,
 		PenaltyFactor: 2.0,
@@ -185,8 +185,8 @@ func (rl *RateLimiter) Middleware() gin.HandlerFunc {
 					Msg("Request from penalized client")
 
 				c.JSON(http.StatusTooManyRequests, gin.H{
-					"error":              "Rate limit exceeded. Please try again later.",
-					"code":               "RATE_LIMIT_PENALTY",
+					"error":               "Rate limit exceeded. Please try again later.",
+					"code":                "RATE_LIMIT_PENALTY",
 					"retry_after_seconds": int(ttl.Seconds()),
 				})
 				c.Abort()
@@ -231,8 +231,8 @@ func (rl *RateLimiter) Middleware() gin.HandlerFunc {
 			}
 
 			c.JSON(http.StatusTooManyRequests, gin.H{
-				"error":              "Rate limit exceeded",
-				"code":               "RATE_LIMIT_EXCEEDED",
+				"error":               "Rate limit exceeded",
+				"code":                "RATE_LIMIT_EXCEEDED",
 				"retry_after_seconds": int(resetTime - time.Now().Unix()),
 			})
 			c.Abort()

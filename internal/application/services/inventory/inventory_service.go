@@ -27,9 +27,9 @@ type InventoryAvailabilityResponse struct {
 
 // InventoryBulkOperationResponse represents the result of bulk inventory operations
 type InventoryBulkOperationResponse struct {
-	SuccessCount int                         `json:"success_count"`
-	TotalCount   int                         `json:"total_count"`
-	Errors       []string                    `json:"errors,omitempty"`
+	SuccessCount int                                 `json:"success_count"`
+	TotalCount   int                                 `json:"total_count"`
+	Errors       []string                            `json:"errors,omitempty"`
 	Results      []*dto.InventoryTransactionResponse `json:"results"`
 }
 
@@ -57,11 +57,11 @@ type Service interface {
 
 // ServiceImpl implements the inventory service interface
 type ServiceImpl struct {
-	inventoryRepo     repositories.InventoryRepository
-	warehouseRepo     repositories.WarehouseRepository
-	transactionRepo   repositories.InventoryTransactionRepository
-	txManager         database.TransactionManagerInterface
-	logger            *zerolog.Logger
+	inventoryRepo   repositories.InventoryRepository
+	warehouseRepo   repositories.WarehouseRepository
+	transactionRepo repositories.InventoryTransactionRepository
+	txManager       database.TransactionManagerInterface
+	logger          *zerolog.Logger
 }
 
 // NewService creates a new inventory service instance
@@ -323,7 +323,7 @@ func (s *ServiceImpl) ListInventory(c *gin.Context, req *dto.ListInventoryReques
 
 	totalPages := (total + req.Limit - 1) / req.Limit
 	return &dto.InventoryListResponse{
-		Inventory:  inventoryDTOs,
+		Inventory: inventoryDTOs,
 		Pagination: &dto.PaginationInfo{
 			Page:       req.Page,
 			Limit:      req.Limit,
@@ -364,12 +364,12 @@ func (s *ServiceImpl) GetInventoryStats(c *gin.Context) (*dto.InventoryStatsResp
 
 	// Calculate statistics
 	stats := &dto.InventoryStatsResponse{
-		TotalProducts:      len(allInventory),
-		TotalWarehouses:    0, // Would need to be calculated separately
-		LowStockItems:      0,
-		OutOfStockItems:    0,
+		TotalProducts:       len(allInventory),
+		TotalWarehouses:     0, // Would need to be calculated separately
+		LowStockItems:       0,
+		OutOfStockItems:     0,
 		TotalInventoryValue: decimal.Zero,
-		TotalStockQuantity: 0,
+		TotalStockQuantity:  0,
 	}
 
 	warehouseSet := make(map[uuid.UUID]bool)
@@ -422,7 +422,7 @@ func (s *ServiceImpl) GetLowStockItems(c *gin.Context, warehouseID *uuid.UUID) (
 	}
 
 	return &dto.InventoryListResponse{
-		Inventory:  inventoryDTOs,
+		Inventory: inventoryDTOs,
 		Pagination: &dto.PaginationInfo{
 			Page:       1,
 			Limit:      len(inventories),

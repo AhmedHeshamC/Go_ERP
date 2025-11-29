@@ -32,40 +32,40 @@ type RateLimiter interface {
 // RateLimit represents rate limiting configuration
 type RateLimit struct {
 	RequestsPerSecond float64 `json:"requests_per_second"`
-	BurstSize        int     `json:"burst_size"`
+	BurstSize         int     `json:"burst_size"`
 }
 
 // Reservation represents a rate limit reservation
 type Reservation struct {
-	OK           bool          `json:"ok"`
-	Delay        time.Duration `json:"delay"`
-	Reservation  time.Time     `json:"reservation"`
-	TimeToAct    time.Time     `json:"time_to_act"`
-	Limit        float64       `json:"limit"`
-	Remaining    float64       `json:"remaining"`
+	OK          bool          `json:"ok"`
+	Delay       time.Duration `json:"delay"`
+	Reservation time.Time     `json:"reservation"`
+	TimeToAct   time.Time     `json:"time_to_act"`
+	Limit       float64       `json:"limit"`
+	Remaining   float64       `json:"remaining"`
 }
 
 // Config holds rate limiter configuration
 type Config struct {
 	// Global settings
-	DefaultLimit     RateLimit `json:"default_limit"`
-	CleanupInterval   time.Duration `json:"cleanup_interval"`
-	MaxKeys          int           `json:"max_keys"`
+	DefaultLimit    RateLimit     `json:"default_limit"`
+	CleanupInterval time.Duration `json:"cleanup_interval"`
+	MaxKeys         int           `json:"max_keys"`
 
 	// Storage settings
-	StorageType      StorageType  `json:"storage_type"`
-	RedisAddr        string       `json:"redis_addr,omitempty"`
-	RedisPassword    string       `json:"redis_password,omitempty"`
-	RedisDB          int          `json:"redis_db,omitempty"`
+	StorageType   StorageType `json:"storage_type"`
+	RedisAddr     string      `json:"redis_addr,omitempty"`
+	RedisPassword string      `json:"redis_password,omitempty"`
+	RedisDB       int         `json:"redis_db,omitempty"`
 
 	// Logging settings
-	LogRequests      bool         `json:"log_requests"`
-	LogRejections    bool         `json:"log_rejections"`
-	LogReservations  bool         `json:"log_reservations"`
+	LogRequests     bool `json:"log_requests"`
+	LogRejections   bool `json:"log_rejections"`
+	LogReservations bool `json:"log_reservations"`
 
 	// Advanced settings
-	EnableKeyHashing bool         `json:"enable_key_hashing"`
-	EnableSlidingWindow bool       `json:"enable_sliding_window"`
+	EnableKeyHashing    bool `json:"enable_key_hashing"`
+	EnableSlidingWindow bool `json:"enable_sliding_window"`
 }
 
 // StorageType defines the storage backend for rate limiting
@@ -81,15 +81,15 @@ func DefaultConfig() *Config {
 	return &Config{
 		DefaultLimit: RateLimit{
 			RequestsPerSecond: 10.0,
-			BurstSize:        20,
+			BurstSize:         20,
 		},
-		CleanupInterval:    5 * time.Minute,
-		MaxKeys:           10000,
-		StorageType:       StorageMemory,
-		LogRequests:       true,
-		LogRejections:     true,
-		LogReservations:   false,
-		EnableKeyHashing:  false,
+		CleanupInterval:     5 * time.Minute,
+		MaxKeys:             10000,
+		StorageType:         StorageMemory,
+		LogRequests:         true,
+		LogRejections:       true,
+		LogReservations:     false,
+		EnableKeyHashing:    false,
 		EnableSlidingWindow: false,
 	}
 }
@@ -322,15 +322,15 @@ func (l *Limiter) GetStats() map[string]interface{} {
 	defer l.stats.mu.RUnlock()
 
 	return map[string]interface{}{
-		"total_requests":     l.stats.TotalRequests,
+		"total_requests":    l.stats.TotalRequests,
 		"allowed_requests":  l.stats.AllowedRequests,
 		"rejected_requests": l.stats.RejectedRequests,
 		"reservations":      l.stats.Reservations,
 		"active_keys":       l.stats.ActiveKeys,
 		"peak_keys":         l.stats.PeakKeys,
 		"last_cleanup":      l.stats.LastCleanup,
-		"rejection_rate":     float64(l.stats.RejectedRequests) / float64(l.stats.TotalRequests) * 100,
-		"allowance_rate":     float64(l.stats.AllowedRequests) / float64(l.stats.TotalRequests) * 100,
+		"rejection_rate":    float64(l.stats.RejectedRequests) / float64(l.stats.TotalRequests) * 100,
+		"allowance_rate":    float64(l.stats.AllowedRequests) / float64(l.stats.TotalRequests) * 100,
 	}
 }
 

@@ -16,20 +16,20 @@ import (
 
 // APIKey represents an API key with associated metadata
 type APIKey struct {
-	ID           uuid.UUID `json:"id" db:"id"`
-	Name         string    `json:"name" db:"name"`
-	KeyHash      string    `json:"-" db:"key_hash"` // Never return the actual key
-	KeyPrefix    string    `json:"key_prefix" db:"key_prefix"`
-	UserID       uuid.UUID `json:"user_id" db:"user_id"`
-	Roles        []string  `json:"roles" db:"roles"`
-	Permissions  []string  `json:"permissions" db:"permissions"`
-	IsActive     bool      `json:"is_active" db:"is_active"`
-	ExpiresAt    *time.Time `json:"expires_at" db:"expires_at"`
-	LastUsedAt   *time.Time `json:"last_used_at" db:"last_used_at"`
-	CreatedAt    time.Time `json:"created_at" db:"created_at"`
-	CreatedBy    uuid.UUID `json:"created_by" db:"created_by"`
-	Description  string    `json:"description" db:"description"`
-	Metadata     map[string]interface{} `json:"metadata" db:"metadata"`
+	ID          uuid.UUID              `json:"id" db:"id"`
+	Name        string                 `json:"name" db:"name"`
+	KeyHash     string                 `json:"-" db:"key_hash"` // Never return the actual key
+	KeyPrefix   string                 `json:"key_prefix" db:"key_prefix"`
+	UserID      uuid.UUID              `json:"user_id" db:"user_id"`
+	Roles       []string               `json:"roles" db:"roles"`
+	Permissions []string               `json:"permissions" db:"permissions"`
+	IsActive    bool                   `json:"is_active" db:"is_active"`
+	ExpiresAt   *time.Time             `json:"expires_at" db:"expires_at"`
+	LastUsedAt  *time.Time             `json:"last_used_at" db:"last_used_at"`
+	CreatedAt   time.Time              `json:"created_at" db:"created_at"`
+	CreatedBy   uuid.UUID              `json:"created_by" db:"created_by"`
+	Description string                 `json:"description" db:"description"`
+	Metadata    map[string]interface{} `json:"metadata" db:"metadata"`
 }
 
 // APIKeyRepository defines the interface for API key storage
@@ -47,8 +47,8 @@ type APIKeyRepository interface {
 
 // APIKeyFilter defines filtering options for API keys
 type APIKeyFilter struct {
-	UserID     *uuid.UUID
-	IsActive   *bool
+	UserID        *uuid.UUID
+	IsActive      *bool
 	ExpiresBefore *time.Time
 	ExpiresAfter  *time.Time
 	CreatedBy     *uuid.UUID
@@ -68,24 +68,24 @@ type APIKeyService struct {
 // APIKeyConfig holds configuration for API key management
 type APIKeyConfig struct {
 	// Key generation settings
-	KeyLength        int           `json:"key_length"`
-	KeyPrefixLength  int           `json:"key_prefix_length"`
-	DefaultExpiry    time.Duration `json:"default_expiry"`
-	MaxExpiry        time.Duration `json:"max_expiry"`
+	KeyLength       int           `json:"key_length"`
+	KeyPrefixLength int           `json:"key_prefix_length"`
+	DefaultExpiry   time.Duration `json:"default_expiry"`
+	MaxExpiry       time.Duration `json:"max_expiry"`
 
 	// Security settings
-	MinNameLength    int           `json:"min_name_length"`
-	MaxNameLength    int           `json:"max_name_length"`
-	MaxKeysPerUser   int           `json:"max_keys_per_user"`
+	MinNameLength  int `json:"min_name_length"`
+	MaxNameLength  int `json:"max_name_length"`
+	MaxKeysPerUser int `json:"max_keys_per_user"`
 
 	// Cache settings
-	CacheEnabled     bool          `json:"cache_enabled"`
-	CacheTTL         time.Duration `json:"cache_ttl"`
+	CacheEnabled bool          `json:"cache_enabled"`
+	CacheTTL     time.Duration `json:"cache_ttl"`
 
 	// Audit settings
-	LogKeyUsage      bool          `json:"log_key_usage"`
-	LogKeyCreation   bool          `json:"log_key_creation"`
-	LogKeyDeletion   bool          `json:"log_key_deletion"`
+	LogKeyUsage    bool `json:"log_key_usage"`
+	LogKeyCreation bool `json:"log_key_creation"`
+	LogKeyDeletion bool `json:"log_key_deletion"`
 }
 
 // DefaultAPIKeyConfig returns a secure default configuration
@@ -93,7 +93,7 @@ func DefaultAPIKeyConfig() APIKeyConfig {
 	return APIKeyConfig{
 		KeyLength:       64,
 		KeyPrefixLength: 8,
-		DefaultExpiry:   365 * 24 * time.Hour, // 1 year
+		DefaultExpiry:   365 * 24 * time.Hour,     // 1 year
 		MaxExpiry:       5 * 365 * 24 * time.Hour, // 5 years
 		MinNameLength:   3,
 		MaxNameLength:   100,
@@ -141,10 +141,10 @@ type ValidateAPIKeyRequest struct {
 
 // ValidateAPIKeyResponse represents the response when validating an API key
 type ValidateAPIKeyResponse struct {
-	Valid     bool     `json:"valid"`
-	APIKey    *APIKey  `json:"api_key,omitempty"`
-	ExpiresIn int64    `json:"expires_in,omitempty"`
-	Message   string   `json:"message,omitempty"`
+	Valid     bool    `json:"valid"`
+	APIKey    *APIKey `json:"api_key,omitempty"`
+	ExpiresIn int64   `json:"expires_in,omitempty"`
+	Message   string  `json:"message,omitempty"`
 }
 
 // CreateAPIKey creates a new API key

@@ -19,13 +19,13 @@ import (
 // PostgresUserRepositoryTestSuite contains all tests for the PostgreSQL user repository
 type PostgresUserRepositoryTestSuite struct {
 	suite.Suite
-	db                *database.Database
-	userRepo          *PostgresUserRepository
-	roleRepo          *PostgresRoleRepository
-	userRoleRepo      *PostgresUserRoleRepository
-	passwordService   *auth.PasswordService
-	ctx               context.Context
-	cleanup           func()
+	db              *database.Database
+	userRepo        *PostgresUserRepository
+	roleRepo        *PostgresRoleRepository
+	userRoleRepo    *PostgresUserRoleRepository
+	passwordService *auth.PasswordService
+	ctx             context.Context
+	cleanup         func()
 }
 
 // SetupSuite runs once before all tests
@@ -152,16 +152,16 @@ func (suite *PostgresUserRepositoryTestSuite) cleanupTestData() {
 // createTestUser creates a test user
 func (suite *PostgresUserRepositoryTestSuite) createTestUser(email, username string) *entities.User {
 	user := &entities.User{
-		ID:           uuid.New(),
-		Email:        email,
-		Username:     username,
-		FirstName:    "Test",
-		LastName:     "User",
-		Phone:        "+1234567890",
-		IsActive:     true,
-		IsVerified:   false,
-		CreatedAt:    time.Now().UTC(),
-		UpdatedAt:    time.Now().UTC(),
+		ID:         uuid.New(),
+		Email:      email,
+		Username:   username,
+		FirstName:  "Test",
+		LastName:   "User",
+		Phone:      "+1234567890",
+		IsActive:   true,
+		IsVerified: false,
+		CreatedAt:  time.Now().UTC(),
+		UpdatedAt:  time.Now().UTC(),
 	}
 
 	// Hash password

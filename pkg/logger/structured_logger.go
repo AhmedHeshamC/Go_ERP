@@ -34,89 +34,89 @@ const (
 type LogFormat string
 
 const (
-	JSONFormat LogFormat = "json"
+	JSONFormat    LogFormat = "json"
 	ConsoleFormat LogFormat = "console"
 )
 
 // Config holds the structured logger configuration
 type Config struct {
 	// General settings
-	Level      LogLevel `json:"level"`
+	Level      LogLevel  `json:"level"`
 	Format     LogFormat `json:"format"`
-	Output     string   `json:"output"`
-	MaxSize    int      `json:"max_size"`    // MB
-	MaxBackups int      `json:"max_backups"`
-	MaxAge     int      `json:"max_age"`     // days
-	Compress   bool     `json:"compress"`
+	Output     string    `json:"output"`
+	MaxSize    int       `json:"max_size"` // MB
+	MaxBackups int       `json:"max_backups"`
+	MaxAge     int       `json:"max_age"` // days
+	Compress   bool      `json:"compress"`
 
 	// Structured logging settings
-	EnableTimestamp     bool `json:"enable_timestamp"`
-	EnableLevel         bool `json:"enable_level"`
-	EnableCaller        bool `json:"enable_caller"`
-	EnableStacktrace    bool `json:"enable_stacktrace"`
-	EnableStackTraceOnError bool `json:"enable_stacktrace_on_error"`
-	TimeFieldFormat     string `json:"time_field_format"`
+	EnableTimestamp         bool   `json:"enable_timestamp"`
+	EnableLevel             bool   `json:"enable_level"`
+	EnableCaller            bool   `json:"enable_caller"`
+	EnableStacktrace        bool   `json:"enable_stacktrace"`
+	EnableStackTraceOnError bool   `json:"enable_stacktrace_on_error"`
+	TimeFieldFormat         string `json:"time_field_format"`
 
 	// Context settings
-	EnableRequestID      bool `json:"enable_request_id"`
-	EnableCorrelationID  bool `json:"enable_correlation_id"`
-	EnableUserID         bool `json:"enable_user_id"`
-	EnableTraceID        bool `json:"enable_trace_id"`
-	EnableSpanID         bool `json:"enable_span_id"`
+	EnableRequestID     bool `json:"enable_request_id"`
+	EnableCorrelationID bool `json:"enable_correlation_id"`
+	EnableUserID        bool `json:"enable_user_id"`
+	EnableTraceID       bool `json:"enable_trace_id"`
+	EnableSpanID        bool `json:"enable_span_id"`
 
 	// Sampling settings
-	EnableSampling       bool    `json:"enable_sampling"`
-	SampleLevel          LogLevel `json:"sample_level"`
-	SampleRate           int      `json:"sample_rate"`  // Sample every N messages
+	EnableSampling bool     `json:"enable_sampling"`
+	SampleLevel    LogLevel `json:"sample_level"`
+	SampleRate     int      `json:"sample_rate"` // Sample every N messages
 
 	// Performance settings
-	BufferSize           int      `json:"buffer_size"`
-	FlushInterval        time.Duration `json:"flush_interval"`
+	BufferSize    int           `json:"buffer_size"`
+	FlushInterval time.Duration `json:"flush_interval"`
 
 	// Security settings
-	SanitizeFields       []string `json:"sanitize_fields"`
-	EnableFieldMasking   bool     `json:"enable_field_masking"`
-	MaskingChar          string   `json:"masking_char"`
+	SanitizeFields     []string `json:"sanitize_fields"`
+	EnableFieldMasking bool     `json:"enable_field_masking"`
+	MaskingChar        string   `json:"masking_char"`
 
 	// Development settings
-	EnablePrettyPrint    bool `json:"enable_pretty_print"`
-	EnableColors         bool `json:"enable_colors"`
+	EnablePrettyPrint bool `json:"enable_pretty_print"`
+	EnableColors      bool `json:"enable_colors"`
 }
 
 // DefaultConfig returns a default structured logger configuration
 func DefaultConfig() *Config {
 	return &Config{
-		Level:                InfoLevel,
-		Format:               JSONFormat,
-		Output:               "stdout",
-		MaxSize:              100,    // 100MB
-		MaxBackups:           10,
-		MaxAge:               30,     // 30 days
-		Compress:             true,
-		EnableTimestamp:      true,
-		EnableLevel:          true,
-		EnableCaller:         false,
-		EnableStacktrace:     false,
+		Level:                   InfoLevel,
+		Format:                  JSONFormat,
+		Output:                  "stdout",
+		MaxSize:                 100, // 100MB
+		MaxBackups:              10,
+		MaxAge:                  30, // 30 days
+		Compress:                true,
+		EnableTimestamp:         true,
+		EnableLevel:             true,
+		EnableCaller:            false,
+		EnableStacktrace:        false,
 		EnableStackTraceOnError: true,
-		TimeFieldFormat:      time.RFC3339,
-		EnableRequestID:      true,
-		EnableCorrelationID:  true,
-		EnableUserID:         true,
-		EnableTraceID:        true,
-		EnableSpanID:         true,
-		EnableSampling:       false,
-		SampleLevel:          DebugLevel,
-		SampleRate:           100,
-		BufferSize:           1000,
-		FlushInterval:        1 * time.Second,
+		TimeFieldFormat:         time.RFC3339,
+		EnableRequestID:         true,
+		EnableCorrelationID:     true,
+		EnableUserID:            true,
+		EnableTraceID:           true,
+		EnableSpanID:            true,
+		EnableSampling:          false,
+		SampleLevel:             DebugLevel,
+		SampleRate:              100,
+		BufferSize:              1000,
+		FlushInterval:           1 * time.Second,
 		SanitizeFields: []string{
 			"password", "token", "secret", "key", "auth",
 			"credit_card", "ssn", "social_security",
 		},
-		EnableFieldMasking:   true,
-		MaskingChar:          "*",
-		EnablePrettyPrint:    false,
-		EnableColors:         false,
+		EnableFieldMasking: true,
+		MaskingChar:        "*",
+		EnablePrettyPrint:  false,
+		EnableColors:       false,
 	}
 }
 
@@ -153,35 +153,35 @@ func ProductionConfig() *Config {
 type contextKey string
 
 const (
-	RequestIDKey      contextKey = "request_id"
-	CorrelationIDKey  contextKey = "correlation_id"
-	UserIDKey         contextKey = "user_id"
-	TraceIDKey        contextKey = "trace_id"
-	SpanIDKey         contextKey = "span_id"
-	LoggerKey         contextKey = "logger"
+	RequestIDKey     contextKey = "request_id"
+	CorrelationIDKey contextKey = "correlation_id"
+	UserIDKey        contextKey = "user_id"
+	TraceIDKey       contextKey = "trace_id"
+	SpanIDKey        contextKey = "span_id"
+	LoggerKey        contextKey = "logger"
 )
 
 // Logger wraps zerolog.Logger with additional functionality
 type Logger struct {
 	zerolog.Logger
-	config   *Config
-	mu       sync.RWMutex
-	sampler  *sampler
-	masker   *fieldMasker
+	config  *Config
+	mu      sync.RWMutex
+	sampler *sampler
+	masker  *fieldMasker
 }
 
 // sampler implements log sampling
 type sampler struct {
-	mu       sync.Mutex
-	counter  int
-	level    zerolog.Level
-	rate     int
+	mu      sync.Mutex
+	counter int
+	level   zerolog.Level
+	rate    int
 }
 
 // fieldMasker implements field sanitization
 type fieldMasker struct {
-	fields  map[string]bool
-	char    string
+	fields map[string]bool
+	char   string
 }
 
 // NewLogger creates a new structured logger
@@ -243,7 +243,7 @@ func createOutput(config *Config) (io.Writer, error) {
 		return io.Discard, nil
 	default:
 		// Assume file path
-		if err := os.MkdirAll(filepath.Dir(config.Output), 0755); err != nil {
+		if err := os.MkdirAll(filepath.Dir(config.Output), 0750); err != nil {
 			return nil, fmt.Errorf("failed to create log directory: %w", err)
 		}
 
@@ -258,7 +258,7 @@ func createOutput(config *Config) (io.Writer, error) {
 			}, nil
 		}
 
-		return os.OpenFile(config.Output, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+		return os.OpenFile(config.Output, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
 	}
 }
 

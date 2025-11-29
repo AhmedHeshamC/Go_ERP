@@ -12,20 +12,20 @@ import (
 
 // ProductCategory represents a product category with hierarchical structure
 type ProductCategory struct {
-	ID            uuid.UUID  `json:"id" db:"id"`
-	Name          string     `json:"name" db:"name"`
-	Description   string     `json:"description" db:"description"`
-	ParentID      *uuid.UUID `json:"parent_id" db:"parent_id"`
-	Level         int        `json:"level" db:"level"`
-	Path          string     `json:"path" db:"path"`
-	ImageURL      string     `json:"image_url" db:"image_url"`
-	SortOrder     int        `json:"sort_order" db:"sort_order"`
-	IsActive      bool       `json:"is_active" db:"is_active"`
+	ID             uuid.UUID  `json:"id" db:"id"`
+	Name           string     `json:"name" db:"name"`
+	Description    string     `json:"description" db:"description"`
+	ParentID       *uuid.UUID `json:"parent_id" db:"parent_id"`
+	Level          int        `json:"level" db:"level"`
+	Path           string     `json:"path" db:"path"`
+	ImageURL       string     `json:"image_url" db:"image_url"`
+	SortOrder      int        `json:"sort_order" db:"sort_order"`
+	IsActive       bool       `json:"is_active" db:"is_active"`
 	SEOTitle       string     `json:"seo_title" db:"seo_title"`
 	SEODescription string     `json:"seo_description" db:"seo_description"`
-	SEOKeywords   string     `json:"seo_keywords" db:"seo_keywords"`
-	CreatedAt     time.Time  `json:"created_at" db:"created_at"`
-	UpdatedAt     time.Time  `json:"updated_at" db:"updated_at"`
+	SEOKeywords    string     `json:"seo_keywords" db:"seo_keywords"`
+	CreatedAt      time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt      time.Time  `json:"updated_at" db:"updated_at"`
 }
 
 // Validate validates the product category entity
@@ -328,8 +328,8 @@ func (pc *ProductCategory) MoveToParent(newParentID *uuid.UUID, newParentPath st
 	// If we moved to a different parent, we might need to recalculate the path
 	// This would be handled at the repository/service level for all children
 	if (oldParentID == nil && newParentID != nil) ||
-	   (oldParentID != nil && newParentID == nil) ||
-	   (oldParentID != nil && newParentID != nil && *oldParentID != *newParentID) {
+		(oldParentID != nil && newParentID == nil) ||
+		(oldParentID != nil && newParentID != nil && *oldParentID != *newParentID) {
 		return fmt.Errorf("category moved to different parent - child paths need recalculation")
 	}
 
@@ -362,7 +362,7 @@ func (pc *ProductCategory) UpdateSEOFields(title, description, keywords string) 
 	tempPC := &ProductCategory{
 		SEOTitle:       title,
 		SEODescription: description,
-		SEOKeywords:   keywords,
+		SEOKeywords:    keywords,
 	}
 
 	if err := tempPC.validateSEOFields(); err != nil {
@@ -380,32 +380,32 @@ func (pc *ProductCategory) UpdateSEOFields(title, description, keywords string) 
 // (included for consistency, though categories don't typically contain sensitive data)
 func (pc *ProductCategory) ToSafeCategory() *ProductCategory {
 	return &ProductCategory{
-		ID:            pc.ID,
-		Name:          pc.Name,
-		Description:   pc.Description,
-		ParentID:      pc.ParentID,
-		Level:         pc.Level,
-		Path:          pc.Path,
-		ImageURL:      pc.ImageURL,
-		SortOrder:     pc.SortOrder,
-		IsActive:      pc.IsActive,
+		ID:             pc.ID,
+		Name:           pc.Name,
+		Description:    pc.Description,
+		ParentID:       pc.ParentID,
+		Level:          pc.Level,
+		Path:           pc.Path,
+		ImageURL:       pc.ImageURL,
+		SortOrder:      pc.SortOrder,
+		IsActive:       pc.IsActive,
 		SEOTitle:       pc.SEOTitle,
 		SEODescription: pc.SEODescription,
-		SEOKeywords:   pc.SEOKeywords,
-		CreatedAt:     pc.CreatedAt,
-		UpdatedAt:     pc.UpdatedAt,
+		SEOKeywords:    pc.SEOKeywords,
+		CreatedAt:      pc.CreatedAt,
+		UpdatedAt:      pc.UpdatedAt,
 	}
 }
 
 // CategoryMetadata represents additional metadata for a category
 type CategoryMetadata struct {
-	CategoryID    uuid.UUID `json:"category_id" db:"category_id"`
-	SeoTitle      string    `json:"seo_title" db:"seo_title"`
-	SeoDescription string   `json:"seo_description" db:"seo_description"`
-	SeoKeywords   string    `json:"seo_keywords" db:"seo_keywords"`
-	MetaData      string    `json:"meta_data" db:"meta_data"` // JSON string for additional metadata
-	CreatedAt     time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at" db:"updated_at"`
+	CategoryID     uuid.UUID `json:"category_id" db:"category_id"`
+	SeoTitle       string    `json:"seo_title" db:"seo_title"`
+	SeoDescription string    `json:"seo_description" db:"seo_description"`
+	SeoKeywords    string    `json:"seo_keywords" db:"seo_keywords"`
+	MetaData       string    `json:"meta_data" db:"meta_data"` // JSON string for additional metadata
+	CreatedAt      time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt      time.Time `json:"updated_at" db:"updated_at"`
 }
 
 // Validate validates the category metadata

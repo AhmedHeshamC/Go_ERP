@@ -20,7 +20,7 @@ func TestDefaultConfig(t *testing.T) {
 func TestNewMemoryStore(t *testing.T) {
 	logger := zerolog.Nop()
 	config := DefaultConfig()
-	
+
 	store := NewMemoryStore(config, &logger)
 	assert.NotNil(t, store)
 }
@@ -30,9 +30,9 @@ func TestMemoryStore_Allow(t *testing.T) {
 	config := DefaultConfig()
 	limit := RateLimit{
 		RequestsPerSecond: 10.0,
-		BurstSize:        10,
+		BurstSize:         10,
 	}
-	
+
 	store := NewMemoryStore(config, &logger)
 
 	t.Run("allows requests within limit", func(t *testing.T) {
@@ -50,7 +50,7 @@ func TestMemoryStore_Allow(t *testing.T) {
 		for i := 0; i < 10; i++ {
 			store.Allow(key, limit)
 		}
-		
+
 		// Next request should be rejected
 		allowed, err := store.Allow(key, limit)
 		require.NoError(t, err)
@@ -63,9 +63,9 @@ func TestMemoryStore_AllowN(t *testing.T) {
 	config := DefaultConfig()
 	limit := RateLimit{
 		RequestsPerSecond: 10.0,
-		BurstSize:        10,
+		BurstSize:         10,
 	}
-	
+
 	store := NewMemoryStore(config, &logger)
 
 	t.Run("allows N requests within limit", func(t *testing.T) {
@@ -88,9 +88,9 @@ func TestMemoryStore_Reserve(t *testing.T) {
 	config := DefaultConfig()
 	limit := RateLimit{
 		RequestsPerSecond: 10.0,
-		BurstSize:        10,
+		BurstSize:         10,
 	}
-	
+
 	store := NewMemoryStore(config, &logger)
 
 	t.Run("reserves slot successfully", func(t *testing.T) {
@@ -107,7 +107,7 @@ func TestMemoryStore_Reserve(t *testing.T) {
 		for i := 0; i < 10; i++ {
 			store.Allow(key, limit)
 		}
-		
+
 		reservation, err := store.Reserve(key, limit)
 		require.NoError(t, err)
 		assert.NotNil(t, reservation)
@@ -124,25 +124,25 @@ func TestMemoryStore_Reset(t *testing.T) {
 	config := DefaultConfig()
 	limit := RateLimit{
 		RequestsPerSecond: 10.0,
-		BurstSize:        5,
+		BurstSize:         5,
 	}
-	
+
 	store := NewMemoryStore(config, &logger)
 
 	key := "test-key-reset"
-	
+
 	// Exhaust the burst
 	for i := 0; i < 5; i++ {
 		store.Allow(key, limit)
 	}
-	
+
 	// Should be rate limited
 	allowed, _ := store.Allow(key, limit)
 	assert.False(t, allowed)
-	
+
 	// Reset the limiter
 	store.Reset(key)
-	
+
 	// Should be allowed again
 	allowed, _ = store.Allow(key, limit)
 	assert.True(t, allowed)
@@ -154,9 +154,9 @@ func TestMemoryStore_GetLimit(t *testing.T) {
 	config := DefaultConfig()
 	config.DefaultLimit = RateLimit{
 		RequestsPerSecond: 10.0,
-		BurstSize:        20,
+		BurstSize:         20,
 	}
-	
+
 	_ = NewMemoryStore(config, &logger)
 
 	// GetLimit returns the default limit from config
@@ -168,7 +168,7 @@ func TestMemoryStore_GetStats(t *testing.T) {
 	logger := zerolog.Nop()
 	config := DefaultConfig()
 	limit := config.DefaultLimit
-	
+
 	store := NewMemoryStore(config, &logger)
 
 	// Make some requests
@@ -187,9 +187,9 @@ func TestMemoryStore_MultipleKeys(t *testing.T) {
 	config := DefaultConfig()
 	limit := RateLimit{
 		RequestsPerSecond: 10.0,
-		BurstSize:        5,
+		BurstSize:         5,
 	}
-	
+
 	store := NewMemoryStore(config, &logger)
 
 	// Test that different keys have independent limits
@@ -201,11 +201,11 @@ func TestMemoryStore_MultipleKeys(t *testing.T) {
 		allowed, _ := store.Allow(key1, limit)
 		assert.True(t, allowed)
 	}
-	
+
 	// key1 should be limited
 	allowed, _ := store.Allow(key1, limit)
 	assert.False(t, allowed)
-	
+
 	// key2 should still be allowed
 	allowed, _ = store.Allow(key2, limit)
 	assert.True(t, allowed)
@@ -216,9 +216,9 @@ func TestMemoryStore_TokenRefill(t *testing.T) {
 	config := DefaultConfig()
 	limit := RateLimit{
 		RequestsPerSecond: 10.0, // 10 tokens per second = 1 token per 100ms
-		BurstSize:        2,
+		BurstSize:         2,
 	}
-	
+
 	store := NewMemoryStore(config, &logger)
 	key := "refill-test"
 
@@ -227,14 +227,14 @@ func TestMemoryStore_TokenRefill(t *testing.T) {
 	assert.True(t, allowed)
 	allowed, _ = store.Allow(key, limit)
 	assert.True(t, allowed)
-	
+
 	// Should be limited now
 	allowed, _ = store.Allow(key, limit)
 	assert.False(t, allowed)
-	
+
 	// Wait for token refill (at least 100ms for 1 token)
 	time.Sleep(150 * time.Millisecond)
-	
+
 	// Should be allowed again
 	allowed, _ = store.Allow(key, limit)
 	assert.True(t, allowed)
@@ -243,7 +243,7 @@ func TestMemoryStore_TokenRefill(t *testing.T) {
 func TestRateLimit_Struct(t *testing.T) {
 	limit := RateLimit{
 		RequestsPerSecond: 5.0,
-		BurstSize:        10,
+		BurstSize:         10,
 	}
 
 	assert.Equal(t, 5.0, limit.RequestsPerSecond)
@@ -271,7 +271,7 @@ func TestStorageType_Constants(t *testing.T) {
 
 func TestConfig_Validation(t *testing.T) {
 	config := DefaultConfig()
-	
+
 	assert.Greater(t, config.DefaultLimit.RequestsPerSecond, 0.0)
 	assert.Greater(t, config.DefaultLimit.BurstSize, 0)
 	assert.Greater(t, config.CleanupInterval, time.Duration(0))

@@ -26,10 +26,10 @@ import (
 // CustomerIntegrationTestSuite tests the customer API endpoints
 type CustomerIntegrationTestSuite struct {
 	suite.Suite
-	db           *database.Database
-	customerRepo customerrepo.CustomerRepository
-	customerSvc  customer.Service
-	router       *gin.Engine
+	db            *database.Database
+	customerRepo  customerrepo.CustomerRepository
+	customerSvc   customer.Service
+	router        *gin.Engine
 	testCustomers []*entities.Customer
 }
 
@@ -106,21 +106,21 @@ func (suite *CustomerIntegrationTestSuite) createTestCustomers() {
 
 	customers := []*entities.Customer{
 		{
-			Name:        "John Doe",
-			Email:       "john.doe@example.com",
-			Phone:       "+1234567890",
-			Address:     "123 Main St, City, State 12345",
+			Name:         "John Doe",
+			Email:        "john.doe@example.com",
+			Phone:        "+1234567890",
+			Address:      "123 Main St, City, State 12345",
 			CustomerType: entities.IndividualCustomer,
-			Status:      entities.ActiveCustomer,
+			Status:       entities.ActiveCustomer,
 		},
 		{
-			Name:        "Acme Corporation",
-			Email:       "contact@acme.com",
-			Phone:       "+0987654321",
-			Address:     "456 Business Ave, Commercial City, State 67890",
+			Name:         "Acme Corporation",
+			Email:        "contact@acme.com",
+			Phone:        "+0987654321",
+			Address:      "456 Business Ave, Commercial City, State 67890",
 			CustomerType: entities.BusinessCustomer,
-			Status:      entities.ActiveCustomer,
-			TaxID:       "123-45-6789",
+			Status:       entities.ActiveCustomer,
+			TaxID:        "123-45-6789",
 		},
 	}
 

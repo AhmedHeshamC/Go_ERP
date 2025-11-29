@@ -12,10 +12,10 @@ import (
 
 // Middleware provides rate limiting middleware for Gin
 type Middleware struct {
-	limiter     RateLimiter
-	logger      *zerolog.Logger
-	keyFunc     KeyFunc
-	skipper     Skipper
+	limiter      RateLimiter
+	logger       *zerolog.Logger
+	keyFunc      KeyFunc
+	skipper      Skipper
 	errorHandler ErrorHandler
 }
 
@@ -100,7 +100,7 @@ func (m *Middleware) WithErrorHandler(errorHandler ErrorHandler) *Middleware {
 // Middleware returns the Gin middleware function
 func (m *Middleware) Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-	// Skip rate limiting if configured
+		// Skip rate limiting if configured
 		if m.skipper(c) {
 			c.Next()
 			return
@@ -109,8 +109,8 @@ func (m *Middleware) Middleware() gin.HandlerFunc {
 		// Generate rate limiting key
 		key := m.keyFunc(c)
 
-	// Apply rate limiting
-	allowed := m.limiter.Allow(key)
+		// Apply rate limiting
+		allowed := m.limiter.Allow(key)
 		if !allowed {
 			m.logger.Warn().
 				Str("key", key).
@@ -147,11 +147,11 @@ func (m *Middleware) addRateLimitHeaders(c *gin.Context, key string) {
 
 // LimitConfig represents rate limiting configuration for specific routes
 type LimitConfig struct {
-	Path     string    `json:"path"`
-	Method   string    `json:"method"`
-	Limit    RateLimit `json:"limit"`
-	KeyFunc  KeyFunc   `json:"-"`
-	Skipper  Skipper   `json:"-"`
+	Path    string    `json:"path"`
+	Method  string    `json:"method"`
+	Limit   RateLimit `json:"limit"`
+	KeyFunc KeyFunc   `json:"-"`
+	Skipper Skipper   `json:"-"`
 }
 
 // NewMultiLimiterMiddleware creates a middleware that applies different limits based on configuration
@@ -227,7 +227,7 @@ func matchesConfig(c *gin.Context, config LimitConfig) bool {
 		// Exact match
 		if config.Path == c.Request.URL.Path {
 			return true
-			}
+		}
 		// Prefix match
 		if strings.HasSuffix(config.Path, "*") {
 			prefix := strings.TrimSuffix(config.Path, "*")
@@ -292,7 +292,7 @@ func RateLimitMiddleware(limit RateLimit) gin.HandlerFunc {
 func RateLimitByIP(requestsPerSecond float64, burstSize int) gin.HandlerFunc {
 	return RateLimitMiddleware(RateLimit{
 		RequestsPerSecond: requestsPerSecond,
-		BurstSize:        burstSize,
+		BurstSize:         burstSize,
 	})
 }
 
@@ -348,9 +348,9 @@ func RateLimitByEndpoint(requestsPerSecond float64, burstSize int) gin.HandlerFu
 
 		if !allowed {
 			c.JSON(http.StatusTooManyRequests, gin.H{
-				"error":   "rate limit exceeded",
-				"message": "Too many requests for this endpoint. Please try again later.",
-				"code":    "RATE_LIMIT_EXCEEDED",
+				"error":    "rate limit exceeded",
+				"message":  "Too many requests for this endpoint. Please try again later.",
+				"code":     "RATE_LIMIT_EXCEEDED",
 				"endpoint": c.FullPath(),
 			})
 			c.Abort()

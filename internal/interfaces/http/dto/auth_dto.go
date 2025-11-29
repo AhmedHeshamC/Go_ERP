@@ -23,17 +23,17 @@ type LoginResponse struct {
 
 // UserInfo represents user information returned in responses
 type UserInfo struct {
-	ID        uuid.UUID  `json:"id"`
-	Email     string     `json:"email"`
-	Username  string     `json:"username"`
-	FirstName string     `json:"first_name"`
-	LastName  string     `json:"last_name"`
-	Phone     string     `json:"phone,omitempty"`
-	Roles     []string   `json:"roles"`
-	IsActive  bool       `json:"is_active"`
-	IsVerified bool      `json:"is_verified"`
-	LastLogin *time.Time `json:"last_login_at,omitempty"`
-	CreatedAt time.Time  `json:"created_at"`
+	ID         uuid.UUID  `json:"id"`
+	Email      string     `json:"email"`
+	Username   string     `json:"username"`
+	FirstName  string     `json:"first_name"`
+	LastName   string     `json:"last_name"`
+	Phone      string     `json:"phone,omitempty"`
+	Roles      []string   `json:"roles"`
+	IsActive   bool       `json:"is_active"`
+	IsVerified bool       `json:"is_verified"`
+	LastLogin  *time.Time `json:"last_login_at,omitempty"`
+	CreatedAt  time.Time  `json:"created_at"`
 }
 
 // RegisterRequest represents a registration request
@@ -91,10 +91,10 @@ type UpdateUserRequest struct {
 
 // Pagination represents pagination information
 type Pagination struct {
-	Page       int `json:"page"`
-	Limit      int `json:"limit"`
-	Total      int `json:"total"`
-	TotalPages int `json:"total_pages"`
+	Page       int  `json:"page"`
+	Limit      int  `json:"limit"`
+	Total      int  `json:"total"`
+	TotalPages int  `json:"total_pages"`
 	HasNext    bool `json:"has_next"`
 	HasPrev    bool `json:"has_prev"`
 }
@@ -102,22 +102,22 @@ type Pagination struct {
 // ListUsersResponse represents a paginated users list response
 type ListUsersResponse struct {
 	Users      []*UserInfo `json:"users"`
-	Pagination *Pagination  `json:"pagination"`
+	Pagination *Pagination `json:"pagination"`
 }
 
 // PaginatedResponse represents a generic paginated response
 type PaginatedResponse struct {
 	Data       interface{} `json:"data"`
-	Pagination *Pagination  `json:"pagination,omitempty"`
+	Pagination *Pagination `json:"pagination,omitempty"`
 	Message    string      `json:"message"`
 }
 
 // RoleInfo represents role information
 type RoleInfo struct {
-	ID          uuid.UUID  `json:"id"`
-	Name        string     `json:"name"`
-	Description string     `json:"description,omitempty"`
-	Permissions []string   `json:"permissions"`
-	CreatedAt   time.Time  `json:"created_at"`
-	UpdatedAt   time.Time  `json:"updated_at"`
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description,omitempty"`
+	Permissions []string  `json:"permissions"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }

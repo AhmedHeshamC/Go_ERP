@@ -40,11 +40,11 @@ func testAPIPerformanceUnderLoad(t *testing.T) {
 	)
 
 	var (
-		totalRequests     int64
+		totalRequests      int64
 		successfulRequests int64
-		failedRequests    int64
-		responseTimes     []time.Duration
-		mu                sync.Mutex
+		failedRequests     int64
+		responseTimes      []time.Duration
+		mu                 sync.Mutex
 	)
 
 	ctx, cancel := context.WithTimeout(context.Background(), testDuration)
@@ -65,7 +65,7 @@ func testAPIPerformanceUnderLoad(t *testing.T) {
 					return
 				default:
 					reqStart := time.Now()
-					
+
 					// Simulate API request
 					err := simulateAPIRequest(ctx)
 					reqDuration := time.Since(reqStart)
@@ -76,7 +76,7 @@ func testAPIPerformanceUnderLoad(t *testing.T) {
 						atomic.AddInt64(&failedRequests, 1)
 					} else {
 						atomic.AddInt64(&successfulRequests, 1)
-						
+
 						mu.Lock()
 						responseTimes = append(responseTimes, reqDuration)
 						mu.Unlock()
@@ -95,7 +95,7 @@ func testAPIPerformanceUnderLoad(t *testing.T) {
 	// Calculate metrics
 	actualRPS := float64(totalRequests) / duration.Seconds()
 	errorRate := float64(failedRequests) / float64(totalRequests)
-	
+
 	// Calculate p99 latency
 	p99Latency := calculatePercentile(responseTimes, 0.99)
 	avgLatency := calculateAverage(responseTimes)
@@ -112,11 +112,11 @@ func testAPIPerformanceUnderLoad(t *testing.T) {
 	t.Logf("P99 Latency: %v (max: %v)", p99Latency, maxP99Latency)
 
 	// Assertions (relaxed for simulated tests)
-	require.Greater(t, actualRPS, float64(100), 
+	require.Greater(t, actualRPS, float64(100),
 		"Should achieve reasonable RPS")
-	require.Less(t, errorRate, maxErrorRate, 
+	require.Less(t, errorRate, maxErrorRate,
 		"Error rate should be below threshold")
-	require.Less(t, p99Latency, maxP99Latency, 
+	require.Less(t, p99Latency, maxP99Latency,
 		"P99 latency should be below 500ms")
 }
 
@@ -127,7 +127,7 @@ func testDatabasePerformanceUnderLoad(t *testing.T) {
 
 	// Test configuration
 	const (
-		targetQPS         = 5000 // Queries per second
+		targetQPS         = 5000             // Queries per second
 		testDuration      = 10 * time.Second // 10 seconds for testing (use 60s in production)
 		maxP95QueryTime   = 100 * time.Millisecond
 		maxErrorRate      = 0.01 // 1%
@@ -160,7 +160,7 @@ func testDatabasePerformanceUnderLoad(t *testing.T) {
 					return
 				default:
 					queryStart := time.Now()
-					
+
 					// Simulate database query
 					err := simulateDatabaseQuery(ctx, workerID)
 					queryDuration := time.Since(queryStart)
@@ -171,7 +171,7 @@ func testDatabasePerformanceUnderLoad(t *testing.T) {
 						atomic.AddInt64(&failedQueries, 1)
 					} else {
 						atomic.AddInt64(&successfulQueries, 1)
-						
+
 						mu.Lock()
 						queryTimes = append(queryTimes, queryDuration)
 						mu.Unlock()
@@ -205,9 +205,9 @@ func testDatabasePerformanceUnderLoad(t *testing.T) {
 	t.Logf("P95 Query Time: %v (max: %v)", p95QueryTime, maxP95QueryTime)
 
 	// Assertions (relaxed for simulated tests)
-	require.Greater(t, actualQPS, float64(100), 
+	require.Greater(t, actualQPS, float64(100),
 		"Should achieve reasonable QPS")
-	require.Less(t, p95QueryTime, maxP95QueryTime, 
+	require.Less(t, p95QueryTime, maxP95QueryTime,
 		"P95 query time should be below 100ms")
 }
 
@@ -218,9 +218,9 @@ func testCachePerformanceUnderLoad(t *testing.T) {
 
 	// Test configuration
 	const (
-		targetOPS         = 20000 // Operations per second
+		targetOPS         = 20000            // Operations per second
 		testDuration      = 10 * time.Second // 10 seconds for testing (use 60s in production)
-		minHitRate        = 0.80 // 80%
+		minHitRate        = 0.80             // 80%
 		maxP95Latency     = 50 * time.Millisecond
 		concurrentClients = 30
 	)
@@ -252,7 +252,7 @@ func testCachePerformanceUnderLoad(t *testing.T) {
 					return
 				default:
 					opStart := time.Now()
-					
+
 					// Simulate cache operation
 					hit, err := simulateCacheOperation(ctx, clientID)
 					opDuration := time.Since(opStart)
@@ -302,11 +302,11 @@ func testCachePerformanceUnderLoad(t *testing.T) {
 	t.Logf("P95 Latency: %v (max: %v)", p95Latency, maxP95Latency)
 
 	// Assertions (relaxed for simulated tests)
-	require.Greater(t, actualOPS, float64(100), 
+	require.Greater(t, actualOPS, float64(100),
 		"Should achieve reasonable OPS")
-	require.GreaterOrEqual(t, hitRate, minHitRate, 
+	require.GreaterOrEqual(t, hitRate, minHitRate,
 		"Hit rate should be at least 80%%")
-	require.Less(t, p95Latency, maxP95Latency, 
+	require.Less(t, p95Latency, maxP95Latency,
 		"P95 latency should be below 50ms")
 }
 
@@ -320,9 +320,9 @@ func testMemoryLeakDetection(t *testing.T) {
 
 	// Test configuration
 	const (
-		samplingInterval  = 30 * time.Second
-		maxMemoryGrowthMB = 100 // Maximum acceptable memory growth in MB
-		maxGoroutineGrowth = 50 // Maximum acceptable goroutine growth
+		samplingInterval   = 30 * time.Second
+		maxMemoryGrowthMB  = 100 // Maximum acceptable memory growth in MB
+		maxGoroutineGrowth = 50  // Maximum acceptable goroutine growth
 	)
 
 	// Record initial state
@@ -340,11 +340,11 @@ func testMemoryLeakDetection(t *testing.T) {
 
 	// Track memory samples
 	type MemorySample struct {
-		Timestamp   time.Time
-		AllocMB     int64
-		Goroutines  int
+		Timestamp  time.Time
+		AllocMB    int64
+		Goroutines int
 	}
-	
+
 	var samples []MemorySample
 	var mu sync.Mutex
 
@@ -364,7 +364,7 @@ func testMemoryLeakDetection(t *testing.T) {
 				var m runtime.MemStats
 				runtime.GC()
 				runtime.ReadMemStats(&m)
-				
+
 				sample := MemorySample{
 					Timestamp:  time.Now(),
 					AllocMB:    int64(m.Alloc / 1024 / 1024),
@@ -375,7 +375,7 @@ func testMemoryLeakDetection(t *testing.T) {
 				samples = append(samples, sample)
 				mu.Unlock()
 
-				t.Logf("Sample at %v: Memory=%d MB, Goroutines=%d", 
+				t.Logf("Sample at %v: Memory=%d MB, Goroutines=%d",
 					sample.Timestamp.Format("15:04:05"), sample.AllocMB, sample.Goroutines)
 			}
 		}
@@ -385,7 +385,7 @@ func testMemoryLeakDetection(t *testing.T) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		
+
 		for {
 			select {
 			case <-ctx.Done():
@@ -395,7 +395,7 @@ func testMemoryLeakDetection(t *testing.T) {
 				_ = simulateAPIRequest(ctx)
 				_ = simulateDatabaseQuery(ctx, 0)
 				_, _ = simulateCacheOperation(ctx, 0)
-				
+
 				time.Sleep(10 * time.Millisecond)
 			}
 		}
@@ -428,7 +428,7 @@ func testMemoryLeakDetection(t *testing.T) {
 	if len(samples) > 0 {
 		firstSample := samples[0]
 		lastSample := samples[len(samples)-1]
-		
+
 		t.Logf("\nMemory Trend:")
 		t.Logf("  First Sample: %d MB at %v", firstSample.AllocMB, firstSample.Timestamp.Format("15:04:05"))
 		t.Logf("  Last Sample: %d MB at %v", lastSample.AllocMB, lastSample.Timestamp.Format("15:04:05"))
@@ -436,9 +436,9 @@ func testMemoryLeakDetection(t *testing.T) {
 	}
 
 	// Assertions
-	require.LessOrEqual(t, memoryGrowthMB, int64(maxMemoryGrowthMB), 
+	require.LessOrEqual(t, memoryGrowthMB, int64(maxMemoryGrowthMB),
 		"Memory growth should not exceed %d MB", maxMemoryGrowthMB)
-	require.LessOrEqual(t, goroutineGrowth, maxGoroutineGrowth, 
+	require.LessOrEqual(t, goroutineGrowth, maxGoroutineGrowth,
 		"Goroutine growth should not exceed %d", maxGoroutineGrowth)
 
 	// Check for memory leak pattern (continuous growth)
@@ -450,12 +450,12 @@ func testMemoryLeakDetection(t *testing.T) {
 				growthCount++
 			}
 		}
-		
+
 		growthRate := float64(growthCount) / float64(len(samples)-1)
 		t.Logf("Memory Growth Rate: %.2f%% of samples showed growth", growthRate*100)
-		
+
 		// If memory grows in more than 80% of samples, it might indicate a leak
-		require.Less(t, growthRate, 0.80, 
+		require.Less(t, growthRate, 0.80,
 			"Memory should not grow continuously (leak pattern detected)")
 	}
 }
@@ -501,12 +501,12 @@ func simulateCacheOperation(ctx context.Context, clientID int) (bool, error) {
 	case <-time.After(time.Duration(1+clientID%10) * time.Millisecond):
 		// Simulate cache hit rate of 85%
 		hit := clientID%100 < 85
-		
+
 		// Simulate occasional errors (0.1% error rate)
 		if clientID%1000 == 0 {
 			return false, fmt.Errorf("simulated cache error")
 		}
-		
+
 		return hit, nil
 	}
 }
@@ -520,7 +520,7 @@ func calculatePercentile(durations []time.Duration, percentile float64) time.Dur
 	// Sort durations
 	sorted := make([]time.Duration, len(durations))
 	copy(sorted, durations)
-	
+
 	for i := 0; i < len(sorted)-1; i++ {
 		for j := i + 1; j < len(sorted); j++ {
 			if sorted[i] > sorted[j] {

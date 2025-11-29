@@ -10,38 +10,38 @@ import (
 // SecurityConfig holds configuration for security headers
 type SecurityConfig struct {
 	// Content Security Policy
-	CSPEnabled       bool     `json:"csp_enabled"`
-	CSPDefaultSrc    string   `json:"csp_default_src"`
-	CSPScriptSrc     string   `json:"csp_script_src"`
-	CSPStyleSrc      string   `json:"csp_style_src"`
-	CSPImgSrc        string   `json:"csp_img_src"`
-	CSPFontSrc       string   `json:"csp_font_src"`
-	CSPConnectSrc    string   `json:"csp_connect_src"`
-	CSPMediaSrc      string   `json:"csp_media_src"`
-	CSPObjectSrc     string   `json:"csp_object_src"`
-	CSPChildSrc      string   `json:"csp_child_src"`
-	CSPFrameSrc      string   `json:"csp_frame_src"`
-	CSPWorkerSrc     string   `json:"csp_worker_src"`
-	CSPManifestSrc   string   `json:"csp_manifest_src"`
-	CSPUpgradeInsecureRequests bool `json:"csp_upgrade_insecure_requests"`
+	CSPEnabled                 bool   `json:"csp_enabled"`
+	CSPDefaultSrc              string `json:"csp_default_src"`
+	CSPScriptSrc               string `json:"csp_script_src"`
+	CSPStyleSrc                string `json:"csp_style_src"`
+	CSPImgSrc                  string `json:"csp_img_src"`
+	CSPFontSrc                 string `json:"csp_font_src"`
+	CSPConnectSrc              string `json:"csp_connect_src"`
+	CSPMediaSrc                string `json:"csp_media_src"`
+	CSPObjectSrc               string `json:"csp_object_src"`
+	CSPChildSrc                string `json:"csp_child_src"`
+	CSPFrameSrc                string `json:"csp_frame_src"`
+	CSPWorkerSrc               string `json:"csp_worker_src"`
+	CSPManifestSrc             string `json:"csp_manifest_src"`
+	CSPUpgradeInsecureRequests bool   `json:"csp_upgrade_insecure_requests"`
 
 	// HSTS Configuration
-	HSTSEnabled         bool   `json:"hsts_enabled"`
-	HSTSMaxAge          int    `json:"hsts_max_age"`
-	HSTSIncludeSubDomains bool  `json:"hsts_include_subdomains"`
-	HSTSPreload         bool   `json:"hsts_preload"`
+	HSTSEnabled           bool `json:"hsts_enabled"`
+	HSTSMaxAge            int  `json:"hsts_max_age"`
+	HSTSIncludeSubDomains bool `json:"hsts_include_subdomains"`
+	HSTSPreload           bool `json:"hsts_preload"`
 
 	// Other Security Headers
-	XFrameOptions         string `json:"x_frame_options"`     // DENY, SAMEORIGIN, ALLOW-FROM
-	XContentTypeOptions   string `json:"x_content_type_options"` // nosniff
-	XSSProtection         string `json:"xss_protection"`        // 1; mode=block
-	ReferrerPolicy        string `json:"referrer_policy"`
-	PermissionsPolicy     string `json:"permissions_policy"`
+	XFrameOptions           string `json:"x_frame_options"`        // DENY, SAMEORIGIN, ALLOW-FROM
+	XContentTypeOptions     string `json:"x_content_type_options"` // nosniff
+	XSSProtection           string `json:"xss_protection"`         // 1; mode=block
+	ReferrerPolicy          string `json:"referrer_policy"`
+	PermissionsPolicy       string `json:"permissions_policy"`
 	StrictTransportSecurity string `json:"strict_transport_security"`
 
 	// Feature Policy / Permissions Policy
-	FeaturePolicyEnabled  bool     `json:"feature_policy_enabled"`
-	AllowedFeatures       []string `json:"allowed_features"`
+	FeaturePolicyEnabled bool     `json:"feature_policy_enabled"`
+	AllowedFeatures      []string `json:"allowed_features"`
 
 	// Custom Headers
 	CustomHeaders map[string]string `json:"custom_headers"`
@@ -53,32 +53,32 @@ type SecurityConfig struct {
 // DefaultSecurityConfig returns a secure default configuration
 func DefaultSecurityConfig(isProduction bool) SecurityConfig {
 	config := SecurityConfig{
-		CSPEnabled: true,
-		CSPDefaultSrc: "'self'",
-		CSPScriptSrc: "'self' 'unsafe-inline' 'unsafe-eval'",
-		CSPStyleSrc: "'self' 'unsafe-inline'",
-		CSPImgSrc: "'self' data: https:",
-		CSPFontSrc: "'self' data:",
-		CSPConnectSrc: "'self'",
-		CSPMediaSrc: "'self'",
-		CSPObjectSrc: "'none'",
-		CSPChildSrc: "'self'",
-		CSPFrameSrc: "'none'",
-		CSPWorkerSrc: "'self'",
-		CSPManifestSrc: "'self'",
+		CSPEnabled:                 true,
+		CSPDefaultSrc:              "'self'",
+		CSPScriptSrc:               "'self' 'unsafe-inline' 'unsafe-eval'",
+		CSPStyleSrc:                "'self' 'unsafe-inline'",
+		CSPImgSrc:                  "'self' data: https:",
+		CSPFontSrc:                 "'self' data:",
+		CSPConnectSrc:              "'self'",
+		CSPMediaSrc:                "'self'",
+		CSPObjectSrc:               "'none'",
+		CSPChildSrc:                "'self'",
+		CSPFrameSrc:                "'none'",
+		CSPWorkerSrc:               "'self'",
+		CSPManifestSrc:             "'self'",
 		CSPUpgradeInsecureRequests: isProduction,
 
 		// HSTS - enabled in production
-		HSTSEnabled: isProduction,
-		HSTSMaxAge: 31536000, // 1 year
+		HSTSEnabled:           isProduction,
+		HSTSMaxAge:            31536000, // 1 year
 		HSTSIncludeSubDomains: true,
-		HSTSPreload: true,
+		HSTSPreload:           true,
 
 		// Standard security headers
-		XFrameOptions: "DENY",
+		XFrameOptions:       "DENY",
 		XContentTypeOptions: "nosniff",
-		XSSProtection: "1; mode=block",
-		ReferrerPolicy: "strict-origin-when-cross-origin",
+		XSSProtection:       "1; mode=block",
+		ReferrerPolicy:      "strict-origin-when-cross-origin",
 
 		// Permissions Policy
 		FeaturePolicyEnabled: true,
@@ -99,7 +99,7 @@ func DefaultSecurityConfig(isProduction bool) SecurityConfig {
 		},
 
 		CustomHeaders: make(map[string]string),
-		IsProduction: isProduction,
+		IsProduction:  isProduction,
 	}
 
 	// Build CSP and Permissions Policy strings

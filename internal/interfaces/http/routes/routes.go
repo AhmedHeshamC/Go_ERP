@@ -21,7 +21,7 @@ func SetupRoutes(
 	logger zerolog.Logger,
 ) {
 	// Setup middlewares
-	authMiddleware := middleware.Auth(nil) // TODO: Pass actual JWT service
+	authMiddleware := middleware.Auth(nil)               // TODO: Pass actual JWT service
 	validationMiddleware := middleware.SecurityHeaders() // Use available middleware
 	// API v1 group
 	v1 := router.Group("/api/v1")
@@ -32,15 +32,6 @@ func SetupRoutes(
 	// TODO: Implement OrderHandler
 	// SetupOrderRoutes(v1, orderHandler)
 	SetupInventoryRoutes(v1, warehouseHandler, inventoryHandler, transactionHandler, authMiddleware, authMiddleware, validationMiddleware, logger)
-
-	// Health check endpoint (outside versioned API)
-	router.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"status":  "ok",
-			"service": "erpgo-api",
-			"version": "1.0.0",
-		})
-	})
 
 	// Root endpoint
 	router.GET("/", func(c *gin.Context) {

@@ -94,41 +94,81 @@ func (m *MockUserRepo) GetUserRoles(ctx context.Context, userID uuid.UUID) ([]*e
 // MockRoleRepository for testing
 type MockRoleRepo struct{}
 
-func (m *MockRoleRepo) CreateRole(ctx context.Context, role *entities.Role) error                         { return nil }
-func (m *MockRoleRepo) GetRoleByID(ctx context.Context, id uuid.UUID) (*entities.Role, error)         { return nil, nil }
-func (m *MockRoleRepo) GetRoleByName(ctx context.Context, name string) (*entities.Role, error)        { return nil, nil }
-func (m *MockRoleRepo) GetAllRoles(ctx context.Context) ([]*entities.Role, error)                    { return []*entities.Role{}, nil }
-func (m *MockRoleRepo) UpdateRole(ctx context.Context, role *entities.Role) error                     { return nil }
-func (m *MockRoleRepo) DeleteRole(ctx context.Context, id uuid.UUID) error                            { return nil }
-func (m *MockRoleRepo) RoleExists(ctx context.Context, name string) (bool, error)                     { return false, nil }
-func (m *MockRoleRepo) AssignRoleToUser(ctx context.Context, userID, roleID, assignedBy uuid.UUID) error { return nil }
-func (m *MockRoleRepo) RemoveRoleFromUser(ctx context.Context, userID, roleID uuid.UUID) error        { return nil }
-func (m *MockRoleRepo) GetUserRoles(ctx context.Context, userID uuid.UUID) ([]*entities.Role, error) { return []*entities.Role{}, nil }
-func (m *MockRoleRepo) GetUsersWithRole(ctx context.Context, roleID uuid.UUID) ([]uuid.UUID, error)   { return []uuid.UUID{}, nil }
-func (m *MockRoleRepo) GetUserPermissions(ctx context.Context, userID uuid.UUID) ([]string, error)   { return []string{}, nil }
-func (m *MockRoleRepo) HasUserRole(ctx context.Context, userID, roleID uuid.UUID) (bool, error)      { return false, nil }
-func (m *MockRoleRepo) RemoveAllUserRoles(ctx context.Context, userID uuid.UUID) error                { return nil }
-func (m *MockRoleRepo) UserHasPermission(ctx context.Context, userID uuid.UUID, permission string) (bool, error) { return false, nil }
-func (m *MockRoleRepo) UserHasAnyPermission(ctx context.Context, userID uuid.UUID, permissions ...string) (bool, error) { return false, nil }
-func (m *MockRoleRepo) UserHasAllPermissions(ctx context.Context, userID uuid.UUID, permissions ...string) (bool, error) { return false, nil }
-func (m *MockRoleRepo) AddPermissionToRole(ctx context.Context, roleID uuid.UUID, permission string) error { return nil }
-func (m *MockRoleRepo) RemovePermissionFromRole(ctx context.Context, roleID uuid.UUID, permission string) error { return nil }
-func (m *MockRoleRepo) GetRolePermissions(ctx context.Context, roleID uuid.UUID) ([]string, error)   { return []string{}, nil }
-func (m *MockRoleRepo) CreateDefaultRoles(ctx context.Context) error                                   { return nil }
-func (m *MockRoleRepo) GetRoleAssignmentHistory(ctx context.Context, userID uuid.UUID) ([]*entities.UserRole, error) { return []*entities.UserRole{}, nil }
+func (m *MockRoleRepo) CreateRole(ctx context.Context, role *entities.Role) error { return nil }
+func (m *MockRoleRepo) GetRoleByID(ctx context.Context, id uuid.UUID) (*entities.Role, error) {
+	return nil, nil
+}
+func (m *MockRoleRepo) GetRoleByName(ctx context.Context, name string) (*entities.Role, error) {
+	return nil, nil
+}
+func (m *MockRoleRepo) GetAllRoles(ctx context.Context) ([]*entities.Role, error) {
+	return []*entities.Role{}, nil
+}
+func (m *MockRoleRepo) UpdateRole(ctx context.Context, role *entities.Role) error { return nil }
+func (m *MockRoleRepo) DeleteRole(ctx context.Context, id uuid.UUID) error        { return nil }
+func (m *MockRoleRepo) RoleExists(ctx context.Context, name string) (bool, error) { return false, nil }
+func (m *MockRoleRepo) AssignRoleToUser(ctx context.Context, userID, roleID, assignedBy uuid.UUID) error {
+	return nil
+}
+func (m *MockRoleRepo) RemoveRoleFromUser(ctx context.Context, userID, roleID uuid.UUID) error {
+	return nil
+}
+func (m *MockRoleRepo) GetUserRoles(ctx context.Context, userID uuid.UUID) ([]*entities.Role, error) {
+	return []*entities.Role{}, nil
+}
+func (m *MockRoleRepo) GetUsersWithRole(ctx context.Context, roleID uuid.UUID) ([]uuid.UUID, error) {
+	return []uuid.UUID{}, nil
+}
+func (m *MockRoleRepo) GetUserPermissions(ctx context.Context, userID uuid.UUID) ([]string, error) {
+	return []string{}, nil
+}
+func (m *MockRoleRepo) HasUserRole(ctx context.Context, userID, roleID uuid.UUID) (bool, error) {
+	return false, nil
+}
+func (m *MockRoleRepo) RemoveAllUserRoles(ctx context.Context, userID uuid.UUID) error { return nil }
+func (m *MockRoleRepo) UserHasPermission(ctx context.Context, userID uuid.UUID, permission string) (bool, error) {
+	return false, nil
+}
+func (m *MockRoleRepo) UserHasAnyPermission(ctx context.Context, userID uuid.UUID, permissions ...string) (bool, error) {
+	return false, nil
+}
+func (m *MockRoleRepo) UserHasAllPermissions(ctx context.Context, userID uuid.UUID, permissions ...string) (bool, error) {
+	return false, nil
+}
+func (m *MockRoleRepo) AddPermissionToRole(ctx context.Context, roleID uuid.UUID, permission string) error {
+	return nil
+}
+func (m *MockRoleRepo) RemovePermissionFromRole(ctx context.Context, roleID uuid.UUID, permission string) error {
+	return nil
+}
+func (m *MockRoleRepo) GetRolePermissions(ctx context.Context, roleID uuid.UUID) ([]string, error) {
+	return []string{}, nil
+}
+func (m *MockRoleRepo) CreateDefaultRoles(ctx context.Context) error { return nil }
+func (m *MockRoleRepo) GetRoleAssignmentHistory(ctx context.Context, userID uuid.UUID) ([]*entities.UserRole, error) {
+	return []*entities.UserRole{}, nil
+}
 
 // MockUserRoleRepository for testing
 type MockUserRoleRepo struct{}
 
-func (m *MockUserRoleRepo) Create(ctx context.Context, userRole *entities.UserRole) error   { return nil }
-func (m *MockUserRoleRepo) GetByID(ctx context.Context, id uuid.UUID) (*entities.UserRole, error) { return nil, nil }
-func (m *MockUserRoleRepo) GetByUserIDAndRoleID(ctx context.Context, userID, roleID uuid.UUID) (*entities.UserRole, error) { return nil, nil }
+func (m *MockUserRoleRepo) Create(ctx context.Context, userRole *entities.UserRole) error { return nil }
+func (m *MockUserRoleRepo) GetByID(ctx context.Context, id uuid.UUID) (*entities.UserRole, error) {
+	return nil, nil
+}
+func (m *MockUserRoleRepo) GetByUserIDAndRoleID(ctx context.Context, userID, roleID uuid.UUID) (*entities.UserRole, error) {
+	return nil, nil
+}
 func (m *MockUserRoleRepo) Update(ctx context.Context, userRole *entities.UserRole) error { return nil }
-func (m *MockUserRoleRepo) Delete(ctx context.Context, id uuid.UUID) error { return nil }
-func (m *MockUserRoleRepo) List(ctx context.Context, filter *repositories.ListUserRolesFilter) ([]*entities.UserRole, error) { return []*entities.UserRole{}, nil }
-func (m *MockUserRoleRepo) DeleteByUserIDAndRoleID(ctx context.Context, userID, roleID uuid.UUID) error { return nil }
+func (m *MockUserRoleRepo) Delete(ctx context.Context, id uuid.UUID) error                { return nil }
+func (m *MockUserRoleRepo) List(ctx context.Context, filter *repositories.ListUserRolesFilter) ([]*entities.UserRole, error) {
+	return []*entities.UserRole{}, nil
+}
+func (m *MockUserRoleRepo) DeleteByUserIDAndRoleID(ctx context.Context, userID, roleID uuid.UUID) error {
+	return nil
+}
 func (m *MockUserRoleRepo) DeleteByUserID(ctx context.Context, userID uuid.UUID) error { return nil }
-func (m *MockUserRoleRepo) Exists(ctx context.Context, id uuid.UUID) (bool, error) { return false, nil }
+func (m *MockUserRoleRepo) Exists(ctx context.Context, id uuid.UUID) (bool, error)     { return false, nil }
 
 // MockTransactionManager for testing
 type MockTransactionManager struct{}

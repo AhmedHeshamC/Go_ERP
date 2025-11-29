@@ -518,19 +518,19 @@ func (h *CategoryHandler) ReorderCategories(c *gin.Context) {
 // categoryToResponse converts a category entity to a response DTO
 func (h *CategoryHandler) categoryToResponse(cat *entities.ProductCategory) *dto.CategoryResponse {
 	return &dto.CategoryResponse{
-		ID:            cat.ID,
-		Name:          cat.Name,
-		Description:   cat.Description,
-		ParentID:      cat.ParentID,
-		Path:          cat.Path,
-		Level:         cat.Level,
-		IsActive:      cat.IsActive,
-		SortOrder:     cat.SortOrder,
-		SEOTitle:      cat.SEOTitle,
+		ID:             cat.ID,
+		Name:           cat.Name,
+		Description:    cat.Description,
+		ParentID:       cat.ParentID,
+		Path:           cat.Path,
+		Level:          cat.Level,
+		IsActive:       cat.IsActive,
+		SortOrder:      cat.SortOrder,
+		SEOTitle:       cat.SEOTitle,
 		SEODescription: cat.SEODescription,
-		SEOKeywords:   cat.SEOKeywords,
-		CreatedAt:     cat.CreatedAt,
-		UpdatedAt:     cat.UpdatedAt,
+		SEOKeywords:    cat.SEOKeywords,
+		CreatedAt:      cat.CreatedAt,
+		UpdatedAt:      cat.UpdatedAt,
 	}
 }
 

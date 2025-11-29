@@ -28,9 +28,9 @@ type PerformanceMetrics struct {
 	slowQueries   prometheus.Counter
 
 	// Query caching
-	cacheHits  prometheus.Counter
-	cacheMiss  prometheus.Counter
-	cacheSets  prometheus.Counter
+	cacheHits prometheus.Counter
+	cacheMiss prometheus.Counter
+	cacheSets prometheus.Counter
 
 	logger *zerolog.Logger
 }
@@ -45,8 +45,8 @@ type QueryCache interface {
 // PerformanceDB wraps Database with performance monitoring capabilities
 type PerformanceDB struct {
 	*Database
-	metrics    *PerformanceMetrics
-	queryCache QueryCache
+	metrics            *PerformanceMetrics
+	queryCache         QueryCache
 	slowQueryThreshold time.Duration
 
 	// Query patterns for optimization
@@ -56,13 +56,13 @@ type PerformanceDB struct {
 
 // PerformanceQueryPattern tracks query execution patterns for optimization
 type PerformanceQueryPattern struct {
-	Query       string
-	Count       int64
-	TotalTime   time.Duration
-	MaxTime     time.Duration
-	MinTime     time.Duration
-	LastUsed    time.Time
-	Parameters  []string
+	Query      string
+	Count      int64
+	TotalTime  time.Duration
+	MaxTime    time.Duration
+	MinTime    time.Duration
+	LastUsed   time.Time
+	Parameters []string
 }
 
 // NewPerformanceDB creates a new PerformanceDB instance with monitoring
@@ -118,11 +118,11 @@ func NewPerformanceDB(db *Database, cache QueryCache, logger *zerolog.Logger) *P
 	}
 
 	return &PerformanceDB{
-		Database:          db,
-		metrics:          metrics,
-		queryCache:       cache,
+		Database:           db,
+		metrics:            metrics,
+		queryCache:         cache,
 		slowQueryThreshold: 100 * time.Millisecond,
-		queryPatterns:    make(map[string]*PerformanceQueryPattern),
+		queryPatterns:      make(map[string]*PerformanceQueryPattern),
 	}
 }
 
@@ -407,12 +407,12 @@ func (pdb *PerformanceDB) updateQueryPattern(queryType, table, operation string,
 	pattern, exists := pdb.queryPatterns[patternKey]
 	if !exists {
 		pattern = &PerformanceQueryPattern{
-			Query:      patternKey,
-			MinTime:    duration,
-			MaxTime:    duration,
-			TotalTime:  duration,
-			Count:      1,
-			LastUsed:   time.Now(),
+			Query:     patternKey,
+			MinTime:   duration,
+			MaxTime:   duration,
+			TotalTime: duration,
+			Count:     1,
+			LastUsed:  time.Now(),
 		}
 		pdb.queryPatterns[patternKey] = pattern
 	}

@@ -132,8 +132,8 @@ func TestBackupRetentionPolicy(t *testing.T) {
 	now := time.Now()
 
 	// Daily backups
-	createTestBackup(t, backupDir, "automated_full_backup_20240101_120000_daily.sql", now.AddDate(0, 0, -8))  // 8 days old - should be deleted
-	createTestBackup(t, backupDir, "automated_full_backup_20240110_120000_daily.sql", now.AddDate(0, 0, -5))  // 5 days old - should be kept
+	createTestBackup(t, backupDir, "automated_full_backup_20240101_120000_daily.sql", now.AddDate(0, 0, -8)) // 8 days old - should be deleted
+	createTestBackup(t, backupDir, "automated_full_backup_20240110_120000_daily.sql", now.AddDate(0, 0, -5)) // 5 days old - should be kept
 
 	// Weekly backups
 	createTestBackup(t, backupDir, "automated_full_backup_20231201_120000_weekly.sql", now.AddDate(0, 0, -35)) // 5 weeks old - should be deleted

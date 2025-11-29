@@ -259,9 +259,9 @@ func TestRateLimiterCheckRateLimit(t *testing.T) {
 	}
 
 	tests := []struct {
-		name         string
-		setupMock    func()
-		expectedAllow bool
+		name              string
+		setupMock         func()
+		expectedAllow     bool
 		expectedRemaining int
 	}{
 		{
@@ -273,7 +273,7 @@ func TestRateLimiterCheckRateLimit(t *testing.T) {
 				mockPipeline.On("Exec", ctx).Return([]redis.Cmder{}, nil)
 				mockRedis.On("TxPipeline").Return(mockPipeline)
 			},
-			expectedAllow: true,
+			expectedAllow:     true,
 			expectedRemaining: 4, // 5 - 1
 		},
 		{
@@ -285,7 +285,7 @@ func TestRateLimiterCheckRateLimit(t *testing.T) {
 				mockPipeline.On("Exec", ctx).Return([]redis.Cmder{}, nil)
 				mockRedis.On("TxPipeline").Return(mockPipeline)
 			},
-			expectedAllow: false,
+			expectedAllow:     false,
 			expectedRemaining: 0,
 		},
 	}
@@ -311,9 +311,9 @@ func TestRateLimiterIsIPBlacklisted(t *testing.T) {
 	limiter := NewRateLimiter(config, mockRedis, logger)
 
 	tests := []struct {
-		name       string
-		ip         string
-		expected   bool
+		name     string
+		ip       string
+		expected bool
 	}{
 		{
 			name:     "Blacklisted IP",

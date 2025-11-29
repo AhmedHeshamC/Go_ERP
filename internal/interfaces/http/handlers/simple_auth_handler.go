@@ -19,7 +19,7 @@ import (
 // AuthHandler handles authentication HTTP requests
 type AuthHandler struct {
 	userService user.Service
-	logger       zerolog.Logger
+	logger      zerolog.Logger
 	rateLimiter ratelimit.EnhancedRateLimiter
 	auditLogger audit.AuditLogger
 }
@@ -28,7 +28,7 @@ type AuthHandler struct {
 func NewAuthHandler(userService user.Service, logger zerolog.Logger) *AuthHandler {
 	return &AuthHandler{
 		userService: userService,
-		logger:       logger,
+		logger:      logger,
 		rateLimiter: nil, // Will be set via SetRateLimiter if needed
 		auditLogger: nil, // Will be set via SetAuditLogger if needed
 	}
@@ -393,7 +393,7 @@ func (h *AuthHandler) ResetPassword(c *gin.Context) {
 	err := h.userService.ResetPassword(c, serviceReq)
 	if err != nil {
 		h.logger.Error().Err(err).Msg("Failed to reset password")
-		
+
 		// Log failed password change to audit log
 		if h.auditLogger != nil {
 			// We don't have user ID here, but we can log the attempt
@@ -411,7 +411,7 @@ func (h *AuthHandler) ResetPassword(c *gin.Context) {
 				h.logger.Error().Err(auditErr).Msg("Failed to log audit event for failed password reset")
 			}
 		}
-		
+
 		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
 			Error:   "Failed to reset password",
 			Details: err.Error(),
@@ -442,16 +442,16 @@ func (h *AuthHandler) ResetPassword(c *gin.Context) {
 // Helper method to convert user entity to DTO
 func (h *AuthHandler) userToDTO(user *entities.User) *dto.UserInfo {
 	return &dto.UserInfo{
-		ID:        user.ID,
-		Email:     user.Email,
-		Username:  user.Username,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Phone:     user.Phone,
-		Roles:     []string{"user"}, // Default role for now
-		IsActive:  user.IsActive,
+		ID:         user.ID,
+		Email:      user.Email,
+		Username:   user.Username,
+		FirstName:  user.FirstName,
+		LastName:   user.LastName,
+		Phone:      user.Phone,
+		Roles:      []string{"user"}, // Default role for now
+		IsActive:   user.IsActive,
 		IsVerified: user.IsVerified,
-		LastLogin: user.LastLoginAt,
-		CreatedAt: user.CreatedAt,
+		LastLogin:  user.LastLoginAt,
+		CreatedAt:  user.CreatedAt,
 	}
 }

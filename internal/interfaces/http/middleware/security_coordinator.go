@@ -15,26 +15,26 @@ import (
 
 // SecurityCoordinator coordinates all security middleware
 type SecurityCoordinator struct {
-	config                     SecurityCoordinatorConfig
-	logger                     zerolog.Logger
-	cache                      cache.Cache
-	apiKeyService              *auth.APIKeyService
-	securityMonitor            *security.SecurityMonitor
-	rateLimiter                *RateLimiter
-	inputValidator             *InputValidator
-	csrfProtection            *CSRF
-	auditLogger               *Auditor
+	config          SecurityCoordinatorConfig
+	logger          zerolog.Logger
+	cache           cache.Cache
+	apiKeyService   *auth.APIKeyService
+	securityMonitor *security.SecurityMonitor
+	rateLimiter     *RateLimiter
+	inputValidator  *InputValidator
+	csrfProtection  *CSRF
+	auditLogger     *Auditor
 }
 
 // SecurityCoordinatorConfig holds configuration for security coordinator
 type SecurityCoordinatorConfig struct {
 	// General settings
-	Enabled                bool   `json:"enabled"`
-	Environment           string  `json:"environment"` // "development", "staging", "production"
+	Enabled     bool   `json:"enabled"`
+	Environment string `json:"environment"` // "development", "staging", "production"
 
 	// Component enablement
-	EnableSecurityHeaders  bool `json:"enable_security_headers"`
-	EnableRateLimiting     bool `json:"enable_rate_limiting"`
+	EnableSecurityHeaders bool `json:"enable_security_headers"`
+	EnableRateLimiting    bool `json:"enable_rate_limiting"`
 	EnableCSRFProtection  bool `json:"enable_csrf_protection"`
 	EnableInputValidation bool `json:"enable_input_validation"`
 	EnableAuditLogging    bool `json:"enable_audit_logging"`
@@ -66,23 +66,23 @@ type SecurityCoordinatorConfig struct {
 // DefaultSecurityCoordinatorConfig returns a secure default configuration
 func DefaultSecurityCoordinatorConfig(environment string) SecurityCoordinatorConfig {
 	return SecurityCoordinatorConfig{
-		Enabled:                true,
+		Enabled:               true,
 		Environment:           environment,
-		EnableSecurityHeaders:  true,
-		EnableRateLimiting:     true,
+		EnableSecurityHeaders: true,
+		EnableRateLimiting:    true,
 		EnableCSRFProtection:  true,
 		EnableInputValidation: true,
 		EnableAuditLogging:    true,
 		EnableAPICredentials:  true,
 		EnableSecurityMonitor: true,
 
-		SecurityHeaders:       SecurityConfig{},
-		RateLimiting:         DefaultRateLimitConfig(),
-		CSRF:                 DefaultCSRFConfig(),
-		InputValidation:      DefaultInputValidationConfig(),
-		Audit:                DefaultAuditConfig(),
-		APIKey:               auth.DefaultAPIKeyConfig(),
-		SecurityMonitoring:   security.DefaultSecurityConfig(),
+		SecurityHeaders:    SecurityConfig{},
+		RateLimiting:       DefaultRateLimitConfig(),
+		CSRF:               DefaultCSRFConfig(),
+		InputValidation:    DefaultInputValidationConfig(),
+		Audit:              DefaultAuditConfig(),
+		APIKey:             auth.DefaultAPIKeyConfig(),
+		SecurityMonitoring: security.DefaultSecurityConfig(),
 	}
 }
 
@@ -383,13 +383,13 @@ func (sc *SecurityCoordinator) GetSecurityStats() map[string]interface{} {
 	}
 
 	stats["enabled_components"] = map[string]bool{
-		"security_headers":   sc.config.EnableSecurityHeaders,
-		"rate_limiting":      sc.config.EnableRateLimiting,
-		"csrf_protection":    sc.config.EnableCSRFProtection,
-		"input_validation":  sc.config.EnableInputValidation,
-		"audit_logging":      sc.config.EnableAuditLogging,
-		"api_credentials":    sc.config.EnableAPICredentials,
-		"security_monitor":   sc.config.EnableSecurityMonitor,
+		"security_headers": sc.config.EnableSecurityHeaders,
+		"rate_limiting":    sc.config.EnableRateLimiting,
+		"csrf_protection":  sc.config.EnableCSRFProtection,
+		"input_validation": sc.config.EnableInputValidation,
+		"audit_logging":    sc.config.EnableAuditLogging,
+		"api_credentials":  sc.config.EnableAPICredentials,
+		"security_monitor": sc.config.EnableSecurityMonitor,
 	}
 
 	return stats

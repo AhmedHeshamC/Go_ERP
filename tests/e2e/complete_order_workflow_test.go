@@ -19,61 +19,59 @@ import (
 
 	"erpgo/internal/application/services/order"
 	"erpgo/internal/application/services/product"
-	"erpgo/internal/application/services/customer"
+	"erpgo/internal/application/services/user"
+	userrepo "erpgo/internal/domain/users/repositories"
 	"erpgo/internal/domain/orders/entities"
-	productrepo "erpgo/internal/domain/products/repositories"
-	customerrepo "erpgo/internal/domain/customers/repositories"
-	"erpgo/internal/infrastructure/database"
-	"erpgo/internal/infrastructure/logger"
 	erporder "erpgo/internal/domain/orders/repositories"
+	productrepo "erpgo/internal/domain/products/repositories"
+	"erpgo/pkg/database"
+	"erpgo/pkg/logger"
 )
 
 // CompleteOrderWorkflowTestSuite tests the complete end-to-end order processing workflow
 type CompleteOrderWorkflowTestSuite struct {
 	suite.Suite
-	db           *database.Database
-	orderRepo    erporder.OrderRepository
-	productRepo  productrepo.ProductRepository
-	customerRepo customerrepo.CustomerRepository
-	orderService order.Service
-	productService product.Service
-	customerService customer.Service
-	router       *gin.Engine
-	testData     *TestData
+	db              *database.Database
+	orderRepo       erporder.OrderRepository
+	productRepo     productrepo.ProductRepository
+	userRepo        userrepo.UserRepository
+	orderService    order.Service
+	productService  product.Service
+	userService     user.Service
+	router          *gin.Engine
+	testData        *TestData
 }
 
 // TestData holds test data for the workflow
 type TestData struct {
-	Customers []*customerrepo.Customer
-	Products  []*productrepo.Product
-	Orders    []*erporder.Order
+	Users    []*userrepo.User
+	Products []*productrepo.Product
+	Orders   []*erporder.Order
 }
 
 // SetupSuite sets up the test suite
 func (suite *CompleteOrderWorkflowTestSuite) SetupSuite() {
 	// Initialize database connection
-	dbConfig := &database.Config{
-		Host:     "localhost",
-		Port:     5432,
-		User:     "postgres",
-		Password: "postgres",
-		DBName:   "erpgo_test",
-		SSLMode:  "disable",
+	dbConfig := database.Config{
+		URL:            "postgres://postgres:postgres@localhost:5432/erpgo_test?sslmode=disable",
+		MaxConnections: 10,
+		MinConnections: 2,
+		SSLMode:        "disable",
 	}
 
 	var err error
-	suite.db, err = database.NewConnection(dbConfig)
+	suite.db, err = database.New(dbConfig)
 	suite.Require().NoError(err)
 
 	// Initialize repositories
-	suite.orderRepo = erporder.NewPostgresOrderRepository(suite.db.GetDB(), dbConfig, logger.NewNopLogger())
-	suite.productRepo = productrepo.NewPostgresProductRepository(suite.db.GetDB(), dbConfig, logger.NewNopLogger())
-	suite.customerRepo = customerrepo.NewPostgresCustomerRepository(suite.db.GetDB(), dbConfig, logger.NewNopLogger())
+	suite.orderRepo = erporder.NewPostgresOrderRepository(suite.db)
+	suite.productRepo = productrepo.NewPostgresProductRepository(suite.db)
+	suite.userRepo = userrepo.NewPostgresUserRepository(suite.db.GetPool())
 
 	// Initialize services
-	suite.orderService = order.NewOrderService(suite.orderRepo, suite.productRepo, suite.customerRepo, logger.NewNopLogger())
-	suite.productService = product.NewProductService(suite.productRepo, logger.NewNopLogger())
-	suite.customerService = customer.NewCustomerService(suite.customerRepo, logger.NewNopLogger())
+	suite.orderService = order.NewOrderService(suite.orderRepo, suite.productRepo, suite.userRepo)
+	suite.productService = product.NewProductService(suite.productRepo)
+	suite.userService = user.NewUserService(suite.userRepo, nil, nil, nil, nil, nil, nil)
 
 	// Set up Gin router
 	gin.SetMode(gin.TestMode)
@@ -95,7 +93,7 @@ func (suite *CompleteOrderWorkflowTestSuite) TearDownSuite() {
 // SetupTest runs before each test
 func (suite *CompleteOrderWorkflowTestSuite) SetupTest() {
 	suite.cleanupTestData()
-	suite.createTestCustomers()
+	suite.createTestUsers()
 	suite.createTestProducts()
 }
 
@@ -108,9 +106,9 @@ func (suite *CompleteOrderWorkflowTestSuite) TearDownTest() {
 func (suite *CompleteOrderWorkflowTestSuite) setupRoutes() {
 	api := suite.router.Group("/api/v1")
 	{
-		// Customer endpoints
-		api.POST("/customers", suite.createCustomerHandler)
-		api.GET("/customers/:id", suite.getCustomerHandler)
+		// User endpoints (replacing customer endpoints)
+		api.POST("/users", suite.createUserHandler)
+		api.GET("/users/:id", suite.getUserHandler)
 
 		// Product endpoints
 		api.POST("/products", suite.createProductHandler)
@@ -131,42 +129,43 @@ func (suite *CompleteOrderWorkflowTestSuite) setupRoutes() {
 // cleanupTestData removes all test data
 func (suite *CompleteOrderWorkflowTestSuite) cleanupTestData() {
 	if suite.db != nil {
-		tx := suite.db.GetDB()
-		tx.Exec("DELETE FROM order_items")
-		tx.Exec("DELETE FROM orders")
-		tx.Exec("DELETE FROM products")
-		tx.Exec("DELETE FROM customers")
+		ctx := context.Background()
+		suite.db.Exec(ctx, "DELETE FROM order_items")
+		suite.db.Exec(ctx, "DELETE FROM orders")
+		suite.db.Exec(ctx, "DELETE FROM products")
+		suite.db.Exec(ctx, "DELETE FROM users")
 	}
 }
 
-// createTestCustomers creates sample customers for testing
-func (suite *CompleteOrderWorkflowTestSuite) createTestCustomers() {
+// createTestUsers creates sample users for testing
+func (suite *CompleteOrderWorkflowTestSuite) createTestUsers() {
 	ctx := context.Background()
 
-	customers := []*customerrepo.Customer{
+	users := []*userrepo.User{
 		{
-			Name:         "John Doe",
-			Email:        "john.doe@example.com",
-			Phone:        "+1234567890",
-			Address:      "123 Main St, City, State 12345",
-			CustomerType: "individual",
-			Status:       "active",
+			Email:     "john.doe@example.com",
+			Username:  "johndoe",
+			FirstName: "John",
+			LastName:  "Doe",
+			Phone:     "+1234567890",
+			IsActive:  true,
+			IsVerified: true,
 		},
 		{
-			Name:         "Acme Corporation",
-			Email:        "contact@acme.com",
-			Phone:        "+0987654321",
-			Address:      "456 Business Ave, Commercial City, State 67890",
-			CustomerType: "business",
-			Status:       "active",
-			TaxID:        "123-45-6789",
+			Email:     "contact@acme.com",
+			Username:  "acmeuser",
+			FirstName: "Acme",
+			LastName:  "User",
+			Phone:     "+0987654321",
+			IsActive:  true,
+			IsVerified: true,
 		},
 	}
 
-	for _, customer := range customers {
-		err := suite.customerRepo.Create(ctx, customer)
+	for _, user := range users {
+		err := suite.userRepo.Create(ctx, user)
 		if err == nil {
-			suite.testData.Customers = append(suite.testData.Customers, customer)
+			suite.testData.Users = append(suite.testData.Users, user)
 		}
 	}
 }
@@ -213,34 +212,35 @@ func (suite *CompleteOrderWorkflowTestSuite) createTestProducts() {
 // Test Complete Order Workflow
 
 func (suite *CompleteOrderWorkflowTestSuite) TestCompleteOrderWorkflow() {
-	if len(suite.testData.Customers) == 0 || len(suite.testData.Products) == 0 {
+	if len(suite.testData.Users) == 0 || len(suite.testData.Products) == 0 {
 		suite.T().Skip("Insufficient test data")
 		return
 	}
 
-	// Step 1: Create a new customer
-	customerPayload := map[string]interface{}{
-		"name":          "Workflow Test Customer",
-		"email":         "workflow@example.com",
-		"phone":         "+1555123456",
-		"address":       "789 Workflow St, Test City, TC 12345",
-		"customer_type": "individual",
+	// Step 1: Create a new user
+	userPayload := map[string]interface{}{
+		"email":     "workflow@example.com",
+		"username":  "workflowuser",
+		"password":  "TestPassword123!",
+		"first_name": "Workflow",
+		"last_name":  "User",
+		"phone":     "+1555123456",
 	}
 
-	jsonData, _ := json.Marshal(customerPayload)
-	req, _ := http.NewRequest("POST", "/api/v1/customers", bytes.NewBuffer(jsonData))
+	jsonData, _ := json.Marshal(userPayload)
+	req, _ := http.NewRequest("POST", "/api/v1/users", bytes.NewBuffer(jsonData))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	suite.router.ServeHTTP(w, req)
 
 	suite.Equal(http.StatusCreated, w.Code)
 
-	var customerResponse map[string]interface{}
-	err := json.Unmarshal(w.Body.Bytes(), &customerResponse)
+	var userResponse map[string]interface{}
+	err := json.Unmarshal(w.Body.Bytes(), &userResponse)
 	suite.NoError(err)
 
-	customerData := customerResponse["customer"].(map[string]interface{})
-	customerID := customerData["id"].(string)
+	userData := userResponse["user"].(map[string]interface{})
+	userID := userData["id"].(string)
 
 	// Step 2: Create a new product
 	productPayload := map[string]interface{}{
@@ -268,15 +268,15 @@ func (suite *CompleteOrderWorkflowTestSuite) TestCompleteOrderWorkflow() {
 
 	// Step 3: Create an order with multiple items
 	orderPayload := map[string]interface{}{
-		"customer_id": customerID,
+		"customer_id": userID, // Using user_id as customer_id for compatibility
 		"items": []map[string]interface{}{
 			{
 				"product_id": productID,
-				"quantity":  2,
+				"quantity":   2,
 			},
 			{
 				"product_id": suite.testData.Products[0].ID.String(),
-				"quantity":  1,
+				"quantity":   1,
 			},
 		},
 		"notes": "End-to-end workflow test order",
@@ -331,8 +331,8 @@ func (suite *CompleteOrderWorkflowTestSuite) TestCompleteOrderWorkflow() {
 	// Step 6: Ship the order
 	shipPayload := map[string]interface{}{
 		"tracking_number": fmt.Sprintf("TRACK_%d", time.Now().Unix()),
-		"carrier":        "UPS",
-		"shipping_date":  time.Now().Format(time.RFC3339),
+		"carrier":         "UPS",
+		"shipping_date":   time.Now().Format(time.RFC3339),
 	}
 
 	jsonData, _ = json.Marshal(shipPayload)
@@ -367,16 +367,16 @@ func (suite *CompleteOrderWorkflowTestSuite) TestCompleteOrderWorkflow() {
 }
 
 // Simplified API handlers for testing (keeping the test focused on the workflow)
-func (suite *CompleteOrderWorkflowTestSuite) createCustomerHandler(c *gin.Context) {
+func (suite *CompleteOrderWorkflowTestSuite) createUserHandler(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	var req struct {
-		Name         string `json:"name" binding:"required"`
-		Email        string `json:"email" binding:"required,email"`
-		Phone        string `json:"phone"`
-		Address      string `json:"address"`
-		CustomerType string `json:"customer_type"`
-		TaxID        string `json:"tax_id"`
+		Email     string `json:"email" binding:"required,email"`
+		Username  string `json:"username" binding:"required"`
+		Password  string `json:"password" binding:"required"`
+		FirstName string `json:"first_name" binding:"required"`
+		LastName  string `json:"last_name" binding:"required"`
+		Phone     string `json:"phone"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -384,41 +384,43 @@ func (suite *CompleteOrderWorkflowTestSuite) createCustomerHandler(c *gin.Contex
 		return
 	}
 
-	customer := &customerrepo.Customer{
+	user := &userrepo.User{
 		ID:           uuid.New(),
-		Name:         req.Name,
 		Email:        req.Email,
+		Username:     req.Username,
+		FirstName:    req.FirstName,
+		LastName:     req.LastName,
 		Phone:        req.Phone,
-		Address:      req.Address,
-		CustomerType: req.CustomerType,
-		Status:       "active",
-		TaxID:        req.TaxID,
+		IsActive:     true,
+		IsVerified:   true,
+		CreatedAt:    time.Now().UTC(),
+		UpdatedAt:    time.Now().UTC(),
 	}
 
-	if err := suite.customerRepo.Create(ctx, customer); err != nil {
+	if err := suite.userRepo.Create(ctx, user); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"customer": customer})
+	c.JSON(http.StatusCreated, gin.H{"user": user})
 }
 
-func (suite *CompleteOrderWorkflowTestSuite) getCustomerHandler(c *gin.Context) {
+func (suite *CompleteOrderWorkflowTestSuite) getUserHandler(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid customer ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
 		return
 	}
 
-	customer, err := suite.customerRepo.GetByID(ctx, id)
+	user, err := suite.userRepo.GetByID(ctx, id)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Customer not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"customer": customer})
+	c.JSON(http.StatusOK, gin.H{"user": user})
 }
 
 func (suite *CompleteOrderWorkflowTestSuite) createProductHandler(c *gin.Context) {

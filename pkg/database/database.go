@@ -15,9 +15,9 @@ import (
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/rs/zerolog"
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/trace"
-	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // Database wraps a pgx connection pool and provides database operations
@@ -43,11 +43,11 @@ type Config struct {
 	SSLHost         string
 
 	// Advanced connection pool settings
-	HealthCheckPeriod     time.Duration
-	MaxConnAcquireTime    time.Duration
-	MaxConnAcquireCount   int32
-	LazyConnect           bool
-	ConnectTimeout        time.Duration
+	HealthCheckPeriod   time.Duration
+	MaxConnAcquireTime  time.Duration
+	MaxConnAcquireCount int32
+	LazyConnect         bool
+	ConnectTimeout      time.Duration
 
 	// Performance settings
 	SlowQueryThreshold    time.Duration
@@ -55,9 +55,9 @@ type Config struct {
 	EnableConnectionStats bool
 
 	// Retry settings
-	EnableRetryOnFailure  bool
-	MaxRetryAttempts      int
-	RetryDelay            time.Duration
+	EnableRetryOnFailure bool
+	MaxRetryAttempts     int
+	RetryDelay           time.Duration
 }
 
 // New creates a new Database instance with the given configuration
@@ -353,7 +353,12 @@ func (c *Config) buildConnectionString() (string, error) {
 	if c.SSLMode != "" {
 		query.Set("sslmode", c.SSLMode)
 	} else {
-		query.Set("sslmode", "require")
+		// Check if sslmode is already in the URL
+		if existingSSLMode := query.Get("sslmode"); existingSSLMode != "" {
+			// Use existing sslmode from URL
+		} else {
+			query.Set("sslmode", "require")
+		}
 	}
 
 	// Add SSL certificate parameters if provided
@@ -402,35 +407,35 @@ func (db *Database) GetConfig() *Config {
 func (db *Database) GetConnectionStats() *DetailedConnectionStats {
 	stats := db.Stats()
 	return &DetailedConnectionStats{
-		AcquireCount:         stats.AcquireCount(),
-		AcquireDuration:      stats.AcquireDuration(),
-		AcquiredConns:        stats.AcquiredConns(),
-		IdleConns:            stats.IdleConns(),
-		MaxConns:             stats.MaxConns(),
-		TotalConns:           stats.TotalConns(),
-		CanceledAcquireCount: stats.CanceledAcquireCount(),
-		ConstructingConns:    stats.ConstructingConns(),
-		EmptyAcquireCount:    stats.EmptyAcquireCount(),
-		NewConnsCount:        stats.NewConnsCount(),
-		MaxIdleDestroyCount:  stats.MaxIdleDestroyCount(),
+		AcquireCount:            stats.AcquireCount(),
+		AcquireDuration:         stats.AcquireDuration(),
+		AcquiredConns:           stats.AcquiredConns(),
+		IdleConns:               stats.IdleConns(),
+		MaxConns:                stats.MaxConns(),
+		TotalConns:              stats.TotalConns(),
+		CanceledAcquireCount:    stats.CanceledAcquireCount(),
+		ConstructingConns:       stats.ConstructingConns(),
+		EmptyAcquireCount:       stats.EmptyAcquireCount(),
+		NewConnsCount:           stats.NewConnsCount(),
+		MaxIdleDestroyCount:     stats.MaxIdleDestroyCount(),
 		MaxLifetimeDestroyCount: stats.MaxLifetimeDestroyCount(),
 	}
 }
 
 // DetailedConnectionStats provides detailed connection pool statistics
 type DetailedConnectionStats struct {
-	AcquireCount           int64         `json:"acquire_count"`
-	AcquireDuration        time.Duration `json:"acquire_duration"`
-	AcquiredConns          int32         `json:"acquired_conns"`
-	IdleConns              int32         `json:"idle_conns"`
-	MaxConns               int32         `json:"max_conns"`
-	TotalConns             int32         `json:"total_conns"`
-	CanceledAcquireCount   int64         `json:"canceled_acquire_count"`
-	ConstructingConns      int32         `json:"constructing_conns"`
-	EmptyAcquireCount      int64         `json:"empty_acquire_count"`
-	NewConnsCount          int64         `json:"new_conns_count"`
-	MaxIdleDestroyCount    int64         `json:"max_idle_destroy_count"`
-	MaxLifetimeDestroyCount int64        `json:"max_lifetime_destroy_count"`
+	AcquireCount            int64         `json:"acquire_count"`
+	AcquireDuration         time.Duration `json:"acquire_duration"`
+	AcquiredConns           int32         `json:"acquired_conns"`
+	IdleConns               int32         `json:"idle_conns"`
+	MaxConns                int32         `json:"max_conns"`
+	TotalConns              int32         `json:"total_conns"`
+	CanceledAcquireCount    int64         `json:"canceled_acquire_count"`
+	ConstructingConns       int32         `json:"constructing_conns"`
+	EmptyAcquireCount       int64         `json:"empty_acquire_count"`
+	NewConnsCount           int64         `json:"new_conns_count"`
+	MaxIdleDestroyCount     int64         `json:"max_idle_destroy_count"`
+	MaxLifetimeDestroyCount int64         `json:"max_lifetime_destroy_count"`
 }
 
 // ResetConnectionStats resets the connection pool statistics
@@ -496,11 +501,11 @@ func (db *Database) PerformHealthCheck(ctx context.Context) *HealthCheckResult {
 
 // HealthCheckResult represents the result of a database health check
 type HealthCheckResult struct {
-	Timestamp       time.Time              `json:"timestamp"`
-	Healthy         bool                  `json:"healthy"`
+	Timestamp       time.Time                `json:"timestamp"`
+	Healthy         bool                     `json:"healthy"`
 	ConnectionStats *DetailedConnectionStats `json:"connection_stats"`
-	Errors          []string              `json:"errors,omitempty"`
-	Warnings        []string              `json:"warnings,omitempty"`
+	Errors          []string                 `json:"errors,omitempty"`
+	Warnings        []string                 `json:"warnings,omitempty"`
 }
 
 // WithTransaction executes a function within a database transaction with automatic rollback on error
@@ -768,21 +773,21 @@ func (db *Database) GetQueryPerformanceStats() *QueryPerformanceStats {
 	// This would return actual statistics from your metrics system
 	// For now, return a placeholder
 	return &QueryPerformanceStats{
-		TotalQueries:     0,
-		AverageLatency:   0,
-		SlowQueries:      0,
-		ErrorRate:        0,
-		LastResetTime:    time.Now(),
+		TotalQueries:   0,
+		AverageLatency: 0,
+		SlowQueries:    0,
+		ErrorRate:      0,
+		LastResetTime:  time.Now(),
 	}
 }
 
 // QueryPerformanceStats holds query performance metrics
 type QueryPerformanceStats struct {
-	TotalQueries     int64         `json:"total_queries"`
-	AverageLatency   time.Duration `json:"average_latency"`
-	SlowQueries      int64         `json:"slow_queries"`
-	ErrorRate        float64       `json:"error_rate"`
-	LastResetTime    time.Time     `json:"last_reset_time"`
+	TotalQueries   int64         `json:"total_queries"`
+	AverageLatency time.Duration `json:"average_latency"`
+	SlowQueries    int64         `json:"slow_queries"`
+	ErrorRate      float64       `json:"error_rate"`
+	LastResetTime  time.Time     `json:"last_reset_time"`
 }
 
 // WithRetryTransaction executes a function within a database transaction with automatic retry on deadlock
@@ -849,8 +854,8 @@ func (db *Database) isRetryableError(err error) bool {
 
 	// Check for connection issues
 	if strings.Contains(errStr, "connection") ||
-	   strings.Contains(errStr, "timeout") ||
-	   strings.Contains(errStr, "network") {
+		strings.Contains(errStr, "timeout") ||
+		strings.Contains(errStr, "network") {
 		return true
 	}
 
@@ -894,7 +899,6 @@ func (db *Database) IsHealthy(ctx context.Context) bool {
 
 	return true
 }
-
 
 // StartPoolMonitoring starts the connection pool monitoring
 func (db *Database) StartPoolMonitoring(ctx context.Context) {

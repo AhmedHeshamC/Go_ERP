@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/redis/go-redis/v9"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
 
@@ -23,8 +23,8 @@ type RedisCache struct {
 
 // CacheEntry represents a cached database result
 type CacheEntry struct {
-	Data      interface{} `json:"data"`
-	CreatedAt time.Time   `json:"created_at"`
+	Data      interface{}   `json:"data"`
+	CreatedAt time.Time     `json:"created_at"`
 	TTL       time.Duration `json:"ttl"`
 }
 
@@ -209,8 +209,8 @@ func (rc *RedisCache) GetStats(ctx context.Context) (map[string]interface{}, err
 	}
 
 	return map[string]interface{}{
-		"redis_info": info,
-		"prefix":     rc.prefix,
+		"redis_info":  info,
+		"prefix":      rc.prefix,
 		"default_ttl": rc.defaultTTL.String(),
 	}, nil
 }

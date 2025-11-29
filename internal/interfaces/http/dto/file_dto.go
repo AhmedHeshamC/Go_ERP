@@ -20,16 +20,16 @@ type FileInfo struct {
 
 // FileMetadataResponse represents file metadata response
 type FileMetadataResponse struct {
-	Key           string            `json:"key"`
-	Size          int64             `json:"size"`
-	LastModified  time.Time         `json:"last_modified"`
-	ContentType   string            `json:"content_type"`
-	ETag          string            `json:"etag,omitempty"`
-	StorageClass  string            `json:"storage_class,omitempty"`
-	Metadata      map[string]string `json:"metadata,omitempty"`
-	Tags          map[string]string `json:"tags,omitempty"`
-	CacheControl  string            `json:"cache_control,omitempty"`
-	URL           string            `json:"url"`
+	Key          string            `json:"key"`
+	Size         int64             `json:"size"`
+	LastModified time.Time         `json:"last_modified"`
+	ContentType  string            `json:"content_type"`
+	ETag         string            `json:"etag,omitempty"`
+	StorageClass string            `json:"storage_class,omitempty"`
+	Metadata     map[string]string `json:"metadata,omitempty"`
+	Tags         map[string]string `json:"tags,omitempty"`
+	CacheControl string            `json:"cache_control,omitempty"`
+	URL          string            `json:"url"`
 }
 
 // FileURLResponse represents a file URL response
@@ -53,11 +53,11 @@ type FileListResponse struct {
 
 // BatchFileUploadResponse represents a batch file upload response
 type BatchFileUploadResponse struct {
-	Results    []*UploadResult         `json:"results"`
-	Errors     []BatchFileUploadError   `json:"errors,omitempty"`
-	TotalFiles int                      `json:"total_files"`
-	Successful int                      `json:"successful"`
-	Failed     int                      `json:"failed"`
+	Results    []*UploadResult        `json:"results"`
+	Errors     []BatchFileUploadError `json:"errors,omitempty"`
+	TotalFiles int                    `json:"total_files"`
+	Successful int                    `json:"successful"`
+	Failed     int                    `json:"failed"`
 }
 
 // BatchFileUploadError represents an error in batch file upload
@@ -76,12 +76,12 @@ type UpdateMetadataRequest struct {
 
 // SearchFilesRequest represents a file search request
 type SearchFilesRequest struct {
-	Query        string `form:"q" binding:"required,min=1"`
-	Directory    string `form:"directory,omitempty"`
-	ContentType  string `form:"content_type,omitempty"`
-	MinSize      int64  `form:"min_size,omitempty"`
-	MaxSize      int64  `form:"max_size,omitempty"`
-	Limit        int    `form:"limit" binding:"omitempty,min=1,max=100"`
+	Query       string `form:"q" binding:"required,min=1"`
+	Directory   string `form:"directory,omitempty"`
+	ContentType string `form:"content_type,omitempty"`
+	MinSize     int64  `form:"min_size,omitempty"`
+	MaxSize     int64  `form:"max_size,omitempty"`
+	Limit       int    `form:"limit" binding:"omitempty,min=1,max=100"`
 }
 
 // SearchFilesResponse represents file search results
@@ -126,8 +126,8 @@ type FileUploadProgress struct {
 	ID            string  `json:"id"`
 	Filename      string  `json:"filename"`
 	Progress      float64 `json:"progress"` // 0-100
-	Status        string  `json:"status"`  // uploading, processing, completed, failed
-	Speed         int64   `json:"speed"`   // bytes per second
+	Status        string  `json:"status"`   // uploading, processing, completed, failed
+	Speed         int64   `json:"speed"`    // bytes per second
 	BytesTotal    int64   `json:"bytes_total"`
 	BytesUploaded int64   `json:"bytes_uploaded"`
 	ETA           int     `json:"eta,omitempty"` // estimated time remaining in seconds
@@ -138,19 +138,19 @@ type FileUploadProgress struct {
 
 // UploadSession represents an upload session
 type UploadSession struct {
-	ID              string    `json:"id"`
-	Filename        string    `json:"filename"`
-	Size            int64     `json:"size"`
-	ContentType     string    `json:"content_type"`
-	Directory       string    `json:"directory"`
-	ChunkSize       int       `json:"chunk_size"`
-	TotalChunks     int       `json:"total_chunks"`
-	UploadedChunks  int       `json:"uploaded_chunks"`
-	Status          string    `json:"status"`     // initializing, active, paused, completed, failed
-	CreatedAt       time.Time `json:"created_at"`
-	UpdatedAt       time.Time `json:"updated_at"`
-	CompletedAt     *time.Time `json:"completed_at,omitempty"`
-	ErrorMessage    string    `json:"error_message,omitempty"`
+	ID             string     `json:"id"`
+	Filename       string     `json:"filename"`
+	Size           int64      `json:"size"`
+	ContentType    string     `json:"content_type"`
+	Directory      string     `json:"directory"`
+	ChunkSize      int        `json:"chunk_size"`
+	TotalChunks    int        `json:"total_chunks"`
+	UploadedChunks int        `json:"uploaded_chunks"`
+	Status         string     `json:"status"` // initializing, active, paused, completed, failed
+	CreatedAt      time.Time  `json:"created_at"`
+	UpdatedAt      time.Time  `json:"updated_at"`
+	CompletedAt    *time.Time `json:"completed_at,omitempty"`
+	ErrorMessage   string     `json:"error_message,omitempty"`
 }
 
 // CreateUploadSessionRequest represents a request to create an upload session
@@ -164,7 +164,7 @@ type CreateUploadSessionRequest struct {
 
 // UploadChunkRequest represents a request to upload a chunk
 type UploadChunkRequest struct {
-	SessionID string `json:"session_id" binding:"required"`
+	SessionID  string `json:"session_id" binding:"required"`
 	ChunkIndex int    `json:"chunk_index" binding:"required,min=0"`
 	Data       []byte `json:"data" binding:"required"`
 	Checksum   string `json:"checksum,omitempty"`
@@ -172,91 +172,91 @@ type UploadChunkRequest struct {
 
 // UploadChunkResponse represents a chunk upload response
 type UploadChunkResponse struct {
-	SessionID       string `json:"session_id"`
-	ChunkIndex      int    `json:"chunk_index"`
-	Uploaded        bool   `json:"uploaded"`
-	Progress        float64 `json:"progress"`
-	Completed       bool   `json:"completed"`
-	FileKey         string `json:"file_key,omitempty"`
-	FileURL         string `json:"file_url,omitempty"`
-	ErrorMessage    string `json:"error_message,omitempty"`
+	SessionID    string  `json:"session_id"`
+	ChunkIndex   int     `json:"chunk_index"`
+	Uploaded     bool    `json:"uploaded"`
+	Progress     float64 `json:"progress"`
+	Completed    bool    `json:"completed"`
+	FileKey      string  `json:"file_key,omitempty"`
+	FileURL      string  `json:"file_url,omitempty"`
+	ErrorMessage string  `json:"error_message,omitempty"`
 }
 
 // File Versioning DTOs
 
 // FileVersion represents a file version
 type FileVersion struct {
-	ID         uuid.UUID `json:"id"`
-	FileKey    string    `json:"file_key"`
-	Version    int       `json:"version"`
-	Size       int64     `json:"size"`
-	Checksum   string    `json:"checksum"`
-	UploadedBy string    `json:"uploaded_by"`
-	UploadedAt time.Time `json:"uploaded_at"`
-	IsLatest   bool      `json:"is_latest"`
+	ID         uuid.UUID         `json:"id"`
+	FileKey    string            `json:"file_key"`
+	Version    int               `json:"version"`
+	Size       int64             `json:"size"`
+	Checksum   string            `json:"checksum"`
+	UploadedBy string            `json:"uploaded_by"`
+	UploadedAt time.Time         `json:"uploaded_at"`
+	IsLatest   bool              `json:"is_latest"`
 	Metadata   map[string]string `json:"metadata,omitempty"`
 }
 
 // FileVersionHistory represents version history for a file
 type FileVersionHistory struct {
-	FileKey    string        `json:"file_key"`
-	Filename   string        `json:"filename"`
-	Versions   []*FileVersion `json:"versions"`
-	TotalVersions int        `json:"total_versions"`
-	CurrentVersion int      `json:"current_version"`
+	FileKey        string         `json:"file_key"`
+	Filename       string         `json:"filename"`
+	Versions       []*FileVersion `json:"versions"`
+	TotalVersions  int            `json:"total_versions"`
+	CurrentVersion int            `json:"current_version"`
 }
 
 // File Sharing DTOs
 
 // CreateShareRequest represents a request to create a file share
 type CreateShareRequest struct {
-	FileKey     string    `json:"file_key" binding:"required"`
-	ExpiresAt   *time.Time `json:"expires_at,omitempty"`
-	Password    *string   `json:"password,omitempty"`
-	MaxDownloads int      `json:"max_downloads,omitempty"`
-	AllowUpload bool      `json:"allow_upload,omitempty"`
+	FileKey      string     `json:"file_key" binding:"required"`
+	ExpiresAt    *time.Time `json:"expires_at,omitempty"`
+	Password     *string    `json:"password,omitempty"`
+	MaxDownloads int        `json:"max_downloads,omitempty"`
+	AllowUpload  bool       `json:"allow_upload,omitempty"`
 }
 
 // FileShare represents a file share
 type FileShare struct {
-	ID          uuid.UUID `json:"id"`
-	FileKey     string    `json:"file_key"`
-	ShareToken  string    `json:"share_token"`
-	URL         string    `json:"url"`
-	ExpiresAt   *time.Time `json:"expires_at,omitempty"`
-	Password    *string   `json:"password,omitempty"`
-	MaxDownloads int      `json:"max_downloads,omitempty"`
-	Downloads   int       `json:"downloads"`
-	AllowUpload bool      `json:"allow_upload"`
-	CreatedBy   string    `json:"created_by"`
-	CreatedAt   time.Time `json:"created_at"`
-	LastAccess  *time.Time `json:"last_access,omitempty"`
-	IsActive    bool      `json:"is_active"`
+	ID           uuid.UUID  `json:"id"`
+	FileKey      string     `json:"file_key"`
+	ShareToken   string     `json:"share_token"`
+	URL          string     `json:"url"`
+	ExpiresAt    *time.Time `json:"expires_at,omitempty"`
+	Password     *string    `json:"password,omitempty"`
+	MaxDownloads int        `json:"max_downloads,omitempty"`
+	Downloads    int        `json:"downloads"`
+	AllowUpload  bool       `json:"allow_upload"`
+	CreatedBy    string     `json:"created_by"`
+	CreatedAt    time.Time  `json:"created_at"`
+	LastAccess   *time.Time `json:"last_access,omitempty"`
+	IsActive     bool       `json:"is_active"`
 }
 
 // File Processing DTOs
 
 // ProcessFileRequest represents a request to process a file
 type ProcessFileRequest struct {
-	FileKey      string            `json:"file_key" binding:"required"`
-	Operations   []string          `json:"operations" binding:"required,min=1"`
-	Options      map[string]interface{} `json:"options,omitempty"`
-	NotifyEmail  *string           `json:"notify_email,omitempty"`
+	FileKey     string                 `json:"file_key" binding:"required"`
+	Operations  []string               `json:"operations" binding:"required,min=1"`
+	Options     map[string]interface{} `json:"options,omitempty"`
+	NotifyEmail *string                `json:"notify_email,omitempty"`
 }
 
 // FileProcessingJob represents a file processing job
 type FileProcessingJob struct {
-	ID          string            `json:"id"`
-	FileKey     string            `json:"file_key"`
-	Operations  []string          `json:"operations"`
-	Status      string            `json:"status"` // pending, processing, completed, failed
-	Progress    float64           `json:"progress"`
+	ID          string                 `json:"id"`
+	FileKey     string                 `json:"file_key"`
+	Operations  []string               `json:"operations"`
+	Status      string                 `json:"status"` // pending, processing, completed, failed
+	Progress    float64                `json:"progress"`
 	Options     map[string]interface{} `json:"options,omitempty"`
 	Result      map[string]interface{} `json:"result,omitempty"`
-	Error       string            `json:"error,omitempty"`
-	CreatedAt   time.Time         `json:"created_at"`
-	StartedAt   *time.Time        `json:"started_at,omitempty"`
-	CompletedAt *time.Time        `json:"completed_at,omitempty"`
+	Error       string                 `json:"error,omitempty"`
+	CreatedAt   time.Time              `json:"created_at"`
+	StartedAt   *time.Time             `json:"started_at,omitempty"`
+	CompletedAt *time.Time             `json:"completed_at,omitempty"`
 }
 
 // File Virus Scan DTOs
@@ -276,27 +276,27 @@ type VirusScanResult struct {
 
 // FileBackupRequest represents a request to backup files
 type FileBackupRequest struct {
-	Keys         []string `json:"keys,omitempty"`
-	Prefix       string   `json:"prefix,omitempty"`
-	BackupType   string   `json:"backup_type" binding:"required,oneof=full incremental differential"`
-	Compression  bool     `json:"compression"`
-	Encryption   bool     `json:"encryption"`
-	Destination  string   `json:"destination"`
+	Keys        []string `json:"keys,omitempty"`
+	Prefix      string   `json:"prefix,omitempty"`
+	BackupType  string   `json:"backup_type" binding:"required,oneof=full incremental differential"`
+	Compression bool     `json:"compression"`
+	Encryption  bool     `json:"encryption"`
+	Destination string   `json:"destination"`
 }
 
 // FileBackupResponse represents a backup response
 type FileBackupResponse struct {
-	BackupID    string    `json:"backup_id"`
-	BackupType  string    `json:"backup_type"`
-	FileCount   int       `json:"file_count"`
-	TotalSize   int64     `json:"total_size"`
-	Compressed  bool      `json:"compressed"`
-	Encrypted   bool      `json:"encrypted"`
-	Destination string    `json:"destination"`
-	StartedAt   time.Time `json:"started_at"`
-	CompletedAt *time.Time `json:"completed_at,omitempty"`
-	Status      string    `json:"status"` // in_progress, completed, failed
-	ErrorMessage *string  `json:"error_message,omitempty"`
+	BackupID     string     `json:"backup_id"`
+	BackupType   string     `json:"backup_type"`
+	FileCount    int        `json:"file_count"`
+	TotalSize    int64      `json:"total_size"`
+	Compressed   bool       `json:"compressed"`
+	Encrypted    bool       `json:"encrypted"`
+	Destination  string     `json:"destination"`
+	StartedAt    time.Time  `json:"started_at"`
+	CompletedAt  *time.Time `json:"completed_at,omitempty"`
+	Status       string     `json:"status"` // in_progress, completed, failed
+	ErrorMessage *string    `json:"error_message,omitempty"`
 }
 
 // File Archive DTOs

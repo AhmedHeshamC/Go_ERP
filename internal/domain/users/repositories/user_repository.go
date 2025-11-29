@@ -3,8 +3,8 @@ package repositories
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"erpgo/internal/domain/users/entities"
+	"github.com/google/uuid"
 )
 
 // UserRepository defines the interface for user data operations
@@ -47,9 +47,9 @@ type UserFilter struct {
 
 // RoleFilter defines filtering options for role queries
 type RoleFilter struct {
-	Search string
-	Page   int
-	Limit  int
-	SortBy string
+	Search    string
+	Page      int
+	Limit     int
+	SortBy    string
 	SortOrder string
 }

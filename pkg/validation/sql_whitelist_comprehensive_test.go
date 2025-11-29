@@ -245,8 +245,8 @@ func TestColumnNormalization(t *testing.T) {
 
 func TestExtractColumnName(t *testing.T) {
 	tests := []struct {
-		name     string
-		input    string
+		name  string
+		input string
 	}{
 		{"simple", "id"},
 		{"with ASC", "id ASC"},

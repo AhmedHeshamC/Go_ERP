@@ -10,16 +10,16 @@ import (
 type ErrorCode string
 
 const (
-	ErrCodeNotFound      ErrorCode = "NOT_FOUND"
-	ErrCodeValidation    ErrorCode = "VALIDATION_ERROR"
-	ErrCodeConflict      ErrorCode = "CONFLICT"
-	ErrCodeUnauthorized  ErrorCode = "UNAUTHORIZED"
-	ErrCodeForbidden     ErrorCode = "FORBIDDEN"
-	ErrCodeInternal      ErrorCode = "INTERNAL_ERROR"
-	ErrCodeRateLimit     ErrorCode = "RATE_LIMIT_EXCEEDED"
-	ErrCodeBadRequest    ErrorCode = "BAD_REQUEST"
-	ErrCodeTimeout       ErrorCode = "TIMEOUT"
-	ErrCodeUnavailable   ErrorCode = "SERVICE_UNAVAILABLE"
+	ErrCodeNotFound     ErrorCode = "NOT_FOUND"
+	ErrCodeValidation   ErrorCode = "VALIDATION_ERROR"
+	ErrCodeConflict     ErrorCode = "CONFLICT"
+	ErrCodeUnauthorized ErrorCode = "UNAUTHORIZED"
+	ErrCodeForbidden    ErrorCode = "FORBIDDEN"
+	ErrCodeInternal     ErrorCode = "INTERNAL_ERROR"
+	ErrCodeRateLimit    ErrorCode = "RATE_LIMIT_EXCEEDED"
+	ErrCodeBadRequest   ErrorCode = "BAD_REQUEST"
+	ErrCodeTimeout      ErrorCode = "TIMEOUT"
+	ErrCodeUnavailable  ErrorCode = "SERVICE_UNAVAILABLE"
 )
 
 // AppError represents an application error with rich context
@@ -292,7 +292,7 @@ func GetStatusCode(err error) int {
 	if appErr, ok := err.(*AppError); ok {
 		return appErr.StatusCode
 	}
-	
+
 	// Check for specific error types
 	switch err.(type) {
 	case *NotFoundError:
@@ -316,7 +316,7 @@ func GetStatusCode(err error) int {
 	case *InternalError:
 		return http.StatusInternalServerError
 	}
-	
+
 	return http.StatusInternalServerError
 }
 
@@ -325,7 +325,7 @@ func GetErrorCode(err error) ErrorCode {
 	if appErr, ok := err.(*AppError); ok {
 		return appErr.Code
 	}
-	
+
 	// Check for specific error types
 	switch err.(type) {
 	case *NotFoundError:
@@ -349,6 +349,6 @@ func GetErrorCode(err error) ErrorCode {
 	case *InternalError:
 		return ErrCodeInternal
 	}
-	
+
 	return ErrCodeInternal
 }

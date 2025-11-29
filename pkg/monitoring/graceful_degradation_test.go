@@ -785,8 +785,8 @@ func TestGracefulMonitoringService_EnableDisableFallback(t *testing.T) {
 
 	// Set primary to fail
 	primaryCollector.SetFailOn("record_http_request", true)
-	service.RecordHTTPRequest("GET", "/api/test", 200, 100*time.Millisecond)/
-	service.RecordHTTPRequest("GET", "/api/test", 200, 100*time.Millisecond)/
+	service.RecordHTTPRequest("GET", "/api/test", 200, 100*time.Millisecond)
+	service.RecordHTTPRequest("GET", "/api/test", 200, 100*time.Millisecond)
 	// Fallback data should not increase
 	newFallbackData := service.GetFallbackData("metrics", "http_requests")
 	// The actual fallback collection is handled by the executeWithFallback mechanism

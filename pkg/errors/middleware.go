@@ -13,35 +13,35 @@ import (
 
 // ErrorReportingMiddleware provides automatic error reporting for HTTP requests
 type ErrorReportingMiddleware struct {
-	reporter  *Reporter
-	logger    *zerolog.Logger
-	config    *MiddlewareConfig
+	reporter *Reporter
+	logger   *zerolog.Logger
+	config   *MiddlewareConfig
 }
 
 // MiddlewareConfig holds the error reporting middleware configuration
 type MiddlewareConfig struct {
 	// Reporting settings
-	ReportPanic        bool `json:"report_panic"`
-	Report5xxErrors    bool `json:"report_5xx_errors"`
-	Report4xxErrors    bool `json:"report_4xx_errors"`
+	ReportPanic            bool `json:"report_panic"`
+	Report5xxErrors        bool `json:"report_5xx_errors"`
+	Report4xxErrors        bool `json:"report_4xx_errors"`
 	ReportValidationErrors bool `json:"report_validation_errors"`
 
 	// Context extraction
-	ExtractUserID       bool     `json:"extract_user_id"`
-	ExtractRequestID    bool     `json:"extract_request_id"`
-	ExtractHeaders      []string `json:"extract_headers"`
+	ExtractUserID    bool     `json:"extract_user_id"`
+	ExtractRequestID bool     `json:"extract_request_id"`
+	ExtractHeaders   []string `json:"extract_headers"`
 
 	// Request body settings
-	IncludeRequestBody bool   `json:"include_request_body"`
-	MaxRequestBodySize int64  `json:"max_request_body_size"`
+	IncludeRequestBody bool  `json:"include_request_body"`
+	MaxRequestBodySize int64 `json:"max_request_body_size"`
 
 	// Performance settings
 	SlowRequestThreshold time.Duration `json:"slow_request_threshold"`
 	ReportSlowRequests   bool          `json:"report_slow_requests"`
 
 	// Filter settings
-	IgnorePaths         []string `json:"ignore_paths"`
-	IgnoreUserAgents     []string `json:"ignore_user_agents"`
+	IgnorePaths      []string `json:"ignore_paths"`
+	IgnoreUserAgents []string `json:"ignore_user_agents"`
 
 	// Custom data extraction
 	CustomDataExtractor func(*gin.Context) map[string]interface{} `json:"-"`
@@ -50,25 +50,25 @@ type MiddlewareConfig struct {
 // DefaultMiddlewareConfig returns a default middleware configuration
 func DefaultMiddlewareConfig() *MiddlewareConfig {
 	return &MiddlewareConfig{
-		ReportPanic:          true,
-		Report5xxErrors:      true,
-		Report4xxErrors:      false,
+		ReportPanic:            true,
+		Report5xxErrors:        true,
+		Report4xxErrors:        false,
 		ReportValidationErrors: false,
-		ExtractUserID:        true,
-		ExtractRequestID:     true,
-		ExtractHeaders:       []string{},
-		IncludeRequestBody:   false,
-		MaxRequestBodySize:   1024 * 32, // 32KB
-		SlowRequestThreshold: 5 * time.Second,
-		ReportSlowRequests:   true,
-		IgnorePaths:          []string{
+		ExtractUserID:          true,
+		ExtractRequestID:       true,
+		ExtractHeaders:         []string{},
+		IncludeRequestBody:     false,
+		MaxRequestBodySize:     1024 * 32, // 32KB
+		SlowRequestThreshold:   5 * time.Second,
+		ReportSlowRequests:     true,
+		IgnorePaths: []string{
 			"/health",
 			"/metrics",
 			"/ready",
 			"/live",
 		},
-		IgnoreUserAgents:     []string{},
-		CustomDataExtractor:  nil,
+		IgnoreUserAgents:    []string{},
+		CustomDataExtractor: nil,
 	}
 }
 
@@ -160,8 +160,8 @@ func (m *ErrorReportingMiddleware) handlePanic(c *gin.Context) {
 
 		// Respond with error
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":   "internal_server_error",
-			"message": "An internal error occurred",
+			"error":      "internal_server_error",
+			"message":    "An internal error occurred",
 			"request_id": errorContext.RequestID,
 		})
 		c.Abort()
@@ -305,7 +305,7 @@ func (m *ErrorReportingMiddleware) extractCustomData(c *gin.Context) map[string]
 
 	// Include request body if configured
 	if m.config.IncludeRequestBody && c.Request.ContentLength > 0 &&
-	   c.Request.ContentLength <= m.config.MaxRequestBodySize {
+		c.Request.ContentLength <= m.config.MaxRequestBodySize {
 
 		// Note: In a real implementation, you'd need to capture the body before
 		// it's consumed by other middleware. This is a simplified version.
@@ -419,7 +419,7 @@ func DevelopmentErrorReporting(reporter *Reporter, logger *zerolog.Logger) gin.H
 		ExtractUserID:          true,
 		ExtractRequestID:       true,
 		IncludeRequestBody:     true,
-		MaxRequestBodySize:      1024 * 64, // 64KB
+		MaxRequestBodySize:     1024 * 64, // 64KB
 		SlowRequestThreshold:   1 * time.Second,
 		ReportSlowRequests:     true,
 		IgnorePaths:            []string{"/health"},
@@ -443,7 +443,7 @@ func ProductionErrorReporting(reporter *Reporter, logger *zerolog.Logger) gin.Ha
 		SlowRequestThreshold:   5 * time.Second,
 		ReportSlowRequests:     false, // Usually handled by APM
 		IgnorePaths:            []string{"/health", "/metrics", "/ready", "/live"},
-		IgnoreUserAgents:       []string{
+		IgnoreUserAgents: []string{
 			"HealthChecker", "kube-probe", "UptimeRobot",
 		},
 	}

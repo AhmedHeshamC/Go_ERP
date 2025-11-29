@@ -48,8 +48,8 @@ func (ptc *PerformanceTestContainer) CreateTestOrderData(t *testing.T, numOrders
 	// Create test orders
 	for i := 0; i < numOrders; i++ {
 		order := &orderEntities.Order{
-			ID:     uuid.New(),
-			Status: orderEntities.OrderStatusPending,
+			ID:          uuid.New(),
+			Status:      orderEntities.OrderStatusPending,
 			TotalAmount: decimal.NewFromFloat(float64(i+1) * 100.0),
 		}
 		ptc.Orders = append(ptc.Orders, order)

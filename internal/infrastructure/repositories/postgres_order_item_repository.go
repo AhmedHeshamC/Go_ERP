@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"erpgo/internal/domain/orders/entities"
 	"erpgo/internal/domain/orders/repositories"
 	"erpgo/pkg/database"
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 )
 
 // PostgresOrderItemRepository implements OrderItemRepository for PostgreSQL

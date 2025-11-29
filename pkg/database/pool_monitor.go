@@ -17,19 +17,19 @@ type PoolMonitor struct {
 	config *PoolMonitorConfig
 
 	// Prometheus metrics
-	acquireCount          prometheus.Counter
-	acquireDuration       prometheus.Histogram
-	acquiredConns         prometheus.Gauge
-	canceledAcquireCount  prometheus.Counter
-	constructingConns     prometheus.Gauge
-	emptyAcquireCount     prometheus.Counter
-	idleConns             prometheus.Gauge
-	maxConns              prometheus.Gauge
-	totalConns            prometheus.Gauge
-	newConnsCount         prometheus.Counter
+	acquireCount            prometheus.Counter
+	acquireDuration         prometheus.Histogram
+	acquiredConns           prometheus.Gauge
+	canceledAcquireCount    prometheus.Counter
+	constructingConns       prometheus.Gauge
+	emptyAcquireCount       prometheus.Counter
+	idleConns               prometheus.Gauge
+	maxConns                prometheus.Gauge
+	totalConns              prometheus.Gauge
+	newConnsCount           prometheus.Counter
 	maxLifetimeDestroyCount prometheus.Counter
-	maxIdleDestroyCount   prometheus.Counter
-	poolUtilization       prometheus.Gauge
+	maxIdleDestroyCount     prometheus.Counter
+	poolUtilization         prometheus.Gauge
 }
 
 // PoolMonitorConfig holds configuration for pool monitoring

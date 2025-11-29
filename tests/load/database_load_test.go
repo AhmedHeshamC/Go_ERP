@@ -19,67 +19,67 @@ import (
 
 // DatabaseLoadTestSuite contains database performance tests
 type DatabaseLoadTestSuite struct {
-	dbPool      *pgxpool.Pool
-	config      DatabaseLoadTestConfig
-	results     *DatabaseLoadTestResult
-	wg          sync.WaitGroup
-	ctx         context.Context
-	cancel      context.CancelFunc
+	dbPool  *pgxpool.Pool
+	config  DatabaseLoadTestConfig
+	results *DatabaseLoadTestResult
+	wg      sync.WaitGroup
+	ctx     context.Context
+	cancel  context.CancelFunc
 }
 
 // DatabaseLoadTestConfig defines configuration for database load tests
 type DatabaseLoadTestConfig struct {
-	Name               string
-	DatabaseURL        string
-	ConcurrentConnections int
+	Name                    string
+	DatabaseURL             string
+	ConcurrentConnections   int
 	OperationsPerConnection int
-	TestDuration       time.Duration
-	OperationTypes     []string // "select", "insert", "update", "delete", "join", "aggregate"
-	Tables             []string // "users", "products", "orders", "order_items"
-	TargetThroughput   int64    // Operations per second
-	MaxLatency         time.Duration
-	MaxCPUUsage        float64   // Percentage
-	MaxMemoryUsage     int64     // MB
+	TestDuration            time.Duration
+	OperationTypes          []string // "select", "insert", "update", "delete", "join", "aggregate"
+	Tables                  []string // "users", "products", "orders", "order_items"
+	TargetThroughput        int64    // Operations per second
+	MaxLatency              time.Duration
+	MaxCPUUsage             float64 // Percentage
+	MaxMemoryUsage          int64   // MB
 }
 
 // DatabaseLoadTestResult contains results from database load tests
 type DatabaseLoadTestResult struct {
-	TestName              string
-	StartTime             time.Time
-	EndTime               time.Time
-	Duration              time.Duration
-	TotalOperations       int64
-	SuccessfulOperations  int64
-	FailedOperations      int64
-	Throughput            float64 // Operations per second
-	AverageLatency        time.Duration
-	P50Latency            time.Duration
-	P95Latency            time.Duration
-	P99Latency            time.Duration
-	ErrorRate             float64
-	CPUUsage              float64
-	MemoryUsageMB         int64
-	ConnectionPoolStats   map[string]int64
-	SlowQueries           []SlowQuery
-	Errors                []DatabaseError
+	TestName             string
+	StartTime            time.Time
+	EndTime              time.Time
+	Duration             time.Duration
+	TotalOperations      int64
+	SuccessfulOperations int64
+	FailedOperations     int64
+	Throughput           float64 // Operations per second
+	AverageLatency       time.Duration
+	P50Latency           time.Duration
+	P95Latency           time.Duration
+	P99Latency           time.Duration
+	ErrorRate            float64
+	CPUUsage             float64
+	MemoryUsageMB        int64
+	ConnectionPoolStats  map[string]int64
+	SlowQueries          []SlowQuery
+	Errors               []DatabaseError
 }
 
 // SlowQuery represents a slow query execution
 type SlowQuery struct {
-	Query       string
-	Duration    time.Duration
-	Timestamp   time.Time
-	Parameters  map[string]interface{}
-	Error       string
+	Query      string
+	Duration   time.Duration
+	Timestamp  time.Time
+	Parameters map[string]interface{}
+	Error      string
 }
 
 // DatabaseError represents a database operation error
 type DatabaseError struct {
-	Operation   string
-	Query       string
-	Error       string
-	Timestamp   time.Time
-	Duration    time.Duration
+	Operation string
+	Query     string
+	Error     string
+	Timestamp time.Time
+	Duration  time.Duration
 }
 
 // DatabaseOperation represents a database operation
@@ -108,10 +108,10 @@ func NewDatabaseLoadTestSuite(config DatabaseLoadTestConfig) (*DatabaseLoadTestS
 	}
 
 	return &DatabaseLoadTestSuite{
-		dbPool:  pool,
-		config:  config,
-		ctx:     ctx,
-		cancel:  cancel,
+		dbPool: pool,
+		config: config,
+		ctx:    ctx,
+		cancel: cancel,
 		results: &DatabaseLoadTestResult{
 			TestName:            config.Name,
 			ConnectionPoolStats: make(map[string]int64),
@@ -259,9 +259,9 @@ func (d *DatabaseLoadTestSuite) generateSelectOperation(table string) DatabaseOp
 		}
 	default:
 		return DatabaseOperation{
-			Type:  "select",
-			Table: table,
-			Query: fmt.Sprintf("SELECT * FROM %s LIMIT %d", table, rand.Intn(100)+1),
+			Type:       "select",
+			Table:      table,
+			Query:      fmt.Sprintf("SELECT * FROM %s LIMIT %d", table, rand.Intn(100)+1),
 			Parameters: map[string]interface{}{},
 		}
 	}
@@ -309,15 +309,15 @@ func (d *DatabaseLoadTestSuite) generateInsertOperation(table string) DatabaseOp
 			Table: "orders",
 			Query: "INSERT INTO orders (id, order_number, customer_id, status, subtotal, tax_amount, total_amount, currency, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
 			Parameters: map[string]interface{}{
-				"1":  uuid.New(),
-				"2":  fmt.Sprintf("ORD-%d", rand.Intn(100000)),
-				"3":  uuid.New(),
-				"4":  "pending",
-				"5":  decimal.NewFromFloat(float64(rand.Intn(500)+50) + 0.99),
-				"6":  decimal.NewFromFloat(float64(rand.Intn(50)+5) + 0.99),
-				"7":  decimal.NewFromFloat(float64(rand.Intn(600)+60) + 0.99),
-				"8":  "USD",
-				"9":  time.Now(),
+				"1": uuid.New(),
+				"2": fmt.Sprintf("ORD-%d", rand.Intn(100000)),
+				"3": uuid.New(),
+				"4": "pending",
+				"5": decimal.NewFromFloat(float64(rand.Intn(500)+50) + 0.99),
+				"6": decimal.NewFromFloat(float64(rand.Intn(50)+5) + 0.99),
+				"7": decimal.NewFromFloat(float64(rand.Intn(600)+60) + 0.99),
+				"8": "USD",
+				"9": time.Now(),
 			},
 		}
 	default:
@@ -472,9 +472,9 @@ func (d *DatabaseLoadTestSuite) generateAggregateOperation(table string) Databas
 		}
 	default:
 		return DatabaseOperation{
-			Type:  "aggregate",
-			Table: table,
-			Query: fmt.Sprintf("SELECT COUNT(*) as total_records FROM %s", table),
+			Type:       "aggregate",
+			Table:      table,
+			Query:      fmt.Sprintf("SELECT COUNT(*) as total_records FROM %s", table),
 			Parameters: map[string]interface{}{},
 		}
 	}
@@ -693,46 +693,46 @@ func TestDatabaseLoadTestSuite(t *testing.T) {
 		{
 			name: "SelectHeavyWorkload",
 			config: DatabaseLoadTestConfig{
-				Name:                  "Select-Heavy Workload Test",
-				DatabaseURL:           databaseURL,
-				ConcurrentConnections: 20,
+				Name:                    "Select-Heavy Workload Test",
+				DatabaseURL:             databaseURL,
+				ConcurrentConnections:   20,
 				OperationsPerConnection: 500,
-				OperationTypes:        []string{"select", "join", "aggregate"},
-				Tables:                []string{"users", "products", "orders"},
-				TargetThroughput:      5000,
-				MaxLatency:            100 * time.Millisecond,
-				MaxCPUUsage:           70.0,
-				MaxMemoryUsage:        1024, // 1GB
+				OperationTypes:          []string{"select", "join", "aggregate"},
+				Tables:                  []string{"users", "products", "orders"},
+				TargetThroughput:        5000,
+				MaxLatency:              100 * time.Millisecond,
+				MaxCPUUsage:             70.0,
+				MaxMemoryUsage:          1024, // 1GB
 			},
 		},
 		{
 			name: "MixedWorkload",
 			config: DatabaseLoadTestConfig{
-				Name:                  "Mixed Database Workload Test",
-				DatabaseURL:           databaseURL,
-				ConcurrentConnections: 15,
+				Name:                    "Mixed Database Workload Test",
+				DatabaseURL:             databaseURL,
+				ConcurrentConnections:   15,
 				OperationsPerConnection: 300,
-				OperationTypes:        []string{"select", "insert", "update", "join"},
-				Tables:                []string{"users", "products", "orders", "order_items"},
-				TargetThroughput:      3000,
-				MaxLatency:            200 * time.Millisecond,
-				MaxCPUUsage:           80.0,
-				MaxMemoryUsage:        1536, // 1.5GB
+				OperationTypes:          []string{"select", "insert", "update", "join"},
+				Tables:                  []string{"users", "products", "orders", "order_items"},
+				TargetThroughput:        3000,
+				MaxLatency:              200 * time.Millisecond,
+				MaxCPUUsage:             80.0,
+				MaxMemoryUsage:          1536, // 1.5GB
 			},
 		},
 		{
 			name: "WriteHeavyWorkload",
 			config: DatabaseLoadTestConfig{
-				Name:                  "Write-Heavy Workload Test",
-				DatabaseURL:           databaseURL,
-				ConcurrentConnections: 10,
+				Name:                    "Write-Heavy Workload Test",
+				DatabaseURL:             databaseURL,
+				ConcurrentConnections:   10,
 				OperationsPerConnection: 200,
-				OperationTypes:        []string{"insert", "update"},
-				Tables:                []string{"products", "orders"},
-				TargetThroughput:      1500,
-				MaxLatency:            300 * time.Millisecond,
-				MaxCPUUsage:           85.0,
-				MaxMemoryUsage:        2048, // 2GB
+				OperationTypes:          []string{"insert", "update"},
+				Tables:                  []string{"products", "orders"},
+				TargetThroughput:        1500,
+				MaxLatency:              300 * time.Millisecond,
+				MaxCPUUsage:             85.0,
+				MaxMemoryUsage:          2048, // 2GB
 			},
 		},
 	}

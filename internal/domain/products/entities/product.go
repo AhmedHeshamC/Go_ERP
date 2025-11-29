@@ -7,44 +7,44 @@ import (
 	"strings"
 	"time"
 
+	apperrors "erpgo/pkg/errors"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
-	apperrors "erpgo/pkg/errors"
 )
 
 // Product represents a product in the system
 type Product struct {
-	ID              uuid.UUID       `json:"id" db:"id"`
-	SKU             string          `json:"sku" db:"sku"`
-	Name            string          `json:"name" db:"name"`
-	Description     string          `json:"description" db:"description"`
-	ShortDescription string         `json:"short_description" db:"short_description"`
-	CategoryID      uuid.UUID       `json:"category_id" db:"category_id"`
-	Price           decimal.Decimal `json:"price" db:"price"`
-	Cost            decimal.Decimal `json:"cost" db:"cost"`
-	Weight          float64         `json:"weight" db:"weight"`
-	Dimensions      string          `json:"dimensions" db:"dimensions"`
-	Length          float64         `json:"length" db:"length"`
-	Width           float64         `json:"width" db:"width"`
-	Height          float64         `json:"height" db:"height"`
-	Volume          float64         `json:"volume" db:"volume"`
-	Barcode         string          `json:"barcode" db:"barcode"`
-	TrackInventory  bool            `json:"track_inventory" db:"track_inventory"`
-	StockQuantity   int             `json:"stock_quantity" db:"stock_quantity"`
-	MinStockLevel   int             `json:"min_stock_level" db:"min_stock_level"`
-	MaxStockLevel   int             `json:"max_stock_level" db:"max_stock_level"`
-	AllowBackorder  bool            `json:"allow_backorder" db:"allow_backorder"`
-	RequiresShipping bool           `json:"requires_shipping" db:"requires_shipping"`
-	Taxable         bool            `json:"taxable" db:"taxable"`
-	TaxRate         decimal.Decimal `json:"tax_rate" db:"tax_rate"`
-	IsActive        bool            `json:"is_active" db:"is_active"`
-	IsFeatured      bool            `json:"is_featured" db:"is_featured"`
-	IsDigital       bool            `json:"is_digital" db:"is_digital"`
-	DownloadURL     string          `json:"download_url" db:"download_url"`
-	MaxDownloads    int             `json:"max_downloads" db:"max_downloads"`
-	ExpiryDays      int             `json:"expiry_days" db:"expiry_days"`
-	CreatedAt       time.Time       `json:"created_at" db:"created_at"`
-	UpdatedAt       time.Time       `json:"updated_at" db:"updated_at"`
+	ID               uuid.UUID       `json:"id" db:"id"`
+	SKU              string          `json:"sku" db:"sku"`
+	Name             string          `json:"name" db:"name"`
+	Description      string          `json:"description" db:"description"`
+	ShortDescription string          `json:"short_description" db:"short_description"`
+	CategoryID       uuid.UUID       `json:"category_id" db:"category_id"`
+	Price            decimal.Decimal `json:"price" db:"price"`
+	Cost             decimal.Decimal `json:"cost" db:"cost"`
+	Weight           float64         `json:"weight" db:"weight"`
+	Dimensions       string          `json:"dimensions" db:"dimensions"`
+	Length           float64         `json:"length" db:"length"`
+	Width            float64         `json:"width" db:"width"`
+	Height           float64         `json:"height" db:"height"`
+	Volume           float64         `json:"volume" db:"volume"`
+	Barcode          string          `json:"barcode" db:"barcode"`
+	TrackInventory   bool            `json:"track_inventory" db:"track_inventory"`
+	StockQuantity    int             `json:"stock_quantity" db:"stock_quantity"`
+	MinStockLevel    int             `json:"min_stock_level" db:"min_stock_level"`
+	MaxStockLevel    int             `json:"max_stock_level" db:"max_stock_level"`
+	AllowBackorder   bool            `json:"allow_backorder" db:"allow_backorder"`
+	RequiresShipping bool            `json:"requires_shipping" db:"requires_shipping"`
+	Taxable          bool            `json:"taxable" db:"taxable"`
+	TaxRate          decimal.Decimal `json:"tax_rate" db:"tax_rate"`
+	IsActive         bool            `json:"is_active" db:"is_active"`
+	IsFeatured       bool            `json:"is_featured" db:"is_featured"`
+	IsDigital        bool            `json:"is_digital" db:"is_digital"`
+	DownloadURL      string          `json:"download_url" db:"download_url"`
+	MaxDownloads     int             `json:"max_downloads" db:"max_downloads"`
+	ExpiryDays       int             `json:"expiry_days" db:"expiry_days"`
+	CreatedAt        time.Time       `json:"created_at" db:"created_at"`
+	UpdatedAt        time.Time       `json:"updated_at" db:"updated_at"`
 }
 
 // Validate validates the product entity
@@ -534,8 +534,8 @@ func (p *Product) UpdateCategory(categoryID uuid.UUID) error {
 func (p *Product) UpdateDetails(name, description, shortDescription string) error {
 	// Create temporary product for validation
 	tempP := &Product{
-		Name:            name,
-		Description:     description,
+		Name:             name,
+		Description:      description,
 		ShortDescription: shortDescription,
 	}
 
@@ -557,26 +557,26 @@ func (p *Product) UpdateDetails(name, description, shortDescription string) erro
 // ToSafeProduct returns a product object without sensitive information
 func (p *Product) ToSafeProduct() *Product {
 	return &Product{
-		ID:                p.ID,
-		SKU:               p.SKU,
-		Name:              p.Name,
-		Description:       p.Description,
-		ShortDescription:  p.ShortDescription,
-		CategoryID:        p.CategoryID,
-		Price:             p.Price,
-		Weight:            p.Weight,
-		Dimensions:        p.Dimensions,
-		TrackInventory:    p.TrackInventory,
-		StockQuantity:     p.StockQuantity,
-		AllowBackorder:    p.AllowBackorder,
-		RequiresShipping:  p.RequiresShipping,
-		Taxable:           p.Taxable,
-		TaxRate:           p.TaxRate,
-		IsActive:          p.IsActive,
-		IsFeatured:        p.IsFeatured,
-		IsDigital:         p.IsDigital,
-		CreatedAt:         p.CreatedAt,
-		UpdatedAt:         p.UpdatedAt,
+		ID:               p.ID,
+		SKU:              p.SKU,
+		Name:             p.Name,
+		Description:      p.Description,
+		ShortDescription: p.ShortDescription,
+		CategoryID:       p.CategoryID,
+		Price:            p.Price,
+		Weight:           p.Weight,
+		Dimensions:       p.Dimensions,
+		TrackInventory:   p.TrackInventory,
+		StockQuantity:    p.StockQuantity,
+		AllowBackorder:   p.AllowBackorder,
+		RequiresShipping: p.RequiresShipping,
+		Taxable:          p.Taxable,
+		TaxRate:          p.TaxRate,
+		IsActive:         p.IsActive,
+		IsFeatured:       p.IsFeatured,
+		IsDigital:        p.IsDigital,
+		CreatedAt:        p.CreatedAt,
+		UpdatedAt:        p.UpdatedAt,
 	}
 }
 
@@ -584,41 +584,41 @@ func (p *Product) ToSafeProduct() *Product {
 
 // Warehouse represents a storage location
 type Warehouse struct {
-	ID          uuid.UUID `json:"id" db:"id"`
-	Name        string    `json:"name" db:"name"`
-	Code        string    `json:"code" db:"code"`
-	Address     string    `json:"address" db:"address"`
-	City        string    `json:"city" db:"city"`
-	State       string    `json:"state" db:"state"`
-	Country     string    `json:"country" db:"country"`
-	PostalCode  string    `json:"postal_code" db:"postal_code"`
-	IsActive    bool      `json:"is_active" db:"is_active"`
-	CreatedAt   time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at" db:"updated_at"`
+	ID         uuid.UUID `json:"id" db:"id"`
+	Name       string    `json:"name" db:"name"`
+	Code       string    `json:"code" db:"code"`
+	Address    string    `json:"address" db:"address"`
+	City       string    `json:"city" db:"city"`
+	State      string    `json:"state" db:"state"`
+	Country    string    `json:"country" db:"country"`
+	PostalCode string    `json:"postal_code" db:"postal_code"`
+	IsActive   bool      `json:"is_active" db:"is_active"`
+	CreatedAt  time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at" db:"updated_at"`
 }
 
 // Inventory represents inventory levels for a product in a warehouse
 type Inventory struct {
-	ID                uuid.UUID  `json:"id" db:"id"`
-	ProductID         uuid.UUID  `json:"product_id" db:"product_id"`
-	WarehouseID       uuid.UUID  `json:"warehouse_id" db:"warehouse_id"`
-	QuantityAvailable int        `json:"quantity_available" db:"quantity_available"`
-	QuantityReserved  int        `json:"quantity_reserved" db:"quantity_reserved"`
-	ReorderLevel      int        `json:"reorder_level" db:"reorder_level"`
-	MaxStock          *int       `json:"max_stock,omitempty" db:"max_stock"`
-	LastUpdatedAt     time.Time  `json:"last_updated_at" db:"last_updated_at"`
-	UpdatedBy         uuid.UUID  `json:"updated_by" db:"updated_by"`
+	ID                uuid.UUID `json:"id" db:"id"`
+	ProductID         uuid.UUID `json:"product_id" db:"product_id"`
+	WarehouseID       uuid.UUID `json:"warehouse_id" db:"warehouse_id"`
+	QuantityAvailable int       `json:"quantity_available" db:"quantity_available"`
+	QuantityReserved  int       `json:"quantity_reserved" db:"quantity_reserved"`
+	ReorderLevel      int       `json:"reorder_level" db:"reorder_level"`
+	MaxStock          *int      `json:"max_stock,omitempty" db:"max_stock"`
+	LastUpdatedAt     time.Time `json:"last_updated_at" db:"last_updated_at"`
+	UpdatedBy         uuid.UUID `json:"updated_by" db:"updated_by"`
 }
 
 // InventoryTransaction represents a movement of inventory
 type InventoryTransaction struct {
-	ID            uuid.UUID  `json:"id" db:"id"`
-	ProductID     uuid.UUID  `json:"product_id" db:"product_id"`
-	WarehouseID   uuid.UUID  `json:"warehouse_id" db:"warehouse_id"`
-	TransactionType string   `json:"transaction_type" db:"transaction_type"` // 'IN', 'OUT', 'ADJUST', 'TRANSFER'
-	Quantity      int        `json:"quantity" db:"quantity"`
-	ReferenceID   *uuid.UUID `json:"reference_id,omitempty" db:"reference_id"`
-	Reason        string     `json:"reason,omitempty" db:"reason"`
-	CreatedAt     time.Time  `json:"created_at" db:"created_at"`
-	CreatedBy     uuid.UUID  `json:"created_by" db:"created_by"`
+	ID              uuid.UUID  `json:"id" db:"id"`
+	ProductID       uuid.UUID  `json:"product_id" db:"product_id"`
+	WarehouseID     uuid.UUID  `json:"warehouse_id" db:"warehouse_id"`
+	TransactionType string     `json:"transaction_type" db:"transaction_type"` // 'IN', 'OUT', 'ADJUST', 'TRANSFER'
+	Quantity        int        `json:"quantity" db:"quantity"`
+	ReferenceID     *uuid.UUID `json:"reference_id,omitempty" db:"reference_id"`
+	Reason          string     `json:"reason,omitempty" db:"reason"`
+	CreatedAt       time.Time  `json:"created_at" db:"created_at"`
+	CreatedBy       uuid.UUID  `json:"created_by" db:"created_by"`
 }

@@ -14,41 +14,41 @@ import (
 type TransactionType string
 
 const (
-	TransactionTypePurchase     TransactionType = "PURCHASE"     // Stock in from purchase
-	TransactionTypeSale         TransactionType = "SALE"         // Stock out from sale
-	TransactionTypeAdjustment   TransactionType = "ADJUSTMENT"   // Manual adjustment
-	TransactionTypeTransferIn   TransactionType = "TRANSFER_IN"  // Transfer in from another warehouse
-	TransactionTypeTransferOut  TransactionType = "TRANSFER_OUT" // Transfer out to another warehouse
-	TransactionTypeReturn       TransactionType = "RETURN"       // Customer return
-	TransactionTypeDamage       TransactionType = "DAMAGE"       // Damaged goods
-	TransactionTypeTheft        TransactionType = "THEFT"        // Stolen goods
-	TransactionTypeExpiry       TransactionType = "EXPIRY"       // Expired goods
-	TransactionTypeProduction   TransactionType = "PRODUCTION"   // Production output
-	TransactionTypeConsumption  TransactionType = "CONSUMPTION"  // Used in production
-	TransactionTypeCount        TransactionType = "COUNT"        // Cycle count adjustment
+	TransactionTypePurchase    TransactionType = "PURCHASE"     // Stock in from purchase
+	TransactionTypeSale        TransactionType = "SALE"         // Stock out from sale
+	TransactionTypeAdjustment  TransactionType = "ADJUSTMENT"   // Manual adjustment
+	TransactionTypeTransferIn  TransactionType = "TRANSFER_IN"  // Transfer in from another warehouse
+	TransactionTypeTransferOut TransactionType = "TRANSFER_OUT" // Transfer out to another warehouse
+	TransactionTypeReturn      TransactionType = "RETURN"       // Customer return
+	TransactionTypeDamage      TransactionType = "DAMAGE"       // Damaged goods
+	TransactionTypeTheft       TransactionType = "THEFT"        // Stolen goods
+	TransactionTypeExpiry      TransactionType = "EXPIRY"       // Expired goods
+	TransactionTypeProduction  TransactionType = "PRODUCTION"   // Production output
+	TransactionTypeConsumption TransactionType = "CONSUMPTION"  // Used in production
+	TransactionTypeCount       TransactionType = "COUNT"        // Cycle count adjustment
 )
 
 // InventoryTransaction represents a movement of inventory
 type InventoryTransaction struct {
-	ID              uuid.UUID      `json:"id" db:"id"`
-	ProductID       uuid.UUID      `json:"product_id" db:"product_id"`
-	WarehouseID     uuid.UUID      `json:"warehouse_id" db:"warehouse_id"`
+	ID              uuid.UUID       `json:"id" db:"id"`
+	ProductID       uuid.UUID       `json:"product_id" db:"product_id"`
+	WarehouseID     uuid.UUID       `json:"warehouse_id" db:"warehouse_id"`
 	TransactionType TransactionType `json:"transaction_type" db:"transaction_type"`
-	Quantity        int            `json:"quantity" db:"quantity"`
-	ReferenceType   string         `json:"reference_type,omitempty" db:"reference_type"`
-	ReferenceID     *uuid.UUID     `json:"reference_id,omitempty" db:"reference_id"`
-	Reason          string         `json:"reason,omitempty" db:"reason"`
-	UnitCost        float64        `json:"unit_cost,omitempty" db:"unit_cost"`
-	TotalCost       float64        `json:"total_cost,omitempty" db:"total_cost"`
-	BatchNumber     string         `json:"batch_number,omitempty" db:"batch_number"`
-	ExpiryDate      *time.Time     `json:"expiry_date,omitempty" db:"expiry_date"`
-	SerialNumber    string         `json:"serial_number,omitempty" db:"serial_number"`
-	FromWarehouseID *uuid.UUID     `json:"from_warehouse_id,omitempty" db:"from_warehouse_id"`
-	ToWarehouseID   *uuid.UUID     `json:"to_warehouse_id,omitempty" db:"to_warehouse_id"`
-	CreatedAt       time.Time      `json:"created_at" db:"created_at"`
-	CreatedBy       uuid.UUID      `json:"created_by" db:"created_by"`
-	ApprovedAt      *time.Time     `json:"approved_at,omitempty" db:"approved_at"`
-	ApprovedBy      *uuid.UUID     `json:"approved_by,omitempty" db:"approved_by"`
+	Quantity        int             `json:"quantity" db:"quantity"`
+	ReferenceType   string          `json:"reference_type,omitempty" db:"reference_type"`
+	ReferenceID     *uuid.UUID      `json:"reference_id,omitempty" db:"reference_id"`
+	Reason          string          `json:"reason,omitempty" db:"reason"`
+	UnitCost        float64         `json:"unit_cost,omitempty" db:"unit_cost"`
+	TotalCost       float64         `json:"total_cost,omitempty" db:"total_cost"`
+	BatchNumber     string          `json:"batch_number,omitempty" db:"batch_number"`
+	ExpiryDate      *time.Time      `json:"expiry_date,omitempty" db:"expiry_date"`
+	SerialNumber    string          `json:"serial_number,omitempty" db:"serial_number"`
+	FromWarehouseID *uuid.UUID      `json:"from_warehouse_id,omitempty" db:"from_warehouse_id"`
+	ToWarehouseID   *uuid.UUID      `json:"to_warehouse_id,omitempty" db:"to_warehouse_id"`
+	CreatedAt       time.Time       `json:"created_at" db:"created_at"`
+	CreatedBy       uuid.UUID       `json:"created_by" db:"created_by"`
+	ApprovedAt      *time.Time      `json:"approved_at,omitempty" db:"approved_at"`
+	ApprovedBy      *uuid.UUID      `json:"approved_by,omitempty" db:"approved_by"`
 }
 
 // Validate validates the inventory transaction entity
@@ -151,12 +151,12 @@ func (t *InventoryTransaction) validateQuantity() error {
 	// Validate quantity sign based on transaction type
 	switch t.TransactionType {
 	case TransactionTypePurchase, TransactionTypeTransferIn, TransactionTypeReturn,
-		 TransactionTypeProduction, TransactionTypeCount:
+		TransactionTypeProduction, TransactionTypeCount:
 		if t.Quantity <= 0 {
 			return fmt.Errorf("transaction type %s requires positive quantity", t.TransactionType)
 		}
 	case TransactionTypeSale, TransactionTypeTransferOut, TransactionTypeDamage,
-		 TransactionTypeTheft, TransactionTypeExpiry, TransactionTypeConsumption:
+		TransactionTypeTheft, TransactionTypeExpiry, TransactionTypeConsumption:
 		if t.Quantity >= 0 {
 			return fmt.Errorf("transaction type %s requires negative quantity", t.TransactionType)
 		}
@@ -575,19 +575,19 @@ func (t *InventoryTransaction) ToSafeTransaction() *InventoryTransaction {
 
 // InventoryTransactionFilter represents filters for querying inventory transactions
 type InventoryTransactionFilter struct {
-	ProductID       *uuid.UUID     `json:"product_id,omitempty"`
-	WarehouseID     *uuid.UUID     `json:"warehouse_id,omitempty"`
+	ProductID       *uuid.UUID       `json:"product_id,omitempty"`
+	WarehouseID     *uuid.UUID       `json:"warehouse_id,omitempty"`
 	TransactionType *TransactionType `json:"transaction_type,omitempty"`
-	ReferenceType   *string        `json:"reference_type,omitempty"`
-	ReferenceID     *uuid.UUID     `json:"reference_id,omitempty"`
-	BatchNumber     *string        `json:"batch_number,omitempty"`
-	SerialNumber    *string        `json:"serial_number,omitempty"`
-	FromDate        *time.Time     `json:"from_date,omitempty"`
-	ToDate          *time.Time     `json:"to_date,omitempty"`
-	CreatedBy       *uuid.UUID     `json:"created_by,omitempty"`
-	ApprovedBy      *uuid.UUID     `json:"approved_by,omitempty"`
-	Limit           *int           `json:"limit,omitempty"`
-	Offset          *int           `json:"offset,omitempty"`
+	ReferenceType   *string          `json:"reference_type,omitempty"`
+	ReferenceID     *uuid.UUID       `json:"reference_id,omitempty"`
+	BatchNumber     *string          `json:"batch_number,omitempty"`
+	SerialNumber    *string          `json:"serial_number,omitempty"`
+	FromDate        *time.Time       `json:"from_date,omitempty"`
+	ToDate          *time.Time       `json:"to_date,omitempty"`
+	CreatedBy       *uuid.UUID       `json:"created_by,omitempty"`
+	ApprovedBy      *uuid.UUID       `json:"approved_by,omitempty"`
+	Limit           *int             `json:"limit,omitempty"`
+	Offset          *int             `json:"offset,omitempty"`
 }
 
 // Validate validates the transaction filter
@@ -613,12 +613,12 @@ func (f *InventoryTransactionFilter) Validate() error {
 
 // InventoryTransactionSummary represents a summary of inventory transactions
 type InventoryTransactionSummary struct {
-	TotalTransactions    int     `json:"total_transactions"`
-	TotalQuantityIn      int     `json:"total_quantity_in"`
-	TotalQuantityOut     int     `json:"total_quantity_out"`
-	NetQuantity          int     `json:"net_quantity"`
-	TotalValue          float64 `json:"total_value"`
-	AverageCost         float64 `json:"average_cost"`
+	TotalTransactions     int        `json:"total_transactions"`
+	TotalQuantityIn       int        `json:"total_quantity_in"`
+	TotalQuantityOut      int        `json:"total_quantity_out"`
+	NetQuantity           int        `json:"net_quantity"`
+	TotalValue            float64    `json:"total_value"`
+	AverageCost           float64    `json:"average_cost"`
 	MostRecentTransaction *time.Time `json:"most_recent_transaction,omitempty"`
 }
 

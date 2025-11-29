@@ -108,13 +108,13 @@ func (suite *MonitoringIntegrationTestSuite) monitoringAlerts(c *gin.Context) {
 	// Mock alert data
 	alerts := []map[string]interface{}{
 		{
-			"id":          "alert-1",
-			"name":        "High CPU Usage",
-			"level":       "warning",
-			"status":      "active",
-			"message":     "CPU usage is above 80%",
-			"created_at":  time.Now().Add(-time.Hour),
-			"updated_at":  time.Now().Add(-time.Minute),
+			"id":         "alert-1",
+			"name":       "High CPU Usage",
+			"level":      "warning",
+			"status":     "active",
+			"message":    "CPU usage is above 80%",
+			"created_at": time.Now().Add(-time.Hour),
+			"updated_at": time.Now().Add(-time.Minute),
 		},
 		{
 			"id":          "alert-2",
@@ -205,10 +205,10 @@ func (suite *MonitoringIntegrationTestSuite) createDashboard(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	var req struct {
-		Name        string                 `json:"name" binding:"required"`
-		Description string                 `json:"description"`
+		Name        string                   `json:"name" binding:"required"`
+		Description string                   `json:"description"`
 		Panels      []map[string]interface{} `json:"panels"`
-		Tags        map[string]interface{} `json:"tags"`
+		Tags        map[string]interface{}   `json:"tags"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {

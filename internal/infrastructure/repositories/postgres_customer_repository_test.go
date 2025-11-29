@@ -1,11 +1,12 @@
 package repositories
 
 import (
-	"context"
+	"fmt"
 	"testing"
+	"time"
 
-	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
@@ -40,7 +41,7 @@ func (suite *CustomerRepositoryTestSuite) TestCreateCustomer() {
 	ctx := testutil.CreateTestContext()
 	customer := testutil.CreateTestCustomer(suite.T())
 
-	err := suite.repo.Create(ctx, customer)
+	_, err := suite.repo.Create(ctx, customer)
 	require.NoError(suite.T(), err)
 
 	// Verify the customer was created
@@ -55,7 +56,7 @@ func (suite *CustomerRepositoryTestSuite) TestGetByID() {
 	customer := testutil.CreateTestCustomer(suite.T())
 
 	// Create the customer first
-	err := suite.repo.Create(ctx, customer)
+	_, err := suite.repo.Create(ctx, customer)
 	require.NoError(suite.T(), err)
 
 	// Retrieve the customer
@@ -70,7 +71,7 @@ func (suite *CustomerRepositoryTestSuite) TestGetByCustomerCode() {
 	customer := testutil.CreateTestCustomer(suite.T())
 
 	// Create the customer first
-	err := suite.repo.Create(ctx, customer)
+	_, err := suite.repo.Create(ctx, customer)
 	require.NoError(suite.T(), err)
 
 	// Retrieve the customer by code
@@ -85,16 +86,17 @@ func (suite *CustomerRepositoryTestSuite) TestUpdateCustomer() {
 	customer := testutil.CreateTestCustomer(suite.T())
 
 	// Create the customer first
-	err := suite.repo.Create(ctx, customer)
+	_, err := suite.repo.Create(ctx, customer)
 	require.NoError(suite.T(), err)
 
 	// Update the customer
 	customer.FirstName = "Jane"
 	customer.LastName = "Smith"
-	customer.Notes = testutil.StringPtr("Updated customer notes")
-	customer.UpdatedAt = testutil.CreateTestContext().Value("now").(time.Time)
+	notes := "Updated customer notes"
+	customer.Notes = &notes
+	customer.UpdatedAt = time.Now()
 
-	err = suite.repo.Update(ctx, customer)
+	_, err = suite.repo.Update(ctx, customer)
 	require.NoError(suite.T(), err)
 
 	// Verify the update
@@ -111,7 +113,7 @@ func (suite *CustomerRepositoryTestSuite) TestDeleteCustomer() {
 	customer := testutil.CreateTestCustomer(suite.T())
 
 	// Create the customer first
-	err := suite.repo.Create(ctx, customer)
+	_, err := suite.repo.Create(ctx, customer)
 	require.NoError(suite.T(), err)
 
 	// Delete the customer
@@ -138,7 +140,7 @@ func (suite *CustomerRepositoryTestSuite) TestListCustomers() {
 			customers[i].Type = "BUSINESS"
 		}
 		customers[i].Email = fmt.Sprintf("customer%d@example.com", i)
-		err := suite.repo.Create(ctx, customers[i])
+		_, err := suite.repo.Create(ctx, customers[i])
 		require.NoError(suite.T(), err)
 	}
 
@@ -166,7 +168,7 @@ func (suite *CustomerRepositoryTestSuite) TestCountCustomers() {
 		customer := testutil.CreateTestCustomer(suite.T())
 		customer.Type = "INDIVIDUAL"
 		customer.Email = fmt.Sprintf("count%d@example.com", i)
-		err := suite.repo.Create(ctx, customer)
+		_, err := suite.repo.Create(ctx, customer)
 		require.NoError(suite.T(), err)
 	}
 
@@ -190,14 +192,15 @@ func (suite *CustomerRepositoryTestSuite) TestSearchCustomers() {
 	// Create test customers with specific data
 	customer1 := testutil.CreateTestCustomer(suite.T())
 	customer1.FirstName = "Searchable"
-	customer1.CompanyName = testutil.StringPtr("Search Company")
-	err := suite.repo.Create(ctx, customer1)
+	companyName := "Search Company"
+	customer1.CompanyName = &companyName
+	_, err := suite.repo.Create(ctx, customer1)
 	require.NoError(suite.T(), err)
 
 	customer2 := testutil.CreateTestCustomer(suite.T())
 	customer2.LastName = "Findable"
 	customer2.Email = "findable@example.com"
-	err = suite.repo.Create(ctx, customer2)
+	_, err = suite.repo.Create(ctx, customer2)
 	require.NoError(suite.T(), err)
 
 	// Search for customers
@@ -222,7 +225,7 @@ func (suite *CustomerRepositoryTestSuite) TestExistsByEmail() {
 	customer := testutil.CreateTestCustomer(suite.T())
 
 	// Create the customer first
-	err := suite.repo.Create(ctx, customer)
+	_, err := suite.repo.Create(ctx, customer)
 	require.NoError(suite.T(), err)
 
 	// Test existing customer
@@ -242,7 +245,7 @@ func (suite *CustomerRepositoryTestSuite) TestExistsByCustomerCode() {
 	customer := testutil.CreateTestCustomer(suite.T())
 
 	// Create the customer first
-	err := suite.repo.Create(ctx, customer)
+	_, err := suite.repo.Create(ctx, customer)
 	require.NoError(suite.T(), err)
 
 	// Test existing customer
@@ -265,7 +268,7 @@ func (suite *CustomerRepositoryTestSuite) TestGetActiveCustomers() {
 		customer := testutil.CreateTestCustomer(suite.T())
 		customer.IsActive = true
 		customer.Email = fmt.Sprintf("active%d@example.com", i)
-		err := suite.repo.Create(ctx, customer)
+		_, err := suite.repo.Create(ctx, customer)
 		require.NoError(suite.T(), err)
 	}
 
@@ -289,7 +292,7 @@ func (suite *CustomerRepositoryTestSuite) TestGetCustomersByType() {
 		customer := testutil.CreateTestCustomer(suite.T())
 		customer.Type = "BUSINESS"
 		customer.Email = fmt.Sprintf("business%d@example.com", i)
-		err := suite.repo.Create(ctx, customer)
+		_, err := suite.repo.Create(ctx, customer)
 		require.NoError(suite.T(), err)
 	}
 
@@ -310,7 +313,7 @@ func (suite *CustomerRepositoryTestSuite) TestUpdateCreditUsed() {
 	customer := testutil.CreateTestCustomer(suite.T())
 
 	// Create the customer first
-	err := suite.repo.Create(ctx, customer)
+	_, err := suite.repo.Create(ctx, customer)
 	require.NoError(suite.T(), err)
 
 	// Update credit used amount
@@ -333,7 +336,7 @@ func (suite *CustomerRepositoryTestSuite) TestGetCustomersWithCreditLimit() {
 		customer := testutil.CreateTestCustomer(suite.T())
 		customer.CreditLimit = decimal.NewFromFloat(float64(i+1) * 1000.00)
 		customer.Email = fmt.Sprintf("credit%d@example.com", i)
-		err := suite.repo.Create(ctx, customer)
+		_, err := suite.repo.Create(ctx, customer)
 		require.NoError(suite.T(), err)
 	}
 
@@ -359,7 +362,7 @@ func (suite *CustomerRepositoryTestSuite) TestGetCustomerStats() {
 		customer := testutil.CreateTestCustomer(suite.T())
 		customer.CreatedAt = time.Now().AddDate(0, 0, -i)
 		customer.Email = fmt.Sprintf("stats%d@example.com", i)
-		err := suite.repo.Create(ctx, customer)
+		_, err := suite.repo.Create(ctx, customer)
 		require.NoError(suite.T(), err)
 	}
 
@@ -383,7 +386,7 @@ func (suite *CustomerRepositoryTestSuite) TestGetCustomerOrdersSummary() {
 	customer := testutil.CreateTestCustomer(suite.T())
 
 	// Create the customer first
-	err := suite.repo.Create(ctx, customer)
+	_, err := suite.repo.Create(ctx, customer)
 	require.NoError(suite.T(), err)
 
 	// Retrieve customer order summary
@@ -429,13 +432,14 @@ func (suite *CustomerRepositoryTestSuite) TestBulkUpdate() {
 		customers[i] = testutil.CreateTestCustomer(suite.T())
 		customers[i].Email = fmt.Sprintf("bulkupdate%d@example.com", i)
 		customers[i].CustomerCode = fmt.Sprintf("BULK-UPDATE-CODE-%d", i)
-		err := suite.repo.Create(ctx, customers[i])
+		_, err := suite.repo.Create(ctx, customers[i])
 		require.NoError(suite.T(), err)
 	}
 
 	// Update the customers
 	for _, customer := range customers {
-		customer.Notes = testutil.StringPtr("Bulk updated notes")
+		notes := "Bulk updated notes"
+		customer.Notes = &notes
 	}
 
 	// Bulk update customers

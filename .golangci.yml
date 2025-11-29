@@ -7,9 +7,13 @@ run:
   skip-dirs:
     - vendor
     - testdata
-  skip-files:
-    - ".*\\.pb\\.go$"
-    - ".*_generated\\.go$"
+  issues:
+    exclude-files:
+      - ".*\\.pb\\.go$"
+      - ".*_generated\\.go$"
+    exclude-dirs:
+      - vendor
+      - testdata
 
 output:
   format: colored-line-number
@@ -19,11 +23,13 @@ output:
   sort-results: true
 
 linters-settings:
-  govet:
-    check-shadowing: true
-    enable-all: true
-    disable:
-      - fieldalignment # Too strict for this project
+govet:
+  check-shadowing: true
+  enable-all: true
+  disable:
+    - fieldalignment # Too strict for this project
+shadow:
+  strict: true
   gocyclo:
     min-complexity: 15
   goconst:

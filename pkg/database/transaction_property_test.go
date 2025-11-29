@@ -358,9 +358,9 @@ func TestProperty_DeadlockRetryLogic(t *testing.T) {
 
 			// Create a mock transaction manager that fails with deadlock
 			tm := &MockTransactionManager{
-				shouldFail:    true,
-				failureCount:  failCount,
-				failureType:   "deadlock",
+				shouldFail:     true,
+				failureCount:   failCount,
+				failureType:    "deadlock",
 				currentAttempt: 0,
 				retryDelay:     1 * time.Millisecond, // Short delay for testing
 			}
@@ -568,7 +568,7 @@ func TestProperty_DeadlockRetryLogic(t *testing.T) {
 				failureType:    "deadlock",
 				currentAttempt: 0,
 				maxRetries:     maxRetries,
-				maxRetriesSet:  true, // Explicitly set maxRetries
+				maxRetriesSet:  true,                 // Explicitly set maxRetries
 				retryDelay:     1 * time.Millisecond, // Short delay for testing
 			}
 
@@ -609,7 +609,7 @@ func TestProperty_DeadlockRetryLogic(t *testing.T) {
 				failureType:    "deadlock",
 				currentAttempt: 0,
 				retryDelays:    make([]time.Duration, 0),
-				retryDelay:     1 * time.Millisecond, // Very short delay for testing
+				retryDelay:     1 * time.Millisecond,  // Very short delay for testing
 				maxRetryDelay:  10 * time.Millisecond, // Short max delay for testing
 			}
 
@@ -681,17 +681,17 @@ func TestProperty_DeadlockRetryLogic(t *testing.T) {
 // Mock Transaction Manager for testing
 
 type MockTransactionManager struct {
-	shouldFail       bool
-	failureCount     int
-	failureType      string
-	currentAttempt   int
-	committed        bool
-	rolledBack       bool
-	retryDelays      []time.Duration
-	maxRetries       int
-	maxRetriesSet    bool // Flag to indicate if maxRetries was explicitly set
-	retryDelay       time.Duration
-	maxRetryDelay    time.Duration
+	shouldFail     bool
+	failureCount   int
+	failureType    string
+	currentAttempt int
+	committed      bool
+	rolledBack     bool
+	retryDelays    []time.Duration
+	maxRetries     int
+	maxRetriesSet  bool // Flag to indicate if maxRetries was explicitly set
+	retryDelay     time.Duration
+	maxRetryDelay  time.Duration
 }
 
 func (m *MockTransactionManager) Execute(ctx context.Context, fn func(context.Context, pgx.Tx) error) error {

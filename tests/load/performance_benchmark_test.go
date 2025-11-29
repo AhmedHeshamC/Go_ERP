@@ -18,128 +18,128 @@ import (
 
 // PerformanceBenchmarkSuite contains comprehensive performance benchmarks
 type PerformanceBenchmarkSuite struct {
-	baseURL    string
-	results    *BenchmarkResults
-	baselines  map[string]*BaselineMetrics
-	ctx        context.Context
-	cancel     context.CancelFunc
+	baseURL   string
+	results   *BenchmarkResults
+	baselines map[string]*BaselineMetrics
+	ctx       context.Context
+	cancel    context.CancelFunc
 }
 
 // BenchmarkResults contains all benchmark results
 type BenchmarkResults struct {
-	TestName           string
-	StartTime          time.Time
-	EndTime            time.Time
-	Duration           time.Duration
-	APIMetrics         *APIBenchmarkMetrics
-	DatabaseMetrics    *DatabaseBenchmarkMetrics
-	CacheMetrics       *CacheBenchmarkMetrics
-	SystemMetrics      *SystemBenchmarkMetrics
-	BusinessMetrics    *BusinessBenchmarkMetrics
-	PerformanceGrade   string // A, B, C, D, F
-	Recommendations    []string
+	TestName         string
+	StartTime        time.Time
+	EndTime          time.Time
+	Duration         time.Duration
+	APIMetrics       *APIBenchmarkMetrics
+	DatabaseMetrics  *DatabaseBenchmarkMetrics
+	CacheMetrics     *CacheBenchmarkMetrics
+	SystemMetrics    *SystemBenchmarkMetrics
+	BusinessMetrics  *BusinessBenchmarkMetrics
+	PerformanceGrade string // A, B, C, D, F
+	Recommendations  []string
 }
 
 // APIBenchmarkMetrics contains API performance metrics
 type APIBenchmarkMetrics struct {
-	TotalRequests           int64
-	SuccessfulRequests      int64
-	FailedRequests          int64
-	AverageResponseTime     time.Duration
-	P50ResponseTime         time.Duration
-	P90ResponseTime         time.Duration
-	P95ResponseTime         time.Duration
-	P99ResponseTime         time.Duration
-	RequestsPerSecond       float64
-	ThroughputMBPS          float64
-	ErrorRate               float64
-	EndpointBreakdown       map[string]*EndpointMetrics
+	TotalRequests       int64
+	SuccessfulRequests  int64
+	FailedRequests      int64
+	AverageResponseTime time.Duration
+	P50ResponseTime     time.Duration
+	P90ResponseTime     time.Duration
+	P95ResponseTime     time.Duration
+	P99ResponseTime     time.Duration
+	RequestsPerSecond   float64
+	ThroughputMBPS      float64
+	ErrorRate           float64
+	EndpointBreakdown   map[string]*EndpointMetrics
 }
 
 // DatabaseBenchmarkMetrics contains database performance metrics
 type DatabaseBenchmarkMetrics struct {
-	TotalQueries            int64
-	SuccessfulQueries       int64
-	FailedQueries           int64
-	AverageQueryTime        time.Duration
-	P95QueryTime            time.Duration
-	QueriesPerSecond        float64
+	TotalQueries              int64
+	SuccessfulQueries         int64
+	FailedQueries             int64
+	AverageQueryTime          time.Duration
+	P95QueryTime              time.Duration
+	QueriesPerSecond          float64
 	ConnectionPoolUtilization float64
-	SlowQueries             []SlowQuery
-	IndexEfficiency         map[string]float64
-	TableSizeGrowth         map[string]int64
+	SlowQueries               []SlowQuery
+	IndexEfficiency           map[string]float64
+	TableSizeGrowth           map[string]int64
 }
 
 // CacheBenchmarkMetrics contains cache performance metrics
 type CacheBenchmarkMetrics struct {
-	TotalOperations         int64
-	CacheHits               int64
-	CacheMisses             int64
-	HitRate                 float64
-	AverageLatency          time.Duration
-	P95Latency              time.Duration
-	OperationsPerSecond     float64
-	MemoryUtilization       float64
-	EvictionRate            float64
-	KeyDistribution         map[string]int64
+	TotalOperations     int64
+	CacheHits           int64
+	CacheMisses         int64
+	HitRate             float64
+	AverageLatency      time.Duration
+	P95Latency          time.Duration
+	OperationsPerSecond float64
+	MemoryUtilization   float64
+	EvictionRate        float64
+	KeyDistribution     map[string]int64
 }
 
 // SystemBenchmarkMetrics contains system resource metrics
 type SystemBenchmarkMetrics struct {
-	CPUUtilization          float64
-	MemoryUtilization      float64
-	DiskUtilization        float64
-	NetworkIO              float64
-	GoroutineCount         int64
-	GCCount                uint32
-	GCCPUPercent           float64
-	HeapSize               uint64
-	HeapObjects            uint64
-	ResourceContentions     []ResourceContention
+	CPUUtilization      float64
+	MemoryUtilization   float64
+	DiskUtilization     float64
+	NetworkIO           float64
+	GoroutineCount      int64
+	GCCount             uint32
+	GCCPUPercent        float64
+	HeapSize            uint64
+	HeapObjects         uint64
+	ResourceContentions []ResourceContention
 }
 
 // BusinessBenchmarkMetrics contains business-relevant metrics
 type BusinessBenchmarkMetrics struct {
-	OrdersPerSecond         float64
-	ProductsPerSecond      float64
-	UsersPerSecond         float64
-	RevenuePerSecond       float64
-	CartAbandonmentRate    float64
-	ConversionRate         float64
-	AverageOrderValue      float64
-	CustomerSatisfaction   float64 // Simulated metric
+	OrdersPerSecond      float64
+	ProductsPerSecond    float64
+	UsersPerSecond       float64
+	RevenuePerSecond     float64
+	CartAbandonmentRate  float64
+	ConversionRate       float64
+	AverageOrderValue    float64
+	CustomerSatisfaction float64 // Simulated metric
 }
 
 // EndpointMetrics contains metrics for specific API endpoints
 type EndpointMetrics struct {
-	Path                    string
-	Method                  string
-	TotalRequests           int64
-	SuccessfulRequests      int64
-	FailedRequests          int64
-	AverageResponseTime     time.Duration
-	P95ResponseTime         time.Duration
-	RequestsPerSecond       float64
+	Path                string
+	Method              string
+	TotalRequests       int64
+	SuccessfulRequests  int64
+	FailedRequests      int64
+	AverageResponseTime time.Duration
+	P95ResponseTime     time.Duration
+	RequestsPerSecond   float64
 }
 
 // BaselineMetrics contains baseline performance measurements
 type BaselineMetrics struct {
-	MetricName             string
-	Value                  float64
-	Unit                   string
-	MeasuredAt             time.Time
-	TargetValue            float64
-	AcceptanceThreshold    float64
-	Grade                  string
+	MetricName          string
+	Value               float64
+	Unit                string
+	MeasuredAt          time.Time
+	TargetValue         float64
+	AcceptanceThreshold float64
+	Grade               string
 }
 
 // ResourceContention represents system resource contention events
 type ResourceContention struct {
-	ResourceType  string
-	Timestamp     time.Time
-	Duration      time.Duration
-	Severity      string
-	Description   string
+	ResourceType string
+	Timestamp    time.Time
+	Duration     time.Duration
+	Severity     string
+	Description  string
 }
 
 // NewPerformanceBenchmarkSuite creates a new performance benchmark suite
@@ -148,10 +148,10 @@ func NewPerformanceBenchmarkSuite(baseURL string) *PerformanceBenchmarkSuite {
 
 	return &PerformanceBenchmarkSuite{
 		baseURL:   baseURL,
-		results:    &BenchmarkResults{},
-		baselines:  make(map[string]*BaselineMetrics),
-		ctx:        ctx,
-		cancel:     cancel,
+		results:   &BenchmarkResults{},
+		baselines: make(map[string]*BaselineMetrics),
+		ctx:       ctx,
+		cancel:    cancel,
 	}
 }
 
@@ -346,10 +346,10 @@ func (p *PerformanceBenchmarkSuite) runDatabaseBenchmarks() error {
 
 	// Query performance benchmarks
 	queryTypes := []struct {
-		name     string
-		count    int64
-		avgTime  time.Duration
-		p95Time  time.Duration
+		name    string
+		count   int64
+		avgTime time.Duration
+		p95Time time.Duration
 	}{
 		{"SELECT simple", 10000, 5 * time.Millisecond, 15 * time.Millisecond},
 		{"SELECT complex", 5000, 25 * time.Millisecond, 80 * time.Millisecond},
@@ -375,18 +375,18 @@ func (p *PerformanceBenchmarkSuite) runDatabaseBenchmarks() error {
 
 	// Index efficiency simulation
 	dbMetrics.IndexEfficiency = map[string]float64{
-		"users_pkey":           95.0,
+		"users_pkey":            95.0,
 		"products_category_idx": 85.0,
-		"orders_customer_idx":    90.0,
-		"order_items_order_idx":  88.0,
+		"orders_customer_idx":   90.0,
+		"order_items_order_idx": 88.0,
 	}
 
 	// Table size growth simulation
 	dbMetrics.TableSizeGrowth = map[string]int64{
-		"users":        1024 * 1024 * 50,  // 50MB
-		"products":     1024 * 1024 * 100, // 100MB
-		"orders":       1024 * 1024 * 200, // 200MB
-		"order_items":  1024 * 1024 * 300, // 300MB
+		"users":       1024 * 1024 * 50,  // 50MB
+		"products":    1024 * 1024 * 100, // 100MB
+		"orders":      1024 * 1024 * 200, // 200MB
+		"order_items": 1024 * 1024 * 300, // 300MB
 	}
 
 	p.results.DatabaseMetrics = dbMetrics
@@ -420,11 +420,11 @@ func (p *PerformanceBenchmarkSuite) runCacheBenchmarks() error {
 
 	// Key distribution simulation
 	cacheMetrics.KeyDistribution = map[string]int64{
-		"product:*":     20000,
-		"user:*":        15000,
-		"order:*":       10000,
-		"session:*":     3000,
-		"analytics:*":   2000,
+		"product:*":   20000,
+		"user:*":      15000,
+		"order:*":     10000,
+		"session:*":   3000,
+		"analytics:*": 2000,
 	}
 
 	p.results.CacheMetrics = cacheMetrics
@@ -447,10 +447,10 @@ func (p *PerformanceBenchmarkSuite) runSystemBenchmarks() error {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
 
-	systemMetrics.CPUUtilization = 65.0 // 65%
+	systemMetrics.CPUUtilization = 65.0    // 65%
 	systemMetrics.MemoryUtilization = 70.0 // 70%
-	systemMetrics.DiskUtilization = 40.0 // 40%
-	systemMetrics.NetworkIO = 100.0      // MB/s
+	systemMetrics.DiskUtilization = 40.0   // 40%
+	systemMetrics.NetworkIO = 100.0        // MB/s
 	systemMetrics.GoroutineCount = int64(runtime.NumGoroutine())
 	systemMetrics.GCCount = m.NumGC
 	systemMetrics.GCCPUPercent = m.GCCPUFraction * 100
@@ -600,7 +600,7 @@ func (p *PerformanceBenchmarkSuite) runBusinessBenchmarks() error {
 
 	// Business KPIs
 	businessMetrics.CartAbandonmentRate = 0.35 // 35%
-	businessMetrics.ConversionRate = 0.03     // 3%
+	businessMetrics.ConversionRate = 0.03      // 3%
 	businessMetrics.AverageOrderValue = 75.50
 	businessMetrics.CustomerSatisfaction = 4.2 // Out of 5
 

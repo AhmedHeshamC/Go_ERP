@@ -8,22 +8,22 @@ import (
 
 // EmailVerification represents an email verification token
 type EmailVerification struct {
-	ID           uuid.UUID  `json:"id" db:"id"`
-	UserID       uuid.UUID  `json:"user_id" db:"user_id"`
-	Email        string     `json:"email" db:"email"`
-	Token        string     `json:"token" db:"token"`
-	TokenType    string     `json:"token_type" db:"token_type"` // "verification", "password_reset", "email_change"
-	ExpiresAt    time.Time  `json:"expires_at" db:"expires_at"`
-	IsUsed       bool       `json:"is_used" db:"is_used"`
-	UsedAt       *time.Time `json:"used_at,omitempty" db:"used_at"`
-	CreatedAt    time.Time  `json:"created_at" db:"created_at"`
-	UpdatedAt    time.Time  `json:"updated_at" db:"updated_at"`
+	ID        uuid.UUID  `json:"id" db:"id"`
+	UserID    uuid.UUID  `json:"user_id" db:"user_id"`
+	Email     string     `json:"email" db:"email"`
+	Token     string     `json:"token" db:"token"`
+	TokenType string     `json:"token_type" db:"token_type"` // "verification", "password_reset", "email_change"
+	ExpiresAt time.Time  `json:"expires_at" db:"expires_at"`
+	IsUsed    bool       `json:"is_used" db:"is_used"`
+	UsedAt    *time.Time `json:"used_at,omitempty" db:"used_at"`
+	CreatedAt time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at" db:"updated_at"`
 }
 
 // EmailVerificationRequest represents a request to send verification email
 type EmailVerificationRequest struct {
-	Email    string `json:"email" validate:"required,email"`
-	UserID   string `json:"user_id,omitempty"`
+	Email     string `json:"email" validate:"required,email"`
+	UserID    string `json:"user_id,omitempty"`
 	TokenType string `json:"token_type,omitempty"` // "verification", "password_reset", "email_change"
 }
 
@@ -52,16 +52,16 @@ type ResendVerificationRequest struct {
 
 // Token type constants
 const (
-	TokenTypeVerification   = "verification"
-	TokenTypePasswordReset  = "password_reset"
-	TokenTypeEmailChange    = "email_change"
+	TokenTypeVerification  = "verification"
+	TokenTypePasswordReset = "password_reset"
+	TokenTypeEmailChange   = "email_change"
 )
 
 // Token expiration durations
 const (
-	DefaultVerificationExpiration = 24 * time.Hour  // 24 hours
-	DefaultPasswordResetExpiration = 1 * time.Hour   // 1 hour
-	DefaultEmailChangeExpiration  = 30 * time.Minute // 30 minutes
+	DefaultVerificationExpiration  = 24 * time.Hour   // 24 hours
+	DefaultPasswordResetExpiration = 1 * time.Hour    // 1 hour
+	DefaultEmailChangeExpiration   = 30 * time.Minute // 30 minutes
 )
 
 // IsExpired checks if the verification token has expired
@@ -84,19 +84,19 @@ func (ev *EmailVerification) MarkAsUsed() {
 
 // EmailTemplate represents an email template
 type EmailTemplate struct {
-	Subject    string `json:"subject"`
-	HTMLBody   string `json:"html_body"`
-	TextBody   string `json:"text_body"`
-	FromEmail  string `json:"from_email"`
-	FromName   string `json:"from_name"`
+	Subject   string `json:"subject"`
+	HTMLBody  string `json:"html_body"`
+	TextBody  string `json:"text_body"`
+	FromEmail string `json:"from_email"`
+	FromName  string `json:"from_name"`
 }
 
 // EmailContent represents the content of a verification email
 type EmailContent struct {
-	ToEmail   string `json:"to_email"`
-	Subject   string `json:"subject"`
-	HTMLBody  string `json:"html_body"`
-	TextBody  string `json:"text_body"`
+	ToEmail  string `json:"to_email"`
+	Subject  string `json:"subject"`
+	HTMLBody string `json:"html_body"`
+	TextBody string `json:"text_body"`
 }
 
 // EmailConfig represents email service configuration

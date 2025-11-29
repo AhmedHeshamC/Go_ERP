@@ -6,11 +6,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"erpgo/internal/domain/products/entities"
 	"erpgo/internal/domain/products/repositories"
 	"erpgo/pkg/database"
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 )
 
 // PostgresProductVariantRepository implements ProductVariantRepository for PostgreSQL

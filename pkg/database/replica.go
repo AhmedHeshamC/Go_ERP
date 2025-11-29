@@ -15,22 +15,22 @@ import (
 
 // ReadReplicaConfig holds configuration for read replicas
 type ReadReplicaConfig struct {
-	PrimaryURL    string        `json:"primary_url"`
-	ReplicaURLs   []string      `json:"replica_urls"`
-	ReadTimeout   time.Duration `json:"read_timeout"`
-	WriteTimeout  time.Duration `json:"write_timeout"`
-	MaxRetries    int           `json:"max_retries"`
-	RetryDelay    time.Duration `json:"retry_delay"`
-	HealthCheck   time.Duration `json:"health_check"`
+	PrimaryURL   string        `json:"primary_url"`
+	ReplicaURLs  []string      `json:"replica_urls"`
+	ReadTimeout  time.Duration `json:"read_timeout"`
+	WriteTimeout time.Duration `json:"write_timeout"`
+	MaxRetries   int           `json:"max_retries"`
+	RetryDelay   time.Duration `json:"retry_delay"`
+	HealthCheck  time.Duration `json:"health_check"`
 }
 
 // ReplicaDB manages read replicas for database operations
 type ReplicaDB struct {
-	primary   *Database
-	replicas  []*Database
-	config    *ReadReplicaConfig
-	logger    *zerolog.Logger
-	healthy   map[int]bool // Track health of each replica
+	primary  *Database
+	replicas []*Database
+	config   *ReadReplicaConfig
+	logger   *zerolog.Logger
+	healthy  map[int]bool // Track health of each replica
 }
 
 // NewReplicaDB creates a new ReplicaDB with primary and read replicas

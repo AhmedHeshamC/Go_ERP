@@ -29,8 +29,8 @@ const (
 // SpanStatus represents the status of a span
 type SpanStatus struct {
 	Code    SpanStatusCode `json:"code"`
-	Message string          `json:"message,omitempty"`
-	Error   error           `json:"error,omitempty"`
+	Message string         `json:"message,omitempty"`
+	Error   error          `json:"error,omitempty"`
 }
 
 // SpanStatusCode represents span status codes
@@ -44,27 +44,27 @@ const (
 // Span represents a single span in a trace
 type Span struct {
 	// Core span information
-	TraceID    string            `json:"trace_id"`
-	SpanID     string            `json:"span_id"`
-	ParentSpanID *string          `json:"parent_span_id,omitempty"`
-	OperationName string         `json:"operation_name"`
-	StartTime   time.Time         `json:"start_time"`
-	EndTime     time.Time         `json:"end_time"`
-	Duration    time.Duration     `json:"duration"`
-	Kind        SpanKind          `json:"kind"`
-	Status      SpanStatus        `json:"status"`
+	TraceID       string        `json:"trace_id"`
+	SpanID        string        `json:"span_id"`
+	ParentSpanID  *string       `json:"parent_span_id,omitempty"`
+	OperationName string        `json:"operation_name"`
+	StartTime     time.Time     `json:"start_time"`
+	EndTime       time.Time     `json:"end_time"`
+	Duration      time.Duration `json:"duration"`
+	Kind          SpanKind      `json:"kind"`
+	Status        SpanStatus    `json:"status"`
 
 	// Attributes and events
 	Attributes map[string]interface{} `json:"attributes,omitempty"`
-	Events     []SpanEvent           `json:"events,omitempty"`
-	Links      []SpanLink            `json:"links,omitempty"`
+	Events     []SpanEvent            `json:"events,omitempty"`
+	Links      []SpanLink             `json:"links,omitempty"`
 
 	// Resource and service information
-	ServiceName    string            `json:"service_name"`
-	Resource       map[string]string `json:"resource,omitempty"`
+	ServiceName string            `json:"service_name"`
+	Resource    map[string]string `json:"resource,omitempty"`
 
 	// Sampling information
-	Sampled    bool  `json:"sampled"`
+	Sampled    bool    `json:"sampled"`
 	SampleRate float64 `json:"sample_rate,omitempty"`
 
 	// Context
@@ -80,89 +80,89 @@ type SpanEvent struct {
 
 // SpanLink represents a link to another span
 type SpanLink struct {
-	TraceID    string            `json:"trace_id"`
-	SpanID     string            `json:"span_id"`
+	TraceID    string                 `json:"trace_id"`
+	SpanID     string                 `json:"span_id"`
 	Attributes map[string]interface{} `json:"attributes,omitempty"`
 }
 
 // SpanContext contains the trace context for propagation
 type SpanContext struct {
-	TraceID      string  `json:"trace_id"`
-	SpanID       string  `json:"span_id"`
-	Sampled      bool    `json:"sampled"`
-	IsRemote     bool    `json:"is_remote"`
+	TraceID      string            `json:"trace_id"`
+	SpanID       string            `json:"span_id"`
+	Sampled      bool              `json:"sampled"`
+	IsRemote     bool              `json:"is_remote"`
 	BaggageItems map[string]string `json:"baggage_items,omitempty"`
 }
 
 // Config holds the tracer configuration
 type Config struct {
 	// Service configuration
-	ServiceName        string  `json:"service_name"`
-	ServiceVersion     string  `json:"service_version"`
-	Environment        string  `json:"environment"`
+	ServiceName    string `json:"service_name"`
+	ServiceVersion string `json:"service_version"`
+	Environment    string `json:"environment"`
 
 	// Sampling configuration
-	SampleRate         float64 `json:"sample_rate"`
-	MaxSpansPerTrace   int     `json:"max_spans_per_trace"`
-	ForceSampling      bool    `json:"force_sampling"`
+	SampleRate       float64 `json:"sample_rate"`
+	MaxSpansPerTrace int     `json:"max_spans_per_trace"`
+	ForceSampling    bool    `json:"force_sampling"`
 
 	// Performance configuration
-	MaxAttributesPerSpan int    `json:"max_attributes_per_span"`
-	MaxEventsPerSpan     int    `json:"max_events_per_span"`
-	MaxLinksPerSpan      int    `json:"max_links_per_span"`
+	MaxAttributesPerSpan int           `json:"max_attributes_per_span"`
+	MaxEventsPerSpan     int           `json:"max_events_per_span"`
+	MaxLinksPerSpan      int           `json:"max_links_per_span"`
 	FlushInterval        time.Duration `json:"flush_interval"`
 
 	// Propagation configuration
-	PropagationFormat   string `json:"propagation_format"` // "tracecontext", "b3", "jaeger", "w3c"
-	EnableBaggage       bool   `json:"enable_baggage"`
+	PropagationFormat string `json:"propagation_format"` // "tracecontext", "b3", "jaeger", "w3c"
+	EnableBaggage     bool   `json:"enable_baggage"`
 
 	// Export configuration
-	Exporter           Exporter `json:"-"`
-	ExportTimeout      time.Duration `json:"export_timeout"`
-	BatchSize         int           `json:"batch_size"`
-	AsyncExport       bool          `json:"async_export"`
+	Exporter      Exporter      `json:"-"`
+	ExportTimeout time.Duration `json:"export_timeout"`
+	BatchSize     int           `json:"batch_size"`
+	AsyncExport   bool          `json:"async_export"`
 
 	// Logging configuration
-	Logger             *zerolog.Logger `json:"-"`
-	LogSpans           bool          `json:"log_spans"`
-	LogSpanEvents      bool          `json:"log_span_events"`
+	Logger        *zerolog.Logger `json:"-"`
+	LogSpans      bool            `json:"log_spans"`
+	LogSpanEvents bool            `json:"log_span_events"`
 
 	// Security configuration
-	SanitizeAttributes  []string `json:"sanitize_attributes"`
-	EnableSanitization  bool     `json:"enable_sanitization"`
+	SanitizeAttributes []string `json:"sanitize_attributes"`
+	EnableSanitization bool     `json:"enable_sanitization"`
 
 	// Debug configuration
-	DebugMode           bool `json:"debug_mode"`
+	DebugMode          bool `json:"debug_mode"`
 	EnableSpanPrinting bool `json:"enable_span_printing"`
 }
 
 // DefaultConfig returns a default tracer configuration
 func DefaultConfig() *Config {
 	return &Config{
-		ServiceName:        "erp-go-service",
-		ServiceVersion:     "1.0.0",
-		Environment:        "development",
-		SampleRate:         1.0, // Sample all traces in development
-		MaxSpansPerTrace:   1000,
-		ForceSampling:      false,
+		ServiceName:          "erp-go-service",
+		ServiceVersion:       "1.0.0",
+		Environment:          "development",
+		SampleRate:           1.0, // Sample all traces in development
+		MaxSpansPerTrace:     1000,
+		ForceSampling:        false,
 		MaxAttributesPerSpan: 100,
-		MaxEventsPerSpan:    100,
-		MaxLinksPerSpan:     10,
-		FlushInterval:      5 * time.Second,
-		PropagationFormat:  "w3c",
-		EnableBaggage:      true,
-		ExportTimeout:      10 * time.Second,
-		BatchSize:          100,
-		AsyncExport:        true,
-		LogSpans:           true,
-		LogSpanEvents:      true,
+		MaxEventsPerSpan:     100,
+		MaxLinksPerSpan:      10,
+		FlushInterval:        5 * time.Second,
+		PropagationFormat:    "w3c",
+		EnableBaggage:        true,
+		ExportTimeout:        10 * time.Second,
+		BatchSize:            100,
+		AsyncExport:          true,
+		LogSpans:             true,
+		LogSpanEvents:        true,
 		SanitizeAttributes: []string{
 			"password", "token", "secret", "key", "auth",
 			"credit_card", "ssn", "social_security",
 		},
-		EnableSanitization:  true,
-		DebugMode:           true,
-		EnableSpanPrinting:  true,
+		EnableSanitization: true,
+		DebugMode:          true,
+		EnableSpanPrinting: true,
 	}
 }
 
@@ -200,8 +200,8 @@ type Tracer struct {
 
 // sampler handles trace sampling
 type sampler struct {
-	rate       float64
-	force      bool
+	rate  float64
+	force bool
 }
 
 // sanitizer handles attribute sanitization
@@ -221,13 +221,13 @@ func NewTracer(config *Config, logger *zerolog.Logger) (*Tracer, error) {
 	}
 
 	tracer := &Tracer{
-		config:    config,
-		logger:    logger,
-		spans:     make(map[string]*Span),
-		spanLinks: make(map[string][]*SpanLink),
-		exporter:  config.Exporter,
-		sampler:   newSampler(config.SampleRate, config.ForceSampling),
-		sanitizer: newSanitizer(config.SanitizeAttributes),
+		config:     config,
+		logger:     logger,
+		spans:      make(map[string]*Span),
+		spanLinks:  make(map[string][]*SpanLink),
+		exporter:   config.Exporter,
+		sampler:    newSampler(config.SampleRate, config.ForceSampling),
+		sanitizer:  newSanitizer(config.SanitizeAttributes),
 		shutdownCh: make(chan struct{}),
 	}
 
@@ -279,14 +279,14 @@ func (t *Tracer) StartSpan(ctx context.Context, operationName string, kind SpanK
 		Status: SpanStatus{
 			Code: SpanStatusOK,
 		},
-		Attributes:    make(map[string]interface{}),
-		Events:        make([]SpanEvent, 0),
-		Links:         make([]SpanLink, 0),
-		ServiceName:   t.config.ServiceName,
-		Resource:      t.buildResource(),
-		Sampled:       sampled,
-		SampleRate:    t.config.SampleRate,
-		Context:       ctx,
+		Attributes:  make(map[string]interface{}),
+		Events:      make([]SpanEvent, 0),
+		Links:       make([]SpanLink, 0),
+		ServiceName: t.config.ServiceName,
+		Resource:    t.buildResource(),
+		Sampled:     sampled,
+		SampleRate:  t.config.SampleRate,
+		Context:     ctx,
 	}
 
 	// Add default attributes
@@ -639,11 +639,11 @@ func (t *Tracer) addDefaultAttributes(span *Span) {
 // buildResource builds resource information
 func (t *Tracer) buildResource() map[string]string {
 	resource := map[string]string{
-		"service.name":     t.config.ServiceName,
-		"service.version":  t.config.ServiceVersion,
-		"service.environment": t.config.Environment,
-		"telemetry.sdk.name": "erp-go-tracing",
-		"telemetry.sdk.version": "1.0.0",
+		"service.name":           t.config.ServiceName,
+		"service.version":        t.config.ServiceVersion,
+		"service.environment":    t.config.Environment,
+		"telemetry.sdk.name":     "erp-go-tracing",
+		"telemetry.sdk.version":  "1.0.0",
 		"telemetry.sdk.language": "go",
 	}
 

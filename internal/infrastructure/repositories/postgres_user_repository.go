@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"erpgo/internal/domain/users/entities"
 	"erpgo/internal/domain/users/repositories"
 	"erpgo/pkg/database"
 	"erpgo/pkg/validation"
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 )
 
 // PostgresUserRepository implements UserRepository for PostgreSQL

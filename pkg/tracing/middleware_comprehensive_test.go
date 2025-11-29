@@ -341,10 +341,10 @@ func TestResponseWriter(t *testing.T) {
 		// Create a gin context with response writer
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		
+
 		rw := &responseWriter{
 			ResponseWriter: c.Writer,
-			body:          make([]byte, 0),
+			body:           make([]byte, 0),
 		}
 
 		testData := []byte("test response")

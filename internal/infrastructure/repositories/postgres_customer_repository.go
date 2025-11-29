@@ -6,12 +6,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
-	"github.com/shopspring/decimal"
 	"erpgo/internal/domain/orders/entities"
 	"erpgo/internal/domain/orders/repositories"
 	"erpgo/pkg/database"
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+	"github.com/shopspring/decimal"
 )
 
 // PostgresCustomerRepository implements CustomerRepository for PostgreSQL
@@ -1020,7 +1020,7 @@ func (r *PostgresCustomerRepository) GetCustomerOrdersSummary(ctx context.Contex
 	`
 
 	summary := &repositories.CustomerOrdersSummary{
-		CustomerID: customerID,
+		CustomerID:   customerID,
 		StatusCounts: make(map[string]int64),
 	}
 

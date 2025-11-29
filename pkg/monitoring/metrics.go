@@ -22,46 +22,46 @@ type MetricsCollector struct {
 	httpResponseSizeBytes *prometheus.HistogramVec
 
 	// Application metrics
-	ordersCreated        *prometheus.CounterVec
-	ordersCompleted      *prometheus.CounterVec
-	ordersCancelled      *prometheus.CounterVec
-	orderProcessingTime  *prometheus.HistogramVec
-	orderValue           *prometheus.HistogramVec
+	ordersCreated       *prometheus.CounterVec
+	ordersCompleted     *prometheus.CounterVec
+	ordersCancelled     *prometheus.CounterVec
+	orderProcessingTime *prometheus.HistogramVec
+	orderValue          *prometheus.HistogramVec
 
 	// Product metrics
-	productsCreated      *prometheus.CounterVec
-	productsViewed       *prometheus.CounterVec
-	productSearches      *prometheus.CounterVec
-	inventoryUpdates     *prometheus.CounterVec
-	lowStockAlerts       *prometheus.CounterVec
+	productsCreated  *prometheus.CounterVec
+	productsViewed   *prometheus.CounterVec
+	productSearches  *prometheus.CounterVec
+	inventoryUpdates *prometheus.CounterVec
+	lowStockAlerts   *prometheus.CounterVec
 
 	// User metrics
-	userRegistrations    *prometheus.CounterVec
-	userLogins           *prometheus.CounterVec
-	activeSessions       *prometheus.GaugeVec
-	authFailures         *prometheus.CounterVec
+	userRegistrations *prometheus.CounterVec
+	userLogins        *prometheus.CounterVec
+	activeSessions    *prometheus.GaugeVec
+	authFailures      *prometheus.CounterVec
 
 	// System metrics
-	databaseConnections  *prometheus.GaugeVec
-	databaseQueryTime    *prometheus.HistogramVec
-	cacheOperations      *prometheus.CounterVec
-	cacheHitRate         *prometheus.GaugeVec
-	systemMemoryUsage    *prometheus.GaugeVec
-	systemCPUUsage       *prometheus.GaugeVec
-	goroutineCount       *prometheus.GaugeVec
+	databaseConnections *prometheus.GaugeVec
+	databaseQueryTime   *prometheus.HistogramVec
+	cacheOperations     *prometheus.CounterVec
+	cacheHitRate        *prometheus.GaugeVec
+	systemMemoryUsage   *prometheus.GaugeVec
+	systemCPUUsage      *prometheus.GaugeVec
+	goroutineCount      *prometheus.GaugeVec
 
 	// Business metrics
-	revenueTotal         *prometheus.CounterVec
-	cartValue            *prometheus.HistogramVec
-	conversionRate       *prometheus.GaugeVec
+	revenueTotal   *prometheus.CounterVec
+	cartValue      *prometheus.HistogramVec
+	conversionRate *prometheus.GaugeVec
 
 	// Error metrics
-	errorTotal           *prometheus.CounterVec
-	panicTotal           *prometheus.CounterVec
+	errorTotal *prometheus.CounterVec
+	panicTotal *prometheus.CounterVec
 
 	// Custom metrics registry
-	customMetrics        map[string]prometheus.Metric
-	customMetricsMutex   sync.RWMutex
+	customMetrics      map[string]prometheus.Metric
+	customMetricsMutex sync.RWMutex
 }
 
 // NewMetricsCollector creates a new metrics collector

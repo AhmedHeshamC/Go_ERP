@@ -30,10 +30,10 @@ func TestProperty_LoginRateLimiting(t *testing.T) {
 			// Create a test rate limiter with memory store
 			logger := zerolog.Nop()
 			config := &AuthLimiterConfig{
-				MaxLoginAttempts:  5,
-				LoginWindow:       15 * time.Minute,
-				LockoutDuration:   15 * time.Minute,
-				StorageType:       StorageMemory,
+				MaxLoginAttempts:    5,
+				LoginWindow:         15 * time.Minute,
+				LockoutDuration:     15 * time.Minute,
+				StorageType:         StorageMemory,
 				EnableNotifications: false,
 			}
 
@@ -79,10 +79,10 @@ func TestProperty_LoginRateLimiting(t *testing.T) {
 
 			logger := zerolog.Nop()
 			config := &AuthLimiterConfig{
-				MaxLoginAttempts:  5,
-				LoginWindow:       15 * time.Minute,
-				LockoutDuration:   15 * time.Minute,
-				StorageType:       StorageMemory,
+				MaxLoginAttempts:    5,
+				LoginWindow:         15 * time.Minute,
+				LockoutDuration:     15 * time.Minute,
+				StorageType:         StorageMemory,
 				EnableNotifications: false,
 			}
 
@@ -120,10 +120,10 @@ func TestProperty_LoginRateLimiting(t *testing.T) {
 			logger := zerolog.Nop()
 			// Use a very short window for testing
 			config := &AuthLimiterConfig{
-				MaxLoginAttempts:  5,
-				LoginWindow:       100 * time.Millisecond,
-				LockoutDuration:   100 * time.Millisecond,
-				StorageType:       StorageMemory,
+				MaxLoginAttempts:    5,
+				LoginWindow:         100 * time.Millisecond,
+				LockoutDuration:     100 * time.Millisecond,
+				StorageType:         StorageMemory,
 				EnableNotifications: false,
 			}
 
@@ -173,10 +173,10 @@ func TestProperty_AccountLockoutAfterFailedLogins(t *testing.T) {
 
 			logger := zerolog.Nop()
 			config := &AuthLimiterConfig{
-				MaxLoginAttempts:  5,
-				LoginWindow:       15 * time.Minute,
-				LockoutDuration:   15 * time.Minute,
-				StorageType:       StorageMemory,
+				MaxLoginAttempts:    5,
+				LoginWindow:         15 * time.Minute,
+				LockoutDuration:     15 * time.Minute,
+				StorageType:         StorageMemory,
 				EnableNotifications: false,
 			}
 
@@ -219,10 +219,10 @@ func TestProperty_AccountLockoutAfterFailedLogins(t *testing.T) {
 
 			logger := zerolog.Nop()
 			config := &AuthLimiterConfig{
-				MaxLoginAttempts:  5,
-				LoginWindow:       15 * time.Minute,
-				LockoutDuration:   15 * time.Minute,
-				StorageType:       StorageMemory,
+				MaxLoginAttempts:    5,
+				LoginWindow:         15 * time.Minute,
+				LockoutDuration:     15 * time.Minute,
+				StorageType:         StorageMemory,
 				EnableNotifications: false,
 			}
 
@@ -262,10 +262,10 @@ func TestProperty_AccountLockoutAfterFailedLogins(t *testing.T) {
 			logger := zerolog.Nop()
 			// Use a very short lockout for testing
 			config := &AuthLimiterConfig{
-				MaxLoginAttempts:  5,
-				LoginWindow:       15 * time.Minute,
-				LockoutDuration:   100 * time.Millisecond,
-				StorageType:       StorageMemory,
+				MaxLoginAttempts:    5,
+				LoginWindow:         15 * time.Minute,
+				LockoutDuration:     100 * time.Millisecond,
+				StorageType:         StorageMemory,
 				EnableNotifications: false,
 			}
 
@@ -305,10 +305,10 @@ func TestProperty_AccountLockoutAfterFailedLogins(t *testing.T) {
 
 			logger := zerolog.Nop()
 			config := &AuthLimiterConfig{
-				MaxLoginAttempts:  5,
-				LoginWindow:       15 * time.Minute,
-				LockoutDuration:   15 * time.Minute,
-				StorageType:       StorageMemory,
+				MaxLoginAttempts:    5,
+				LoginWindow:         15 * time.Minute,
+				LockoutDuration:     15 * time.Minute,
+				StorageType:         StorageMemory,
 				EnableNotifications: false,
 			}
 
@@ -344,10 +344,10 @@ func TestProperty_AccountLockoutAfterFailedLogins(t *testing.T) {
 
 			logger := zerolog.Nop()
 			config := &AuthLimiterConfig{
-				MaxLoginAttempts:  5,
-				LoginWindow:       15 * time.Minute,
-				LockoutDuration:   15 * time.Minute,
-				StorageType:       StorageMemory,
+				MaxLoginAttempts:    5,
+				LoginWindow:         15 * time.Minute,
+				LockoutDuration:     15 * time.Minute,
+				StorageType:         StorageMemory,
 				EnableNotifications: false,
 			}
 

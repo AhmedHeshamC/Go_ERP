@@ -64,78 +64,78 @@ type Service interface {
 // Request/Response DTOs
 
 type CreateProductRequest struct {
-	SKU             string          `json:"sku,omitempty" validate:"max=100"`
-	Name            string          `json:"name" validate:"required,max=300"`
-	Description     string          `json:"description,omitempty" validate:"max=2000"`
-	ShortDescription string         `json:"short_description,omitempty" validate:"max=500"`
-	CategoryID      string          `json:"category_id" validate:"required,uuid"`
-	Price           decimal.Decimal `json:"price" validate:"required,gt=0"`
-	Cost            decimal.Decimal `json:"cost,omitempty" validate:"gte=0"`
-	Weight          float64         `json:"weight,omitempty" validate:"gte=0"`
-	Length          float64         `json:"length,omitempty" validate:"gte=0"`
-	Width           float64         `json:"width,omitempty" validate:"gte=0"`
-	Height          float64         `json:"height,omitempty" validate:"gte=0"`
-	Barcode         string          `json:"barcode,omitempty" validate:"max=50"`
-	TrackInventory  bool            `json:"track_inventory"`
-	StockQuantity   int             `json:"stock_quantity,omitempty" validate:"gte=0"`
-	MinStockLevel   int             `json:"min_stock_level,omitempty" validate:"gte=0"`
-	MaxStockLevel   int             `json:"max_stock_level,omitempty" validate:"gte=0"`
-	AllowBackorder  bool            `json:"allow_backorder"`
-	RequiresShipping bool           `json:"requires_shipping"`
-	Taxable         bool            `json:"taxable"`
-	TaxRate         decimal.Decimal `json:"tax_rate,omitempty" validate:"gte=0,lte=100"`
-	IsFeatured      bool            `json:"is_featured"`
-	IsDigital       bool            `json:"is_digital"`
-	DownloadURL     string          `json:"download_url,omitempty" validate:"omitempty,url,max=1000"`
-	MaxDownloads    int             `json:"max_downloads,omitempty" validate:"gte=0,max=9999"`
-	ExpiryDays      int             `json:"expiry_days,omitempty" validate:"gte=0,max=3650"`
+	SKU              string          `json:"sku,omitempty" validate:"max=100"`
+	Name             string          `json:"name" validate:"required,max=300"`
+	Description      string          `json:"description,omitempty" validate:"max=2000"`
+	ShortDescription string          `json:"short_description,omitempty" validate:"max=500"`
+	CategoryID       string          `json:"category_id" validate:"required,uuid"`
+	Price            decimal.Decimal `json:"price" validate:"required,gt=0"`
+	Cost             decimal.Decimal `json:"cost,omitempty" validate:"gte=0"`
+	Weight           float64         `json:"weight,omitempty" validate:"gte=0"`
+	Length           float64         `json:"length,omitempty" validate:"gte=0"`
+	Width            float64         `json:"width,omitempty" validate:"gte=0"`
+	Height           float64         `json:"height,omitempty" validate:"gte=0"`
+	Barcode          string          `json:"barcode,omitempty" validate:"max=50"`
+	TrackInventory   bool            `json:"track_inventory"`
+	StockQuantity    int             `json:"stock_quantity,omitempty" validate:"gte=0"`
+	MinStockLevel    int             `json:"min_stock_level,omitempty" validate:"gte=0"`
+	MaxStockLevel    int             `json:"max_stock_level,omitempty" validate:"gte=0"`
+	AllowBackorder   bool            `json:"allow_backorder"`
+	RequiresShipping bool            `json:"requires_shipping"`
+	Taxable          bool            `json:"taxable"`
+	TaxRate          decimal.Decimal `json:"tax_rate,omitempty" validate:"gte=0,lte=100"`
+	IsFeatured       bool            `json:"is_featured"`
+	IsDigital        bool            `json:"is_digital"`
+	DownloadURL      string          `json:"download_url,omitempty" validate:"omitempty,url,max=1000"`
+	MaxDownloads     int             `json:"max_downloads,omitempty" validate:"gte=0,max=9999"`
+	ExpiryDays       int             `json:"expiry_days,omitempty" validate:"gte=0,max=3650"`
 }
 
 type UpdateProductRequest struct {
-	Name            *string         `json:"name,omitempty" validate:"omitempty,max=300"`
-	Description     *string         `json:"description,omitempty" validate:"omitempty,max=2000"`
-	ShortDescription *string        `json:"short_description,omitempty" validate:"omitempty,max=500"`
-	CategoryID      *string         `json:"category_id,omitempty" validate:"omitempty,uuid"`
-	Price           *decimal.Decimal `json:"price,omitempty" validate:"omitempty,gt=0"`
-	Cost            *decimal.Decimal `json:"cost,omitempty" validate:"omitempty,gte=0"`
-	Weight          *float64        `json:"weight,omitempty" validate:"omitempty,gte=0"`
-	Length          *float64        `json:"length,omitempty" validate:"omitempty,gte=0"`
-	Width           *float64        `json:"width,omitempty" validate:"omitempty,gte=0"`
-	Height          *float64        `json:"height,omitempty" validate:"omitempty,gte=0"`
-	Barcode         *string         `json:"barcode,omitempty" validate:"omitempty,max=50"`
-	TrackInventory  *bool           `json:"track_inventory,omitempty"`
-	MinStockLevel   *int            `json:"min_stock_level,omitempty" validate:"omitempty,gte=0"`
-	MaxStockLevel   *int            `json:"max_stock_level,omitempty" validate:"omitempty,gte=0"`
-	AllowBackorder  *bool           `json:"allow_backorder,omitempty"`
-	RequiresShipping *bool          `json:"requires_shipping,omitempty"`
-	Taxable         *bool           `json:"taxable,omitempty"`
-	TaxRate         *decimal.Decimal `json:"tax_rate,omitempty" validate:"omitempty,gte=0,lte=100"`
-	IsFeatured      *bool           `json:"is_featured,omitempty"`
-	IsDigital       *bool           `json:"is_digital,omitempty"`
-	DownloadURL     *string         `json:"download_url,omitempty" validate:"omitempty,url,max=1000"`
-	MaxDownloads    *int            `json:"max_downloads,omitempty" validate:"omitempty,gte=0,max=9999"`
-	ExpiryDays      *int            `json:"expiry_days,omitempty" validate:"omitempty,gte=0,max=3650"`
+	Name             *string          `json:"name,omitempty" validate:"omitempty,max=300"`
+	Description      *string          `json:"description,omitempty" validate:"omitempty,max=2000"`
+	ShortDescription *string          `json:"short_description,omitempty" validate:"omitempty,max=500"`
+	CategoryID       *string          `json:"category_id,omitempty" validate:"omitempty,uuid"`
+	Price            *decimal.Decimal `json:"price,omitempty" validate:"omitempty,gt=0"`
+	Cost             *decimal.Decimal `json:"cost,omitempty" validate:"omitempty,gte=0"`
+	Weight           *float64         `json:"weight,omitempty" validate:"omitempty,gte=0"`
+	Length           *float64         `json:"length,omitempty" validate:"omitempty,gte=0"`
+	Width            *float64         `json:"width,omitempty" validate:"omitempty,gte=0"`
+	Height           *float64         `json:"height,omitempty" validate:"omitempty,gte=0"`
+	Barcode          *string          `json:"barcode,omitempty" validate:"omitempty,max=50"`
+	TrackInventory   *bool            `json:"track_inventory,omitempty"`
+	MinStockLevel    *int             `json:"min_stock_level,omitempty" validate:"omitempty,gte=0"`
+	MaxStockLevel    *int             `json:"max_stock_level,omitempty" validate:"omitempty,gte=0"`
+	AllowBackorder   *bool            `json:"allow_backorder,omitempty"`
+	RequiresShipping *bool            `json:"requires_shipping,omitempty"`
+	Taxable          *bool            `json:"taxable,omitempty"`
+	TaxRate          *decimal.Decimal `json:"tax_rate,omitempty" validate:"omitempty,gte=0,lte=100"`
+	IsFeatured       *bool            `json:"is_featured,omitempty"`
+	IsDigital        *bool            `json:"is_digital,omitempty"`
+	DownloadURL      *string          `json:"download_url,omitempty" validate:"omitempty,url,max=1000"`
+	MaxDownloads     *int             `json:"max_downloads,omitempty" validate:"omitempty,gte=0,max=9999"`
+	ExpiryDays       *int             `json:"expiry_days,omitempty" validate:"omitempty,gte=0,max=3650"`
 }
 
 type ListProductsRequest struct {
-	Search         string          `json:"search,omitempty"`
-	CategoryID     string          `json:"category_id,omitempty"`
-	CategoryIDs    []string        `json:"category_ids,omitempty"`
-	SKU            string          `json:"sku,omitempty"`
+	Search         string           `json:"search,omitempty"`
+	CategoryID     string           `json:"category_id,omitempty"`
+	CategoryIDs    []string         `json:"category_ids,omitempty"`
+	SKU            string           `json:"sku,omitempty"`
 	MinPrice       *decimal.Decimal `json:"min_price,omitempty"`
 	MaxPrice       *decimal.Decimal `json:"max_price,omitempty"`
-	IsActive       *bool           `json:"is_active,omitempty"`
-	IsFeatured     *bool           `json:"is_featured,omitempty"`
-	IsDigital      *bool           `json:"is_digital,omitempty"`
-	TrackInventory *bool           `json:"track_inventory,omitempty"`
-	InStock        *bool           `json:"in_stock,omitempty"`
-	LowStock       *bool           `json:"low_stock,omitempty"`
-	CreatedAfter   *time.Time      `json:"created_after,omitempty"`
-	CreatedBefore  *time.Time      `json:"created_before,omitempty"`
-	Page           int             `json:"page,omitempty" validate:"min=1"`
-	Limit          int             `json:"limit,omitempty" validate:"min=1,max=100"`
-	SortBy         string          `json:"sort_by,omitempty" validate:"omitempty,oneof=name price created_at updated_at sku"`
-	SortOrder      string          `json:"sort_order,omitempty" validate:"omitempty,oneof=asc desc"`
+	IsActive       *bool            `json:"is_active,omitempty"`
+	IsFeatured     *bool            `json:"is_featured,omitempty"`
+	IsDigital      *bool            `json:"is_digital,omitempty"`
+	TrackInventory *bool            `json:"track_inventory,omitempty"`
+	InStock        *bool            `json:"in_stock,omitempty"`
+	LowStock       *bool            `json:"low_stock,omitempty"`
+	CreatedAfter   *time.Time       `json:"created_after,omitempty"`
+	CreatedBefore  *time.Time       `json:"created_before,omitempty"`
+	Page           int              `json:"page,omitempty" validate:"min=1"`
+	Limit          int              `json:"limit,omitempty" validate:"min=1,max=100"`
+	SortBy         string           `json:"sort_by,omitempty" validate:"omitempty,oneof=name price created_at updated_at sku"`
+	SortOrder      string           `json:"sort_order,omitempty" validate:"omitempty,oneof=asc desc"`
 }
 
 type ListProductsResponse struct {
@@ -150,11 +150,11 @@ type SearchProductsRequest struct {
 
 type SearchProductsResponse struct {
 	Products []*entities.Product `json:"products"`
-	Total    int                `json:"total"`
+	Total    int                 `json:"total"`
 }
 
 type UpdatePriceRequest struct {
-	Price decimal.Decimal `json:"price" validate:"required,gt=0"`
+	Price decimal.Decimal  `json:"price" validate:"required,gt=0"`
 	Cost  *decimal.Decimal `json:"cost,omitempty" validate:"omitempty,gte=0"`
 }
 
@@ -177,35 +177,35 @@ type Pagination struct {
 }
 
 type CreateCategoryRequest struct {
-	Name        string `json:"name" validate:"required,min=2,max=100"`
-	Description string `json:"description,omitempty" validate:"max=500"`
-	ParentID    *string `json:"parent_id,omitempty" validate:"omitempty,uuid"`
-	IsActive    bool   `json:"is_active"`
-	SortOrder   int    `json:"sort_order,omitempty" validate:"gte=0"`
-	SEOTitle    string `json:"seo_title,omitempty" validate:"max=60"`
-	SEODescription string `json:"seo_description,omitempty" validate:"max=160"`
-	SEOKeywords string `json:"seo_keywords,omitempty" validate:"max=255"`
+	Name           string  `json:"name" validate:"required,min=2,max=100"`
+	Description    string  `json:"description,omitempty" validate:"max=500"`
+	ParentID       *string `json:"parent_id,omitempty" validate:"omitempty,uuid"`
+	IsActive       bool    `json:"is_active"`
+	SortOrder      int     `json:"sort_order,omitempty" validate:"gte=0"`
+	SEOTitle       string  `json:"seo_title,omitempty" validate:"max=60"`
+	SEODescription string  `json:"seo_description,omitempty" validate:"max=160"`
+	SEOKeywords    string  `json:"seo_keywords,omitempty" validate:"max=255"`
 }
 
 type UpdateCategoryRequest struct {
-	Name         *string `json:"name,omitempty" validate:"omitempty,min=2,max=100"`
-	Description  *string `json:"description,omitempty" validate:"omitempty,max=500"`
-	IsActive     *bool   `json:"is_active,omitempty"`
-	SortOrder    *int    `json:"sort_order,omitempty" validate:"omitempty,gte=0"`
-	SEOTitle     *string `json:"seo_title,omitempty" validate:"omitempty,max=60"`
+	Name           *string `json:"name,omitempty" validate:"omitempty,min=2,max=100"`
+	Description    *string `json:"description,omitempty" validate:"omitempty,max=500"`
+	IsActive       *bool   `json:"is_active,omitempty"`
+	SortOrder      *int    `json:"sort_order,omitempty" validate:"omitempty,gte=0"`
+	SEOTitle       *string `json:"seo_title,omitempty" validate:"omitempty,max=60"`
 	SEODescription *string `json:"seo_description,omitempty" validate:"omitempty,max=160"`
-	SEOKeywords  *string `json:"seo_keywords,omitempty" validate:"omitempty,max=255"`
+	SEOKeywords    *string `json:"seo_keywords,omitempty" validate:"omitempty,max=255"`
 }
 
 type ListCategoriesRequest struct {
-	Search   string `json:"search,omitempty"`
-	ParentID *string `json:"parent_id,omitempty"`
-	IsActive *bool  `json:"is_active,omitempty"`
-	Level    *int   `json:"level,omitempty"`
-	Page     int    `json:"page,omitempty" validate:"min=1"`
-	Limit    int    `json:"limit,omitempty" validate:"min=1,max=100"`
-	SortBy   string `json:"sort_by,omitempty" validate:"omitempty,oneof=name,sort_order,created_at"`
-	SortOrder string `json:"sort_order,omitempty" validate:"omitempty,oneof=asc desc"`
+	Search    string  `json:"search,omitempty"`
+	ParentID  *string `json:"parent_id,omitempty"`
+	IsActive  *bool   `json:"is_active,omitempty"`
+	Level     *int    `json:"level,omitempty"`
+	Page      int     `json:"page,omitempty" validate:"min=1"`
+	Limit     int     `json:"limit,omitempty" validate:"min=1,max=100"`
+	SortBy    string  `json:"sort_by,omitempty" validate:"omitempty,oneof=name,sort_order,created_at"`
+	SortOrder string  `json:"sort_order,omitempty" validate:"omitempty,oneof=asc desc"`
 }
 
 type ListCategoriesResponse struct {
@@ -223,21 +223,21 @@ type CategoryNode struct {
 }
 
 type CreateProductVariantRequest struct {
-	ProductID       string          `json:"product_id" validate:"required,uuid"`
-	SKU             string          `json:"sku,omitempty" validate:"max=100"`
-	Name            string          `json:"name" validate:"required,max=300"`
-	Price           decimal.Decimal `json:"price" validate:"required,gt=0"`
-	Cost            decimal.Decimal `json:"cost,omitempty" validate:"gte=0"`
-	Weight          float64         `json:"weight,omitempty" validate:"gte=0"`
-	Barcode         string          `json:"barcode,omitempty" validate:"max=50"`
-	TrackInventory  bool            `json:"track_inventory"`
-	StockQuantity   int             `json:"stock_quantity,omitempty" validate:"gte=0"`
-	MinStockLevel   int             `json:"min_stock_level,omitempty" validate:"gte=0"`
-	MaxStockLevel   int             `json:"max_stock_level,omitempty" validate:"gte=0"`
-	AllowBackorder  bool            `json:"allow_backorder"`
-	IsActive        bool            `json:"is_active"`
-	Attributes      []VariantAttributeRequest `json:"attributes,omitempty"`
-	Images          []VariantImageRequest    `json:"images,omitempty"`
+	ProductID      string                    `json:"product_id" validate:"required,uuid"`
+	SKU            string                    `json:"sku,omitempty" validate:"max=100"`
+	Name           string                    `json:"name" validate:"required,max=300"`
+	Price          decimal.Decimal           `json:"price" validate:"required,gt=0"`
+	Cost           decimal.Decimal           `json:"cost,omitempty" validate:"gte=0"`
+	Weight         float64                   `json:"weight,omitempty" validate:"gte=0"`
+	Barcode        string                    `json:"barcode,omitempty" validate:"max=50"`
+	TrackInventory bool                      `json:"track_inventory"`
+	StockQuantity  int                       `json:"stock_quantity,omitempty" validate:"gte=0"`
+	MinStockLevel  int                       `json:"min_stock_level,omitempty" validate:"gte=0"`
+	MaxStockLevel  int                       `json:"max_stock_level,omitempty" validate:"gte=0"`
+	AllowBackorder bool                      `json:"allow_backorder"`
+	IsActive       bool                      `json:"is_active"`
+	Attributes     []VariantAttributeRequest `json:"attributes,omitempty"`
+	Images         []VariantImageRequest     `json:"images,omitempty"`
 }
 
 type VariantAttributeRequest struct {
@@ -246,98 +246,98 @@ type VariantAttributeRequest struct {
 }
 
 type VariantImageRequest struct {
-	URL      string `json:"url" validate:"required,url,max=1000"`
-	Alt      string `json:"alt,omitempty" validate:"max=255"`
-	SortOrder int   `json:"sort_order,omitempty" validate:"gte=0"`
-	IsMain   bool   `json:"is_main"`
+	URL       string `json:"url" validate:"required,url,max=1000"`
+	Alt       string `json:"alt,omitempty" validate:"max=255"`
+	SortOrder int    `json:"sort_order,omitempty" validate:"gte=0"`
+	IsMain    bool   `json:"is_main"`
 }
 
 type UpdateProductVariantRequest struct {
-	Name            *string         `json:"name,omitempty" validate:"omitempty,max=300"`
-	Price           *decimal.Decimal `json:"price,omitempty" validate:"omitempty,gt=0"`
-	Cost            *decimal.Decimal `json:"cost,omitempty" validate:"omitempty,gte=0"`
-	Weight          *float64        `json:"weight,omitempty" validate:"omitempty,gte=0"`
-	Barcode         *string         `json:"barcode,omitempty" validate:"omitempty,max=50"`
-	TrackInventory  *bool           `json:"track_inventory,omitempty"`
-	MinStockLevel   *int            `json:"min_stock_level,omitempty" validate:"omitempty,gte=0"`
-	MaxStockLevel   *int            `json:"max_stock_level,omitempty" validate:"omitempty,gte=0"`
-	AllowBackorder  *bool           `json:"allow_backorder,omitempty"`
-	IsActive        *bool           `json:"is_active,omitempty"`
-	Attributes      []VariantAttributeRequest `json:"attributes,omitempty"`
+	Name           *string                   `json:"name,omitempty" validate:"omitempty,max=300"`
+	Price          *decimal.Decimal          `json:"price,omitempty" validate:"omitempty,gt=0"`
+	Cost           *decimal.Decimal          `json:"cost,omitempty" validate:"omitempty,gte=0"`
+	Weight         *float64                  `json:"weight,omitempty" validate:"omitempty,gte=0"`
+	Barcode        *string                   `json:"barcode,omitempty" validate:"omitempty,max=50"`
+	TrackInventory *bool                     `json:"track_inventory,omitempty"`
+	MinStockLevel  *int                      `json:"min_stock_level,omitempty" validate:"omitempty,gte=0"`
+	MaxStockLevel  *int                      `json:"max_stock_level,omitempty" validate:"omitempty,gte=0"`
+	AllowBackorder *bool                     `json:"allow_backorder,omitempty"`
+	IsActive       *bool                     `json:"is_active,omitempty"`
+	Attributes     []VariantAttributeRequest `json:"attributes,omitempty"`
 }
 
 type ListProductVariantsRequest struct {
-	Search         string          `json:"search,omitempty"`
-	MinPrice       *decimal.Decimal `json:"min_price,omitempty"`
-	MaxPrice       *decimal.Decimal `json:"max_price,omitempty"`
-	IsActive       *bool           `json:"is_active,omitempty"`
-	InStock        *bool           `json:"in_stock,omitempty"`
-	Page           int             `json:"page,omitempty" validate:"min=1"`
-	Limit          int             `json:"limit,omitempty" validate:"min=1,max=100"`
-	SortBy         string          `json:"sort_by,omitempty" validate:"omitempty,oneof=name,price,created_at"`
-	SortOrder      string          `json:"sort_order,omitempty" validate:"omitempty,oneof=asc desc"`
+	Search    string           `json:"search,omitempty"`
+	MinPrice  *decimal.Decimal `json:"min_price,omitempty"`
+	MaxPrice  *decimal.Decimal `json:"max_price,omitempty"`
+	IsActive  *bool            `json:"is_active,omitempty"`
+	InStock   *bool            `json:"in_stock,omitempty"`
+	Page      int              `json:"page,omitempty" validate:"min=1"`
+	Limit     int              `json:"limit,omitempty" validate:"min=1,max=100"`
+	SortBy    string           `json:"sort_by,omitempty" validate:"omitempty,oneof=name,price,created_at"`
+	SortOrder string           `json:"sort_order,omitempty" validate:"omitempty,oneof=asc desc"`
 }
 
 type ListProductVariantsResponse struct {
 	Variants   []*entities.ProductVariant `json:"variants"`
-	Pagination *Pagination               `json:"pagination"`
+	Pagination *Pagination                `json:"pagination"`
 }
 
 type StockLevelResponse struct {
-	ProductID       uuid.UUID       `json:"product_id"`
-	CurrentStock    int             `json:"current_stock"`
-	MinStockLevel   int             `json:"min_stock_level"`
-	MaxStockLevel   int             `json:"max_stock_level"`
-	IsLowStock      bool            `json:"is_low_stock"`
-	IsOutOfStock    bool            `json:"is_out_of_stock"`
-	TrackInventory  bool            `json:"track_inventory"`
-	AllowBackorder  bool            `json:"allow_backorder"`
-	LastUpdated     time.Time       `json:"last_updated"`
+	ProductID      uuid.UUID `json:"product_id"`
+	CurrentStock   int       `json:"current_stock"`
+	MinStockLevel  int       `json:"min_stock_level"`
+	MaxStockLevel  int       `json:"max_stock_level"`
+	IsLowStock     bool      `json:"is_low_stock"`
+	IsOutOfStock   bool      `json:"is_out_of_stock"`
+	TrackInventory bool      `json:"track_inventory"`
+	AllowBackorder bool      `json:"allow_backorder"`
+	LastUpdated    time.Time `json:"last_updated"`
 }
 
 type AvailabilityResponse struct {
-	ProductID       uuid.UUID `json:"product_id"`
-	RequestedQty    int       `json:"requested_qty"`
-	Available       bool      `json:"available"`
-	Reason          string    `json:"reason,omitempty"`
-	CanFulfill      bool      `json:"can_fulfill"`
-	BackorderAllowed bool     `json:"backorder_allowed"`
+	ProductID        uuid.UUID `json:"product_id"`
+	RequestedQty     int       `json:"requested_qty"`
+	Available        bool      `json:"available"`
+	Reason           string    `json:"reason,omitempty"`
+	CanFulfill       bool      `json:"can_fulfill"`
+	BackorderAllowed bool      `json:"backorder_allowed"`
 }
 
 type GetProductStatsRequest struct {
-	CategoryID     *string    `json:"category_id,omitempty"`
-	IsActive       *bool      `json:"is_active,omitempty"`
-	IsFeatured     *bool      `json:"is_featured,omitempty"`
-	IsDigital      *bool      `json:"is_digital,omitempty"`
-	CreatedAfter   *time.Time `json:"created_after,omitempty"`
-	CreatedBefore  *time.Time `json:"created_before,omitempty"`
+	CategoryID    *string    `json:"category_id,omitempty"`
+	IsActive      *bool      `json:"is_active,omitempty"`
+	IsFeatured    *bool      `json:"is_featured,omitempty"`
+	IsDigital     *bool      `json:"is_digital,omitempty"`
+	CreatedAfter  *time.Time `json:"created_after,omitempty"`
+	CreatedBefore *time.Time `json:"created_before,omitempty"`
 }
 
 // Errors
 var (
-	ErrProductNotFound         = errors.New("product not found")
-	ErrProductAlreadyExists    = errors.New("product already exists")
-	ErrInvalidSKU             = errors.New("invalid SKU")
-	ErrInvalidPrice           = errors.New("invalid price")
-	ErrInvalidStockLevel      = errors.New("invalid stock level")
-	ErrInsufficientStock      = errors.New("insufficient stock")
-	ErrCategoryNotFound       = errors.New("category not found")
-	ErrCategoryAlreadyExists  = errors.New("category already exists")
+	ErrProductNotFound          = errors.New("product not found")
+	ErrProductAlreadyExists     = errors.New("product already exists")
+	ErrInvalidSKU               = errors.New("invalid SKU")
+	ErrInvalidPrice             = errors.New("invalid price")
+	ErrInvalidStockLevel        = errors.New("invalid stock level")
+	ErrInsufficientStock        = errors.New("insufficient stock")
+	ErrCategoryNotFound         = errors.New("category not found")
+	ErrCategoryAlreadyExists    = errors.New("category already exists")
 	ErrInvalidCategoryHierarchy = errors.New("invalid category hierarchy")
-	ErrCategoryHasProducts    = errors.New("category has products")
-	ErrCategoryHasChildren    = errors.New("category has children")
-	ErrVariantNotFound        = errors.New("product variant not found")
-	ErrVariantAlreadyExists   = errors.New("product variant already exists")
-	ErrInvalidQuantity        = errors.New("invalid quantity")
+	ErrCategoryHasProducts      = errors.New("category has products")
+	ErrCategoryHasChildren      = errors.New("category has children")
+	ErrVariantNotFound          = errors.New("product variant not found")
+	ErrVariantAlreadyExists     = errors.New("product variant already exists")
+	ErrInvalidQuantity          = errors.New("invalid quantity")
 )
 
 // ServiceImpl implements the product service interface
 type ServiceImpl struct {
-	productRepo        repositories.ProductRepository
-	categoryRepo       repositories.CategoryRepository
-	variantRepo        repositories.ProductVariantRepository
-	variantAttrRepo    repositories.VariantAttributeRepository
-	variantImageRepo   repositories.VariantImageRepository
+	productRepo      repositories.ProductRepository
+	categoryRepo     repositories.CategoryRepository
+	variantRepo      repositories.ProductVariantRepository
+	variantAttrRepo  repositories.VariantAttributeRepository
+	variantImageRepo repositories.VariantImageRepository
 }
 
 // NewService creates a new product service instance
@@ -399,36 +399,36 @@ func (s *ServiceImpl) CreateProduct(ctx context.Context, req *CreateProductReque
 
 	// Create product entity
 	product := &entities.Product{
-		ID:                uuid.New(),
-		SKU:               strings.ToUpper(strings.TrimSpace(sku)),
-		Name:              strings.TrimSpace(req.Name),
-		Description:       strings.TrimSpace(req.Description),
-		ShortDescription:  strings.TrimSpace(req.ShortDescription),
-		CategoryID:        categoryID,
-		Price:             req.Price,
-		Cost:              req.Cost,
-		Weight:            req.Weight,
-		Length:            req.Length,
-		Width:             req.Width,
-		Height:            req.Height,
-		Volume:            req.Length * req.Width * req.Height, // Calculate volume
-		Barcode:           strings.TrimSpace(req.Barcode),
-		TrackInventory:    req.TrackInventory,
-		StockQuantity:     req.StockQuantity,
-		MinStockLevel:     req.MinStockLevel,
-		MaxStockLevel:     req.MaxStockLevel,
-		AllowBackorder:    req.AllowBackorder,
-		RequiresShipping:  req.RequiresShipping,
-		Taxable:           req.Taxable,
-		TaxRate:           req.TaxRate,
-		IsActive:          true, // Always create active products
-		IsFeatured:        req.IsFeatured,
-		IsDigital:         req.IsDigital,
-		DownloadURL:       strings.TrimSpace(req.DownloadURL),
-		MaxDownloads:      req.MaxDownloads,
-		ExpiryDays:        req.ExpiryDays,
-		CreatedAt:         time.Now().UTC(),
-		UpdatedAt:         time.Now().UTC(),
+		ID:               uuid.New(),
+		SKU:              strings.ToUpper(strings.TrimSpace(sku)),
+		Name:             strings.TrimSpace(req.Name),
+		Description:      strings.TrimSpace(req.Description),
+		ShortDescription: strings.TrimSpace(req.ShortDescription),
+		CategoryID:       categoryID,
+		Price:            req.Price,
+		Cost:             req.Cost,
+		Weight:           req.Weight,
+		Length:           req.Length,
+		Width:            req.Width,
+		Height:           req.Height,
+		Volume:           req.Length * req.Width * req.Height, // Calculate volume
+		Barcode:          strings.TrimSpace(req.Barcode),
+		TrackInventory:   req.TrackInventory,
+		StockQuantity:    req.StockQuantity,
+		MinStockLevel:    req.MinStockLevel,
+		MaxStockLevel:    req.MaxStockLevel,
+		AllowBackorder:   req.AllowBackorder,
+		RequiresShipping: req.RequiresShipping,
+		Taxable:          req.Taxable,
+		TaxRate:          req.TaxRate,
+		IsActive:         true, // Always create active products
+		IsFeatured:       req.IsFeatured,
+		IsDigital:        req.IsDigital,
+		DownloadURL:      strings.TrimSpace(req.DownloadURL),
+		MaxDownloads:     req.MaxDownloads,
+		ExpiryDays:       req.ExpiryDays,
+		CreatedAt:        time.Now().UTC(),
+		UpdatedAt:        time.Now().UTC(),
 	}
 
 	// Validate product entity
@@ -867,19 +867,19 @@ func (s *ServiceImpl) CreateCategory(ctx context.Context, req *CreateCategoryReq
 
 	// Create category entity
 	category := &entities.ProductCategory{
-		ID:            uuid.New(),
-		Name:          strings.TrimSpace(req.Name),
-		Description:   strings.TrimSpace(req.Description),
-		ParentID:      parentID,
-		Path:          path,
-		Level:         s.calculateCategoryLevel(parentID),
-		IsActive:      req.IsActive,
-		SortOrder:     req.SortOrder,
-		SEOTitle:      strings.TrimSpace(req.SEOTitle),
+		ID:             uuid.New(),
+		Name:           strings.TrimSpace(req.Name),
+		Description:    strings.TrimSpace(req.Description),
+		ParentID:       parentID,
+		Path:           path,
+		Level:          s.calculateCategoryLevel(parentID),
+		IsActive:       req.IsActive,
+		SortOrder:      req.SortOrder,
+		SEOTitle:       strings.TrimSpace(req.SEOTitle),
 		SEODescription: strings.TrimSpace(req.SEODescription),
-		SEOKeywords:   strings.TrimSpace(req.SEOKeywords),
-		CreatedAt:     time.Now().UTC(),
-		UpdatedAt:     time.Now().UTC(),
+		SEOKeywords:    strings.TrimSpace(req.SEOKeywords),
+		CreatedAt:      time.Now().UTC(),
+		UpdatedAt:      time.Now().UTC(),
 	}
 
 	// Validate category entity
@@ -1510,15 +1510,15 @@ func (s *ServiceImpl) ListProductVariants(ctx context.Context, productID string,
 
 	// Build filter
 	filter := repositories.ProductVariantFilter{
-		ProductID:      &parsedProductID,
-		Search:         strings.TrimSpace(req.Search),
-		MinPrice:       req.MinPrice,
-		MaxPrice:       req.MaxPrice,
-		IsActive:       req.IsActive,
-		Page:           req.Page,
-		Limit:          req.Limit,
-		SortBy:         req.SortBy,
-		SortOrder:      req.SortOrder,
+		ProductID: &parsedProductID,
+		Search:    strings.TrimSpace(req.Search),
+		MinPrice:  req.MinPrice,
+		MaxPrice:  req.MaxPrice,
+		IsActive:  req.IsActive,
+		Page:      req.Page,
+		Limit:     req.Limit,
+		SortBy:    req.SortBy,
+		SortOrder: req.SortOrder,
 	}
 
 	// Get variants and total count

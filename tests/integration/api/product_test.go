@@ -148,9 +148,9 @@ func TestCategoryEndpoints(t *testing.T) {
 		// Mock response
 		categories := []*dto.CategoryResponse{
 			{
-				ID:   uuid.New(),
-				Name: "Electronics",
-				Path: "electronics",
+				ID:    uuid.New(),
+				Name:  "Electronics",
+				Path:  "electronics",
 				Level: 0,
 			},
 		}
@@ -176,17 +176,17 @@ func TestCategoryEndpoints(t *testing.T) {
 		tree := []*dto.CategoryTreeNode{
 			{
 				CategoryResponse: &dto.CategoryResponse{
-					ID:   uuid.New(),
-					Name: "Electronics",
-					Path: "electronics",
+					ID:    uuid.New(),
+					Name:  "Electronics",
+					Path:  "electronics",
 					Level: 0,
 				},
 				Children: []*dto.CategoryTreeNode{
 					{
 						CategoryResponse: &dto.CategoryResponse{
-							ID:   uuid.New(),
-							Name: "Laptops",
-							Path: "electronics/laptops",
+							ID:    uuid.New(),
+							Name:  "Laptops",
+							Path:  "electronics/laptops",
 							Level: 1,
 						},
 						Children: []*dto.CategoryTreeNode{},
@@ -365,11 +365,11 @@ func TestProductOperations(t *testing.T) {
 
 		// Mock response
 		product := &dto.ProductResponse{
-			ID:        uuid.MustParse(productID),
-			SKU:       "FEATURED-001",
-			Name:      "Featured Product",
-			Price:     decimal.NewFromFloat(299.99),
-			IsActive:  true,
+			ID:         uuid.MustParse(productID),
+			SKU:        "FEATURED-001",
+			Name:       "Featured Product",
+			Price:      decimal.NewFromFloat(299.99),
+			IsActive:   true,
 			IsFeatured: featured,
 		}
 
@@ -493,14 +493,14 @@ func TestRequestValidation(t *testing.T) {
 		// Validate required fields
 		if req.Name == "" {
 			c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-				Error:   "Product name is required",
+				Error: "Product name is required",
 			})
 			return
-			}
+		}
 
 		if req.Price.IsZero() {
 			c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-				Error:   "Price must be greater than 0",
+				Error: "Price must be greater than 0",
 			})
 			return
 		}

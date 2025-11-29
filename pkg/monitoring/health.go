@@ -26,14 +26,14 @@ type HealthCheck func(ctx context.Context) HealthCheckResult
 
 // HealthCheckResult represents the result of a health check
 type HealthCheckResult struct {
-	Status      HealthStatus            `json:"status"`
-	Message     string                  `json:"message"`
-	Details     map[string]interface{}  `json:"details,omitempty"`
-	Duration    time.Duration           `json:"duration"`
-	Timestamp   time.Time               `json:"timestamp"`
-	CheckType   string                  `json:"check_type"`
-	Component   string                  `json:"component"`
-	Metadata    map[string]string       `json:"metadata,omitempty"`
+	Status    HealthStatus           `json:"status"`
+	Message   string                 `json:"message"`
+	Details   map[string]interface{} `json:"details,omitempty"`
+	Duration  time.Duration          `json:"duration"`
+	Timestamp time.Time              `json:"timestamp"`
+	CheckType string                 `json:"check_type"`
+	Component string                 `json:"component"`
+	Metadata  map[string]string      `json:"metadata,omitempty"`
 }
 
 // HealthCheckConfig configures a health check
@@ -50,15 +50,15 @@ type HealthCheckConfig struct {
 
 // HealthReport represents a comprehensive health report
 type HealthReport struct {
-	Status       HealthStatus                   `json:"status"`
-	Timestamp    time.Time                      `json:"timestamp"`
-	Version      string                         `json:"version"`
-	BuildInfo    BuildInfo                      `json:"build_info"`
-	SystemInfo   SystemInfo                     `json:"system_info"`
-	Checks       map[string]HealthCheckResult   `json:"checks"`
-	Summary      HealthSummary                  `json:"summary"`
-	Uptime       time.Duration                  `json:"uptime"`
-	Dependencies map[string]DependencyStatus   `json:"dependencies"`
+	Status       HealthStatus                 `json:"status"`
+	Timestamp    time.Time                    `json:"timestamp"`
+	Version      string                       `json:"version"`
+	BuildInfo    BuildInfo                    `json:"build_info"`
+	SystemInfo   SystemInfo                   `json:"system_info"`
+	Checks       map[string]HealthCheckResult `json:"checks"`
+	Summary      HealthSummary                `json:"summary"`
+	Uptime       time.Duration                `json:"uptime"`
+	Dependencies map[string]DependencyStatus  `json:"dependencies"`
 }
 
 // BuildInfo contains build information
@@ -71,13 +71,13 @@ type BuildInfo struct {
 
 // SystemInfo contains system information
 type SystemInfo struct {
-	Hostname     string    `json:"hostname"`
-	PID          int       `json:"pid"`
-	GoRoutines   int       `json:"goroutines"`
+	Hostname     string     `json:"hostname"`
+	PID          int        `json:"pid"`
+	GoRoutines   int        `json:"goroutines"`
 	MemoryUsage  MemoryInfo `json:"memory_usage"`
-	CPUUsage     float64   `json:"cpu_usage"`
-	NumCPU       int       `json:"num_cpu"`
-	NumGoroutine int       `json:"num_goroutine"`
+	CPUUsage     float64    `json:"cpu_usage"`
+	NumCPU       int        `json:"num_cpu"`
+	NumGoroutine int        `json:"num_goroutine"`
 }
 
 // MemoryInfo contains memory information
@@ -314,9 +314,9 @@ func (hc *HealthChecker) getSystemInfo() SystemInfo {
 	runtime.ReadMemStats(&m)
 
 	return SystemInfo{
-		Hostname:     getHealthHostname(),
-		PID:          getHealthPID(),
-		GoRoutines:   runtime.NumGoroutine(),
+		Hostname:   getHealthHostname(),
+		PID:        getHealthPID(),
+		GoRoutines: runtime.NumGoroutine(),
 		MemoryUsage: MemoryInfo{
 			Alloc:      m.Alloc,
 			TotalAlloc: m.TotalAlloc,

@@ -13,36 +13,36 @@ func TestEnhancedSecurityHeaders(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	tests := []struct {
-		name           string
-		config         SecurityConfig
+		name            string
+		config          SecurityConfig
 		expectedHeaders map[string]string
 	}{
 		{
-			name: "Production security headers",
+			name:   "Production security headers",
 			config: DefaultSecurityConfig(true),
 			expectedHeaders: map[string]string{
-				"X-Frame-Options":         "DENY",
-				"X-Content-Type-Options":  "nosniff",
-				"X-XSS-Protection":        "1; mode=block",
-				"Referrer-Policy":         "strict-origin-when-cross-origin",
+				"X-Frame-Options":           "DENY",
+				"X-Content-Type-Options":    "nosniff",
+				"X-XSS-Protection":          "1; mode=block",
+				"Referrer-Policy":           "strict-origin-when-cross-origin",
 				"Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-				"Content-Security-Policy": "default-src 'self'",
-				"Permissions-Policy":      "geolocation=(), microphone=(), camera=()",
-				"X-DNS-Prefetch-Control":  "off",
+				"Content-Security-Policy":   "default-src 'self'",
+				"Permissions-Policy":        "geolocation=(), microphone=(), camera=()",
+				"X-DNS-Prefetch-Control":    "off",
 			},
 		},
 		{
-			name: "Development security headers",
+			name:   "Development security headers",
 			config: DevelopmentSecurityConfig(),
 			expectedHeaders: map[string]string{
-				"X-Frame-Options":         "DENY",
-				"X-Content-Type-Options":  "nosniff",
-				"X-XSS-Protection":        "1; mode=block",
-				"Referrer-Policy":         "strict-origin-when-cross-origin",
+				"X-Frame-Options":        "DENY",
+				"X-Content-Type-Options": "nosniff",
+				"X-XSS-Protection":       "1; mode=block",
+				"Referrer-Policy":        "strict-origin-when-cross-origin",
 			},
 		},
 		{
-			name: "API security headers",
+			name:   "API security headers",
 			config: APISecurityConfig(true),
 			expectedHeaders: map[string]string{
 				"X-Frame-Options":         "DENY",
@@ -99,10 +99,10 @@ func TestSecurityHeadersWithEnvironment(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	tests := []struct {
-		name           string
-		isProduction   bool
-		expectHSTS     bool
-		expectCSP      bool
+		name         string
+		isProduction bool
+		expectHSTS   bool
+		expectCSP    bool
 	}{
 		{
 			name:         "Production environment",
@@ -310,8 +310,8 @@ func TestBuildCSP(t *testing.T) {
 		{
 			name: "CSP with upgrade insecure requests",
 			config: SecurityConfig{
-				CSPEnabled:               true,
-				CSPDefaultSrc:            "'self'",
+				CSPEnabled:                 true,
+				CSPDefaultSrc:              "'self'",
 				CSPUpgradeInsecureRequests: true,
 			},
 			contains: []string{"default-src 'self'", "upgrade-insecure-requests"},
@@ -370,8 +370,8 @@ func TestBuildHSTS(t *testing.T) {
 		{
 			name: "HSTS with subdomains",
 			config: SecurityConfig{
-				HSTSEnabled:         true,
-				HSTSMaxAge:          31536000,
+				HSTSEnabled:           true,
+				HSTSMaxAge:            31536000,
 				HSTSIncludeSubDomains: true,
 			},
 			expected: "max-age=31536000; includeSubDomains",
@@ -379,10 +379,10 @@ func TestBuildHSTS(t *testing.T) {
 		{
 			name: "Complete HSTS",
 			config: SecurityConfig{
-				HSTSEnabled:         true,
-				HSTSMaxAge:          31536000,
+				HSTSEnabled:           true,
+				HSTSMaxAge:            31536000,
 				HSTSIncludeSubDomains: true,
-				HSTSPreload:         true,
+				HSTSPreload:           true,
 			},
 			expected: "max-age=31536000; includeSubDomains; preload",
 		},

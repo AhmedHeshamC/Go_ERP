@@ -7,13 +7,13 @@ import (
 	"testing"
 	"time"
 
+	"erpgo/internal/domain/products/entities"
+	"erpgo/internal/domain/products/repositories"
+
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"erpgo/internal/domain/products/entities"
-	"erpgo/internal/domain/products/repositories"
-	"erpgo/pkg/database"
 )
 
 // Test setup helper functions - product-specific helpers
@@ -40,34 +40,34 @@ func createTestProductEntity(t testing.TB, categoryID uuid.UUID) *entities.Produ
 	t.Helper()
 
 	return &entities.Product{
-		ID:                uuid.New(),
-		SKU:               "TEST-001",
-		Name:              "Test Product",
-		Description:       "Test product description",
-		ShortDescription:  "Test short description",
-		CategoryID:        categoryID,
-		Price:             decimal.NewFromFloat(99.99),
-		Cost:              decimal.NewFromFloat(50.00),
-		Weight:            1.5,
-		Dimensions:        "10 x 5 x 3",
-		Length:            10.0,
-		Width:             5.0,
-		Height:            3.0,
-		Volume:            150.0,
-		Barcode:           "1234567890123",
-		TrackInventory:    true,
-		StockQuantity:     100,
-		MinStockLevel:     10,
-		MaxStockLevel:     500,
-		AllowBackorder:    false,
-		RequiresShipping:  true,
-		Taxable:           true,
-		TaxRate:           decimal.NewFromFloat(10.0),
-		IsActive:          true,
-		IsFeatured:        false,
-		IsDigital:         false,
-		CreatedAt:         time.Now().UTC(),
-		UpdatedAt:         time.Now().UTC(),
+		ID:               uuid.New(),
+		SKU:              "TEST-001",
+		Name:             "Test Product",
+		Description:      "Test product description",
+		ShortDescription: "Test short description",
+		CategoryID:       categoryID,
+		Price:            decimal.NewFromFloat(99.99),
+		Cost:             decimal.NewFromFloat(50.00),
+		Weight:           1.5,
+		Dimensions:       "10 x 5 x 3",
+		Length:           10.0,
+		Width:            5.0,
+		Height:           3.0,
+		Volume:           150.0,
+		Barcode:          "1234567890123",
+		TrackInventory:   true,
+		StockQuantity:    100,
+		MinStockLevel:    10,
+		MaxStockLevel:    500,
+		AllowBackorder:   false,
+		RequiresShipping: true,
+		Taxable:          true,
+		TaxRate:          decimal.NewFromFloat(10.0),
+		IsActive:         true,
+		IsFeatured:       false,
+		IsDigital:        false,
+		CreatedAt:        time.Now().UTC(),
+		UpdatedAt:        time.Now().UTC(),
 	}
 }
 
@@ -75,26 +75,26 @@ func createTestVariant(t testing.TB, productID uuid.UUID) *entities.ProductVaria
 	t.Helper()
 
 	return &entities.ProductVariant{
-		ID:                uuid.New(),
-		ProductID:         productID,
-		SKU:               "TEST-001-RED",
-		Name:              "Test Product - Red",
-		Price:             decimal.NewFromFloat(99.99),
-		Cost:              decimal.NewFromFloat(50.00),
-		Weight:            1.5,
-		TrackInventory:    true,
-		StockQuantity:     50,
-		MinStockLevel:     5,
-		MaxStockLevel:     200,
-		AllowBackorder:    false,
-		RequiresShipping:  true,
-		Taxable:           true,
-		TaxRate:           decimal.NewFromFloat(10.0),
-		IsActive:          true,
-		IsDigital:         false,
-		SortOrder:         1,
-		CreatedAt:         time.Now().UTC(),
-		UpdatedAt:         time.Now().UTC(),
+		ID:               uuid.New(),
+		ProductID:        productID,
+		SKU:              "TEST-001-RED",
+		Name:             "Test Product - Red",
+		Price:            decimal.NewFromFloat(99.99),
+		Cost:             decimal.NewFromFloat(50.00),
+		Weight:           1.5,
+		TrackInventory:   true,
+		StockQuantity:    50,
+		MinStockLevel:    5,
+		MaxStockLevel:    200,
+		AllowBackorder:   false,
+		RequiresShipping: true,
+		Taxable:          true,
+		TaxRate:          decimal.NewFromFloat(10.0),
+		IsActive:         true,
+		IsDigital:        false,
+		SortOrder:        1,
+		CreatedAt:        time.Now().UTC(),
+		UpdatedAt:        time.Now().UTC(),
 	}
 }
 
@@ -338,9 +338,9 @@ func TestPostgresProductRepository_Search(t *testing.T) {
 
 	// Create test products
 	products := []struct {
-		sku        string
-		name       string
-		isActive   bool
+		sku      string
+		name     string
+		isActive bool
 	}{
 		{"SEARCH-001", "Laptop Computer", true},
 		{"SEARCH-002", "Desktop Computer", true},
@@ -388,10 +388,10 @@ func TestPostgresProductRepository_GetLowStock(t *testing.T) {
 		minStockLevel int
 		shouldAppear  bool
 	}{
-		{50, 10, false},  // Normal stock
+		{50, 10, false}, // Normal stock
 		{5, 10, true},   // Low stock
 		{15, 20, true},  // Low stock
-		{0, 10, false}, // Out of stock (not low stock)
+		{0, 10, false},  // Out of stock (not low stock)
 	}
 
 	for i, tc := range testCases {
@@ -491,20 +491,20 @@ func TestPostgresProductRepository_GetProductStats(t *testing.T) {
 
 	// Create test products with different configurations
 	products := []struct {
-		isActive      bool
-		isFeatured    bool
-		isDigital     bool
+		isActive       bool
+		isFeatured     bool
+		isDigital      bool
 		trackInventory bool
-		stockQuantity int
-		minStockLevel int
-		price         float64
-		cost          float64
+		stockQuantity  int
+		minStockLevel  int
+		price          float64
+		cost           float64
 	}{
 		{true, true, false, true, 100, 10, 99.99, 50.00},
 		{true, false, true, false, 0, 0, 29.99, 10.00},
-		{true, false, false, true, 5, 10, 49.99, 25.00}, // Low stock
+		{true, false, false, true, 5, 10, 49.99, 25.00},    // Low stock
 		{false, false, false, true, 0, 10, 199.99, 100.00}, // Inactive, out of stock
-		{true, true, false, true, 0, 10, 79.99, 40.00}, // Featured, out of stock
+		{true, true, false, true, 0, 10, 79.99, 40.00},     // Featured, out of stock
 	}
 
 	for _, p := range products {

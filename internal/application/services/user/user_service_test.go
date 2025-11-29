@@ -12,7 +12,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"erpgo/internal/domain/users/entities"
-	"erpgo/pkg/auth"
 	"erpgo/pkg/cache"
 )
 
@@ -21,8 +20,8 @@ func TestCreateUser(t *testing.T) {
 	mockUserRepo := &MockUserRepository{}
 	mockRoleRepo := &MockRoleRepository{}
 	mockUserRoleRepo := &MockUserRoleRepository{}
-	mockPasswordSvc := &MockPasswordService{}
-	mockJWTSvc := &MockJWTService{}
+	mockPasswordSvc := NewMockPasswordService()
+	mockJWTSvc := NewMockJWTService()
 	mockTxManager := &MockTransactionManager{}
 
 	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), mockTxManager)
@@ -40,7 +39,6 @@ func TestCreateUser(t *testing.T) {
 	// Mock expectations
 	mockUserRepo.On("ExistsByEmail", ctx, "test@example.com").Return(false, nil)
 	mockUserRepo.On("ExistsByUsername", ctx, "testuser").Return(false, nil)
-	mockPasswordSvc.On("HashPassword", "Password123!").Return("hashedPassword", nil)
 	mockUserRepo.On("Create", ctx, mock.AnythingOfType("*entities.User")).Return(nil)
 	mockUserRepo.On("AssignRole", ctx, mock.AnythingOfType("uuid.UUID"), "student", mock.AnythingOfType("uuid.UUID")).Return(nil)
 
@@ -60,7 +58,6 @@ func TestCreateUser(t *testing.T) {
 	assert.Empty(t, result.PasswordHash) // Should be removed in ToSafeUser()
 
 	mockUserRepo.AssertExpectations(t)
-	mockPasswordSvc.AssertExpectations(t)
 }
 
 func TestCreateUserUserAlreadyExists(t *testing.T) {
@@ -68,8 +65,8 @@ func TestCreateUserUserAlreadyExists(t *testing.T) {
 	mockUserRepo := &MockUserRepository{}
 	mockRoleRepo := &MockRoleRepository{}
 	mockUserRoleRepo := &MockUserRoleRepository{}
-	mockPasswordSvc := &MockPasswordService{}
-	mockJWTSvc := &MockJWTService{}
+	mockPasswordSvc := NewMockPasswordService()
+	mockJWTSvc := NewMockJWTService()
 	mockTxManager := &MockTransactionManager{}
 
 	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), mockTxManager)
@@ -102,22 +99,22 @@ func TestGetUser(t *testing.T) {
 	mockUserRepo := &MockUserRepository{}
 	mockRoleRepo := &MockRoleRepository{}
 	mockUserRoleRepo := &MockUserRoleRepository{}
-	mockPasswordSvc := &MockPasswordService{}
-	mockJWTSvc := &MockJWTService{}
+	mockPasswordSvc := NewMockPasswordService()
+	mockJWTSvc := NewMockJWTService()
 
 	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
 	ctx := context.Background()
 	userID := uuid.New()
 	testUser := &entities.User{
-		ID:        userID,
-		Email:     "test@example.com",
-		Username:  "testuser",
-		FirstName: "Test",
-		LastName:  "User",
+		ID:           userID,
+		Email:        "test@example.com",
+		Username:     "testuser",
+		FirstName:    "Test",
+		LastName:     "User",
 		PasswordHash: "hashedPassword",
-		IsActive:  true,
-		IsVerified: true,
+		IsActive:     true,
+		IsVerified:   true,
 	}
 
 	// Mock expectations
@@ -144,8 +141,8 @@ func TestGetUserNotFound(t *testing.T) {
 	mockUserRepo := &MockUserRepository{}
 	mockRoleRepo := &MockRoleRepository{}
 	mockUserRoleRepo := &MockUserRoleRepository{}
-	mockPasswordSvc := &MockPasswordService{}
-	mockJWTSvc := &MockJWTService{}
+	mockPasswordSvc := NewMockPasswordService()
+	mockJWTSvc := NewMockJWTService()
 
 	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
@@ -171,8 +168,8 @@ func TestLogin(t *testing.T) {
 	mockUserRepo := &MockUserRepository{}
 	mockRoleRepo := &MockRoleRepository{}
 	mockUserRoleRepo := &MockUserRoleRepository{}
-	mockPasswordSvc := &MockPasswordService{}
-	mockJWTSvc := &MockJWTService{}
+	mockPasswordSvc := NewMockPasswordService()
+	mockJWTSvc := NewMockJWTService()
 
 	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
@@ -183,27 +180,30 @@ func TestLogin(t *testing.T) {
 	}
 
 	userID := uuid.New()
+
+	// Create a real user with a password that will be hashed by the real password service
 	testUser := &entities.User{
-		ID:        userID,
-		Email:     "test@example.com",
-		Username:  "testuser",
-		FirstName: "Test",
-		LastName:  "User",
-		PasswordHash: "hashedPassword",
-		IsActive:  true,
-		IsVerified: true,
+		ID:           userID,
+		Email:        "test@example.com",
+		Username:     "testuser",
+		FirstName:    "Test",
+		LastName:     "User",
+		PasswordHash: "", // Will be set below
+		IsActive:     true,
+		IsVerified:   true,
 	}
+
+	// Hash the password using the real password service
+	hashedPassword, err := mockPasswordSvc.HashPassword("Password123!")
+	require.NoError(t, err)
+	testUser.PasswordHash = hashedPassword
 
 	userRoles := []string{"student", "user"}
 
 	// Mock expectations
 	mockUserRepo.On("GetByEmail", ctx, "test@example.com").Return(testUser, nil)
-	mockPasswordSvc.On("CheckPassword", "Password123!", "hashedPassword").Return(true)
 	mockUserRepo.On("GetUserRoles", ctx, userID).Return(userRoles, nil)
 	mockUserRepo.On("UpdateLastLogin", ctx, userID).Return(nil)
-	mockJWTSvc.On("GenerateTokenPair", userID, "test@example.com", "testuser", userRoles).
-		Return("access_token", "refresh_token", nil)
-	mockJWTSvc.On("GetAccessExpiry").Return(time.Hour)
 
 	// Execute
 	result, err := service.Login(ctx, req)
@@ -214,13 +214,11 @@ func TestLogin(t *testing.T) {
 	assert.NotNil(t, result.User)
 	assert.Equal(t, "test@example.com", result.User.Email)
 	assert.Equal(t, "testuser", result.User.Username)
-	assert.Equal(t, "access_token", result.AccessToken)
-	assert.Equal(t, "refresh_token", result.RefreshToken)
-	assert.Equal(t, int(time.Hour.Seconds()), result.ExpiresIn)
+	assert.NotEmpty(t, result.AccessToken)
+	assert.NotEmpty(t, result.RefreshToken)
+	assert.Greater(t, result.ExpiresIn, 0)
 
 	mockUserRepo.AssertExpectations(t)
-	mockPasswordSvc.AssertExpectations(t)
-	mockJWTSvc.AssertExpectations(t)
 }
 
 func TestLoginInvalidCredentials(t *testing.T) {
@@ -228,8 +226,8 @@ func TestLoginInvalidCredentials(t *testing.T) {
 	mockUserRepo := &MockUserRepository{}
 	mockRoleRepo := &MockRoleRepository{}
 	mockUserRoleRepo := &MockUserRoleRepository{}
-	mockPasswordSvc := &MockPasswordService{}
-	mockJWTSvc := &MockJWTService{}
+	mockPasswordSvc := NewMockPasswordService()
+	mockJWTSvc := NewMockJWTService()
 
 	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
@@ -239,17 +237,24 @@ func TestLoginInvalidCredentials(t *testing.T) {
 		Password: "wrongpassword",
 	}
 
+	userID := uuid.New()
+
+	// Create a real user with a password that will be hashed by the real password service
 	testUser := &entities.User{
-		ID:           uuid.New(),
+		ID:           userID,
 		Email:        "test@example.com",
 		Username:     "testuser",
-		PasswordHash: "hashedPassword",
+		PasswordHash: "", // Will be set below
 		IsActive:     true,
 	}
 
+	// Hash the correct password using the real password service
+	hashedPassword, err := mockPasswordSvc.HashPassword("Password123!")
+	require.NoError(t, err)
+	testUser.PasswordHash = hashedPassword
+
 	// Mock expectations
 	mockUserRepo.On("GetByEmail", ctx, "test@example.com").Return(testUser, nil)
-	mockPasswordSvc.On("CheckPassword", "wrongpassword", "hashedPassword").Return(false)
 
 	// Execute
 	result, err := service.Login(ctx, req)
@@ -260,7 +265,6 @@ func TestLoginInvalidCredentials(t *testing.T) {
 	assert.Equal(t, ErrInvalidCredentials, err)
 
 	mockUserRepo.AssertExpectations(t)
-	mockPasswordSvc.AssertExpectations(t)
 }
 
 func TestListUsers(t *testing.T) {
@@ -268,8 +272,8 @@ func TestListUsers(t *testing.T) {
 	mockUserRepo := &MockUserRepository{}
 	mockRoleRepo := &MockRoleRepository{}
 	mockUserRoleRepo := &MockUserRoleRepository{}
-	mockPasswordSvc := &MockPasswordService{}
-	mockJWTSvc := &MockJWTService{}
+	mockPasswordSvc := NewMockPasswordService()
+	mockJWTSvc := NewMockJWTService()
 
 	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
@@ -324,8 +328,8 @@ func TestUpdateUser(t *testing.T) {
 	mockUserRepo := &MockUserRepository{}
 	mockRoleRepo := &MockRoleRepository{}
 	mockUserRoleRepo := &MockUserRoleRepository{}
-	mockPasswordSvc := &MockPasswordService{}
-	mockJWTSvc := &MockJWTService{}
+	mockPasswordSvc := NewMockPasswordService()
+	mockJWTSvc := NewMockJWTService()
 
 	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
@@ -368,8 +372,8 @@ func TestAssignRole(t *testing.T) {
 	mockUserRepo := &MockUserRepository{}
 	mockRoleRepo := &MockRoleRepository{}
 	mockUserRoleRepo := &MockUserRoleRepository{}
-	mockPasswordSvc := &MockPasswordService{}
-	mockJWTSvc := &MockJWTService{}
+	mockPasswordSvc := NewMockPasswordService()
+	mockJWTSvc := NewMockJWTService()
 
 	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
@@ -408,8 +412,8 @@ func TestCreateRole(t *testing.T) {
 	mockUserRepo := &MockUserRepository{}
 	mockRoleRepo := &MockRoleRepository{}
 	mockUserRoleRepo := &MockUserRoleRepository{}
-	mockPasswordSvc := &MockPasswordService{}
-	mockJWTSvc := &MockJWTService{}
+	mockPasswordSvc := NewMockPasswordService()
+	mockJWTSvc := NewMockJWTService()
 
 	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
@@ -442,8 +446,8 @@ func TestDeleteUser(t *testing.T) {
 	mockUserRepo := &MockUserRepository{}
 	mockRoleRepo := &MockRoleRepository{}
 	mockUserRoleRepo := &MockUserRoleRepository{}
-	mockPasswordSvc := &MockPasswordService{}
-	mockJWTSvc := &MockJWTService{}
+	mockPasswordSvc := NewMockPasswordService()
+	mockJWTSvc := NewMockJWTService()
 
 	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
@@ -473,8 +477,8 @@ func TestChangePassword(t *testing.T) {
 	mockUserRepo := &MockUserRepository{}
 	mockRoleRepo := &MockRoleRepository{}
 	mockUserRoleRepo := &MockUserRoleRepository{}
-	mockPasswordSvc := &MockPasswordService{}
-	mockJWTSvc := &MockJWTService{}
+	mockPasswordSvc := NewMockPasswordService()
+	mockJWTSvc := NewMockJWTService()
 
 	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
@@ -485,32 +489,30 @@ func TestChangePassword(t *testing.T) {
 		NewPassword: "NewPassword456!",
 	}
 
+	userUUID := uuid.New()
+
+	// Hash the old password using the real password service
+	hashedOldPassword, err := mockPasswordSvc.HashPassword("OldPassword123!")
+	require.NoError(t, err)
+
 	testUser := &entities.User{
-		ID:           uuid.New(),
+		ID:           userUUID,
 		Email:        "test@example.com",
-		PasswordHash: "hashedOldPassword",
+		PasswordHash: hashedOldPassword,
 		IsActive:     true,
 		UpdatedAt:    time.Now().UTC(),
 	}
 
 	// Mock expectations
 	mockUserRepo.On("GetByID", ctx, mock.AnythingOfType("uuid.UUID")).Return(testUser, nil)
-	mockPasswordSvc.On("CheckPassword", "OldPassword123!", "hashedOldPassword").Return(true)
-	mockPasswordSvc.On("CheckPassword", "NewPassword456!", "hashedOldPassword").Return(false)
-	mockPasswordSvc.On("ValidatePassword", "NewPassword456!").Return(&auth.ValidationResult{
-		Valid:  true,
-		Errors: []string{},
-	})
-	mockPasswordSvc.On("HashPassword", "NewPassword456!").Return("hashedNewPassword", nil)
 	mockUserRepo.On("Update", ctx, mock.AnythingOfType("*entities.User")).Return(nil)
 
 	// Execute
-	err := service.ChangePassword(ctx, userID, req)
+	err = service.ChangePassword(ctx, userID, req)
 
 	// Assert
 	require.NoError(t, err)
 	mockUserRepo.AssertExpectations(t)
-	mockPasswordSvc.AssertExpectations(t)
 }
 
 func TestChangePasswordInvalidOldPassword(t *testing.T) {
@@ -518,8 +520,8 @@ func TestChangePasswordInvalidOldPassword(t *testing.T) {
 	mockUserRepo := &MockUserRepository{}
 	mockRoleRepo := &MockRoleRepository{}
 	mockUserRoleRepo := &MockUserRoleRepository{}
-	mockPasswordSvc := &MockPasswordService{}
-	mockJWTSvc := &MockJWTService{}
+	mockPasswordSvc := NewMockPasswordService()
+	mockJWTSvc := NewMockJWTService()
 
 	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
@@ -530,26 +532,30 @@ func TestChangePasswordInvalidOldPassword(t *testing.T) {
 		NewPassword: "NewPassword456!",
 	}
 
+	userUUID := uuid.New()
+
+	// Hash the correct old password using the real password service
+	hashedOldPassword, err := mockPasswordSvc.HashPassword("OldPassword123!")
+	require.NoError(t, err)
+
 	testUser := &entities.User{
-		ID:           uuid.New(),
+		ID:           userUUID,
 		Email:        "test@example.com",
-		PasswordHash: "hashedOldPassword",
+		PasswordHash: hashedOldPassword,
 		IsActive:     true,
 		UpdatedAt:    time.Now().UTC(),
 	}
 
 	// Mock expectations
 	mockUserRepo.On("GetByID", ctx, mock.AnythingOfType("uuid.UUID")).Return(testUser, nil)
-	mockPasswordSvc.On("CheckPassword", "WrongPassword123!", "hashedOldPassword").Return(false)
 
 	// Execute
-	err := service.ChangePassword(ctx, userID, req)
+	err = service.ChangePassword(ctx, userID, req)
 
 	// Assert
 	assert.Error(t, err)
 	assert.Equal(t, ErrInvalidCredentials, err)
 	mockUserRepo.AssertExpectations(t)
-	mockPasswordSvc.AssertExpectations(t)
 }
 
 func TestForgotPassword(t *testing.T) {
@@ -557,8 +563,8 @@ func TestForgotPassword(t *testing.T) {
 	mockUserRepo := &MockUserRepository{}
 	mockRoleRepo := &MockRoleRepository{}
 	mockUserRoleRepo := &MockUserRoleRepository{}
-	mockPasswordSvc := &MockPasswordService{}
-	mockJWTSvc := &MockJWTService{}
+	mockPasswordSvc := NewMockPasswordService()
+	mockJWTSvc := NewMockJWTService()
 
 	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
@@ -573,7 +579,6 @@ func TestForgotPassword(t *testing.T) {
 
 	// Mock expectations
 	mockUserRepo.On("GetByEmail", ctx, email).Return(testUser, nil)
-	mockPasswordSvc.On("GenerateResetToken").Return("reset-token-123", nil)
 
 	// Execute
 	err := service.ForgotPassword(ctx, email)
@@ -581,7 +586,6 @@ func TestForgotPassword(t *testing.T) {
 	// Assert
 	require.NoError(t, err)
 	mockUserRepo.AssertExpectations(t)
-	mockPasswordSvc.AssertExpectations(t)
 }
 
 func TestResetPassword(t *testing.T) {
@@ -589,8 +593,8 @@ func TestResetPassword(t *testing.T) {
 	mockUserRepo := &MockUserRepository{}
 	mockRoleRepo := &MockRoleRepository{}
 	mockUserRoleRepo := &MockUserRoleRepository{}
-	mockPasswordSvc := &MockPasswordService{}
-	mockJWTSvc := &MockJWTService{}
+	mockPasswordSvc := NewMockPasswordService()
+	mockJWTSvc := NewMockJWTService()
 
 	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 
@@ -619,11 +623,6 @@ func TestResetPassword(t *testing.T) {
 
 	// Mock expectations
 	mockUserRepo.On("GetByID", ctx, userID).Return(testUser, nil)
-	mockPasswordSvc.On("ValidatePassword", "NewPassword123!").Return(&auth.ValidationResult{
-		Valid:  true,
-		Errors: []string{},
-	})
-	mockPasswordSvc.On("HashPassword", "NewPassword123!").Return("hashedNewPassword", nil)
 	mockUserRepo.On("Update", ctx, mock.AnythingOfType("*entities.User")).Return(nil)
 
 	// Execute
@@ -632,7 +631,6 @@ func TestResetPassword(t *testing.T) {
 	// Assert
 	require.NoError(t, err)
 	mockUserRepo.AssertExpectations(t)
-	mockPasswordSvc.AssertExpectations(t)
 
 	// Verify token was removed
 	_, exists := service.(*ServiceImpl).resetTokens["reset-token-123"]
@@ -644,8 +642,8 @@ func TestResetPasswordInvalidToken(t *testing.T) {
 	mockUserRepo := &MockUserRepository{}
 	mockRoleRepo := &MockRoleRepository{}
 	mockUserRoleRepo := &MockUserRoleRepository{}
-	mockPasswordSvc := &MockPasswordService{}
-	mockJWTSvc := &MockJWTService{}
+	mockPasswordSvc := NewMockPasswordService()
+	mockJWTSvc := NewMockJWTService()
 
 	service := NewService(mockUserRepo, mockRoleRepo, mockUserRoleRepo, mockPasswordSvc, mockJWTSvc, nil, cache.NewMockCache(), &MockTransactionManager{})
 

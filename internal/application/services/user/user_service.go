@@ -146,29 +146,29 @@ type ListRolesRequest struct {
 
 type ListRolesResponse struct {
 	Roles      []*entities.Role `json:"roles"`
-	Pagination *Pagination     `json:"pagination"`
+	Pagination *Pagination      `json:"pagination"`
 }
 
 type Pagination struct {
-	Page       int `json:"page"`
-	Limit      int `json:"limit"`
-	Total      int `json:"total"`
-	TotalPages int `json:"total_pages"`
+	Page       int  `json:"page"`
+	Limit      int  `json:"limit"`
+	Total      int  `json:"total"`
+	TotalPages int  `json:"total_pages"`
 	HasNext    bool `json:"has_next"`
 	HasPrev    bool `json:"has_prev"`
 }
 
 // Errors
 var (
-	ErrUserNotFound          = errors.New("user not found")
-	ErrInvalidCredentials    = errors.New("invalid credentials")
-	ErrUserAlreadyExists     = errors.New("user already exists")
-	ErrInvalidToken          = errors.New("invalid token")
-	ErrTokenExpired          = errors.New("token expired")
+	ErrUserNotFound           = errors.New("user not found")
+	ErrInvalidCredentials     = errors.New("invalid credentials")
+	ErrUserAlreadyExists      = errors.New("user already exists")
+	ErrInvalidToken           = errors.New("invalid token")
+	ErrTokenExpired           = errors.New("token expired")
 	ErrInsufficientPermission = errors.New("insufficient permission")
-	ErrRoleNotFound          = errors.New("role not found")
-	ErrInvalidPassword       = errors.New("invalid password")
-	ErrEmailAlreadyVerified  = errors.New("email already verified")
+	ErrRoleNotFound           = errors.New("role not found")
+	ErrInvalidPassword        = errors.New("invalid password")
+	ErrEmailAlreadyVerified   = errors.New("email already verified")
 )
 
 // ResetTokenInfo holds information about password reset tokens
@@ -181,18 +181,18 @@ type ResetTokenInfo struct {
 
 // ServiceImpl implements the user service interface
 type ServiceImpl struct {
-	userRepo              repositories.UserRepository
-	roleRepo              repositories.RoleRepository
-	userRoleRepo          repositories.UserRoleRepository
-	passwordSvc           *auth.PasswordService
-	jwtSvc                *auth.JWTService
-	emailVerificationSvc  email.Service
-	cache                 cache.Cache
-	permissionCache       *cache.PermissionCache
-	txManager             database.TransactionManagerInterface
-	defaultRole           string
-	resetTokens           map[string]*ResetTokenInfo  // Fallback for when cache is not available
-	resetMutex            sync.RWMutex
+	userRepo             repositories.UserRepository
+	roleRepo             repositories.RoleRepository
+	userRoleRepo         repositories.UserRoleRepository
+	passwordSvc          *auth.PasswordService
+	jwtSvc               *auth.JWTService
+	emailVerificationSvc email.Service
+	cache                cache.Cache
+	permissionCache      *cache.PermissionCache
+	txManager            database.TransactionManagerInterface
+	defaultRole          string
+	resetTokens          map[string]*ResetTokenInfo // Fallback for when cache is not available
+	resetMutex           sync.RWMutex
 }
 
 // NewService creates a new user service instance
@@ -212,19 +212,19 @@ func NewService(
 		logger := zerolog.Nop()
 		permissionCache = cache.NewPermissionCache(cacheInstance, &logger, cache.DefaultPermissionCacheConfig())
 	}
-	
+
 	return &ServiceImpl{
-		userRepo:              userRepo,
-		roleRepo:              roleRepo,
-		userRoleRepo:          userRoleRepo,
-		passwordSvc:           passwordSvc,
-		jwtSvc:                jwtSvc,
-		emailVerificationSvc:  emailVerificationSvc,
-		cache:                 cacheInstance,
-		permissionCache:       permissionCache,
-		txManager:             txManager,
-		defaultRole:           "student", // Default role for new users
-		resetTokens:           make(map[string]*ResetTokenInfo),
+		userRepo:             userRepo,
+		roleRepo:             roleRepo,
+		userRoleRepo:         userRoleRepo,
+		passwordSvc:          passwordSvc,
+		jwtSvc:               jwtSvc,
+		emailVerificationSvc: emailVerificationSvc,
+		cache:                cacheInstance,
+		permissionCache:      permissionCache,
+		txManager:            txManager,
+		defaultRole:          "student", // Default role for new users
+		resetTokens:          make(map[string]*ResetTokenInfo),
 	}
 }
 
@@ -653,10 +653,10 @@ func (s *ServiceImpl) Logout(ctx context.Context, token string) error {
 	// This would require the user to login again on all devices
 	// Uncomment the following lines if you want this behavior:
 	/*
-	err = s.jwtSvc.InvalidateUserTokens(ctx, claims.UserID)
-	if err != nil {
-		return fmt.Errorf("failed to invalidate user tokens: %w", err)
-	}
+		err = s.jwtSvc.InvalidateUserTokens(ctx, claims.UserID)
+		if err != nil {
+			return fmt.Errorf("failed to invalidate user tokens: %w", err)
+		}
 	*/
 
 	return nil
@@ -810,7 +810,9 @@ func (s *ServiceImpl) ForgotPassword(ctx context.Context, email string) error {
 	// Send password reset email if email service is available
 	if s.emailVerificationSvc != nil {
 		// Cast to email service interface to access SendPasswordResetEmail
-		if emailSvc, ok := s.emailVerificationSvc.(interface{ SendPasswordResetEmail(email, token string) error }); ok {
+		if emailSvc, ok := s.emailVerificationSvc.(interface {
+			SendPasswordResetEmail(email, token string) error
+		}); ok {
 			if err := emailSvc.SendPasswordResetEmail(email, resetToken); err != nil {
 				// Log error but don't fail the operation
 				fmt.Printf("Warning: failed to send password reset email: %v\n", err)
@@ -1215,7 +1217,7 @@ func (s *ServiceImpl) CheckUserPermission(ctx context.Context, userID, permissio
 // SendVerificationEmail sends a verification email to a user
 func (s *ServiceImpl) SendVerificationEmail(ctx context.Context, email string) error {
 	req := &entities.EmailVerificationRequest{
-		Email:    email,
+		Email:     email,
 		TokenType: entities.TokenTypeVerification,
 	}
 

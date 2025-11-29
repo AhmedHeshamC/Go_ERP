@@ -27,12 +27,12 @@ func TestCORSMiddleware(t *testing.T) {
 		{
 			name: "Development - allowed origin",
 			corsConfig: config.CORSConfig{
-				Origins:         []string{"http://localhost:3000"},
-				Methods:         []string{"GET", "POST"},
-				Headers:         []string{"Content-Type"},
-				MaxAge:           86400,
-				Credentials:     true,
-				IsProduction:    false,
+				Origins:      []string{"http://localhost:3000"},
+				Methods:      []string{"GET", "POST"},
+				Headers:      []string{"Content-Type"},
+				MaxAge:       86400,
+				Credentials:  true,
+				IsProduction: false,
 			},
 			origin:         "http://localhost:3000",
 			method:         "GET",
@@ -42,12 +42,12 @@ func TestCORSMiddleware(t *testing.T) {
 		{
 			name: "Development - wildcard allowed",
 			corsConfig: config.CORSConfig{
-				Origins:         []string{"*"},
-				Methods:         []string{"GET", "POST"},
-				Headers:         []string{"Content-Type"},
-				MaxAge:           86400,
-				Credentials:     true,
-				IsProduction:    false,
+				Origins:      []string{"*"},
+				Methods:      []string{"GET", "POST"},
+				Headers:      []string{"Content-Type"},
+				MaxAge:       86400,
+				Credentials:  true,
+				IsProduction: false,
 			},
 			origin:         "http://example.com",
 			method:         "GET",
@@ -57,12 +57,12 @@ func TestCORSMiddleware(t *testing.T) {
 		{
 			name: "Production - specific origin allowed",
 			corsConfig: config.CORSConfig{
-				Origins:         []string{"https://app.example.com"},
-				Methods:         []string{"GET", "POST"},
-				Headers:         []string{"Content-Type"},
-				MaxAge:           86400,
-				Credentials:     true,
-				IsProduction:    true,
+				Origins:      []string{"https://app.example.com"},
+				Methods:      []string{"GET", "POST"},
+				Headers:      []string{"Content-Type"},
+				MaxAge:       86400,
+				Credentials:  true,
+				IsProduction: true,
 			},
 			origin:         "https://app.example.com",
 			method:         "GET",
@@ -72,12 +72,12 @@ func TestCORSMiddleware(t *testing.T) {
 		{
 			name: "Production - wildcard not allowed",
 			corsConfig: config.CORSConfig{
-				Origins:         []string{"*"},
-				Methods:         []string{"GET", "POST"},
-				Headers:         []string{"Content-Type"},
-				MaxAge:           86400,
-				Credentials:     true,
-				IsProduction:    true,
+				Origins:      []string{"*"},
+				Methods:      []string{"GET", "POST"},
+				Headers:      []string{"Content-Type"},
+				MaxAge:       86400,
+				Credentials:  true,
+				IsProduction: true,
 			},
 			origin:         "https://malicious.com",
 			method:         "GET",
@@ -87,12 +87,12 @@ func TestCORSMiddleware(t *testing.T) {
 		{
 			name: "Production - HTTPS required",
 			corsConfig: config.CORSConfig{
-				Origins:         []string{"https://app.example.com"},
-				Methods:         []string{"GET", "POST"},
-				Headers:         []string{"Content-Type"},
-				MaxAge:           86400,
-				Credentials:     true,
-				IsProduction:    true,
+				Origins:      []string{"https://app.example.com"},
+				Methods:      []string{"GET", "POST"},
+				Headers:      []string{"Content-Type"},
+				MaxAge:       86400,
+				Credentials:  true,
+				IsProduction: true,
 			},
 			origin:         "http://app.example.com",
 			method:         "GET",
@@ -102,12 +102,12 @@ func TestCORSMiddleware(t *testing.T) {
 		{
 			name: "Preflight request - allowed",
 			corsConfig: config.CORSConfig{
-				Origins:         []string{"http://localhost:3000"},
-				Methods:         []string{"GET", "POST"},
-				Headers:         []string{"Content-Type"},
-				MaxAge:           86400,
-				Credentials:     true,
-				IsProduction:    false,
+				Origins:      []string{"http://localhost:3000"},
+				Methods:      []string{"GET", "POST"},
+				Headers:      []string{"Content-Type"},
+				MaxAge:       86400,
+				Credentials:  true,
+				IsProduction: false,
 			},
 			origin:         "http://localhost:3000",
 			method:         "OPTIONS",
@@ -117,12 +117,12 @@ func TestCORSMiddleware(t *testing.T) {
 		{
 			name: "No origin header",
 			corsConfig: config.CORSConfig{
-				Origins:         []string{"http://localhost:3000"},
-				Methods:         []string{"GET", "POST"},
-				Headers:         []string{"Content-Type"},
-				MaxAge:           86400,
-				Credentials:     true,
-				IsProduction:    false,
+				Origins:      []string{"http://localhost:3000"},
+				Methods:      []string{"GET", "POST"},
+				Headers:      []string{"Content-Type"},
+				MaxAge:       86400,
+				Credentials:  true,
+				IsProduction: false,
 			},
 			origin:         "",
 			method:         "GET",
@@ -222,9 +222,9 @@ func TestCORSForAPI(t *testing.T) {
 	logger := zerolog.Nop()
 
 	corsConfig := config.CORSConfig{
-		Origins:     []string{"https://api.example.com"},
-		Methods:     []string{"GET", "POST"},
-		Headers:     []string{"Content-Type"},
+		Origins:      []string{"https://api.example.com"},
+		Methods:      []string{"GET", "POST"},
+		Headers:      []string{"Content-Type"},
 		IsProduction: false,
 	}
 
@@ -258,9 +258,9 @@ func TestCORSForWebApp(t *testing.T) {
 	logger := zerolog.Nop()
 
 	corsConfig := config.CORSConfig{
-		Origins:     []string{"https://app.example.com"},
-		Methods:     []string{"GET", "POST"},
-		Headers:     []string{"Content-Type"},
+		Origins:      []string{"https://app.example.com"},
+		Methods:      []string{"GET", "POST"},
+		Headers:      []string{"Content-Type"},
 		IsProduction: false,
 	}
 
@@ -297,8 +297,8 @@ func TestCORSWithDynamicOrigins(t *testing.T) {
 	logger := zerolog.Nop()
 
 	corsConfig := config.CORSConfig{
-		Methods:     []string{"GET", "POST"},
-		Headers:     []string{"Content-Type"},
+		Methods:      []string{"GET", "POST"},
+		Headers:      []string{"Content-Type"},
 		IsProduction: false,
 	}
 
@@ -382,9 +382,9 @@ func TestBlockedOrigins(t *testing.T) {
 	logger := zerolog.Nop()
 
 	corsConfig := config.CORSConfig{
-		Origins:     []string{"*"}, // Allow all origins
-		Methods:     []string{"GET", "POST"},
-		Headers:     []string{"Content-Type"},
+		Origins:      []string{"*"}, // Allow all origins
+		Methods:      []string{"GET", "POST"},
+		Headers:      []string{"Content-Type"},
 		IsProduction: false,
 	}
 

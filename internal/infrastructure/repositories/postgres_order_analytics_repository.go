@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/uuid"
-	"github.com/shopspring/decimal"
 	"erpgo/internal/domain/orders/repositories"
 	"erpgo/pkg/database"
+	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 // Additional analytics types not defined in the domain package
@@ -22,42 +22,42 @@ type RegionSalesStats struct {
 }
 
 type CustomerRetentionStats struct {
-	Period                 string          `json:"period"`
-	TotalCustomers         int64           `json:"total_customers"`
-	NewCustomers           int64           `json:"new_customers"`
-	ReturningCustomers     int64           `json:"returning_customers"`
-	RetentionRate          decimal.Decimal `json:"retention_rate"`
-	TotalOrders            int64           `json:"total_orders"`
+	Period                   string          `json:"period"`
+	TotalCustomers           int64           `json:"total_customers"`
+	NewCustomers             int64           `json:"new_customers"`
+	ReturningCustomers       int64           `json:"returning_customers"`
+	RetentionRate            decimal.Decimal `json:"retention_rate"`
+	TotalOrders              int64           `json:"total_orders"`
 	AverageOrdersPerCustomer decimal.Decimal `json:"average_orders_per_customer"`
-	CustomerLifetimeValue  decimal.Decimal `json:"customer_lifetime_value"`
+	CustomerLifetimeValue    decimal.Decimal `json:"customer_lifetime_value"`
 }
 
 type InventoryTurnoverStats struct {
-	ProductID      uuid.UUID       `json:"product_id"`
-	ProductSKU     string          `json:"product_sku"`
-	ProductName    string          `json:"product_name"`
-	QuantitySold   int64           `json:"quantity_sold"`
-	AverageStock   decimal.Decimal `json:"average_stock"`
-	TurnoverRate   decimal.Decimal `json:"turnover_rate"`
-	DaysInStock    int64           `json:"days_in_stock"`
+	ProductID    uuid.UUID       `json:"product_id"`
+	ProductSKU   string          `json:"product_sku"`
+	ProductName  string          `json:"product_name"`
+	QuantitySold int64           `json:"quantity_sold"`
+	AverageStock decimal.Decimal `json:"average_stock"`
+	TurnoverRate decimal.Decimal `json:"turnover_rate"`
+	DaysInStock  int64           `json:"days_in_stock"`
 }
 
 type PaymentAnalysisStats struct {
-	TotalOrders           int64                    `json:"total_orders"`
-	PaymentStatusBreakdown map[string]int64        `json:"payment_status_breakdown"`
-	PaymentMethodBreakdown map[string]int64        `json:"payment_method_breakdown"`
-	AveragePaymentTime    decimal.Decimal          `json:"average_payment_time"`
-	OverdueAmount         decimal.Decimal          `json:"overdue_amount"`
-	PaymentTrends         []*repositories.RevenueByPeriod `json:"payment_trends"`
+	TotalOrders            int64                           `json:"total_orders"`
+	PaymentStatusBreakdown map[string]int64                `json:"payment_status_breakdown"`
+	PaymentMethodBreakdown map[string]int64                `json:"payment_method_breakdown"`
+	AveragePaymentTime     decimal.Decimal                 `json:"average_payment_time"`
+	OverdueAmount          decimal.Decimal                 `json:"overdue_amount"`
+	PaymentTrends          []*repositories.RevenueByPeriod `json:"payment_trends"`
 }
 
 type SeasonalStats struct {
-	Season            string          `json:"season"`
-	Year              int             `json:"year"`
-	OrderCount        int64           `json:"order_count"`
-	TotalRevenue      decimal.Decimal `json:"total_revenue"`
-	AvgOrderValue     decimal.Decimal `json:"avg_order_value"`
-	GrowthRate        decimal.Decimal `json:"growth_rate"`
+	Season        string          `json:"season"`
+	Year          int             `json:"year"`
+	OrderCount    int64           `json:"order_count"`
+	TotalRevenue  decimal.Decimal `json:"total_revenue"`
+	AvgOrderValue decimal.Decimal `json:"avg_order_value"`
+	GrowthRate    decimal.Decimal `json:"growth_rate"`
 }
 
 // PostgresOrderAnalyticsRepository implements advanced analytics queries for orders

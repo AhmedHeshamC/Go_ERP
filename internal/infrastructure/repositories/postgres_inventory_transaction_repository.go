@@ -6,11 +6,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"erpgo/internal/domain/inventory/entities"
 	"erpgo/internal/domain/inventory/repositories"
 	"erpgo/pkg/database"
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 )
 
 // PostgresInventoryTransactionRepository implements InventoryTransactionRepository for PostgreSQL

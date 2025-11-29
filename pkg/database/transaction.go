@@ -11,8 +11,8 @@ import (
 
 // TransactionManager manages database transactions with optimized boundaries
 type TransactionManager struct {
-	db           *Database
-	logger       *zerolog.Logger
+	db             *Database
+	logger         *zerolog.Logger
 	defaultTimeout time.Duration
 }
 
@@ -24,20 +24,20 @@ func NewTransactionManager(db *Database, logger *zerolog.Logger) *TransactionMan
 	}
 
 	return &TransactionManager{
-		db:           db,
-		logger:       logger,
+		db:             db,
+		logger:         logger,
 		defaultTimeout: 30 * time.Second,
 	}
 }
 
 // TransactionOptions holds configuration for transaction execution
 type TransactionOptions struct {
-	Timeout         time.Duration `json:"timeout"`
-	IsolationLevel  string        `json:"isolation_level"`
-	ReadOnly        bool          `json:"read_only"`
-	Deferrable      bool          `json:"deferrable"`
-	RetryAttempts   int           `json:"retry_attempts"`
-	RetryDelay      time.Duration `json:"retry_delay"`
+	Timeout        time.Duration `json:"timeout"`
+	IsolationLevel string        `json:"isolation_level"`
+	ReadOnly       bool          `json:"read_only"`
+	Deferrable     bool          `json:"deferrable"`
+	RetryAttempts  int           `json:"retry_attempts"`
+	RetryDelay     time.Duration `json:"retry_delay"`
 }
 
 // DefaultTransactionOptions returns sensible default transaction options
@@ -227,7 +227,7 @@ func (tm *TransactionManager) ReadOnlyTransaction(ctx context.Context, fn Transa
 func (tm *TransactionManager) WriteTransaction(ctx context.Context, fn TransactionFunc) error {
 	opts := DefaultTransactionOptions()
 	opts.IsolationLevel = "READ COMMITTED" // Best for write performance
-	opts.Timeout = 10 * time.Second // Shorter timeout for writes
+	opts.Timeout = 10 * time.Second        // Shorter timeout for writes
 
 	return tm.ExecuteWithOptions(ctx, opts, fn)
 }
@@ -281,14 +281,14 @@ func (tm *TransactionManager) NestedTransaction(ctx context.Context, tx pgx.Tx, 
 
 // TransactionMetrics tracks transaction performance
 type TransactionMetrics struct {
-	TotalTransactions    int64         `json:"total_transactions"`
-	SuccessfulTransactions int64       `json:"successful_transactions"`
-	FailedTransactions   int64         `json:"failed_transactions"`
-	RolledBackTransactions int64       `json:"rolled_back_transactions"`
-	AvgDuration          time.Duration `json:"avg_duration"`
-	MaxDuration          time.Duration `json:"max_duration"`
-	MinDuration          time.Duration `json:"min_duration"`
-	RetryCount           int64         `json:"retry_count"`
+	TotalTransactions      int64         `json:"total_transactions"`
+	SuccessfulTransactions int64         `json:"successful_transactions"`
+	FailedTransactions     int64         `json:"failed_transactions"`
+	RolledBackTransactions int64         `json:"rolled_back_transactions"`
+	AvgDuration            time.Duration `json:"avg_duration"`
+	MaxDuration            time.Duration `json:"max_duration"`
+	MinDuration            time.Duration `json:"min_duration"`
+	RetryCount             int64         `json:"retry_count"`
 }
 
 // MetricsTransactionManager wraps TransactionManager with metrics collection

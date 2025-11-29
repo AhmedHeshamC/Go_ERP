@@ -13,8 +13,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/redis/go-redis/v9"
 	"github.com/google/uuid"
+	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/require"
 )
 
@@ -30,52 +30,52 @@ type CacheLoadTestSuite struct {
 
 // CacheLoadTestConfig defines configuration for cache load tests
 type CacheLoadTestConfig struct {
-	Name               string
-	RedisURL           string
-	ConcurrentClients  int
+	Name                string
+	RedisURL            string
+	ConcurrentClients   int
 	OperationsPerClient int
-	TestDuration       time.Duration
-	OperationTypes     []string // "get", "set", "delete", "mget", "mset", "pipeline"
-	DataSizeKB         int      // Size of data objects in KB
-	TargetThroughput   int64    // Operations per second
-	TargetHitRate      float64  // Target cache hit rate (0.0 to 1.0)
-	MaxLatency         time.Duration
-	MaxMemoryUsage     int64 // MB
-	KeyDistribution    string // "uniform", "zipfian", "latest"
+	TestDuration        time.Duration
+	OperationTypes      []string // "get", "set", "delete", "mget", "mset", "pipeline"
+	DataSizeKB          int      // Size of data objects in KB
+	TargetThroughput    int64    // Operations per second
+	TargetHitRate       float64  // Target cache hit rate (0.0 to 1.0)
+	MaxLatency          time.Duration
+	MaxMemoryUsage      int64  // MB
+	KeyDistribution     string // "uniform", "zipfian", "latest"
 }
 
 // CacheLoadTestResult contains results from cache load tests
 type CacheLoadTestResult struct {
-	TestName              string
-	StartTime             time.Time
-	EndTime               time.Time
-	Duration              time.Duration
-	TotalOperations       int64
-	SuccessfulOperations  int64
-	FailedOperations      int64
-	Throughput            float64 // Operations per second
-	AverageLatency        time.Duration
-	P50Latency            time.Duration
-	P95Latency            time.Duration
-	P99Latency            time.Duration
-	ErrorRate             float64
-	HitRate               float64
-	MissRate              float64
-	RedisMemoryUsageMB    int64
-	RedisMaxMemoryMB      int64
-	RedisConnections      int64
-	SlowOperations        []SlowOperation
-	Errors                []CacheError
-	OperationBreakdown    map[string]int64
+	TestName             string
+	StartTime            time.Time
+	EndTime              time.Time
+	Duration             time.Duration
+	TotalOperations      int64
+	SuccessfulOperations int64
+	FailedOperations     int64
+	Throughput           float64 // Operations per second
+	AverageLatency       time.Duration
+	P50Latency           time.Duration
+	P95Latency           time.Duration
+	P99Latency           time.Duration
+	ErrorRate            float64
+	HitRate              float64
+	MissRate             float64
+	RedisMemoryUsageMB   int64
+	RedisMaxMemoryMB     int64
+	RedisConnections     int64
+	SlowOperations       []SlowOperation
+	Errors               []CacheError
+	OperationBreakdown   map[string]int64
 }
 
 // SlowOperation represents a slow cache operation
 type SlowOperation struct {
-	Operation  string
-	Key        string
-	Duration   time.Duration
-	Timestamp  time.Time
-	DataSize   int
+	Operation string
+	Key       string
+	Duration  time.Duration
+	Timestamp time.Time
+	DataSize  int
 }
 
 // CacheError represents a cache operation error
@@ -89,11 +89,11 @@ type CacheError struct {
 
 // CacheOperation represents a cache operation
 type CacheOperation struct {
-	Type       string
-	Key        string
-	Value      interface{}
-	TTL        time.Duration
-	DataSize   int
+	Type     string
+	Key      string
+	Value    interface{}
+	TTL      time.Duration
+	DataSize int
 }
 
 // TestData represents test data structure for caching
@@ -377,10 +377,10 @@ func (c *CacheLoadTestSuite) generateTestData(seed int) TestData {
 		Category:    []string{"Electronics", "Books", "Clothing", "Home"}[rand.Intn(4)],
 		Tags:        []string{fmt.Sprintf("tag%d", rand.Intn(100)), fmt.Sprintf("category%d", rand.Intn(20))},
 		Metadata: map[string]interface{}{
-			"seed":      seed,
-			"size":      c.config.DataSizeKB,
-			"created":   time.Now(),
-			"random":    rand.Float64(),
+			"seed":    seed,
+			"size":    c.config.DataSizeKB,
+			"created": time.Now(),
+			"random":  rand.Float64(),
 		},
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
@@ -712,69 +712,69 @@ func TestCacheLoadTestSuite(t *testing.T) {
 		{
 			name: "ReadHeavyWorkload",
 			config: CacheLoadTestConfig{
-				Name:               "Read-Heavy Cache Workload Test",
-				RedisURL:           redisURL,
-				ConcurrentClients:  50,
+				Name:                "Read-Heavy Cache Workload Test",
+				RedisURL:            redisURL,
+				ConcurrentClients:   50,
 				OperationsPerClient: 200,
-				TestDuration:       30 * time.Second,
-				OperationTypes:     []string{"get", "mget", "pipeline"},
-				DataSizeKB:         1, // 1KB objects
-				TargetThroughput:   20000,
-				TargetHitRate:      0.90, // 90% hit rate
-				MaxLatency:         50 * time.Millisecond,
-				MaxMemoryUsage:     512, // 512MB
-				KeyDistribution:    "zipfian",
+				TestDuration:        30 * time.Second,
+				OperationTypes:      []string{"get", "mget", "pipeline"},
+				DataSizeKB:          1, // 1KB objects
+				TargetThroughput:    20000,
+				TargetHitRate:       0.90, // 90% hit rate
+				MaxLatency:          50 * time.Millisecond,
+				MaxMemoryUsage:      512, // 512MB
+				KeyDistribution:     "zipfian",
 			},
 		},
 		{
 			name: "MixedWorkload",
 			config: CacheLoadTestConfig{
-				Name:               "Mixed Cache Workload Test",
-				RedisURL:           redisURL,
-				ConcurrentClients:  30,
+				Name:                "Mixed Cache Workload Test",
+				RedisURL:            redisURL,
+				ConcurrentClients:   30,
 				OperationsPerClient: 150,
-				TestDuration:       25 * time.Second,
-				OperationTypes:     []string{"get", "set", "mget", "mset", "pipeline"},
-				DataSizeKB:         2, // 2KB objects
-				TargetThroughput:   15000,
-				TargetHitRate:      0.75, // 75% hit rate
-				MaxLatency:         75 * time.Millisecond,
-				MaxMemoryUsage:     1024, // 1GB
-				KeyDistribution:    "uniform",
+				TestDuration:        25 * time.Second,
+				OperationTypes:      []string{"get", "set", "mget", "mset", "pipeline"},
+				DataSizeKB:          2, // 2KB objects
+				TargetThroughput:    15000,
+				TargetHitRate:       0.75, // 75% hit rate
+				MaxLatency:          75 * time.Millisecond,
+				MaxMemoryUsage:      1024, // 1GB
+				KeyDistribution:     "uniform",
 			},
 		},
 		{
 			name: "WriteHeavyWorkload",
 			config: CacheLoadTestConfig{
-				Name:               "Write-Heavy Cache Workload Test",
-				RedisURL:           redisURL,
-				ConcurrentClients:  20,
+				Name:                "Write-Heavy Cache Workload Test",
+				RedisURL:            redisURL,
+				ConcurrentClients:   20,
 				OperationsPerClient: 100,
-				TestDuration:       20 * time.Second,
-				OperationTypes:     []string{"set", "mset", "pipeline"},
-				DataSizeKB:         5, // 5KB objects
-				TargetThroughput:   10000,
-				TargetHitRate:      0.60, // 60% hit rate
-				MaxLatency:         100 * time.Millisecond,
-				MaxMemoryUsage:     2048, // 2GB
-				KeyDistribution:    "latest",
+				TestDuration:        20 * time.Second,
+				OperationTypes:      []string{"set", "mset", "pipeline"},
+				DataSizeKB:          5, // 5KB objects
+				TargetThroughput:    10000,
+				TargetHitRate:       0.60, // 60% hit rate
+				MaxLatency:          100 * time.Millisecond,
+				MaxMemoryUsage:      2048, // 2GB
+				KeyDistribution:     "latest",
 			},
 		},
 		{
 			name: "HighConcurrencyTest",
 			config: CacheLoadTestConfig{
-				Name:               "High Concurrency Cache Test",
-				RedisURL:           redisURL,
-				ConcurrentClients:  100,
+				Name:                "High Concurrency Cache Test",
+				RedisURL:            redisURL,
+				ConcurrentClients:   100,
 				OperationsPerClient: 50,
-				TestDuration:       15 * time.Second,
-				OperationTypes:     []string{"get", "set", "pipeline"},
-				DataSizeKB:         1, // 1KB objects
-				TargetThroughput:   30000,
-				TargetHitRate:      0.85, // 85% hit rate
-				MaxLatency:         30 * time.Millisecond,
-				MaxMemoryUsage:     1024, // 1GB
-				KeyDistribution:    "zipfian",
+				TestDuration:        15 * time.Second,
+				OperationTypes:      []string{"get", "set", "pipeline"},
+				DataSizeKB:          1, // 1KB objects
+				TargetThroughput:    30000,
+				TargetHitRate:       0.85, // 85% hit rate
+				MaxLatency:          30 * time.Millisecond,
+				MaxMemoryUsage:      1024, // 1GB
+				KeyDistribution:     "zipfian",
 			},
 		},
 	}

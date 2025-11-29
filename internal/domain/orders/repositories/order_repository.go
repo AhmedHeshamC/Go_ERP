@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
+	"erpgo/internal/domain/orders/entities"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
-	"erpgo/internal/domain/orders/entities"
 )
 
 // OrderRepository defines the interface for order data operations
@@ -253,195 +253,195 @@ type CompanyStats struct {
 // OrderFilter defines filtering options for order queries
 type OrderFilter struct {
 	// Basic filters
-	Search         string             `json:"search,omitempty"`
-	Status         []entities.OrderStatus `json:"status,omitempty"`
-	PaymentStatus  []entities.PaymentStatus `json:"payment_status,omitempty"`
-	Priority       []entities.OrderPriority `json:"priority,omitempty"`
-	Type           []entities.OrderType `json:"type,omitempty"`
+	Search         string                    `json:"search,omitempty"`
+	Status         []entities.OrderStatus    `json:"status,omitempty"`
+	PaymentStatus  []entities.PaymentStatus  `json:"payment_status,omitempty"`
+	Priority       []entities.OrderPriority  `json:"priority,omitempty"`
+	Type           []entities.OrderType      `json:"type,omitempty"`
 	ShippingMethod []entities.ShippingMethod `json:"shipping_method,omitempty"`
 
 	// Customer filters
-	CustomerID     *uuid.UUID         `json:"customer_id,omitempty"`
-	CompanyID      *uuid.UUID         `json:"company_id,omitempty"`
-	CustomerType   string             `json:"customer_type,omitempty"`
+	CustomerID   *uuid.UUID `json:"customer_id,omitempty"`
+	CompanyID    *uuid.UUID `json:"company_id,omitempty"`
+	CustomerType string     `json:"customer_type,omitempty"`
 
 	// Date filters
-	StartDate      *time.Time         `json:"start_date,omitempty"`
-	EndDate        *time.Time         `json:"end_date,omitempty"`
-	ShippingDateFrom *time.Time       `json:"shipping_date_from,omitempty"`
-	ShippingDateTo   *time.Time       `json:"shipping_date_to,omitempty"`
+	StartDate        *time.Time `json:"start_date,omitempty"`
+	EndDate          *time.Time `json:"end_date,omitempty"`
+	ShippingDateFrom *time.Time `json:"shipping_date_from,omitempty"`
+	ShippingDateTo   *time.Time `json:"shipping_date_to,omitempty"`
 
 	// Financial filters
-	MinTotalAmount *decimal.Decimal   `json:"min_total_amount,omitempty"`
-	MaxTotalAmount *decimal.Decimal   `json:"max_total_amount,omitempty"`
-	Currency       string             `json:"currency,omitempty"`
+	MinTotalAmount *decimal.Decimal `json:"min_total_amount,omitempty"`
+	MaxTotalAmount *decimal.Decimal `json:"max_total_amount,omitempty"`
+	Currency       string           `json:"currency,omitempty"`
 
 	// Created by filter
-	CreatedBy      *uuid.UUID         `json:"created_by,omitempty"`
+	CreatedBy *uuid.UUID `json:"created_by,omitempty"`
 
 	// Pagination
-	Page           int                `json:"page"`
-	Limit          int                `json:"limit"`
-	Offset         int                `json:"offset,omitempty"`
+	Page   int `json:"page"`
+	Limit  int `json:"limit"`
+	Offset int `json:"offset,omitempty"`
 
 	// Sorting
-	SortBy         string             `json:"sort_by,omitempty"`
-	SortOrder      string             `json:"sort_order,omitempty"`
+	SortBy    string `json:"sort_by,omitempty"`
+	SortOrder string `json:"sort_order,omitempty"`
 }
 
 // CustomerFilter defines filtering options for customer queries
 type CustomerFilter struct {
-	Search         string             `json:"search,omitempty"`
-	Type           string             `json:"type,omitempty"`
-	CompanyID      *uuid.UUID         `json:"company_id,omitempty"`
-	IsActive       *bool              `json:"is_active,omitempty"`
-	Industry       *string            `json:"industry,omitempty"`
-	Source         string             `json:"source,omitempty"`
+	Search    string     `json:"search,omitempty"`
+	Type      string     `json:"type,omitempty"`
+	CompanyID *uuid.UUID `json:"company_id,omitempty"`
+	IsActive  *bool      `json:"is_active,omitempty"`
+	Industry  *string    `json:"industry,omitempty"`
+	Source    string     `json:"source,omitempty"`
 
 	// Financial filters
-	HasCreditLimit *bool              `json:"has_credit_limit,omitempty"`
-	MinCreditLimit *decimal.Decimal   `json:"min_credit_limit,omitempty"`
-	MaxCreditLimit *decimal.Decimal   `json:"max_credit_limit,omitempty"`
+	HasCreditLimit *bool            `json:"has_credit_limit,omitempty"`
+	MinCreditLimit *decimal.Decimal `json:"min_credit_limit,omitempty"`
+	MaxCreditLimit *decimal.Decimal `json:"max_credit_limit,omitempty"`
 
 	// Registration date filters
-	StartDate      *time.Time         `json:"start_date,omitempty"`
-	EndDate        *time.Time         `json:"end_date,omitempty"`
+	StartDate *time.Time `json:"start_date,omitempty"`
+	EndDate   *time.Time `json:"end_date,omitempty"`
 
 	// Pagination
-	Page           int                `json:"page"`
-	Limit          int                `json:"limit"`
-	Offset         int                `json:"offset,omitempty"`
+	Page   int `json:"page"`
+	Limit  int `json:"limit"`
+	Offset int `json:"offset,omitempty"`
 
 	// Sorting
-	SortBy         string             `json:"sort_by,omitempty"`
-	SortOrder      string             `json:"sort_order,omitempty"`
+	SortBy    string `json:"sort_by,omitempty"`
+	SortOrder string `json:"sort_order,omitempty"`
 }
 
 // CompanyFilter defines filtering options for company queries
 type CompanyFilter struct {
-	Search         string             `json:"search,omitempty"`
-	Industry       *string            `json:"industry,omitempty"`
-	IsActive       *bool              `json:"is_active,omitempty"`
+	Search   string  `json:"search,omitempty"`
+	Industry *string `json:"industry,omitempty"`
+	IsActive *bool   `json:"is_active,omitempty"`
 
 	// Registration date filters
-	StartDate      *time.Time         `json:"start_date,omitempty"`
-	EndDate        *time.Time         `json:"end_date,omitempty"`
+	StartDate *time.Time `json:"start_date,omitempty"`
+	EndDate   *time.Time `json:"end_date,omitempty"`
 
 	// Pagination
-	Page           int                `json:"page"`
-	Limit          int                `json:"limit"`
-	Offset         int                `json:"offset,omitempty"`
+	Page   int `json:"page"`
+	Limit  int `json:"limit"`
+	Offset int `json:"offset,omitempty"`
 
 	// Sorting
-	SortBy         string             `json:"sort_by,omitempty"`
-	SortOrder      string             `json:"sort_order,omitempty"`
+	SortBy    string `json:"sort_by,omitempty"`
+	SortOrder string `json:"sort_order,omitempty"`
 }
 
 // Analytics filter types
 
 // OrderStatsFilter defines filters for order statistics
 type OrderStatsFilter struct {
-	StartDate      time.Time          `json:"start_date"`
-	EndDate        time.Time          `json:"end_date"`
-	Status         []entities.OrderStatus `json:"status,omitempty"`
-	CustomerID     *uuid.UUID         `json:"customer_id,omitempty"`
-	CompanyID      *uuid.UUID         `json:"company_id,omitempty"`
+	StartDate  time.Time              `json:"start_date"`
+	EndDate    time.Time              `json:"end_date"`
+	Status     []entities.OrderStatus `json:"status,omitempty"`
+	CustomerID *uuid.UUID             `json:"customer_id,omitempty"`
+	CompanyID  *uuid.UUID             `json:"company_id,omitempty"`
 }
 
 // CustomerStatsFilter defines filters for customer statistics
 type CustomerStatsFilter struct {
-	StartDate      time.Time          `json:"start_date"`
-	EndDate        time.Time          `json:"end_date"`
-	Type           string             `json:"type,omitempty"`
-	IsActive       *bool              `json:"is_active,omitempty"`
+	StartDate time.Time `json:"start_date"`
+	EndDate   time.Time `json:"end_date"`
+	Type      string    `json:"type,omitempty"`
+	IsActive  *bool     `json:"is_active,omitempty"`
 }
 
 // Analytics result types
 
 // OrderStats represents order statistics
 type OrderStats struct {
-	TotalOrders    int64              `json:"total_orders"`
-	TotalRevenue   decimal.Decimal    `json:"total_revenue"`
-	AverageOrderValue decimal.Decimal  `json:"average_order_value"`
-	StatusCounts   map[string]int64   `json:"status_counts"`
+	TotalOrders         int64            `json:"total_orders"`
+	TotalRevenue        decimal.Decimal  `json:"total_revenue"`
+	AverageOrderValue   decimal.Decimal  `json:"average_order_value"`
+	StatusCounts        map[string]int64 `json:"status_counts"`
 	PaymentStatusCounts map[string]int64 `json:"payment_status_counts"`
 }
 
 // RevenueByPeriod represents revenue grouped by time period
 type RevenueByPeriod struct {
-	Period         string             `json:"period"`
-	Revenue        decimal.Decimal    `json:"revenue"`
-	OrderCount     int64              `json:"order_count"`
-	AverageOrderValue decimal.Decimal  `json:"average_order_value"`
+	Period            string          `json:"period"`
+	Revenue           decimal.Decimal `json:"revenue"`
+	OrderCount        int64           `json:"order_count"`
+	AverageOrderValue decimal.Decimal `json:"average_order_value"`
 }
 
 // CustomerOrderStats represents customer order statistics
 type CustomerOrderStats struct {
-	CustomerID     uuid.UUID          `json:"customer_id"`
-	CustomerName   string             `json:"customer_name"`
-	CustomerEmail  string             `json:"customer_email"`
-	OrderCount     int64              `json:"order_count"`
-	TotalRevenue   decimal.Decimal    `json:"total_revenue"`
-	AverageOrderValue decimal.Decimal  `json:"average_order_value"`
-	LastOrderDate  *time.Time         `json:"last_order_date,omitempty"`
+	CustomerID        uuid.UUID       `json:"customer_id"`
+	CustomerName      string          `json:"customer_name"`
+	CustomerEmail     string          `json:"customer_email"`
+	OrderCount        int64           `json:"order_count"`
+	TotalRevenue      decimal.Decimal `json:"total_revenue"`
+	AverageOrderValue decimal.Decimal `json:"average_order_value"`
+	LastOrderDate     *time.Time      `json:"last_order_date,omitempty"`
 }
 
 // ProductSalesStats represents product sales statistics
 type ProductSalesStats struct {
-	ProductID      uuid.UUID          `json:"product_id"`
-	ProductSKU     string             `json:"product_sku"`
-	ProductName    string             `json:"product_name"`
-	QuantitySold   int64              `json:"quantity_sold"`
-	TotalRevenue   decimal.Decimal    `json:"total_revenue"`
-	OrderCount     int64              `json:"order_count"`
+	ProductID    uuid.UUID       `json:"product_id"`
+	ProductSKU   string          `json:"product_sku"`
+	ProductName  string          `json:"product_name"`
+	QuantitySold int64           `json:"quantity_sold"`
+	TotalRevenue decimal.Decimal `json:"total_revenue"`
+	OrderCount   int64           `json:"order_count"`
 }
 
 // ProductLowStock represents products with low stock
 type ProductLowStock struct {
-	ProductID      uuid.UUID          `json:"product_id"`
-	ProductSKU     string             `json:"product_sku"`
-	ProductName    string             `json:"product_name"`
-	CurrentStock   int                `json:"current_stock"`
-	ReorderLevel   int                `json:"reorder_level"`
-	PendingOrders  int                `json:"pending_orders"`
+	ProductID     uuid.UUID `json:"product_id"`
+	ProductSKU    string    `json:"product_sku"`
+	ProductName   string    `json:"product_name"`
+	CurrentStock  int       `json:"current_stock"`
+	ReorderLevel  int       `json:"reorder_level"`
+	PendingOrders int       `json:"pending_orders"`
 }
 
 // CustomerStats represents customer statistics
 type CustomerStats struct {
-	TotalCustomers int64              `json:"total_customers"`
-	ActiveCustomers int64             `json:"active_customers"`
-	NewCustomers   int64              `json:"new_customers"`
-	CustomersByType map[string]int64  `json:"customers_by_type"`
+	TotalCustomers    int64            `json:"total_customers"`
+	ActiveCustomers   int64            `json:"active_customers"`
+	NewCustomers      int64            `json:"new_customers"`
+	CustomersByType   map[string]int64 `json:"customers_by_type"`
 	CustomersBySource map[string]int64 `json:"customers_by_source"`
 }
 
 // CustomerOrdersSummary represents a customer's order summary
 type CustomerOrdersSummary struct {
-	CustomerID     uuid.UUID          `json:"customer_id"`
-	TotalOrders    int64              `json:"total_orders"`
-	TotalRevenue   decimal.Decimal    `json:"total_revenue"`
+	CustomerID        uuid.UUID        `json:"customer_id"`
+	TotalOrders       int64            `json:"total_orders"`
+	TotalRevenue      decimal.Decimal  `json:"total_revenue"`
 	AverageOrderValue decimal.Decimal  `json:"average_order_value"`
-	LastOrderDate  *time.Time         `json:"last_order_date,omitempty"`
-	FirstOrderDate  *time.Time        `json:"first_order_date,omitempty"`
-	StatusCounts   map[string]int64   `json:"status_counts"`
+	LastOrderDate     *time.Time       `json:"last_order_date,omitempty"`
+	FirstOrderDate    *time.Time       `json:"first_order_date,omitempty"`
+	StatusCounts      map[string]int64 `json:"status_counts"`
 }
 
 // CustomerRevenueStats represents customer revenue statistics
 type CustomerRevenueStats struct {
-	CustomerID     uuid.UUID          `json:"customer_id"`
-	CustomerName   string             `json:"customer_name"`
-	CustomerEmail  string             `json:"customer_email"`
-	CompanyName    *string            `json:"company_name,omitempty"`
-	TotalRevenue   decimal.Decimal    `json:"total_revenue"`
-	OrderCount     int64              `json:"order_count"`
-	AverageOrderValue decimal.Decimal  `json:"average_order_value"`
+	CustomerID        uuid.UUID       `json:"customer_id"`
+	CustomerName      string          `json:"customer_name"`
+	CustomerEmail     string          `json:"customer_email"`
+	CompanyName       *string         `json:"company_name,omitempty"`
+	TotalRevenue      decimal.Decimal `json:"total_revenue"`
+	OrderCount        int64           `json:"order_count"`
+	AverageOrderValue decimal.Decimal `json:"average_order_value"`
 }
 
 // NewCustomersByPeriod represents new customers grouped by time period
 type NewCustomersByPeriod struct {
-	Period         string             `json:"period"`
-	NewCustomers   int64              `json:"new_customers"`
-	TotalCustomers int64              `json:"total_customers"`
+	Period         string `json:"period"`
+	NewCustomers   int64  `json:"new_customers"`
+	TotalCustomers int64  `json:"total_customers"`
 }
 
 // Pagination represents pagination information

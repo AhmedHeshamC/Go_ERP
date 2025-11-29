@@ -6,9 +6,9 @@ import (
 	"os"
 	"time"
 
+	"erpgo/pkg/auth"
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
-	"erpgo/pkg/auth"
 )
 
 func main() {

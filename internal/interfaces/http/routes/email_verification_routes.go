@@ -3,9 +3,9 @@ package routes
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"erpgo/internal/interfaces/http/handlers"
 	"erpgo/pkg/auth"
+	"github.com/gin-gonic/gin"
 )
 
 // SetupEmailVerificationRoutes sets up email verification routes

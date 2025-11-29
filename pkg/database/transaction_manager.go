@@ -15,20 +15,20 @@ import (
 type TransactionManagerInterface interface {
 	// WithTransaction executes a function within a transaction
 	WithTransaction(ctx context.Context, fn func(tx pgx.Tx) error) error
-	
+
 	// WithRetryTransaction executes a function within a transaction with retry logic
 	WithRetryTransaction(ctx context.Context, fn func(tx pgx.Tx) error) error
-	
+
 	// WithTransactionOptions executes a function within a transaction with custom options
 	WithTransactionOptions(ctx context.Context, opts TransactionConfig, fn func(tx pgx.Tx) error) error
 }
 
 // TransactionConfig holds configuration for transaction execution
 type TransactionConfig struct {
-	MaxRetries      int
-	RetryDelay      time.Duration
-	IsolationLevel  pgx.TxIsoLevel
-	Timeout         time.Duration
+	MaxRetries     int
+	RetryDelay     time.Duration
+	IsolationLevel pgx.TxIsoLevel
+	Timeout        time.Duration
 }
 
 // DefaultTransactionConfig returns default transaction configuration
@@ -82,7 +82,7 @@ func (tm *TransactionManagerImpl) WithTransactionOptions(ctx context.Context, op
 	}
 
 	var lastErr error
-	
+
 	for attempt := 0; attempt <= opts.MaxRetries; attempt++ {
 		// Apply retry delay with exponential backoff
 		if attempt > 0 {
@@ -117,7 +117,7 @@ func (tm *TransactionManagerImpl) WithTransactionOptions(ctx context.Context, op
 		tx, err := tm.db.BeginTx(ctx, txOpts)
 		if err != nil {
 			lastErr = fmt.Errorf("failed to begin transaction: %w", err)
-			
+
 			// Check if error is retryable
 			if !tm.isRetryableError(err) || attempt == opts.MaxRetries {
 				return lastErr
@@ -142,7 +142,7 @@ func (tm *TransactionManagerImpl) WithTransactionOptions(ctx context.Context, op
 		if err == nil {
 			if commitErr := tx.Commit(ctx); commitErr != nil {
 				lastErr = fmt.Errorf("failed to commit transaction: %w", commitErr)
-				
+
 				// Check if commit error is retryable
 				if !tm.isRetryableError(commitErr) || attempt == opts.MaxRetries {
 					return lastErr

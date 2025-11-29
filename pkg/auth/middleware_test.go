@@ -91,23 +91,23 @@ func TestAuthMiddleware_InvalidAuthFormat(t *testing.T) {
 	})
 
 	tests := []struct {
-		name        string
-		authHeader  string
+		name         string
+		authHeader   string
 		expectedCode int
 	}{
 		{
-			name:        "no bearer prefix",
-			authHeader:  "abc123.token",
+			name:         "no bearer prefix",
+			authHeader:   "abc123.token",
 			expectedCode: http.StatusUnauthorized,
 		},
 		{
-			name:        "lowercase bearer",
-			authHeader:  "bearer abc123.token",
+			name:         "lowercase bearer",
+			authHeader:   "bearer abc123.token",
 			expectedCode: http.StatusUnauthorized,
 		},
 		{
-			name:        "empty bearer",
-			authHeader:  "Bearer ",
+			name:         "empty bearer",
+			authHeader:   "Bearer ",
 			expectedCode: http.StatusUnauthorized,
 		},
 	}

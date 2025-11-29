@@ -16,10 +16,10 @@ import (
 
 // LocalStorage implements StorageProvider for local filesystem storage
 type LocalStorage struct {
-	basePath   string
-	publicURL  string
-	logger     zerolog.Logger
-	config     *StorageConfig
+	basePath  string
+	publicURL string
+	logger    zerolog.Logger
+	config    *StorageConfig
 }
 
 // NewLocalStorage creates a new local storage provider
@@ -30,7 +30,7 @@ func NewLocalStorage(config *StorageConfig, logger zerolog.Logger) (*LocalStorag
 
 	// Create base directory if it doesn't exist
 	basePath := config.Bucket
-	if err := os.MkdirAll(basePath, 0755); err != nil {
+	if err := os.MkdirAll(basePath, 0750); err != nil {
 		return nil, fmt.Errorf("failed to create base directory: %w", err)
 	}
 
@@ -53,8 +53,22 @@ func (ls *LocalStorage) Upload(ctx context.Context, key string, data io.Reader, 
 	fullPath := filepath.Join(ls.basePath, key)
 	dir := filepath.Dir(fullPath)
 
+	// Validate directory path before creating
+	// TODO: Implement security.ValidatePath
+	// if err := security.ValidatePath(dir, ls.basePath); err != nil {
+	// 	ls.logger.Error().Err(err).Str("directory", dir).Msg("Invalid directory path for upload")
+	// 	return nil, fmt.Errorf("invalid directory path: %w", err)
+	// }
+
+	// Validate file path before creating
+	// TODO: Implement security.ValidatePath
+	// if err := security.ValidatePath(fullPath, ls.basePath); err != nil {
+	// 	ls.logger.Error().Err(err).Str("path", fullPath).Msg("Invalid file path for upload")
+	// 	return nil, fmt.Errorf("invalid file path: %w", err)
+	// }
+
 	// Create directory if it doesn't exist
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := os.MkdirAll(dir, 0750); err != nil {
 		ls.logger.Error().Err(err).Str("directory", dir).Msg("Failed to create directory")
 		return nil, fmt.Errorf("failed to create directory: %w", err)
 	}
@@ -130,6 +144,13 @@ func (ls *LocalStorage) Download(ctx context.Context, key string) (io.ReadCloser
 	}
 
 	fullPath := filepath.Join(ls.basePath, key)
+
+	// Validate path before accessing file
+	// TODO: Implement security.ValidatePath
+	// if err := security.ValidatePath(path, ls.basePath); err != nil {
+	// 	ls.logger.Error().Err(err).Str("path", path).Msg("Invalid file path for access")
+	// 	return nil, err
+	// }
 
 	// Check if file exists
 	file, err := os.Open(fullPath)
@@ -224,7 +245,9 @@ func (ls *LocalStorage) List(ctx context.Context, prefix string, options *ListOp
 // ListWithPagination lists objects in local storage with pagination
 func (ls *LocalStorage) ListWithPagination(ctx context.Context, prefix string, options *ListOptions) (*ListResult, error) {
 	if options == nil {
-		options = &ListOptions{}
+		options = &ListOptions{
+			Recursive: true, // Default to recursive listing like S3
+		}
 	}
 
 	basePath := ls.basePath
@@ -319,12 +342,12 @@ func (ls *LocalStorage) ListWithPagination(ctx context.Context, prefix string, o
 	}
 
 	return &ListResult{
-		Objects:              paginatedObjects,
-		Prefixes:             prefixes,
-		IsTruncated:          isTruncated,
+		Objects:               paginatedObjects,
+		Prefixes:              prefixes,
+		IsTruncated:           isTruncated,
 		NextContinuationToken: nextContinuationToken,
-		MaxKeys:              maxKeys,
-		CommonPrefixes:       prefixes,
+		MaxKeys:               maxKeys,
+		CommonPrefixes:        prefixes,
 	}, nil
 }
 

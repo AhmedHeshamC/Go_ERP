@@ -10,22 +10,22 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
-	"erpgo/internal/infrastructure/repositories"
 	"erpgo/internal/domain/orders/entities"
 	"erpgo/internal/domain/orders/repositories"
+	"erpgo/internal/infrastructure/repositories"
 	"erpgo/tests/integration/testutil"
 )
 
 // OrderIntegrationTestSuite tests the complete order workflow
 type OrderIntegrationTestSuite struct {
 	suite.Suite
-	db              *database.Database
-	orderRepo       repositories.OrderRepository
-	orderItemRepo   repositories.OrderItemRepository
-	customerRepo    repositories.CustomerRepository
-	addressRepo     repositories.OrderAddressRepository
-	companyRepo     repositories.CompanyRepository
-	cleanupFunc     func()
+	db            *database.Database
+	orderRepo     repositories.OrderRepository
+	orderItemRepo repositories.OrderItemRepository
+	customerRepo  repositories.CustomerRepository
+	addressRepo   repositories.OrderAddressRepository
+	companyRepo   repositories.CompanyRepository
+	cleanupFunc   func()
 }
 
 // SetupSuite sets up the integration test suite

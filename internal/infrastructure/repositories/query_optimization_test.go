@@ -49,7 +49,7 @@ func TestUserRolesSingleQuery(t *testing.T) {
 	// Create multiple roles
 	roleNames := []string{"admin", "editor", "viewer"}
 	roleIDs := make([]uuid.UUID, len(roleNames))
-	
+
 	for i, name := range roleNames {
 		role := &entities.Role{
 			ID:          uuid.New(),
@@ -69,24 +69,24 @@ func TestUserRolesSingleQuery(t *testing.T) {
 	// Track query count by wrapping the database connection
 	// In a real implementation, you would use a query counter middleware
 	// For this test, we'll verify the query structure instead
-	
+
 	// Fetch user roles
 	roles, err := userRepo.GetUserRoles(ctx, user.ID)
 	require.NoError(t, err)
-	
+
 	// Verify all roles were fetched
 	assert.Len(t, roles, len(roleNames), "should fetch all assigned roles")
-	
+
 	// Verify the roles match what we assigned
 	roleMap := make(map[string]bool)
 	for _, role := range roles {
 		roleMap[role] = true
 	}
-	
+
 	for _, name := range roleNames {
 		assert.True(t, roleMap[name], "role %s should be present", name)
 	}
-	
+
 	// The key assertion here is that GetUserRoles uses a JOIN query
 	// which fetches all roles in a single database round-trip.
 	// The implementation in postgres_user_repository.go uses:
@@ -137,10 +137,10 @@ func TestUserRolesQueryStructure(t *testing.T) {
 	// Fetch roles - this should use a single JOIN query
 	roles, err := userRepo.GetUserRoles(ctx, user.ID)
 	require.NoError(t, err)
-	
+
 	// Verify we got all roles in one query
 	assert.Equal(t, numRoles, len(roles), "should fetch all %d roles", numRoles)
-	
+
 	// The implementation should use INNER JOIN which is O(1) database calls
 	// regardless of the number of roles, not O(N) calls
 }
@@ -171,7 +171,7 @@ func TestUserRolesEmptyResult(t *testing.T) {
 	// Fetch roles for user with no roles
 	roles, err := userRepo.GetUserRoles(ctx, user.ID)
 	require.NoError(t, err)
-	
+
 	// Should return empty slice, not error
 	assert.Empty(t, roles, "user with no roles should return empty slice")
 }
@@ -188,7 +188,7 @@ func TestUserRolesNonExistentUser(t *testing.T) {
 	// Try to fetch roles for non-existent user
 	nonExistentID := uuid.New()
 	roles, err := userRepo.GetUserRoles(ctx, nonExistentID)
-	
+
 	// Should not error, just return empty result
 	require.NoError(t, err)
 	assert.Empty(t, roles, "non-existent user should return empty slice")

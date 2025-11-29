@@ -110,11 +110,11 @@ func TestPasswordService_ValidatePassword(t *testing.T) {
 	passwordService := NewPasswordServiceWithValidator(12, "test-pepper", validator)
 
 	tests := []struct {
-		name         string
-		password     string
-		expectValid  bool
-		errorCount   int
-		errorMsgs    []string
+		name        string
+		password    string
+		expectValid bool
+		errorCount  int
+		errorMsgs   []string
 	}{
 		{
 			name:        "valid password",
@@ -230,11 +230,11 @@ func TestPasswordService_EstimatePasswordStrength(t *testing.T) {
 	passwordService := NewPasswordService(12, "test-pepper")
 
 	tests := []struct {
-		name         string
-		password     string
-		expectedStr  string
-		expectedMin  int
-		expectedMax  int
+		name        string
+		password    string
+		expectedStr string
+		expectedMin int
+		expectedMax int
 	}{
 		{
 			name:        "very weak",
@@ -337,8 +337,8 @@ func TestDefaultPasswordValidator(t *testing.T) {
 
 func TestGetStrengthDescription(t *testing.T) {
 	tests := []struct {
-		strength   int
-		expected   string
+		strength int
+		expected string
 	}{
 		{0, "Very Weak"},
 		{1, "Weak"},

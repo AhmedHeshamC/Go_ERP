@@ -9,15 +9,15 @@ import (
 
 func TestNewAppError(t *testing.T) {
 	err := NewAppError(ErrCodeNotFound, "resource not found", http.StatusNotFound)
-	
+
 	if err.Code != ErrCodeNotFound {
 		t.Errorf("Expected code %s, got %s", ErrCodeNotFound, err.Code)
 	}
-	
+
 	if err.Message != "resource not found" {
 		t.Errorf("Expected message 'resource not found', got '%s'", err.Message)
 	}
-	
+
 	if err.StatusCode != http.StatusNotFound {
 		t.Errorf("Expected status code %d, got %d", http.StatusNotFound, err.StatusCode)
 	}
@@ -27,11 +27,11 @@ func TestAppErrorWithContext(t *testing.T) {
 	err := NewAppError(ErrCodeValidation, "validation failed", http.StatusBadRequest)
 	err.WithContext("field", "email")
 	err.WithContext("value", "invalid@")
-	
+
 	if err.Details["field"] != "email" {
 		t.Errorf("Expected field context 'email', got '%v'", err.Details["field"])
 	}
-	
+
 	if err.Details["value"] != "invalid@" {
 		t.Errorf("Expected value context 'invalid@', got '%v'", err.Details["value"])
 	}
@@ -41,7 +41,7 @@ func TestAppErrorWithCorrelationID(t *testing.T) {
 	err := NewAppError(ErrCodeInternal, "internal error", http.StatusInternalServerError)
 	correlationID := "test-correlation-123"
 	err.WithCorrelationID(correlationID)
-	
+
 	if err.CorrelationID != correlationID {
 		t.Errorf("Expected correlation ID '%s', got '%s'", correlationID, err.CorrelationID)
 	}
@@ -50,11 +50,11 @@ func TestAppErrorWithCorrelationID(t *testing.T) {
 func TestWrapError(t *testing.T) {
 	originalErr := errors.New("original error")
 	wrappedErr := WrapError(originalErr, ErrCodeInternal, "wrapped error", http.StatusInternalServerError)
-	
+
 	if wrappedErr.Err != originalErr {
 		t.Error("Expected wrapped error to contain original error")
 	}
-	
+
 	if !errors.Is(wrappedErr, originalErr) {
 		t.Error("Expected errors.Is to work with wrapped error")
 	}
@@ -62,11 +62,11 @@ func TestWrapError(t *testing.T) {
 
 func TestNotFoundError(t *testing.T) {
 	err := NewNotFoundError("user not found")
-	
+
 	if err.Code != ErrCodeNotFound {
 		t.Errorf("Expected code %s, got %s", ErrCodeNotFound, err.Code)
 	}
-	
+
 	if err.StatusCode != http.StatusNotFound {
 		t.Errorf("Expected status code %d, got %d", http.StatusNotFound, err.StatusCode)
 	}
@@ -77,11 +77,11 @@ func TestValidationError(t *testing.T) {
 	err.AddFieldError("email", "invalid format")
 	err.AddFieldError("email", "required field")
 	err.AddFieldError("password", "too short")
-	
+
 	if len(err.Fields["email"]) != 2 {
 		t.Errorf("Expected 2 errors for email field, got %d", len(err.Fields["email"]))
 	}
-	
+
 	if len(err.Fields["password"]) != 1 {
 		t.Errorf("Expected 1 error for password field, got %d", len(err.Fields["password"]))
 	}
@@ -89,11 +89,11 @@ func TestValidationError(t *testing.T) {
 
 func TestConflictError(t *testing.T) {
 	err := NewConflictError("resource already exists")
-	
+
 	if err.Code != ErrCodeConflict {
 		t.Errorf("Expected code %s, got %s", ErrCodeConflict, err.Code)
 	}
-	
+
 	if err.StatusCode != http.StatusConflict {
 		t.Errorf("Expected status code %d, got %d", http.StatusConflict, err.StatusCode)
 	}
@@ -101,11 +101,11 @@ func TestConflictError(t *testing.T) {
 
 func TestUnauthorizedError(t *testing.T) {
 	err := NewUnauthorizedError("invalid credentials")
-	
+
 	if err.Code != ErrCodeUnauthorized {
 		t.Errorf("Expected code %s, got %s", ErrCodeUnauthorized, err.Code)
 	}
-	
+
 	if err.StatusCode != http.StatusUnauthorized {
 		t.Errorf("Expected status code %d, got %d", http.StatusUnauthorized, err.StatusCode)
 	}
@@ -114,15 +114,15 @@ func TestUnauthorizedError(t *testing.T) {
 func TestRateLimitError(t *testing.T) {
 	retryAfter := 15 * time.Minute
 	err := NewRateLimitError("rate limit exceeded", retryAfter)
-	
+
 	if err.Code != ErrCodeRateLimit {
 		t.Errorf("Expected code %s, got %s", ErrCodeRateLimit, err.Code)
 	}
-	
+
 	if err.StatusCode != http.StatusTooManyRequests {
 		t.Errorf("Expected status code %d, got %d", http.StatusTooManyRequests, err.StatusCode)
 	}
-	
+
 	if err.RetryAfter != retryAfter {
 		t.Errorf("Expected retry after %v, got %v", retryAfter, err.RetryAfter)
 	}
@@ -141,7 +141,7 @@ func TestGetStatusCode(t *testing.T) {
 		{"InternalError", NewInternalError("internal error"), http.StatusInternalServerError},
 		{"GenericError", errors.New("generic error"), http.StatusInternalServerError},
 	}
-	
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			status := GetStatusCode(tt.err)
@@ -165,7 +165,7 @@ func TestGetErrorCode(t *testing.T) {
 		{"InternalError", NewInternalError("internal error"), ErrCodeInternal},
 		{"GenericError", errors.New("generic error"), ErrCodeInternal},
 	}
-	
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			code := GetErrorCode(tt.err)
@@ -183,7 +183,7 @@ func TestAppErrorError(t *testing.T) {
 	if err1.Error() != expected1 {
 		t.Errorf("Expected error string '%s', got '%s'", expected1, err1.Error())
 	}
-	
+
 	// Test error with wrapped error
 	originalErr := errors.New("database connection failed")
 	err2 := WrapError(originalErr, ErrCodeInternal, "internal error", http.StatusInternalServerError)

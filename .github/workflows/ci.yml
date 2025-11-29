@@ -44,10 +44,34 @@ jobs:
           version: latest
           args: --timeout=5m
 
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+
+      - name: Run govulncheck
+        run: |
+          echo "Running vulnerability check..."
+          govulncheck ./...
+          if [ $? -ne 0 ]; then
+            echo "❌ Vulnerabilities found in dependencies"
+            exit 1
+          fi
+
       - name: Run Gosec Security Scanner
-        uses: securecodewarrior/github-action-gosec@master
-        with:
-          args: '-fmt sarif -out gosec.sarif ./...'
+        run: |
+          go install github.com/securego/gosec/v2/cmd/gosec@latest
+          gosec -fmt sarif -out gosec.sarif -severity high -confidence medium ./...
+
+      - name: Check Gosec Results
+        run: |
+          # Parse SARIF and fail on critical/high severity issues
+          if [ -f gosec.sarif ]; then
+            HIGH_ISSUES=$(jq '[.runs[].results[] | select(.level == "error" or .level == "warning")] | length' gosec.sarif)
+            if [ "$HIGH_ISSUES" -gt 0 ]; then
+              echo "❌ Found $HIGH_ISSUES critical/high severity security issues"
+              jq '.runs[].results[] | select(.level == "error" or .level == "warning") | {rule: .ruleId, message: .message.text, location: .locations[0].physicalLocation.artifactLocation.uri}' gosec.sarif
+              exit 1
+            fi
+          fi
 
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v2
@@ -333,9 +357,82 @@ jobs:
           image-ref: ${{ needs.build.outputs.image }}
           format: 'sarif'
           output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
+
+  # Create Security Issues
+  create-security-issues:
+    name: Create Security Issues
+    runs-on: ubuntu-latest
+    needs: [lint]
+    if: failure() && github.event_name == 'push'
+    permissions:
+      issues: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create security issue for vulnerabilities
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const title = '🔒 Security Vulnerabilities Detected';
+            const body = `## Security Alert
+            
+            Security vulnerabilities were detected in the latest push to \`${context.ref}\`.
+            
+            **Commit:** ${context.sha}
+            **Author:** @${context.actor}
+            **Workflow Run:** https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}
+            
+            ### Action Required
+            
+            1. Review the workflow logs for detailed vulnerability information
+            2. Update affected dependencies or fix security issues
+            3. Re-run security scans to verify fixes
+            
+            ### Scan Results
+            
+            - **govulncheck:** Check for dependency vulnerabilities
+            - **gosec:** Check for code security issues
+            
+            Please address these issues as soon as possible.
+            
+            ---
+            *This issue was automatically created by the CI/CD security scan.*`;
+            
+            // Check if similar issue already exists
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'security,automated'
+            });
+            
+            const existingIssue = issues.data.find(issue => 
+              issue.title.includes('Security Vulnerabilities Detected')
+            );
+            
+            if (!existingIssue) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['security', 'critical', 'automated']
+              });
+            } else {
+              // Update existing issue with new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existingIssue.number,
+                body: `New security vulnerabilities detected in commit ${context.sha}\n\nWorkflow: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+              });
+            }

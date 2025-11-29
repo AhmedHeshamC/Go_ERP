@@ -8,12 +8,12 @@ import (
 
 // RoleResponse represents a role response
 type RoleResponse struct {
-	ID          uuid.UUID  `json:"id"`
-	Name        string     `json:"name"`
-	Description string     `json:"description"`
-	Permissions []string   `json:"permissions,omitempty"`
-	CreatedAt   time.Time  `json:"created_at"`
-	UpdatedAt   time.Time  `json:"updated_at"`
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Permissions []string  `json:"permissions,omitempty"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 // CreateRoleRequest represents a role creation request
@@ -44,11 +44,11 @@ type RemoveRoleRequest struct {
 
 // UserRoleResponse represents a user role response
 type UserRoleResponse struct {
-	UserID     uuid.UUID  `json:"user_id"`
-	RoleID     uuid.UUID  `json:"role_id"`
-	RoleName   string     `json:"role_name"`
-	AssignedBy uuid.UUID  `json:"assigned_by"`
-	AssignedAt time.Time  `json:"assigned_at"`
+	UserID     uuid.UUID `json:"user_id"`
+	RoleID     uuid.UUID `json:"role_id"`
+	RoleName   string    `json:"role_name"`
+	AssignedBy uuid.UUID `json:"assigned_by"`
+	AssignedAt time.Time `json:"assigned_at"`
 }
 
 // UserPermissionsResponse represents user permissions response

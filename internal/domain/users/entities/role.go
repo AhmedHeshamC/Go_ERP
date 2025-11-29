@@ -8,12 +8,12 @@ import (
 
 // Role represents a role in the system
 type Role struct {
-	ID          uuid.UUID  `json:"id" db:"id"`
-	Name        string     `json:"name" db:"name"`
-	Description string     `json:"description" db:"description"`
-	Permissions []string   `json:"permissions" db:"permissions"`
-	CreatedAt   time.Time  `json:"created_at" db:"created_at"`
-	UpdatedAt   time.Time  `json:"updated_at" db:"updated_at"`
+	ID          uuid.UUID `json:"id" db:"id"`
+	Name        string    `json:"name" db:"name"`
+	Description string    `json:"description" db:"description"`
+	Permissions []string  `json:"permissions" db:"permissions"`
+	CreatedAt   time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at" db:"updated_at"`
 }
 
 // UserRole represents the relationship between a user and a role
@@ -129,7 +129,7 @@ const (
 	PermissionGradeUpdate = "grades.update"
 
 	// Profile permissions
-	PermissionProfileRead = "profile.read"
+	PermissionProfileRead   = "profile.read"
 	PermissionProfileUpdate = "profile.update"
 )
 

@@ -793,7 +793,7 @@ func genUnknownErrorCode() gopter.Gen {
 func genDatabaseErrorCode() gopter.Gen {
 	return gen.OneGenOf(
 		gen.OneConstOf("23505", "23503", "23514", "23502"), // Constraint violations
-		gen.OneConstOf("40P01", "40001"),                    // Deadlock/serialization
+		gen.OneConstOf("40P01", "40001"),                   // Deadlock/serialization
 		genConnectionErrorCode(),
 		genResourceErrorCode(),
 		genUnknownErrorCode(),

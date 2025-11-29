@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	apperrors "erpgo/pkg/errors"
+	"github.com/gin-gonic/gin"
 )
 
 // ErrorResponse represents a structured error response

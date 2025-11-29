@@ -90,4 +90,3 @@ func AuditLoggingWithConfig(config AuditConfig, cache cache.Cache, logger zerolo
 func createRateLimitWithConfig(config RateLimitConfig, cacheInterface cache.Cache, logger zerolog.Logger) gin.HandlerFunc {
 	return RateLimitWithConfigFull(config, cacheInterface, logger)
 }
-

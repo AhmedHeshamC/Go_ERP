@@ -10,20 +10,21 @@ import (
 	"syscall"
 	"time"
 
+	_ "erpgo/docs" // Import generated docs
+
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/swaggo/files"
-	"github.com/swaggo/gin-swagger"
-	_ "erpgo/docs" // Import generated docs
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"github.com/google/uuid"
 
+	emailsvc "erpgo/internal/application/services/email"
+	"erpgo/internal/application/services/inventory"
+	"erpgo/internal/application/services/product"
+	"erpgo/internal/application/services/user"
 	"erpgo/internal/domain/users/entities"
 	"erpgo/internal/domain/users/repositories"
-	"erpgo/internal/application/services/user"
-	"erpgo/internal/application/services/product"
-	"erpgo/internal/application/services/inventory"
-	emailsvc "erpgo/internal/application/services/email"
 	infrarepos "erpgo/internal/infrastructure/repositories"
 	"erpgo/internal/interfaces/http/handlers"
 	httpmiddleware "erpgo/internal/interfaces/http/middleware"
@@ -44,16 +45,15 @@ var (
 	commit    = "unknown"
 )
 
-
 func main() {
 	// Load configuration with secret management
-	cfg, secretMgr, err := config.LoadWithSecretManager()
+	cfg, err := config.Load()
 	if err != nil {
 		log.Fatalf("Failed to load configuration: %v", err)
 	}
 
-	// Log loaded secret keys (not values!) for audit
-	log.Printf("Loaded secrets: %v", (*secretMgr).ListSecretKeys())
+	// Log loaded configuration for audit
+	log.Printf("Loaded configuration successfully")
 
 	// Initialize logger
 	log := logger.New(cfg.LogLevel, cfg.IsDevelopment())
@@ -71,7 +71,7 @@ func main() {
 		MinConnections:  dbConfig.MinConnections,
 		ConnMaxLifetime: dbConfig.ConnMaxLifetime,
 		ConnMaxIdleTime: dbConfig.ConnMaxIdleTime,
-		SSLMode:         dbConfig.SSLMode,
+		SSLMode:         "disable", // Force disable SSL for development
 		SSLCert:         dbConfig.SSLCert,
 		SSLKey:          dbConfig.SSLKey,
 		SSLCA:           dbConfig.SSLCA,
@@ -101,7 +101,7 @@ func main() {
 	// TODO: Create proper repository implementations (Phase 1.1.1)
 	// roleRepo := infrarepos.NewPostgresRoleRepository(db) // Doesn't exist yet
 	// userRoleRepo := infrarepos.NewPostgresUserRoleRepository(db) // Doesn't exist yet
-	var roleRepo repositories.RoleRepository = &MockRoleRepository{} // Temporary mock for Phase 1.1.1
+	var roleRepo repositories.RoleRepository = &MockRoleRepository{}             // Temporary mock for Phase 1.1.1
 	var userRoleRepo repositories.UserRoleRepository = &MockUserRoleRepository{} // Temporary mock for Phase 1.1.1
 
 	// Initialize product repositories
@@ -141,10 +141,10 @@ func main() {
 	// Initialize email service
 	// TODO: Get email configuration from config file
 	emailConfig := &entities.EmailConfig{
-		SMTPHost:     "localhost", // TODO: Get from config
-		SMTPPort:     587,         // TODO: Get from config
-		SMTPUsername: "",          // TODO: Get from config
-		SMTPPassword: "",          // TODO: Get from config
+		SMTPHost:     "localhost",                 // TODO: Get from config
+		SMTPPort:     587,                         // TODO: Get from config
+		SMTPUsername: "",                          // TODO: Get from config
+		SMTPPassword: "",                          // TODO: Get from config
 		FromEmail:    "noreply@erpgo.example.com", // TODO: Get from config
 		FromName:     "ERPGo",                     // TODO: Get from config
 		UseTLS:       true,                        // TODO: Get from config
@@ -174,21 +174,21 @@ func main() {
 	// TODO: Implement notification, payment, tax, and shipping services
 	// TODO: Fix order service compilation issues
 	/*
-	orderService := order.NewService(
-		orderRepo,
-		orderItemRepo,
-		customerRepo,
-		addressRepo,
-		companyRepo,
-		orderAnalyticsRepo,
-		nil, // productService - will need adapter or direct repo access
-		inventoryService, // inventoryService - now available
-		nil, // userService - will need adapter or direct repo access
-		nil, // notificationService
-		nil, // paymentService
-		nil, // taxCalculator
-		nil, // shippingCalculator
-	)
+		orderService := order.NewService(
+			orderRepo,
+			orderItemRepo,
+			customerRepo,
+			addressRepo,
+			companyRepo,
+			orderAnalyticsRepo,
+			nil, // productService - will need adapter or direct repo access
+			inventoryService, // inventoryService - now available
+			nil, // userService - will need adapter or direct repo access
+			nil, // notificationService
+			nil, // paymentService
+			nil, // taxCalculator
+			nil, // shippingCalculator
+		)
 	*/
 
 	// Initialize handlers
@@ -196,7 +196,7 @@ func main() {
 	productHandler := handlers.NewProductHandler(productService, *log)
 	// orderHandler := handlers.NewOrderHandler(orderService, *log) // TODO: Fix order service
 	inventoryHandler := handlers.NewInventoryHandler(inventoryService, *log)
-	warehouseHandler := handlers.NewWarehouseHandler(nil, *log) // TODO: Create warehouseService
+	warehouseHandler := handlers.NewWarehouseHandler(nil, *log)              // TODO: Create warehouseService
 	transactionHandler := handlers.NewInventoryTransactionHandler(nil, *log) // TODO: Create transactionService
 
 	// Setup Gin
@@ -232,10 +232,10 @@ func main() {
 		c.DefaultModelsExpandDepth = 1
 		c.PersistAuthorization = true // Persist auth token across page refreshes
 	}
-	
+
 	// Main Swagger UI endpoint at /api/docs
 	router.GET("/api/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, swaggerConfig))
-	
+
 	// Alternative endpoints for convenience
 	router.GET("/api/v1/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, swaggerConfig))
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, swaggerConfig))

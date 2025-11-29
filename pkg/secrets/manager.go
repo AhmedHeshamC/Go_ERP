@@ -245,15 +245,16 @@ func (v *DatabaseURLValidator) Validate(value string) error {
 		return fmt.Errorf("database URL cannot be empty")
 	}
 
-	// Check for common insecure patterns
-	if strings.Contains(value, "sslmode=disable") {
-		return fmt.Errorf("database URL should not disable SSL in production")
-	}
-
 	// Check for localhost in production (this would need environment context)
 	if strings.Contains(value, "localhost") || strings.Contains(value, "127.0.0.1") {
 		// This is a warning, not an error, as it might be valid in dev
 		// In production, this should be caught by environment-specific validation
+	}
+
+	// Only check SSL mode in production environment
+	env := os.Getenv("ENVIRONMENT")
+	if strings.ToLower(env) == "production" && strings.Contains(value, "sslmode=disable") {
+		return fmt.Errorf("database URL should not disable SSL in production")
 	}
 
 	return nil

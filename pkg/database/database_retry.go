@@ -28,23 +28,23 @@ func NewRetryableDatabase(config Config, logger *zerolog.Logger) (*RetryableData
 
 	// Create retry manager
 	retryConfig := &RetryConfig{
-		MaxAttempts:         3,
-		InitialDelay:        100 * time.Millisecond,
-		MaxDelay:            5 * time.Second,
-		Multiplier:          2.0,
-		Jitter:              true,
-		JitterFactor:        0.1,
-		BackoffStrategy:     BackoffStrategyExponential,
-		RetryOnTimeout:      true,
-		RetryOnConnectionLoss: true,
-		RetryOnDeadlock:     true,
-		RetryOnQueryCancel:  false,
-		LogRetries:          true,
-		LogRetryAttempts:    true,
-		LogSuccessfulRetry:  true,
-		EnableCircuitBreaker: true,
+		MaxAttempts:             3,
+		InitialDelay:            100 * time.Millisecond,
+		MaxDelay:                5 * time.Second,
+		Multiplier:              2.0,
+		Jitter:                  true,
+		JitterFactor:            0.1,
+		BackoffStrategy:         BackoffStrategyExponential,
+		RetryOnTimeout:          true,
+		RetryOnConnectionLoss:   true,
+		RetryOnDeadlock:         true,
+		RetryOnQueryCancel:      false,
+		LogRetries:              true,
+		LogRetryAttempts:        true,
+		LogSuccessfulRetry:      true,
+		EnableCircuitBreaker:    true,
 		CircuitBreakerThreshold: 5,
-		CircuitBreakerTimeout: 30 * time.Second,
+		CircuitBreakerTimeout:   30 * time.Second,
 	}
 
 	retryManager := NewRetryManager(retryConfig, logger)
@@ -230,26 +230,26 @@ func (rdb *RetryableDatabase) GetCircuitBreakerStatus() map[string]interface{} {
 	}
 
 	return map[string]interface{}{
-		"enabled":          true,
-		"state":            state,
-		"failures":         rdb.retryManager.circuitBreaker.failures,
-		"last_failure":     rdb.retryManager.circuitBreaker.lastFailure,
-		"next_attempt":     rdb.retryManager.circuitBreaker.nextAttempt,
-		"threshold":        rdb.retryManager.config.CircuitBreakerThreshold,
-		"timeout":          rdb.retryManager.config.CircuitBreakerTimeout,
+		"enabled":      true,
+		"state":        state,
+		"failures":     rdb.retryManager.circuitBreaker.failures,
+		"last_failure": rdb.retryManager.circuitBreaker.lastFailure,
+		"next_attempt": rdb.retryManager.circuitBreaker.nextAttempt,
+		"threshold":    rdb.retryManager.config.CircuitBreakerThreshold,
+		"timeout":      rdb.retryManager.config.CircuitBreakerTimeout,
 	}
 }
 
 // GetRetryStats returns retry statistics
 func (rdb *RetryableDatabase) GetRetryStats() map[string]interface{} {
 	return map[string]interface{}{
-		"max_attempts":      rdb.retryManager.config.MaxAttempts,
-		"initial_delay":     rdb.retryManager.config.InitialDelay.String(),
-		"max_delay":         rdb.retryManager.config.MaxDelay.String(),
-		"multiplier":        rdb.retryManager.config.Multiplier,
-		"jitter":            rdb.retryManager.config.Jitter,
-		"backoff_strategy":  rdb.retryManager.config.BackoffStrategy,
-		"circuit_breaker":   rdb.GetCircuitBreakerStatus(),
+		"max_attempts":     rdb.retryManager.config.MaxAttempts,
+		"initial_delay":    rdb.retryManager.config.InitialDelay.String(),
+		"max_delay":        rdb.retryManager.config.MaxDelay.String(),
+		"multiplier":       rdb.retryManager.config.Multiplier,
+		"jitter":           rdb.retryManager.config.Jitter,
+		"backoff_strategy": rdb.retryManager.config.BackoffStrategy,
+		"circuit_breaker":  rdb.GetCircuitBreakerStatus(),
 	}
 }
 
@@ -326,4 +326,3 @@ func (rdb *RetryableDatabase) CopyFromWithRetry(ctx context.Context, tableName p
 
 	return result, nil
 }
-

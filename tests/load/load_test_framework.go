@@ -32,25 +32,25 @@ type LoadTestConfig struct {
 
 // LoadTestResult contains results from a load test
 type LoadTestResult struct {
-	TestName           string
-	StartTime          time.Time
-	EndTime            time.Time
-	Duration           time.Duration
-	TotalRequests      int64
-	SuccessfulRequests int64
-	FailedRequests     int64
-	RequestsPerSecond  float64
+	TestName            string
+	StartTime           time.Time
+	EndTime             time.Time
+	Duration            time.Duration
+	TotalRequests       int64
+	SuccessfulRequests  int64
+	FailedRequests      int64
+	RequestsPerSecond   float64
 	AverageResponseTime time.Duration
-	MinResponseTime    time.Duration
-	MaxResponseTime    time.Duration
-	P50ResponseTime    time.Duration
-	P95ResponseTime    time.Duration
-	P99ResponseTime    time.Duration
-	ErrorRate          float64
-	ThroughputMBPS     float64
-	Errors             []LoadTestError
-	Metrics            *LoadTestMetrics
-	SystemMetrics      *SystemMetrics
+	MinResponseTime     time.Duration
+	MaxResponseTime     time.Duration
+	P50ResponseTime     time.Duration
+	P95ResponseTime     time.Duration
+	P99ResponseTime     time.Duration
+	ErrorRate           float64
+	ThroughputMBPS      float64
+	Errors              []LoadTestError
+	Metrics             *LoadTestMetrics
+	SystemMetrics       *SystemMetrics
 }
 
 // LoadTestError represents an error that occurred during load testing
@@ -65,38 +65,38 @@ type LoadTestError struct {
 
 // LoadTestMetrics tracks performance metrics during load testing
 type LoadTestMetrics struct {
-	requestsTotal       prometheus.Counter
-	requestsSuccessful  prometheus.Counter
-	requestsFailed      prometheus.Counter
-	requestDuration     prometheus.Histogram
-	responseSize        prometheus.Histogram
-	activeUsers         prometheus.Gauge
-	systemMemoryUsage   prometheus.Gauge
-	goroutineCount      prometheus.Gauge
+	requestsTotal      prometheus.Counter
+	requestsSuccessful prometheus.Counter
+	requestsFailed     prometheus.Counter
+	requestDuration    prometheus.Histogram
+	responseSize       prometheus.Histogram
+	activeUsers        prometheus.Gauge
+	systemMemoryUsage  prometheus.Gauge
+	goroutineCount     prometheus.Gauge
 }
 
 // SystemMetrics tracks system resource usage
 type SystemMetrics struct {
-	InitialMemoryMB     int64
-	PeakMemoryMB        int64
-	FinalMemoryMB       int64
-	InitialGoroutines   int
-	PeakGoroutines      int
-	FinalGoroutines     int
-	AvgCPUUsage         float64
-	PeakCPUUsage        float64
+	InitialMemoryMB   int64
+	PeakMemoryMB      int64
+	FinalMemoryMB     int64
+	InitialGoroutines int
+	PeakGoroutines    int
+	FinalGoroutines   int
+	AvgCPUUsage       float64
+	PeakCPUUsage      float64
 }
 
 // LoadTestFramework provides comprehensive load testing capabilities
 type LoadTestFramework struct {
-	config      *LoadTestConfig
-	httpClient  *http.Client
-	results     *LoadTestResult
-	metrics     *LoadTestMetrics
-	stopChan    chan struct{}
-	wg          sync.WaitGroup
-	ctx         context.Context
-	cancel      context.CancelFunc
+	config     *LoadTestConfig
+	httpClient *http.Client
+	results    *LoadTestResult
+	metrics    *LoadTestMetrics
+	stopChan   chan struct{}
+	wg         sync.WaitGroup
+	ctx        context.Context
+	cancel     context.CancelFunc
 }
 
 // NewLoadTestFramework creates a new load testing framework
@@ -171,9 +171,9 @@ func (ltf *LoadTestFramework) RunLoadTest(requestFunc func(user int, iteration i
 
 	// Initialize results and metrics tracking
 	ltf.results = &LoadTestResult{
-		TestName:    ltf.config.Name,
-		StartTime:   time.Now(),
-		Metrics:     ltf.metrics,
+		TestName:      ltf.config.Name,
+		StartTime:     time.Now(),
+		Metrics:       ltf.metrics,
 		SystemMetrics: ltf.initializeSystemMetrics(),
 	}
 
@@ -388,8 +388,8 @@ func (ltf *LoadTestFramework) initializeSystemMetrics() *SystemMetrics {
 
 	// Convert memory stats safely - m.Alloc is uint64, converting to MB will always fit in int64
 	return &SystemMetrics{
-		InitialMemoryMB:   int64(m.Alloc) / 1024 / 1024,   // #nosec G115 - Division by 1024*1024 ensures result fits in int64
-		PeakMemoryMB:      int64(m.Alloc) / 1024 / 1024,   // #nosec G115 - Division by 1024*1024 ensures result fits in int64
+		InitialMemoryMB:   int64(m.Alloc) / 1024 / 1024, // #nosec G115 - Division by 1024*1024 ensures result fits in int64
+		PeakMemoryMB:      int64(m.Alloc) / 1024 / 1024, // #nosec G115 - Division by 1024*1024 ensures result fits in int64
 		InitialGoroutines: runtime.NumGoroutine(),
 		PeakGoroutines:    runtime.NumGoroutine(),
 	}

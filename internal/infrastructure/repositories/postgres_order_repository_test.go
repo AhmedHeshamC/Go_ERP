@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -13,14 +12,12 @@ import (
 
 	"erpgo/internal/domain/orders/entities"
 	"erpgo/internal/domain/orders/repositories"
-	"erpgo/pkg/database"
 	"erpgo/tests/integration/testutil"
 )
 
 // OrderRepositoryTestSuite contains all tests for the order repository
 type OrderRepositoryTestSuite struct {
 	suite.Suite
-	db          *database.Database
 	repo        repositories.OrderRepository
 	cleanupFunc func()
 }
@@ -104,7 +101,8 @@ func (suite *OrderRepositoryTestSuite) TestUpdateOrder() {
 
 	// Update the order
 	order.Status = entities.OrderStatusConfirmed
-	order.Notes = testutil.StringPtr("Updated notes")
+	notes := "Updated notes"
+	order.Notes = &notes
 	order.UpdatedAt = time.Now()
 
 	err = suite.repo.Update(ctx, order)
@@ -438,12 +436,14 @@ func (suite *OrderRepositoryTestSuite) TestSearchOrders() {
 
 	// Create test orders with specific data
 	order1 := testutil.CreateTestOrder(suite.T())
-	order1.CustomerNotes = testutil.StringPtr("Special delivery instructions")
+	customerNotes := "Special delivery instructions"
+	order1.CustomerNotes = &customerNotes
 	err := suite.repo.Create(ctx, order1)
 	require.NoError(suite.T(), err)
 
 	order2 := testutil.CreateTestOrder(suite.T())
-	order2.Notes = testutil.StringPtr("Urgent priority order")
+	notes := "Urgent priority order"
+	order2.Notes = &notes
 	err = suite.repo.Create(ctx, order2)
 	require.NoError(suite.T(), err)
 

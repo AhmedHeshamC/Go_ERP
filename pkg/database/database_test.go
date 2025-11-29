@@ -141,7 +141,7 @@ func TestNew_WithInvalidURL(t *testing.T) {
 
 func TestDatabase_Getters(t *testing.T) {
 	db := &Database{
-		pool:   &pgxpool.Pool{},
+		pool: &pgxpool.Pool{},
 		config: &Config{
 			URL:             "postgres://localhost/test",
 			MaxConnections:  20,

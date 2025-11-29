@@ -14,11 +14,11 @@ import (
 
 // OpenAPISpec represents the structure of an OpenAPI 3.0 specification
 type OpenAPISpec struct {
-	OpenAPI string                 `yaml:"openapi" json:"openapi"`
-	Info    OpenAPIInfo            `yaml:"info" json:"info"`
-	Servers []OpenAPIServer        `yaml:"servers" json:"servers"`
-	Paths   map[string]interface{} `yaml:"paths" json:"paths"`
-	Components OpenAPIComponents   `yaml:"components" json:"components"`
+	OpenAPI    string                 `yaml:"openapi" json:"openapi"`
+	Info       OpenAPIInfo            `yaml:"info" json:"info"`
+	Servers    []OpenAPIServer        `yaml:"servers" json:"servers"`
+	Paths      map[string]interface{} `yaml:"paths" json:"paths"`
+	Components OpenAPIComponents      `yaml:"components" json:"components"`
 }
 
 type OpenAPIInfo struct {
@@ -175,7 +175,7 @@ func TestErrorCodesDocumented(t *testing.T) {
 	// Check each error code is documented
 	for _, errorCode := range requiredErrorCodes {
 		t.Run(fmt.Sprintf("ErrorCode_%s", errorCode), func(t *testing.T) {
-			assert.Contains(t, errorCodesDoc, errorCode, 
+			assert.Contains(t, errorCodesDoc, errorCode,
 				"Error code %s should be documented in ERROR_CODES.md", errorCode)
 		})
 	}
@@ -399,7 +399,7 @@ func TestEndpointResponseCodesDocumented(t *testing.T) {
 			responses, ok := operationMap["responses"].(map[string]interface{})
 			if ok && len(responses) > 0 {
 				endpointsWithResponses++
-				
+
 				// Verify common response codes are present
 				t.Run(fmt.Sprintf("%s_%s_has_responses", path, method), func(t *testing.T) {
 					assert.NotEmpty(t, responses, "Endpoint %s %s should have response codes documented", method, path)

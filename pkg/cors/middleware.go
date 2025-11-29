@@ -83,13 +83,13 @@ func DefaultConfig() *Config {
 			"Content-Length",
 			"Content-Range",
 		},
-		AllowCredentials:     false,
+		AllowCredentials:    false,
 		MaxAge:              12 * time.Hour,
-		PreflightContinue:    false,
-		PreflightStatusCode:  http.StatusNoContent,
-		OptionsPassthrough:   false,
-		LogCORS:              true,
-		VaryOrigin:           true,
+		PreflightContinue:   false,
+		PreflightStatusCode: http.StatusNoContent,
+		OptionsPassthrough:  false,
+		LogCORS:             true,
+		VaryOrigin:          true,
 	}
 }
 
@@ -127,13 +127,13 @@ func DevelopmentConfig() *Config {
 			"Content-Range",
 			"X-Debug",
 		},
-		AllowCredentials:     true,
+		AllowCredentials:    true,
 		MaxAge:              5 * time.Minute,
-		PreflightContinue:    false,
-		PreflightStatusCode:  http.StatusNoContent,
-		OptionsPassthrough:   false,
-		LogCORS:              true,
-		VaryOrigin:           true,
+		PreflightContinue:   false,
+		PreflightStatusCode: http.StatusNoContent,
+		OptionsPassthrough:  false,
+		LogCORS:             true,
+		VaryOrigin:          true,
 	}
 }
 
@@ -160,13 +160,13 @@ func ProductionConfig(allowedOrigins []string) *Config {
 		ExposedHeaders: []string{
 			"Content-Length",
 		},
-		AllowCredentials:     false,
+		AllowCredentials:    false,
 		MaxAge:              2 * time.Hour,
-		PreflightContinue:    false,
-		PreflightStatusCode:  http.StatusNoContent,
-		OptionsPassthrough:   false,
-		LogCORS:              false, // Disable verbose logging in production
-		VaryOrigin:           true,
+		PreflightContinue:   false,
+		PreflightStatusCode: http.StatusNoContent,
+		OptionsPassthrough:  false,
+		LogCORS:             false, // Disable verbose logging in production
+		VaryOrigin:          true,
 	}
 }
 
@@ -487,15 +487,15 @@ func (m *Middleware) WithLogCORS(log bool) *Middleware {
 // GetStats returns middleware statistics
 func (m *Middleware) GetStats() map[string]interface{} {
 	return map[string]interface{}{
-		"allowed_origins":      len(m.config.AllowedOrigins),
-		"allowed_methods":      len(m.config.AllowedMethods),
-		"allowed_headers":      len(m.config.AllowedHeaders),
-		"exposed_headers":      len(m.config.ExposedHeaders),
-		"allow_credentials":    m.config.AllowCredentials,
-		"max_age":              m.config.MaxAge.String(),
-		"origin_cache_size":    len(m.originCache),
-		"log_cors":             m.config.LogCORS,
-		"vary_origin":          m.config.VaryOrigin,
+		"allowed_origins":   len(m.config.AllowedOrigins),
+		"allowed_methods":   len(m.config.AllowedMethods),
+		"allowed_headers":   len(m.config.AllowedHeaders),
+		"exposed_headers":   len(m.config.ExposedHeaders),
+		"allow_credentials": m.config.AllowCredentials,
+		"max_age":           m.config.MaxAge.String(),
+		"origin_cache_size": len(m.originCache),
+		"log_cors":          m.config.LogCORS,
+		"vary_origin":       m.config.VaryOrigin,
 	}
 }
 
@@ -521,11 +521,11 @@ func Permissive(logger *zerolog.Logger) gin.HandlerFunc {
 			http.MethodTrace,
 			http.MethodConnect,
 		},
-		AllowedHeaders: []string{"*"},
+		AllowedHeaders:   []string{"*"},
 		AllowCredentials: true,
-		MaxAge:          24 * time.Hour,
-		LogCORS:         true,
-		VaryOrigin:      false,
+		MaxAge:           24 * time.Hour,
+		LogCORS:          true,
+		VaryOrigin:       false,
 	}
 
 	return NewMiddleware(config, logger).Middleware()

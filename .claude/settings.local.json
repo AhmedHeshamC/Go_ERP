@@ -33,7 +33,8 @@
       "Bash(~/go/bin/swag init:*)",
       "Bash(go version:*)",
       "Bash(git add:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(go tool cover:*)"
     ],
     "deny": [],
     "ask": []

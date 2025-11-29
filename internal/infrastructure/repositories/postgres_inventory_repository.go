@@ -7,11 +7,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"erpgo/internal/domain/inventory/entities"
 	"erpgo/internal/domain/inventory/repositories"
 	"erpgo/pkg/database"
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 )
 
 // PostgresInventoryRepository implements InventoryRepository for PostgreSQL
@@ -1322,7 +1322,7 @@ func (r *PostgresInventoryRepository) GetInventoryLevels(ctx context.Context, pr
 			&level.SKU,
 			&level.WarehouseID,
 			&level.WarehouseName,
-						&level.Quantity,
+			&level.Quantity,
 			&level.Reserved,
 			&level.Available,
 			&level.ReorderLevel,
@@ -1399,7 +1399,7 @@ func (r *PostgresInventoryRepository) GetStockLevels(ctx context.Context, filter
 			&level.SKU,
 			&level.WarehouseID,
 			&level.WarehouseName,
-						&level.Quantity,
+			&level.Quantity,
 			&level.Reserved,
 			&level.Available,
 			&level.ReorderLevel,
@@ -1465,13 +1465,13 @@ func (r *PostgresInventoryRepository) GetInventoryTurnover(ctx context.Context, 
 	}
 
 	turnover := &repositories.InventoryTurnover{
-		ProductID:     productID,
-		Days:          days,
-		BeginningStock: 0, // Would need historical data
-		EndingStock:   0,
+		ProductID:       productID,
+		Days:            days,
+		BeginningStock:  0, // Would need historical data
+		EndingStock:     0,
 		CostOfGoodsSold: 0, // Would need transaction data
-		TurnoverRate:  0,
-		DaysOfSupply:  0,
+		TurnoverRate:    0,
+		DaysOfSupply:    0,
 	}
 
 	var warehouseName string

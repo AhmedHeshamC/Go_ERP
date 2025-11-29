@@ -42,32 +42,32 @@ func (f *Factory) CreateProvider(config *StorageConfig) (StorageProvider, error)
 
 // ProviderInfo contains information about a storage provider
 type ProviderInfo struct {
-	Name        string   `json:"name"`
-	Type        string   `json:"type"`
+	Name         string   `json:"name"`
+	Type         string   `json:"type"`
 	Capabilities []string `json:"capabilities"`
-	Features    []string `json:"features"`
+	Features     []string `json:"features"`
 }
 
 // GetProviderInfo returns information about available storage providers
 func (f *Factory) GetProviderInfo() map[string]ProviderInfo {
 	return map[string]ProviderInfo{
 		"local": {
-			Name:        "Local Filesystem",
-			Type:        "local",
+			Name:         "Local Filesystem",
+			Type:         "local",
 			Capabilities: []string{"upload", "download", "delete", "list", "metadata", "bulk"},
-			Features:    []string{"fast", "simple", "no external dependencies"},
+			Features:     []string{"fast", "simple", "no external dependencies"},
 		},
 		"s3": {
-			Name:        "Amazon S3",
-			Type:        "s3",
+			Name:         "Amazon S3",
+			Type:         "s3",
 			Capabilities: []string{"upload", "download", "delete", "list", "metadata", "bulk", "presigned_url"},
-			Features:    []string{"scalable", "durable", "cdn", "encryption"},
+			Features:     []string{"scalable", "durable", "cdn", "encryption"},
 		},
 		"minio": {
-			Name:        "MinIO S3-Compatible",
-			Type:        "minio",
+			Name:         "MinIO S3-Compatible",
+			Type:         "minio",
 			Capabilities: []string{"upload", "download", "delete", "list", "metadata", "bulk", "presigned_url"},
-			Features:    []string{"self-hosted", "s3-compatible", "scalable"},
+			Features:     []string{"self-hosted", "s3-compatible", "scalable"},
 		},
 	}
 }

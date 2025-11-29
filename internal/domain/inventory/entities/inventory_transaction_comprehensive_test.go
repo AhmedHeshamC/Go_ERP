@@ -443,7 +443,7 @@ func TestInventoryTransaction_AdditionalCoverage(t *testing.T) {
 
 			requires := transaction.RequiresApproval()
 			if requires != tt.requires {
-				t.Errorf("For type %s, expected RequiresApproval=%v, got %v", 
+				t.Errorf("For type %s, expected RequiresApproval=%v, got %v",
 					tt.txType, tt.requires, requires)
 			}
 		}

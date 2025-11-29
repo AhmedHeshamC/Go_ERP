@@ -343,8 +343,8 @@ func (b *RetryConfigBuilder) Build() *RetryConfig {
 func DefaultConfigForReadOperations() *RetryConfig {
 	return NewRetryConfigBuilder().
 		WithMaxAttempts(3).
-		WithInitialDelay(50 * time.Millisecond).
-		WithMaxDelay(2 * time.Second).
+		WithInitialDelay(50*time.Millisecond).
+		WithMaxDelay(2*time.Second).
 		WithMultiplier(1.5).
 		WithJitter(true, 0.1).
 		WithBackoffStrategy(BackoffStrategyExponential).
@@ -358,8 +358,8 @@ func DefaultConfigForReadOperations() *RetryConfig {
 func DefaultConfigForWriteOperations() *RetryConfig {
 	return NewRetryConfigBuilder().
 		WithMaxAttempts(2).
-		WithInitialDelay(100 * time.Millisecond).
-		WithMaxDelay(3 * time.Second).
+		WithInitialDelay(100*time.Millisecond).
+		WithMaxDelay(3*time.Second).
 		WithMultiplier(2.0).
 		WithJitter(true, 0.2).
 		WithBackoffStrategy(BackoffStrategyExponential).
@@ -373,8 +373,8 @@ func DefaultConfigForWriteOperations() *RetryConfig {
 func DefaultConfigForTransactions() *RetryConfig {
 	return NewRetryConfigBuilder().
 		WithMaxAttempts(2).
-		WithInitialDelay(200 * time.Millisecond).
-		WithMaxDelay(5 * time.Second).
+		WithInitialDelay(200*time.Millisecond).
+		WithMaxDelay(5*time.Second).
 		WithMultiplier(2.0).
 		WithJitter(true, 0.15).
 		WithBackoffStrategy(BackoffStrategyExponential).
@@ -388,8 +388,8 @@ func DefaultConfigForTransactions() *RetryConfig {
 func DefaultConfigForBatchOperations() *RetryConfig {
 	return NewRetryConfigBuilder().
 		WithMaxAttempts(1). // Usually don't retry batch operations
-		WithInitialDelay(500 * time.Millisecond).
-		WithMaxDelay(10 * time.Second).
+		WithInitialDelay(500*time.Millisecond).
+		WithMaxDelay(10*time.Second).
 		WithMultiplier(1.0).
 		WithJitter(false, 0).
 		WithBackoffStrategy(BackoffStrategyFixed).

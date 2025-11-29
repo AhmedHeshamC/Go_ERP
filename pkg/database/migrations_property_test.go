@@ -86,7 +86,7 @@ func TestProperty_MigrationTransactionRollback(t *testing.T) {
 					AND table_name = '%s'
 				);
 			`, tableName)
-			
+
 			queryErr := db.QueryRow(ctx, checkSQL).Scan(&exists)
 			if queryErr != nil {
 				t.Logf("Error checking if table exists: %v", queryErr)
@@ -97,10 +97,10 @@ func TestProperty_MigrationTransactionRollback(t *testing.T) {
 				// PROPERTY VIOLATION: Table exists after failed migration
 				// This means rollback did NOT occur
 				t.Logf("PROPERTY VIOLATION: Table %s exists after failed migration - rollback did not occur", tableName)
-				
+
 				// Clean up the orphaned table
 				_, _ = db.Exec(ctx, fmt.Sprintf("DROP TABLE IF EXISTS %s;", tableName))
-				
+
 				return false
 			}
 
@@ -116,10 +116,10 @@ func TestProperty_MigrationTransactionRollback(t *testing.T) {
 			if recorded {
 				// PROPERTY VIOLATION: Migration was recorded despite failure
 				t.Logf("PROPERTY VIOLATION: Migration %d was recorded despite failure - rollback did not occur", version)
-				
+
 				// Clean up the orphaned record
 				_, _ = db.Exec(ctx, "DELETE FROM schema_migrations WHERE version = $1;", version)
-				
+
 				return false
 			}
 
@@ -145,7 +145,7 @@ func genValidTableName() gopter.Gen {
 			if len(name) == 0 || len(name) > 63 {
 				return false
 			}
-			
+
 			// Check first character
 			first := name[0]
 			if !((first >= 'a' && first <= 'z') || (first >= 'A' && first <= 'Z') || first == '_') {
@@ -158,7 +158,7 @@ func genValidTableName() gopter.Gen {
 				"update": true, "delete": true, "from": true, "where": true,
 				"order": true, "group": true, "having": true, "limit": true,
 			}
-			
+
 			if reserved[name] {
 				return false
 			}

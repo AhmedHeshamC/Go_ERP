@@ -76,11 +76,18 @@ jobs:
       run: go vet ./...
 
     - name: Run govulncheck
-      run: govulncheck ./...
+      run: |
+        echo "Running govulncheck for dependency vulnerabilities..."
+        govulncheck ./...
+        if [ $? -ne 0 ]; then
+          echo "❌ Critical or high severity vulnerabilities found"
+          exit 1
+        fi
 
     - name: Run gosec security scanner
       run: |
-        gosec -conf .gosec.yml -fmt json -out security-reports/gosec-report.json ./... || true
+        mkdir -p security-reports
+        gosec -conf .gosec.yml -fmt json -out security-reports/gosec-report.json -severity high -confidence medium ./...
 
     - name: Run staticcheck
       run: staticcheck ./...
@@ -165,23 +172,123 @@ jobs:
 
     - name: Check for high severity issues
       run: |
+        EXIT_CODE=0
+        
         if [ -f "security-reports/gosec-report.json" ]; then
-          HIGH_ISSUES=$(jq '[.Issues[] | select(.severity == "HIGH")] | length' security-reports/gosec-report.json)
-          if [ "$HIGH_ISSUES" -gt 0 ]; then
-            echo "❌ High severity security issues found: $HIGH_ISSUES"
+          HIGH_ISSUES=$(jq '[.Issues[] | select(.severity == "HIGH")] | length' security-reports/gosec-report.json 2>/dev/null || echo "0")
+          CRITICAL_ISSUES=$(jq '[.Issues[] | select(.severity == "CRITICAL")] | length' security-reports/gosec-report.json 2>/dev/null || echo "0")
+          
+          if [ "$HIGH_ISSUES" -gt 0 ] || [ "$CRITICAL_ISSUES" -gt 0 ]; then
+            echo "❌ Critical/High severity security issues found:"
+            echo "   - Critical: $CRITICAL_ISSUES"
+            echo "   - High: $HIGH_ISSUES"
             echo "Please review and fix these issues before merging."
-            exit 1
+            EXIT_CODE=1
           fi
         fi
 
         if [ -f "security-reports/trufflehog-report.json" ]; then
-          SECRETS_FOUND=$(jq '.results | length' security-reports/trufflehog-report.json)
+          SECRETS_FOUND=$(jq '.results | length' security-reports/trufflehog-report.json 2>/dev/null || echo "0")
           if [ "$SECRETS_FOUND" -gt 0 ]; then
             echo "❌ Potential secrets found in code: $SECRETS_FOUND"
             echo "Please remove any secrets before merging."
-            exit 1
+            EXIT_CODE=1
           fi
         fi
+        
+        exit $EXIT_CODE
+
+    - name: Create security issue on failure
+      if: failure() && github.event_name == 'push'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const path = './security-reports';
+          
+          let issueBody = `## 🔒 Security Scan Failed\n\n`;
+          issueBody += `**Branch:** \`${context.ref}\`\n`;
+          issueBody += `**Commit:** ${context.sha}\n`;
+          issueBody += `**Author:** @${context.actor}\n`;
+          issueBody += `**Workflow:** [View Run](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})\n\n`;
+          issueBody += `### Issues Found\n\n`;
+          
+          // Parse gosec results
+          if (fs.existsSync(`${path}/gosec-report.json`)) {
+            try {
+              const gosecReport = JSON.parse(fs.readFileSync(`${path}/gosec-report.json`, 'utf8'));
+              const issues = gosecReport.Issues || [];
+              const highIssues = issues.filter(i => i.severity === 'HIGH');
+              const criticalIssues = issues.filter(i => i.severity === 'CRITICAL');
+              
+              if (criticalIssues.length > 0 || highIssues.length > 0) {
+                issueBody += `#### Gosec Security Issues\n`;
+                issueBody += `- Critical: ${criticalIssues.length}\n`;
+                issueBody += `- High: ${highIssues.length}\n\n`;
+                
+                if (criticalIssues.length > 0) {
+                  issueBody += `**Critical Issues:**\n`;
+                  criticalIssues.slice(0, 5).forEach(issue => {
+                    issueBody += `- \`${issue.rule_id}\`: ${issue.details} (${issue.file}:${issue.line})\n`;
+                  });
+                  issueBody += `\n`;
+                }
+              }
+            } catch (e) {
+              console.log('Error parsing gosec report:', e);
+            }
+          }
+          
+          // Parse trufflehog results
+          if (fs.existsSync(`${path}/trufflehog-report.json`)) {
+            try {
+              const trufflehogData = fs.readFileSync(`${path}/trufflehog-report.json`, 'utf8');
+              const lines = trufflehogData.trim().split('\n').filter(l => l);
+              if (lines.length > 0) {
+                issueBody += `#### Secrets Detection\n`;
+                issueBody += `⚠️ ${lines.length} potential secrets detected\n\n`;
+              }
+            } catch (e) {
+              console.log('Error parsing trufflehog report:', e);
+            }
+          }
+          
+          issueBody += `### Action Required\n\n`;
+          issueBody += `1. Review the [workflow logs](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})\n`;
+          issueBody += `2. Fix all critical and high severity issues\n`;
+          issueBody += `3. Remove any exposed secrets\n`;
+          issueBody += `4. Re-run security scans to verify fixes\n\n`;
+          issueBody += `---\n*This issue was automatically created by the security scan workflow.*`;
+          
+          // Check for existing open security issues
+          const issues = await github.rest.issues.listForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            state: 'open',
+            labels: 'security,automated'
+          });
+          
+          const existingIssue = issues.data.find(issue => 
+            issue.title.includes('Security Scan Failed')
+          );
+          
+          if (!existingIssue) {
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🔒 Security Scan Failed - Action Required',
+              body: issueBody,
+              labels: ['security', 'critical', 'automated'],
+              assignees: [context.actor]
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: existingIssue.number,
+              body: `### New Security Issues Detected\n\n${issueBody}`
+            });
+          }
 
   dependency-check:
     runs-on: ubuntu-latest
@@ -199,7 +306,12 @@ jobs:
     - name: Run dependency vulnerability check
       run: |
         go install golang.org/x/vuln/cmd/govulncheck@latest
+        echo "Checking for dependency vulnerabilities..."
         govulncheck ./...
+        if [ $? -ne 0 ]; then
+          echo "❌ Dependency vulnerabilities found"
+          exit 1
+        fi
 
     - name: Check for outdated dependencies
       run: |

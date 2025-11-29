@@ -18,9 +18,9 @@ import (
 
 // TestDatabase wraps a database connection for testing
 type TestDatabase struct {
-	DB       *database.Database
+	DB              *database.Database
 	PasswordService *auth.PasswordService
-	Cleanup  func()
+	Cleanup         func()
 }
 
 // SetupTestDatabase creates a test database connection
@@ -58,9 +58,9 @@ func SetupTestDatabase(t *testing.T) *TestDatabase {
 	CreateTestTables(t, db)
 
 	return &TestDatabase{
-		DB:       db,
+		DB:              db,
 		PasswordService: passwordService,
-		Cleanup:  cleanup,
+		Cleanup:         cleanup,
 	}
 }
 
@@ -167,16 +167,16 @@ func CleanupTestDatabase(t *testing.T, db *database.Database) {
 // CreateTestUser creates a test user with hashed password
 func CreateTestUser(t *testing.T, passwordService *auth.PasswordService, email, username string) *entities.User {
 	user := &entities.User{
-		ID:           uuid.New(),
-		Email:        email,
-		Username:     username,
-		FirstName:    "Test",
-		LastName:     "User",
-		Phone:        "+1234567890",
-		IsActive:     true,
-		IsVerified:   false,
-		CreatedAt:    time.Now().UTC(),
-		UpdatedAt:    time.Now().UTC(),
+		ID:         uuid.New(),
+		Email:      email,
+		Username:   username,
+		FirstName:  "Test",
+		LastName:   "User",
+		Phone:      "+1234567890",
+		IsActive:   true,
+		IsVerified: false,
+		CreatedAt:  time.Now().UTC(),
+		UpdatedAt:  time.Now().UTC(),
 	}
 
 	// Hash password

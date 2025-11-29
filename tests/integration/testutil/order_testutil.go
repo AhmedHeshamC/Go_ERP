@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
+	"erpgo/internal/domain/orders/entities"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/require"
-	"erpgo/internal/domain/orders/entities"
 )
 
 // CreateTestOrder creates a test order for testing purposes
@@ -20,30 +20,30 @@ func CreateTestOrder(t *testing.T) *entities.Order {
 	createdBy := uuid.New()
 
 	return &entities.Order{
-		ID:                 uuid.New(),
-		OrderNumber:        GenerateTestOrderNumber(),
-		CustomerID:         customerID,
-		Status:             entities.OrderStatusPending,
-		Priority:           entities.OrderPriorityNormal,
-		Type:               entities.OrderTypeSales,
-		PaymentStatus:      entities.PaymentStatusPending,
-		ShippingMethod:     entities.ShippingMethodStandard,
-		Subtotal:           decimal.NewFromFloat(100.00),
-		TaxAmount:          decimal.NewFromFloat(8.00),
-		ShippingAmount:     decimal.NewFromFloat(10.00),
-		DiscountAmount:     decimal.NewFromFloat(0.00),
-		TotalAmount:        decimal.NewFromFloat(118.00),
-		PaidAmount:         decimal.NewFromFloat(0.00),
-		RefundedAmount:     decimal.NewFromFloat(0.00),
-		Currency:           "USD",
-		OrderDate:          now,
-		RequiredDate:       func() *time.Time { t := now.AddDate(0, 0, 7); return &t }(),
-		ShippingAddressID:  shippingAddressID,
-		BillingAddressID:   billingAddressID,
-		Notes:              stringPtr("Test order notes"),
-		CreatedBy:          createdBy,
-		CreatedAt:          now,
-		UpdatedAt:          now,
+		ID:                uuid.New(),
+		OrderNumber:       GenerateTestOrderNumber(),
+		CustomerID:        customerID,
+		Status:            entities.OrderStatusPending,
+		Priority:          entities.OrderPriorityNormal,
+		Type:              entities.OrderTypeSales,
+		PaymentStatus:     entities.PaymentStatusPending,
+		ShippingMethod:    entities.ShippingMethodStandard,
+		Subtotal:          decimal.NewFromFloat(100.00),
+		TaxAmount:         decimal.NewFromFloat(8.00),
+		ShippingAmount:    decimal.NewFromFloat(10.00),
+		DiscountAmount:    decimal.NewFromFloat(0.00),
+		TotalAmount:       decimal.NewFromFloat(118.00),
+		PaidAmount:        decimal.NewFromFloat(0.00),
+		RefundedAmount:    decimal.NewFromFloat(0.00),
+		Currency:          "USD",
+		OrderDate:         now,
+		RequiredDate:      func() *time.Time { t := now.AddDate(0, 0, 7); return &t }(),
+		ShippingAddressID: shippingAddressID,
+		BillingAddressID:  billingAddressID,
+		Notes:             stringPtr("Test order notes"),
+		CreatedBy:         createdBy,
+		CreatedAt:         now,
+		UpdatedAt:         now,
 	}
 }
 
@@ -53,24 +53,24 @@ func CreateTestOrderItem(t *testing.T, orderID uuid.UUID) *entities.OrderItem {
 	now := time.Now()
 
 	return &entities.OrderItem{
-		ID:             uuid.New(),
-		OrderID:        orderID,
-		ProductID:      productID,
-		ProductSKU:     "TEST-SKU-001",
-		ProductName:    "Test Product",
-		Quantity:       2,
-		UnitPrice:      decimal.NewFromFloat(50.00),
-		DiscountAmount: decimal.NewFromFloat(0.00),
-		TaxRate:        decimal.NewFromFloat(0.08),
-		TaxAmount:      decimal.NewFromFloat(8.00),
-		TotalPrice:     decimal.NewFromFloat(108.00),
-		Weight:         1.5,
-		Dimensions:     "10x5x3",
-		Status:         "ORDERED",
-		QuantityShipped: 0,
+		ID:               uuid.New(),
+		OrderID:          orderID,
+		ProductID:        productID,
+		ProductSKU:       "TEST-SKU-001",
+		ProductName:      "Test Product",
+		Quantity:         2,
+		UnitPrice:        decimal.NewFromFloat(50.00),
+		DiscountAmount:   decimal.NewFromFloat(0.00),
+		TaxRate:          decimal.NewFromFloat(0.08),
+		TaxAmount:        decimal.NewFromFloat(8.00),
+		TotalPrice:       decimal.NewFromFloat(108.00),
+		Weight:           1.5,
+		Dimensions:       "10x5x3",
+		Status:           "ORDERED",
+		QuantityShipped:  0,
 		QuantityReturned: 0,
-		CreatedAt:      now,
-		UpdatedAt:      now,
+		CreatedAt:        now,
+		UpdatedAt:        now,
 	}
 }
 
@@ -79,24 +79,24 @@ func CreateTestCustomer(t *testing.T) *entities.Customer {
 	now := time.Now()
 
 	return &entities.Customer{
-		ID:                  uuid.New(),
-		CustomerCode:        GenerateTestCustomerCode(),
-		Type:                "INDIVIDUAL",
-		FirstName:           "John",
-		LastName:            "Doe",
-		Email:               "john.doe@example.com",
-		Phone:               "+1-555-123-4567",
-		CompanyName:         stringPtr("Test Company"),
-		CreditLimit:         decimal.NewFromFloat(1000.00),
-		CreditUsed:          decimal.NewFromFloat(0.00),
-		Terms:               "NET30",
-		IsActive:            true,
-		IsVATExempt:         false,
-		PreferredCurrency:   "USD",
-		Notes:               stringPtr("Test customer"),
-		Source:              "WEB",
-		CreatedAt:           now,
-		UpdatedAt:           now,
+		ID:                uuid.New(),
+		CustomerCode:      GenerateTestCustomerCode(),
+		Type:              "INDIVIDUAL",
+		FirstName:         "John",
+		LastName:          "Doe",
+		Email:             "john.doe@example.com",
+		Phone:             "+1-555-123-4567",
+		CompanyName:       stringPtr("Test Company"),
+		CreditLimit:       decimal.NewFromFloat(1000.00),
+		CreditUsed:        decimal.NewFromFloat(0.00),
+		Terms:             "NET30",
+		IsActive:          true,
+		IsVATExempt:       false,
+		PreferredCurrency: "USD",
+		Notes:             stringPtr("Test customer"),
+		Source:            "WEB",
+		CreatedAt:         now,
+		UpdatedAt:         now,
 	}
 }
 
@@ -105,25 +105,25 @@ func CreateTestOrderAddress(t *testing.T, customerID *uuid.UUID, orderID *uuid.U
 	now := time.Now()
 
 	return &entities.OrderAddress{
-		ID:            uuid.New(),
-		CustomerID:    customerID,
-		OrderID:       orderID,
-		Type:          addressType,
-		FirstName:     "John",
-		LastName:      "Doe",
-		Company:       stringPtr("Test Company"),
-		AddressLine1:  "123 Test St",
-		AddressLine2:  stringPtr("Apt 4B"),
-		City:          "Test City",
-		State:         "CA",
-		PostalCode:    "12345",
-		Country:       "USA",
-		Phone:         stringPtr("+1-555-123-4567"),
-		Email:         stringPtr("john.doe@example.com"),
-		Instructions:  stringPtr("Leave at door"),
-		IsDefault:     false,
-		CreatedAt:     now,
-		UpdatedAt:     now,
+		ID:           uuid.New(),
+		CustomerID:   customerID,
+		OrderID:      orderID,
+		Type:         addressType,
+		FirstName:    "John",
+		LastName:     "Doe",
+		Company:      stringPtr("Test Company"),
+		AddressLine1: "123 Test St",
+		AddressLine2: stringPtr("Apt 4B"),
+		City:         "Test City",
+		State:        "CA",
+		PostalCode:   "12345",
+		Country:      "USA",
+		Phone:        stringPtr("+1-555-123-4567"),
+		Email:        stringPtr("john.doe@example.com"),
+		Instructions: stringPtr("Leave at door"),
+		IsDefault:    false,
+		CreatedAt:    now,
+		UpdatedAt:    now,
 	}
 }
 
@@ -230,31 +230,31 @@ func AssertCustomersEqual(t *testing.T, expected, actual *entities.Customer) {
 // CreateTestOrderFilter creates a test order filter
 func CreateTestOrderFilter() map[string]interface{} {
 	return map[string]interface{}{
-		"status":          []string{"PENDING", "CONFIRMED"},
-		"payment_status":  []string{"PENDING"},
-		"start_date":      time.Now().AddDate(0, 0, -30),
-		"end_date":        time.Now(),
+		"status":           []string{"PENDING", "CONFIRMED"},
+		"payment_status":   []string{"PENDING"},
+		"start_date":       time.Now().AddDate(0, 0, -30),
+		"end_date":         time.Now(),
 		"min_total_amount": decimal.NewFromFloat(50.00),
 		"max_total_amount": decimal.NewFromFloat(500.00),
-		"page":            1,
-		"limit":           10,
-		"sort_by":         "order_date",
-		"sort_order":      "DESC",
+		"page":             1,
+		"limit":            10,
+		"sort_by":          "order_date",
+		"sort_order":       "DESC",
 	}
 }
 
 // CreateTestCustomerFilter creates a test customer filter
 func CreateTestCustomerFilter() map[string]interface{} {
 	return map[string]interface{}{
-		"type":            "INDIVIDUAL",
-		"is_active":       true,
-		"start_date":      time.Now().AddDate(0, 0, -30),
-		"end_date":        time.Now(),
+		"type":             "INDIVIDUAL",
+		"is_active":        true,
+		"start_date":       time.Now().AddDate(0, 0, -30),
+		"end_date":         time.Now(),
 		"min_credit_limit": decimal.NewFromFloat(100.00),
-		"page":            1,
-		"limit":           10,
-		"sort_by":         "created_at",
-		"sort_order":      "DESC",
+		"page":             1,
+		"limit":            10,
+		"sort_by":          "created_at",
+		"sort_order":       "DESC",
 	}
 }
 

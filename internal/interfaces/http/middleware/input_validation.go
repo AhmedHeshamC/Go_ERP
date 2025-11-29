@@ -16,15 +16,15 @@ import (
 // InputValidationConfig holds configuration for input validation
 type InputValidationConfig struct {
 	// Size limits
-	MaxRequestSize    int64  `json:"max_request_size"`    // Max request body size in bytes
-	MaxHeaderSize     int    `json:"max_header_size"`     // Max header size in bytes
-	MaxURLLength      int    `json:"max_url_length"`      // Max URL length
-	MaxQueryParams    int    `json:"max_query_params"`    // Max number of query parameters
-	MaxFormFields     int    `json:"max_form_fields"`     // Max number of form fields
+	MaxRequestSize int64 `json:"max_request_size"` // Max request body size in bytes
+	MaxHeaderSize  int   `json:"max_header_size"`  // Max header size in bytes
+	MaxURLLength   int   `json:"max_url_length"`   // Max URL length
+	MaxQueryParams int   `json:"max_query_params"` // Max number of query parameters
+	MaxFormFields  int   `json:"max_form_fields"`  // Max number of form fields
 
 	// String validation
-	MinStringLength   int    `json:"min_string_length"`   // Min string length
-	MaxStringLength   int    `json:"max_string_length"`   // Max string length
+	MinStringLength int `json:"min_string_length"` // Min string length
+	MaxStringLength int `json:"max_string_length"` // Max string length
 
 	// SQL injection patterns
 	SQLInjectionPatterns []string `json:"sql_injection_patterns"`
@@ -39,31 +39,31 @@ type InputValidationConfig struct {
 	CommandInjectionPatterns []string `json:"command_injection_patterns"`
 
 	// File upload validation
-	AllowedMimeTypes     []string `json:"allowed_mime_types"`
-	MaxFileSize          int64    `json:"max_file_size"`
-	AllowedExtensions    []string `json:"allowed_extensions"`
+	AllowedMimeTypes  []string `json:"allowed_mime_types"`
+	MaxFileSize       int64    `json:"max_file_size"`
+	AllowedExtensions []string `json:"allowed_extensions"`
 
 	// Settings
-	Enabled              bool     `json:"enabled"`
-	StrictMode           bool     `json:"strict_mode"`           // Reject suspicious requests
-	LogValidationErrors  bool     `json:"log_validation_errors"`
-	SanitizeOutput       bool     `json:"sanitize_output"`       // Sanitize response data
+	Enabled             bool `json:"enabled"`
+	StrictMode          bool `json:"strict_mode"` // Reject suspicious requests
+	LogValidationErrors bool `json:"log_validation_errors"`
+	SanitizeOutput      bool `json:"sanitize_output"` // Sanitize response data
 
 	// Exclusions
-	ExcludedPaths        []string `json:"excluded_paths"`
-	ExcludedMethods      []string `json:"excluded_methods"`
+	ExcludedPaths   []string `json:"excluded_paths"`
+	ExcludedMethods []string `json:"excluded_methods"`
 }
 
 // DefaultInputValidationConfig returns a secure default configuration
 func DefaultInputValidationConfig() InputValidationConfig {
 	return InputValidationConfig{
-		MaxRequestSize:   10 * 1024 * 1024, // 10MB
-		MaxHeaderSize:    8192,              // 8KB
-		MaxURLLength:     2048,              // 2KB
-		MaxQueryParams:   50,
-		MaxFormFields:    100,
-		MinStringLength:  1,
-		MaxStringLength:  10000,
+		MaxRequestSize:  10 * 1024 * 1024, // 10MB
+		MaxHeaderSize:   8192,             // 8KB
+		MaxURLLength:    2048,             // 2KB
+		MaxQueryParams:  50,
+		MaxFormFields:   100,
+		MinStringLength: 1,
+		MaxStringLength: 10000,
 
 		// Common SQL injection patterns
 		SQLInjectionPatterns: []string{
@@ -92,7 +92,7 @@ func DefaultInputValidationConfig() InputValidationConfig {
 
 		// Command injection patterns
 		CommandInjectionPatterns: []string{
-			`(?i)(;|\||&|&&|\|\||`+"`"+`|\$\(|\${|\$\{)`,
+			`(?i)(;|\||&|&&|\|\||` + "`" + `|\$\(|\${|\$\{)`,
 			`(?i)(cat\s+|ls\s+|dir\s+|type\s+|whoami|id|uname|pwd)`,
 			`(?i)(rm\s+-rf|del\s+/f|format\s+|shutdown\s+|reboot\s+)`,
 			`(?i)(wget\s+|curl\s+|nc\s+|netcat\s+|telnet\s+)`,
@@ -131,10 +131,10 @@ type InputValidator struct {
 	logger zerolog.Logger
 
 	// Compiled regex patterns
-	sqlPatterns      []*regexp.Regexp
-	xssPatterns      []*regexp.Regexp
-	pathPatterns     []*regexp.Regexp
-	commandPatterns  []*regexp.Regexp
+	sqlPatterns     []*regexp.Regexp
+	xssPatterns     []*regexp.Regexp
+	pathPatterns    []*regexp.Regexp
+	commandPatterns []*regexp.Regexp
 }
 
 // NewInputValidator creates a new input validator

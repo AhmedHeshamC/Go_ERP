@@ -15,11 +15,11 @@ import (
 
 // HealthStatus represents the health status of the database
 type HealthStatus struct {
-	Status     string                 `json:"status"`
-	Message    string                 `json:"message,omitempty"`
-	Timestamp  time.Time              `json:"timestamp"`
-	Details    map[string]interface{} `json:"details,omitempty"`
-	Checks     map[string]CheckResult `json:"checks,omitempty"`
+	Status    string                 `json:"status"`
+	Message   string                 `json:"message,omitempty"`
+	Timestamp time.Time              `json:"timestamp"`
+	Details   map[string]interface{} `json:"details,omitempty"`
+	Checks    map[string]CheckResult `json:"checks,omitempty"`
 }
 
 // CheckResult represents the result of a health check
@@ -65,10 +65,10 @@ func (hc *HealthChecker) Check(ctx context.Context) HealthStatus {
 	// Get pool statistics
 	stats := hc.db.Stats()
 	status.Details["pool_stats"] = map[string]interface{}{
-		"max_conns":         stats.MaxConns(),
-		"total_conns":       stats.TotalConns(),
-		"idle_conns":        stats.IdleConns(),
-		"acquired_conns":    stats.AcquiredConns(),
+		"max_conns":          stats.MaxConns(),
+		"total_conns":        stats.TotalConns(),
+		"idle_conns":         stats.IdleConns(),
+		"acquired_conns":     stats.AcquiredConns(),
 		"constructing_conns": stats.ConstructingConns(),
 	}
 
@@ -146,15 +146,15 @@ func (hc *HealthChecker) checkQuery(ctx context.Context) CheckResult {
 // Metrics holds database metrics
 type Metrics struct {
 	// Connection metrics
-	ConnectionsActive   prometheus.Gauge
-	ConnectionsIdle     prometheus.Gauge
-	ConnectionsMax      prometheus.Gauge
-	ConnectionsTotal    prometheus.Counter
+	ConnectionsActive prometheus.Gauge
+	ConnectionsIdle   prometheus.Gauge
+	ConnectionsMax    prometheus.Gauge
+	ConnectionsTotal  prometheus.Counter
 
 	// Query metrics
-	QueryDuration       prometheus.Histogram
-	QueryErrors         prometheus.Counter
-	QueryTotal          prometheus.Counter
+	QueryDuration prometheus.Histogram
+	QueryErrors   prometheus.Counter
+	QueryTotal    prometheus.Counter
 
 	// Transaction metrics
 	TransactionDuration prometheus.Histogram

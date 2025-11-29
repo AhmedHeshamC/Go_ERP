@@ -14,20 +14,20 @@ import (
 type EventType string
 
 const (
-	EventTypeLogin              EventType = "LOGIN"
-	EventTypeLogout             EventType = "LOGOUT"
-	EventTypeLoginFailed        EventType = "LOGIN_FAILED"
-	EventTypePermissionChange   EventType = "PERMISSION_CHANGE"
-	EventTypeRoleAssignment     EventType = "ROLE_ASSIGNMENT"
-	EventTypeRoleRevocation     EventType = "ROLE_REVOCATION"
-	EventTypeDataAccess         EventType = "DATA_ACCESS"
-	EventTypeDataModification   EventType = "DATA_MODIFICATION"
-	EventTypeDataDeletion       EventType = "DATA_DELETION"
-	EventTypeConfigChange       EventType = "CONFIG_CHANGE"
-	EventTypeSecurityEvent      EventType = "SECURITY_EVENT"
-	EventTypeAccountLockout     EventType = "ACCOUNT_LOCKOUT"
-	EventTypePasswordChange     EventType = "PASSWORD_CHANGE"
-	EventTypeTokenRefresh       EventType = "TOKEN_REFRESH"
+	EventTypeLogin            EventType = "LOGIN"
+	EventTypeLogout           EventType = "LOGOUT"
+	EventTypeLoginFailed      EventType = "LOGIN_FAILED"
+	EventTypePermissionChange EventType = "PERMISSION_CHANGE"
+	EventTypeRoleAssignment   EventType = "ROLE_ASSIGNMENT"
+	EventTypeRoleRevocation   EventType = "ROLE_REVOCATION"
+	EventTypeDataAccess       EventType = "DATA_ACCESS"
+	EventTypeDataModification EventType = "DATA_MODIFICATION"
+	EventTypeDataDeletion     EventType = "DATA_DELETION"
+	EventTypeConfigChange     EventType = "CONFIG_CHANGE"
+	EventTypeSecurityEvent    EventType = "SECURITY_EVENT"
+	EventTypeAccountLockout   EventType = "ACCOUNT_LOCKOUT"
+	EventTypePasswordChange   EventType = "PASSWORD_CHANGE"
+	EventTypeTokenRefresh     EventType = "TOKEN_REFRESH"
 )
 
 // AuditEvent represents a single audit log entry
@@ -61,10 +61,10 @@ type AuditFilter struct {
 type AuditLogger interface {
 	// LogEvent logs a single audit event
 	LogEvent(ctx context.Context, event *AuditEvent) error
-	
+
 	// Query retrieves audit logs based on filter criteria
 	Query(ctx context.Context, filter AuditFilter) ([]*AuditEvent, error)
-	
+
 	// Count returns the total number of audit logs matching the filter
 	Count(ctx context.Context, filter AuditFilter) (int64, error)
 }
@@ -83,6 +83,10 @@ func NewPostgresAuditLogger(db *pgxpool.Pool) *PostgresAuditLogger {
 
 // LogEvent logs a single audit event to the database
 func (l *PostgresAuditLogger) LogEvent(ctx context.Context, event *AuditEvent) error {
+	if l.db == nil {
+		return fmt.Errorf("database connection is nil")
+	}
+
 	if event == nil {
 		return fmt.Errorf("audit event cannot be nil")
 	}
@@ -118,7 +122,7 @@ func (l *PostgresAuditLogger) LogEvent(ctx context.Context, event *AuditEvent) e
 
 	query := `
 		INSERT INTO audit_logs (
-			id, timestamp, event_type, user_id, resource_id, 
+			id, timestamp, event_type, user_id, resource_id,
 			action, ip_address, user_agent, success, details, created_at
 		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 	`
@@ -146,10 +150,14 @@ func (l *PostgresAuditLogger) LogEvent(ctx context.Context, event *AuditEvent) e
 
 // Query retrieves audit logs based on filter criteria
 func (l *PostgresAuditLogger) Query(ctx context.Context, filter AuditFilter) ([]*AuditEvent, error) {
+	if l.db == nil {
+		return nil, fmt.Errorf("database connection is nil")
+	}
+
 	query := `
-		SELECT 
+		SELECT
 			id, timestamp, event_type, user_id, resource_id,
-			action, ip_address, user_agent, success, details, created_at
+			action, ip_address::text, user_agent, success, details, created_at
 		FROM audit_logs
 		WHERE 1=1
 	`
@@ -233,7 +241,7 @@ func (l *PostgresAuditLogger) Query(ctx context.Context, filter AuditFilter) ([]
 			&event.UserID,
 			&event.ResourceID,
 			&event.Action,
-			&event.IPAddress,
+			&event.IPAddress, // Scan directly into string field
 			&event.UserAgent,
 			&event.Success,
 			&detailsJSON,
@@ -264,6 +272,10 @@ func (l *PostgresAuditLogger) Query(ctx context.Context, filter AuditFilter) ([]
 
 // Count returns the total number of audit logs matching the filter
 func (l *PostgresAuditLogger) Count(ctx context.Context, filter AuditFilter) (int64, error) {
+	if l.db == nil {
+		return 0, fmt.Errorf("database connection is nil")
+	}
+
 	query := `SELECT COUNT(*) FROM audit_logs WHERE 1=1`
 	args := []interface{}{}
 	argPos := 1
@@ -428,7 +440,6 @@ func NewPasswordChangeEvent(userID uuid.UUID, ipAddress, userAgent string, succe
 	}
 }
 
-
 // MockAuditLogger is a mock implementation for testing (exported for use in other packages)
 type MockAuditLogger struct {
 	Events []*AuditEvent
@@ -457,7 +468,7 @@ func (m *MockAuditLogger) LogEvent(ctx context.Context, event *AuditEvent) error
 
 func (m *MockAuditLogger) Query(ctx context.Context, filter AuditFilter) ([]*AuditEvent, error) {
 	result := make([]*AuditEvent, 0)
-	
+
 	for _, event := range m.Events {
 		// Apply filters
 		if filter.UserID != nil && (event.UserID == nil || *event.UserID != *filter.UserID) {
@@ -478,10 +489,10 @@ func (m *MockAuditLogger) Query(ctx context.Context, filter AuditFilter) ([]*Aud
 		if filter.Success != nil && event.Success != *filter.Success {
 			continue
 		}
-		
+
 		result = append(result, event)
 	}
-	
+
 	// Apply limit and offset
 	limit := filter.Limit
 	if limit <= 0 {
@@ -490,17 +501,17 @@ func (m *MockAuditLogger) Query(ctx context.Context, filter AuditFilter) ([]*Aud
 	if limit > 1000 {
 		limit = 1000
 	}
-	
+
 	start := filter.Offset
 	if start > len(result) {
 		return []*AuditEvent{}, nil
 	}
-	
+
 	end := start + limit
 	if end > len(result) {
 		end = len(result)
 	}
-	
+
 	return result[start:end], nil
 }
 

@@ -6,11 +6,11 @@ import (
 	"testing"
 	"time"
 
+	"erpgo/internal/domain/products/entities"
+	"erpgo/internal/domain/products/repositories"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"erpgo/internal/domain/products/entities"
-	"erpgo/internal/domain/products/repositories"
 )
 
 func TestPostgresCategoryRepository_Create(t *testing.T) {

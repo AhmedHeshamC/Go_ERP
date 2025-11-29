@@ -77,7 +77,7 @@ func (w *SQLColumnWhitelist) ValidateOrderByClause(orderBy string) error {
 // normalizeColumnName normalizes a column name by removing quotes and trimming
 func normalizeColumnName(column string) string {
 	// Remove quotes
-	column = strings.Trim(column, `"'` + "`")
+	column = strings.Trim(column, `"'`+"`")
 
 	// Trim whitespace
 	column = strings.TrimSpace(column)

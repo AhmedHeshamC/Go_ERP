@@ -33,32 +33,32 @@ const (
 type ErrorType string
 
 const (
-	ErrorTypeValidation    ErrorType = "validation"
-	ErrorTypeBusiness      ErrorType = "business"
-	ErrorTypeSystem        ErrorType = "system"
-	ErrorTypeNetwork       ErrorType = "network"
-	ErrorTypeDatabase      ErrorType = "database"
+	ErrorTypeValidation     ErrorType = "validation"
+	ErrorTypeBusiness       ErrorType = "business"
+	ErrorTypeSystem         ErrorType = "system"
+	ErrorTypeNetwork        ErrorType = "network"
+	ErrorTypeDatabase       ErrorType = "database"
 	ErrorTypeAuthentication ErrorType = "authentication"
 	ErrorTypeAuthorization  ErrorType = "authorization"
-	ErrorTypeRateLimit     ErrorType = "rate_limit"
-	ErrorTypeTimeout       ErrorType = "timeout"
-	ErrorTypeExternal      ErrorType = "external"
-	ErrorTypeSecurity      ErrorType = "security"
-	ErrorTypePerformance   ErrorType = "performance"
+	ErrorTypeRateLimit      ErrorType = "rate_limit"
+	ErrorTypeTimeout        ErrorType = "timeout"
+	ErrorTypeExternal       ErrorType = "external"
+	ErrorTypeSecurity       ErrorType = "security"
+	ErrorTypePerformance    ErrorType = "performance"
 )
 
 // Context represents error context information
 type Context struct {
-	UserID         string            `json:"user_id,omitempty"`
-	RequestID      string            `json:"request_id,omitempty"`
-	CorrelationID  string            `json:"correlation_id,omitempty"`
-	SessionID      string            `json:"session_id,omitempty"`
-	TraceID        string            `json:"trace_id,omitempty"`
-	SpanID         string            `json:"span_id,omitempty"`
-	IPAddress      string            `json:"ip_address,omitempty"`
-	UserAgent      string            `json:"user_agent,omitempty"`
-	Tags           map[string]string `json:"tags,omitempty"`
-	Extra          map[string]interface{} `json:"extra,omitempty"`
+	UserID        string                 `json:"user_id,omitempty"`
+	RequestID     string                 `json:"request_id,omitempty"`
+	CorrelationID string                 `json:"correlation_id,omitempty"`
+	SessionID     string                 `json:"session_id,omitempty"`
+	TraceID       string                 `json:"trace_id,omitempty"`
+	SpanID        string                 `json:"span_id,omitempty"`
+	IPAddress     string                 `json:"ip_address,omitempty"`
+	UserAgent     string                 `json:"user_agent,omitempty"`
+	Tags          map[string]string      `json:"tags,omitempty"`
+	Extra         map[string]interface{} `json:"extra,omitempty"`
 }
 
 // StackFrame represents a single stack frame
@@ -71,23 +71,23 @@ type StackFrame struct {
 
 // ErrorReport represents a comprehensive error report
 type ErrorReport struct {
-	ID            string                 `json:"id"`
-	Timestamp     time.Time              `json:"timestamp"`
-	Message       string                 `json:"message"`
-	Error         string                 `json:"error"`
-	Type          ErrorType              `json:"type"`
-	Severity      Severity               `json:"severity"`
-	Context       *Context               `json:"context,omitempty"`
-	StackFrames   []StackFrame           `json:"stack_frames,omitempty"`
-	CustomData    map[string]interface{} `json:"custom_data,omitempty"`
-	Platform      *PlatformInfo          `json:"platform,omitempty"`
-	Environment   string                 `json:"environment,omitempty"`
-	Release       string                 `json:"release,omitempty"`
-	Fingerprint   string                 `json:"fingerprint,omitempty"`
-	Handled       bool                   `json:"handled"`
-	Occurrences   int                    `json:"occurrences"`
-	FirstSeen     time.Time              `json:"first_seen"`
-	LastSeen      time.Time              `json:"last_seen"`
+	ID          string                 `json:"id"`
+	Timestamp   time.Time              `json:"timestamp"`
+	Message     string                 `json:"message"`
+	Error       string                 `json:"error"`
+	Type        ErrorType              `json:"type"`
+	Severity    Severity               `json:"severity"`
+	Context     *Context               `json:"context,omitempty"`
+	StackFrames []StackFrame           `json:"stack_frames,omitempty"`
+	CustomData  map[string]interface{} `json:"custom_data,omitempty"`
+	Platform    *PlatformInfo          `json:"platform,omitempty"`
+	Environment string                 `json:"environment,omitempty"`
+	Release     string                 `json:"release,omitempty"`
+	Fingerprint string                 `json:"fingerprint,omitempty"`
+	Handled     bool                   `json:"handled"`
+	Occurrences int                    `json:"occurrences"`
+	FirstSeen   time.Time              `json:"first_seen"`
+	LastSeen    time.Time              `json:"last_seen"`
 }
 
 // PlatformInfo represents platform information
@@ -102,43 +102,43 @@ type PlatformInfo struct {
 // Config holds the error reporter configuration
 type Config struct {
 	// Basic settings
-	Enabled       bool          `json:"enabled"`
-	Environment   string        `json:"environment"`
-	Release       string        `json:"release"`
-	Debug         bool          `json:"debug"`
+	Enabled     bool   `json:"enabled"`
+	Environment string `json:"environment"`
+	Release     string `json:"release"`
+	Debug       bool   `json:"debug"`
 
 	// Reporting settings
-	SampleRate    float64       `json:"sample_rate"`
-	MaxErrors     int           `json:"max_errors"`
+	SampleRate     float64       `json:"sample_rate"`
+	MaxErrors      int           `json:"max_errors"`
 	FlushInterval  time.Duration `json:"flush_interval"`
 	AsyncReporting bool          `json:"async_reporting"`
 
 	// Filter settings
-	IgnoreErrors    []string    `json:"ignore_errors"`
-	IgnoreStatusCodes []int     `json:"ignore_status_codes"`
-	MinSeverity      Severity   `json:"min_severity"`
+	IgnoreErrors      []string `json:"ignore_errors"`
+	IgnoreStatusCodes []int    `json:"ignore_status_codes"`
+	MinSeverity       Severity `json:"min_severity"`
 
 	// Context settings
-	IncludeRequestData bool     `json:"include_request_data"`
-	IncludeUserData    bool     `json:"include_user_data"`
-	IncludeSystemData  bool     `json:"include_system_data"`
+	IncludeRequestData bool `json:"include_request_data"`
+	IncludeUserData    bool `json:"include_user_data"`
+	IncludeSystemData  bool `json:"include_system_data"`
 
 	// Sensitive data settings
 	SanitizeFields     []string `json:"sanitize_fields"`
 	EnableSanitization bool     `json:"enable_sanitization"`
 
 	// Performance settings
-	MaxStackFrames     int      `json:"max_stack_frames"`
-	MaxCustomDataSize  int      `json:"max_custom_data_size"`
-	Timeout            time.Duration `json:"timeout"`
+	MaxStackFrames    int           `json:"max_stack_frames"`
+	MaxCustomDataSize int           `json:"max_custom_data_size"`
+	Timeout           time.Duration `json:"timeout"`
 
 	// Integration settings
-	SentryEnabled      bool   `json:"sentry_enabled"`
-	SentryDSN          string `json:"sentry_dsn"`
-	DataDogEnabled     bool   `json:"datadog_enabled"`
-	DataDogAPIKey      string `json:"datadog_api_key"`
-	DataDogSite        string `json:"datadog_site"`
-	CustomWebhookURL   string `json:"custom_webhook_url"`
+	SentryEnabled    bool   `json:"sentry_enabled"`
+	SentryDSN        string `json:"sentry_dsn"`
+	DataDogEnabled   bool   `json:"datadog_enabled"`
+	DataDogAPIKey    string `json:"datadog_api_key"`
+	DataDogSite      string `json:"datadog_site"`
+	CustomWebhookURL string `json:"custom_webhook_url"`
 }
 
 // DefaultConfig returns a default error reporter configuration
@@ -186,15 +186,15 @@ func ProductionConfig() *Config {
 
 // Reporter represents the error reporter
 type Reporter struct {
-	config       *Config
-	logger       *zerolog.Logger
-	queue        chan *ErrorReport
-	buffer       []*ErrorReport
-	bufferMu     sync.RWMutex
-	errorCounts  map[string]int
-	countsMu     sync.RWMutex
-	client       *http.Client
-	sanitizer    *sanitizer
+	config      *Config
+	logger      *zerolog.Logger
+	queue       chan *ErrorReport
+	buffer      []*ErrorReport
+	bufferMu    sync.RWMutex
+	errorCounts map[string]int
+	countsMu    sync.RWMutex
+	client      *http.Client
+	sanitizer   *sanitizer
 }
 
 // sanitizer handles sensitive data sanitization

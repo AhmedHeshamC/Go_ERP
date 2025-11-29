@@ -20,10 +20,10 @@ type RedisStore struct {
 
 // RedisBucket represents a token bucket stored in Redis
 type RedisBucket struct {
-	Tokens     float64   `json:"tokens"`
-	Capacity   float64   `json:"capacity"`
-	RefillRate float64   `json:"refill_rate"`
-	LastUpdate int64     `json:"last_update"`
+	Tokens     float64 `json:"tokens"`
+	Capacity   float64 `json:"capacity"`
+	RefillRate float64 `json:"refill_rate"`
+	LastUpdate int64   `json:"last_update"`
 }
 
 // NewRedisStore creates a new Redis store
@@ -389,9 +389,9 @@ func (s *RedisStore) GetStats() map[string]interface{} {
 	}
 
 	return map[string]interface{}{
-		"active_keys": activeKeys,
+		"active_keys":  activeKeys,
 		"storage_type": string(s.config.StorageType),
-		"redis_addr":  s.config.RedisAddr,
-		"redis_db":   s.config.RedisDB,
+		"redis_addr":   s.config.RedisAddr,
+		"redis_db":     s.config.RedisDB,
 	}
 }

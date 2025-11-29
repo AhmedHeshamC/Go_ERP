@@ -11,45 +11,45 @@ import (
 
 // ProductResponse represents a product response
 type ProductResponse struct {
-	ID                uuid.UUID       `json:"id"`
-	SKU               string          `json:"sku"`
-	Name              string          `json:"name"`
-	Description       string          `json:"description,omitempty"`
-	ShortDescription  string          `json:"short_description,omitempty"`
-	CategoryID        uuid.UUID       `json:"category_id"`
-	Category          *CategoryInfo   `json:"category,omitempty"`
-	Price             decimal.Decimal `json:"price"`
-	Cost              *decimal.Decimal `json:"cost,omitempty"` // Cost is often hidden from public APIs
-	Weight            float64         `json:"weight,omitempty"`
-	Dimensions        string          `json:"dimensions,omitempty"`
-	Length            float64         `json:"length,omitempty"`
-	Width             float64         `json:"width,omitempty"`
-	Height            float64         `json:"height,omitempty"`
-	Volume            float64         `json:"volume,omitempty"`
-	Barcode           string          `json:"barcode,omitempty"`
-	TrackInventory    bool            `json:"track_inventory"`
-	StockQuantity     int             `json:"stock_quantity"`
-	MinStockLevel     int             `json:"min_stock_level"`
-	MaxStockLevel     int             `json:"max_stock_level,omitempty"`
-	AllowBackorder    bool            `json:"allow_backorder"`
-	RequiresShipping  bool            `json:"requires_shipping"`
-	Taxable           bool            `json:"taxable"`
-	TaxRate           decimal.Decimal `json:"tax_rate,omitempty"`
-	IsActive          bool            `json:"is_active"`
-	IsFeatured        bool            `json:"is_featured"`
-	IsDigital         bool            `json:"is_digital"`
-	DownloadURL       string          `json:"download_url,omitempty"`
-	MaxDownloads      int             `json:"max_downloads,omitempty"`
-	ExpiryDays        int             `json:"expiry_days,omitempty"`
-	CreatedAt         time.Time       `json:"created_at"`
-	UpdatedAt         time.Time       `json:"updated_at"`
+	ID               uuid.UUID        `json:"id"`
+	SKU              string           `json:"sku"`
+	Name             string           `json:"name"`
+	Description      string           `json:"description,omitempty"`
+	ShortDescription string           `json:"short_description,omitempty"`
+	CategoryID       uuid.UUID        `json:"category_id"`
+	Category         *CategoryInfo    `json:"category,omitempty"`
+	Price            decimal.Decimal  `json:"price"`
+	Cost             *decimal.Decimal `json:"cost,omitempty"` // Cost is often hidden from public APIs
+	Weight           float64          `json:"weight,omitempty"`
+	Dimensions       string           `json:"dimensions,omitempty"`
+	Length           float64          `json:"length,omitempty"`
+	Width            float64          `json:"width,omitempty"`
+	Height           float64          `json:"height,omitempty"`
+	Volume           float64          `json:"volume,omitempty"`
+	Barcode          string           `json:"barcode,omitempty"`
+	TrackInventory   bool             `json:"track_inventory"`
+	StockQuantity    int              `json:"stock_quantity"`
+	MinStockLevel    int              `json:"min_stock_level"`
+	MaxStockLevel    int              `json:"max_stock_level,omitempty"`
+	AllowBackorder   bool             `json:"allow_backorder"`
+	RequiresShipping bool             `json:"requires_shipping"`
+	Taxable          bool             `json:"taxable"`
+	TaxRate          decimal.Decimal  `json:"tax_rate,omitempty"`
+	IsActive         bool             `json:"is_active"`
+	IsFeatured       bool             `json:"is_featured"`
+	IsDigital        bool             `json:"is_digital"`
+	DownloadURL      string           `json:"download_url,omitempty"`
+	MaxDownloads     int              `json:"max_downloads,omitempty"`
+	ExpiryDays       int              `json:"expiry_days,omitempty"`
+	CreatedAt        time.Time        `json:"created_at"`
+	UpdatedAt        time.Time        `json:"updated_at"`
 }
 
 // CategoryInfo represents basic category information in product responses
 type CategoryInfo struct {
 	ID   uuid.UUID `json:"id"`
-	Name string     `json:"name"`
-	Path string     `json:"path"`
+	Name string    `json:"name"`
+	Path string    `json:"path"`
 }
 
 // ProductListResponse represents a paginated product list response
@@ -92,21 +92,21 @@ type AvailabilityResponse struct {
 
 // CategoryResponse represents a category response
 type CategoryResponse struct {
-	ID            uuid.UUID       `json:"id"`
-	Name          string          `json:"name"`
-	Description   string          `json:"description,omitempty"`
-	ParentID      *uuid.UUID      `json:"parent_id,omitempty"`
-	Parent        *CategoryInfo   `json:"parent,omitempty"`
-	Path          string          `json:"path"`
-	Level         int             `json:"level"`
-	IsActive      bool            `json:"is_active"`
-	SortOrder     int             `json:"sort_order"`
-	SEOTitle      string          `json:"seo_title,omitempty"`
-	SEODescription string         `json:"seo_description,omitempty"`
-	SEOKeywords   string          `json:"seo_keywords,omitempty"`
-	ProductCount  int             `json:"product_count,omitempty"`
-	CreatedAt     time.Time       `json:"created_at"`
-	UpdatedAt     time.Time       `json:"updated_at"`
+	ID             uuid.UUID     `json:"id"`
+	Name           string        `json:"name"`
+	Description    string        `json:"description,omitempty"`
+	ParentID       *uuid.UUID    `json:"parent_id,omitempty"`
+	Parent         *CategoryInfo `json:"parent,omitempty"`
+	Path           string        `json:"path"`
+	Level          int           `json:"level"`
+	IsActive       bool          `json:"is_active"`
+	SortOrder      int           `json:"sort_order"`
+	SEOTitle       string        `json:"seo_title,omitempty"`
+	SEODescription string        `json:"seo_description,omitempty"`
+	SEOKeywords    string        `json:"seo_keywords,omitempty"`
+	ProductCount   int           `json:"product_count,omitempty"`
+	CreatedAt      time.Time     `json:"created_at"`
+	UpdatedAt      time.Time     `json:"updated_at"`
 }
 
 // CategoryTreeNode represents a category tree node
@@ -123,7 +123,7 @@ type CategoryTreeResponse struct {
 // CategoryListResponse represents a paginated category list response
 type CategoryListResponse struct {
 	Categories []*CategoryResponse `json:"categories"`
-	Pagination *PaginationInfo      `json:"pagination"`
+	Pagination *PaginationInfo     `json:"pagination"`
 }
 
 // Product Variant Response DTOs
@@ -146,24 +146,24 @@ type VariantImage struct {
 
 // ProductVariantResponse represents a product variant response
 type ProductVariantResponse struct {
-	ID             uuid.UUID          `json:"id"`
-	ProductID      uuid.UUID          `json:"product_id"`
-	SKU            string             `json:"sku"`
-	Name           string             `json:"name"`
-	Price          decimal.Decimal    `json:"price"`
-	Cost           *decimal.Decimal   `json:"cost,omitempty"`
-	Weight         float64            `json:"weight,omitempty"`
-	Barcode        string             `json:"barcode,omitempty"`
-	TrackInventory bool               `json:"track_inventory"`
-	StockQuantity  int                `json:"stock_quantity"`
-	MinStockLevel  int                `json:"min_stock_level"`
-	MaxStockLevel  int                `json:"max_stock_level,omitempty"`
-	AllowBackorder bool               `json:"allow_backorder"`
-	IsActive       bool               `json:"is_active"`
+	ID             uuid.UUID           `json:"id"`
+	ProductID      uuid.UUID           `json:"product_id"`
+	SKU            string              `json:"sku"`
+	Name           string              `json:"name"`
+	Price          decimal.Decimal     `json:"price"`
+	Cost           *decimal.Decimal    `json:"cost,omitempty"`
+	Weight         float64             `json:"weight,omitempty"`
+	Barcode        string              `json:"barcode,omitempty"`
+	TrackInventory bool                `json:"track_inventory"`
+	StockQuantity  int                 `json:"stock_quantity"`
+	MinStockLevel  int                 `json:"min_stock_level"`
+	MaxStockLevel  int                 `json:"max_stock_level,omitempty"`
+	AllowBackorder bool                `json:"allow_backorder"`
+	IsActive       bool                `json:"is_active"`
 	Attributes     []*VariantAttribute `json:"attributes,omitempty"`
 	Images         []*VariantImage     `json:"images,omitempty"`
-	CreatedAt      time.Time          `json:"created_at"`
-	UpdatedAt      time.Time          `json:"updated_at"`
+	CreatedAt      time.Time           `json:"created_at"`
+	UpdatedAt      time.Time           `json:"updated_at"`
 }
 
 // ProductVariantListResponse represents a paginated product variant list response
@@ -206,11 +206,11 @@ type ProductStatsResponse struct {
 
 // BulkOperationResponse represents a bulk operation response
 type BulkOperationResponse struct {
-	SuccessCount int                    `json:"success_count"`
-	FailedCount  int                    `json:"failed_count"`
-	TotalCount   int                    `json:"total_count"`
-	Errors       []BulkOperationError   `json:"errors,omitempty"`
-	Results      []BulkOperationResult  `json:"results,omitempty"`
+	SuccessCount int                   `json:"success_count"`
+	FailedCount  int                   `json:"failed_count"`
+	TotalCount   int                   `json:"total_count"`
+	Errors       []BulkOperationError  `json:"errors,omitempty"`
+	Results      []BulkOperationResult `json:"results,omitempty"`
 }
 
 // BulkOperationError represents an error in a bulk operation

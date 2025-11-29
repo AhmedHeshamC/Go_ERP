@@ -13,109 +13,109 @@ import (
 
 // DashboardConfig holds configuration for the performance dashboard
 type DashboardConfig struct {
-	Enabled    bool   `json:"enabled"`
-	Port       int    `json:"port"`
-	Path       string `json:"path"`
+	Enabled         bool          `json:"enabled"`
+	Port            int           `json:"port"`
+	Path            string        `json:"path"`
 	RefreshInterval time.Duration `json:"refresh_interval"`
-	HistorySize int    `json:"history_size"`
+	HistorySize     int           `json:"history_size"`
 }
 
 // PerformanceData represents current performance metrics
 type PerformanceData struct {
-	Timestamp          time.Time              `json:"timestamp"`
-	QueryMetrics       QueryMetrics           `json:"query_metrics"`
-	ConnectionStats    ConnectionStats        `json:"connection_stats"`
-	CacheStats         CacheStats             `json:"cache_stats"`
-	SlowQueries        []SlowQuery            `json:"slow_queries"`
-	TableSizes         []TableSize            `json:"table_sizes"`
-	IndexUsage         []IndexUsage           `json:"index_usage"`
-	QueryPatterns      []QueryPattern         `json:"query_patterns"`
-	SystemMetrics      SystemMetrics          `json:"system_metrics"`
+	Timestamp       time.Time       `json:"timestamp"`
+	QueryMetrics    QueryMetrics    `json:"query_metrics"`
+	ConnectionStats ConnectionStats `json:"connection_stats"`
+	CacheStats      CacheStats      `json:"cache_stats"`
+	SlowQueries     []SlowQuery     `json:"slow_queries"`
+	TableSizes      []TableSize     `json:"table_sizes"`
+	IndexUsage      []IndexUsage    `json:"index_usage"`
+	QueryPatterns   []QueryPattern  `json:"query_patterns"`
+	SystemMetrics   SystemMetrics   `json:"system_metrics"`
 }
 
 // QueryMetrics holds query performance metrics
 type QueryMetrics struct {
-	TotalQueries       int64         `json:"total_queries"`
-	QueriesPerSecond   float64       `json:"queries_per_second"`
-	AvgResponseTime    time.Duration `json:"avg_response_time"`
-	MaxResponseTime    time.Duration `json:"max_response_time"`
-	MinResponseTime    time.Duration `json:"min_response_time"`
-	P95ResponseTime    time.Duration `json:"p95_response_time"`
-	P99ResponseTime    time.Duration `json:"p99_response_time"`
-	ErrorRate          float64       `json:"error_rate"`
-	SlowQueriesCount   int64         `json:"slow_queries_count"`
+	TotalQueries     int64         `json:"total_queries"`
+	QueriesPerSecond float64       `json:"queries_per_second"`
+	AvgResponseTime  time.Duration `json:"avg_response_time"`
+	MaxResponseTime  time.Duration `json:"max_response_time"`
+	MinResponseTime  time.Duration `json:"min_response_time"`
+	P95ResponseTime  time.Duration `json:"p95_response_time"`
+	P99ResponseTime  time.Duration `json:"p99_response_time"`
+	ErrorRate        float64       `json:"error_rate"`
+	SlowQueriesCount int64         `json:"slow_queries_count"`
 }
 
 // ConnectionStats holds connection pool statistics
 type ConnectionStats struct {
-	ActiveConnections  int `json:"active_connections"`
-	IdleConnections    int `json:"idle_connections"`
-	TotalConnections   int `json:"total_connections"`
-	MaxConnections     int `json:"max_connections"`
+	ActiveConnections     int     `json:"active_connections"`
+	IdleConnections       int     `json:"idle_connections"`
+	TotalConnections      int     `json:"total_connections"`
+	MaxConnections        int     `json:"max_connections"`
 	ConnectionUtilization float64 `json:"connection_utilization"`
 }
 
 // CacheStats holds cache performance statistics
 type CacheStats struct {
-	Hits               int64   `json:"hits"`
-	Misses             int64   `json:"misses"`
-	Sets               int64   `json:"sets"`
-	HitRate            float64 `json:"hit_rate"`
-	MissRate           float64 `json:"miss_rate"`
-	Evictions          int64   `json:"evictions"`
-	MemoryUsage        int64   `json:"memory_usage"`
+	Hits        int64   `json:"hits"`
+	Misses      int64   `json:"misses"`
+	Sets        int64   `json:"sets"`
+	HitRate     float64 `json:"hit_rate"`
+	MissRate    float64 `json:"miss_rate"`
+	Evictions   int64   `json:"evictions"`
+	MemoryUsage int64   `json:"memory_usage"`
 }
 
 // SlowQuery represents a slow query entry
 type SlowQuery struct {
-	Query              string        `json:"query"`
-	CallCount          int64         `json:"call_count"`
-	TotalTime          time.Duration `json:"total_time"`
-	MeanTime           time.Duration `json:"mean_time"`
-	Rows               int64         `json:"rows"`
-	HitPercent         float64       `json:"hit_percent"`
-	LastExecuted       time.Time     `json:"last_executed"`
+	Query        string        `json:"query"`
+	CallCount    int64         `json:"call_count"`
+	TotalTime    time.Duration `json:"total_time"`
+	MeanTime     time.Duration `json:"mean_time"`
+	Rows         int64         `json:"rows"`
+	HitPercent   float64       `json:"hit_percent"`
+	LastExecuted time.Time     `json:"last_executed"`
 }
 
 // TableSize represents table size information
 type TableSize struct {
-	TableName          string `json:"table_name"`
-	TotalSize          string `json:"total_size"`
-	IndexSize          string `json:"index_size"`
-	TableSize          string `json:"table_size"`
-	RowCount           int64  `json:"row_count"`
+	TableName string `json:"table_name"`
+	TotalSize string `json:"total_size"`
+	IndexSize string `json:"index_size"`
+	TableSize string `json:"table_size"`
+	RowCount  int64  `json:"row_count"`
 }
 
 // IndexUsage represents index usage statistics
 type IndexUsage struct {
-	SchemaName         string `json:"schema_name"`
-	TableName          string `json:"table_name"`
-	IndexName          string `json:"index_name"`
-	IdxScan            int64  `json:"idx_scan"`
-	IdxTupRead         int64  `json:"idx_tup_read"`
-	IdxTupFetch        int64  `json:"idx_tup_fetch"`
-	UsagePercent       float64 `json:"usage_percent"`
+	SchemaName   string  `json:"schema_name"`
+	TableName    string  `json:"table_name"`
+	IndexName    string  `json:"index_name"`
+	IdxScan      int64   `json:"idx_scan"`
+	IdxTupRead   int64   `json:"idx_tup_read"`
+	IdxTupFetch  int64   `json:"idx_tup_fetch"`
+	UsagePercent float64 `json:"usage_percent"`
 }
 
 // SystemMetrics holds system-level performance metrics
 type SystemMetrics struct {
-	CPUUsage           float64 `json:"cpu_usage"`
-	MemoryUsage        int64   `json:"memory_usage"`
-	DiskUsage          float64 `json:"disk_usage"`
-	NetworkIO          int64   `json:"network_io"`
-	DatabaseCPUTime    float64 `json:"database_cpu_time"`
+	CPUUsage        float64 `json:"cpu_usage"`
+	MemoryUsage     int64   `json:"memory_usage"`
+	DiskUsage       float64 `json:"disk_usage"`
+	NetworkIO       int64   `json:"network_io"`
+	DatabaseCPUTime float64 `json:"database_cpu_time"`
 }
 
 // PerformanceDashboard provides a web-based performance monitoring interface
 type PerformanceDashboard struct {
-	config         *DashboardConfig
-	db             *Database
-	perfDB         *PerformanceDB
-	queryCache     QueryCache
-	logger         *zerolog.Logger
-	history        []PerformanceData
-	metrics        *PerformanceMetrics
-	server         *http.Server
+	config     *DashboardConfig
+	db         *Database
+	perfDB     *PerformanceDB
+	queryCache QueryCache
+	logger     *zerolog.Logger
+	history    []PerformanceData
+	metrics    *PerformanceMetrics
+	server     *http.Server
 }
 
 // NewPerformanceDashboard creates a new performance dashboard
@@ -167,8 +167,12 @@ func (pd *PerformanceDashboard) Start() error {
 	mux.Handle(pd.config.Path+"/static/", http.StripPrefix(pd.config.Path, http.FileServer(http.Dir("./web/static"))))
 
 	pd.server = &http.Server{
-		Addr:    fmt.Sprintf(":%d", pd.config.Port),
-		Handler: mux,
+		Addr:              fmt.Sprintf(":%d", pd.config.Port),
+		Handler:           mux,
+		ReadTimeout:       10 * time.Second,
+		WriteTimeout:      30 * time.Second,
+		IdleTimeout:       120 * time.Second,
+		ReadHeaderTimeout: 10 * time.Second,
 	}
 
 	// Start data collection
@@ -486,9 +490,9 @@ func (pd *PerformanceDashboard) formatQueryPatterns(patterns map[string]*Perform
 	for _, pattern := range patterns {
 		// Convert PerformanceQueryPattern to QueryPattern for display
 		result = append(result, QueryPattern{
-			Name: pattern.Query, // Use query as name for display
-			Query: pattern.Query,
-			Args:  []interface{}{},
+			Name:   pattern.Query, // Use query as name for display
+			Query:  pattern.Query,
+			Args:   []interface{}{},
 			Weight: 1,
 		})
 	}

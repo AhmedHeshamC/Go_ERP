@@ -16,11 +16,11 @@ import (
 // allowed to complete (up to 30 second timeout) before connections are closed
 func TestShutdownManager_RequestCompletion(t *testing.T) {
 	tests := []struct {
-		name              string
-		requestDuration   time.Duration
-		shutdownTimeout   time.Duration
-		expectCompletion  bool
-		expectError       bool
+		name             string
+		requestDuration  time.Duration
+		shutdownTimeout  time.Duration
+		expectCompletion bool
+		expectError      bool
 	}{
 		{
 			name:             "short request completes before timeout",
